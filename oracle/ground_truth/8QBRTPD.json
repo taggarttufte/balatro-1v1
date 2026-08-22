@@ -1,0 +1,7457 @@
+{
+ "schema_version": "1.0",
+ "seed": "8QBRTPD",
+ "game_version": "1.0.1o",
+ "analyzer_version_flag": "10106",
+ "deck": "b_red",
+ "deck_name": "Red Deck",
+ "stake": "stake_white",
+ "stake_name": "White Stake",
+ "profile": "fully_unlocked",
+ "assumptions": [
+  "Profile: fully unlocked (every joker/voucher/tag unlockable is unlocked and discovered).",
+  "Fresh run: Stone/Steel/Glass Joker, Golden Ticket, Lucky Cat (enhancement_gate), Cavendish (yes_pool_flag gros_michel_extinct) and Planet X/Ceres/Eris (softlock) are UNAVAILABLE in pools and are resampled past, exactly as the game does for a deck with no such cards / hands played.",
+  "No purchases, no rerolls, no skips, no Showman: the shop queue is the raw per-ante stream (cdt{ante} / Joker{r}sho{ante} / Tarotsho{ante} / ...); the game fills 2 slots per shop visit and each reroll draws the next 2.",
+  "Every booster pack is opened, in display order, so pack N of a kind within an ante assumes packs 1..N-1 of that kind were opened (they share the per-ante per-source stream).",
+  "Shop visits: ante 1 has two (after Small, after Big); every later ante has three, the first being the shop entered right after the previous ante's Boss (ease_ante runs before that shop, so it is keyed with the new ante).  Immolate-lineage UIs label these smallBlind/bigBlind/bossBlind = the blind you are about to play.",
+  "The first pack of the run is the forced Buffoon Pack (get_pack: first_shop_buffoon), consuming no shop_pack RNG.",
+  "Pack art variants (p_arcana_normal_1..4 etc.) are not resolved; keys drop the numeric suffix.",
+  "Analyzer version flag 10106 (= 1.0.1f+ pools).  No generation-relevant change is known between 1.0.1f and 1.0.1o; the community uses these analyzers against 1.0.1o and this oracle was built against a local 1.0.1o install.",
+  "Stickers (eternal/perishable/rental) only roll at Black/Orange/Gold stake; at White stake they are all false."
+ ],
+ "shop_queue_depth": 50,
+ "source": {
+  "primary": "blueprint",
+  "primary_detail": {
+   "repo": "https://github.com/miaklwalker/Blueprint",
+   "commit": "62898ed03cf3ea32719d64852fae797753d5665e",
+   "driver": "mp/oracle/blueprint_runner/run_blueprint.ts",
+   "generated_at": "2026-08-21T15:49:56.112Z"
+  },
+  "cross_checks": {
+   "thesoul_wasm": {
+    "source": "TheSoul WASM (SpectralPack/TheSoul immolate.wasm, C++ Immolate by MathIsFun0)",
+    "driver": "mp/oracle/blueprint_runner/run_thesoul.js (fresh-run locks, fully unlocked profile)",
+    "fields_compared": 708,
+    "status": "agree",
+    "mismatches": [],
+    "generated_at": "2026-08-21T15:50:40.429Z"
+   }
+  }
+ },
+ "retrieved": "2026-08-21T16:01:43Z",
+ "antes": {
+  "1": {
+   "boss": {
+    "key": "bl_psychic",
+    "name": "The Psychic"
+   },
+   "voucher": {
+    "key": "v_wasteful",
+    "name": "Wasteful"
+   },
+   "tags": {
+    "small": {
+     "key": "tag_skip",
+     "name": "Speed Tag"
+    },
+    "big": {
+     "key": "tag_juggle",
+     "name": "Juggle Tag"
+    }
+   },
+   "shop_queue": [
+    {
+     "set": "Planet",
+     "key": "c_mars",
+     "name": "Mars"
+    },
+    {
+     "set": "Joker",
+     "key": "j_ceremonial",
+     "name": "Ceremonial Dagger",
+     "edition": null,
+     "rarity": 2,
+     "stickers": {
+      "eternal": false,
+      "perishable": false,
+      "rental": false
+     }
+    },
+    {
+     "set": "Tarot",
+     "key": "c_justice",
+     "name": "Justice"
+    },
+    {
+     "set": "Joker",
+     "key": "j_marble",
+     "name": "Marble Joker",
+     "edition": null,
+     "rarity": 2,
+     "stickers": {
+      "eternal": false,
+      "perishable": false,
+      "rental": false
+     }
+    },
+    {
+     "set": "Joker",
+     "key": "j_blue_joker",
+     "name": "Blue Joker",
+     "edition": null,
+     "rarity": 1,
+     "stickers": {
+      "eternal": false,
+      "perishable": false,
+      "rental": false
+     }
+    },
+    {
+     "set": "Tarot",
+     "key": "c_chariot",
+     "name": "The Chariot"
+    },
+    {
+     "set": "Joker",
+     "key": "j_zany",
+     "name": "Zany Joker",
+     "edition": null,
+     "rarity": 1,
+     "stickers": {
+      "eternal": false,
+      "perishable": false,
+      "rental": false
+     }
+    },
+    {
+     "set": "Joker",
+     "key": "j_ice_cream",
+     "name": "Ice Cream",
+     "edition": null,
+     "rarity": 1,
+     "stickers": {
+      "eternal": false,
+      "perishable": false,
+      "rental": false
+     }
+    },
+    {
+     "set": "Joker",
+     "key": "j_scholar",
+     "name": "Scholar",
+     "edition": null,
+     "rarity": 1,
+     "stickers": {
+      "eternal": false,
+      "perishable": false,
+      "rental": false
+     }
+    },
+    {
+     "set": "Joker",
+     "key": "j_fortune_teller",
+     "name": "Fortune Teller",
+     "edition": null,
+     "rarity": 1,
+     "stickers": {
+      "eternal": false,
+      "perishable": false,
+      "rental": false
+     }
+    },
+    {
+     "set": "Joker",
+     "key": "j_mystic_summit",
+     "name": "Mystic Summit",
+     "edition": null,
+     "rarity": 1,
+     "stickers": {
+      "eternal": false,
+      "perishable": false,
+      "rental": false
+     }
+    },
+    {
+     "set": "Joker",
+     "key": "j_joker",
+     "name": "Joker",
+     "edition": null,
+     "rarity": 1,
+     "stickers": {
+      "eternal": false,
+      "perishable": false,
+      "rental": false
+     }
+    },
+    {
+     "set": "Joker",
+     "key": "j_luchador",
+     "name": "Luchador",
+     "edition": null,
+     "rarity": 2,
+     "stickers": {
+      "eternal": false,
+      "perishable": false,
+      "rental": false
+     }
+    },
+    {
+     "set": "Joker",
+     "key": "j_smiley",
+     "name": "Smiley Face",
+     "edition": null,
+     "rarity": 1,
+     "stickers": {
+      "eternal": false,
+      "perishable": false,
+      "rental": false
+     }
+    },
+    {
+     "set": "Joker",
+     "key": "j_erosion",
+     "name": "Erosion",
+     "edition": null,
+     "rarity": 2,
+     "stickers": {
+      "eternal": false,
+      "perishable": false,
+      "rental": false
+     }
+    },
+    {
+     "set": "Tarot",
+     "key": "c_hermit",
+     "name": "The Hermit"
+    },
+    {
+     "set": "Joker",
+     "key": "j_runner",
+     "name": "Runner",
+     "edition": null,
+     "rarity": 1,
+     "stickers": {
+      "eternal": false,
+      "perishable": false,
+      "rental": false
+     }
+    },
+    {
+     "set": "Tarot",
+     "key": "c_strength",
+     "name": "Strength"
+    },
+    {
+     "set": "Planet",
+     "key": "c_pluto",
+     "name": "Pluto"
+    },
+    {
+     "set": "Joker",
+     "key": "j_crafty",
+     "name": "Crafty Joker",
+     "edition": null,
+     "rarity": 1,
+     "stickers": {
+      "eternal": false,
+      "perishable": false,
+      "rental": false
+     }
+    },
+    {
+     "set": "Planet",
+     "key": "c_jupiter",
+     "name": "Jupiter"
+    },
+    {
+     "set": "Joker",
+     "key": "j_arrowhead",
+     "name": "Arrowhead",
+     "edition": null,
+     "rarity": 2,
+     "stickers": {
+      "eternal": false,
+      "perishable": false,
+      "rental": false
+     }
+    },
+    {
+     "set": "Joker",
+     "key": "j_hallucination",
+     "name": "Hallucination",
+     "edition": null,
+     "rarity": 1,
+     "stickers": {
+      "eternal": false,
+      "perishable": false,
+      "rental": false
+     }
+    },
+    {
+     "set": "Joker",
+     "key": "j_zany",
+     "name": "Zany Joker",
+     "edition": null,
+     "rarity": 1,
+     "stickers": {
+      "eternal": false,
+      "perishable": false,
+      "rental": false
+     }
+    },
+    {
+     "set": "Joker",
+     "key": "j_onyx_agate",
+     "name": "Onyx Agate",
+     "edition": null,
+     "rarity": 2,
+     "stickers": {
+      "eternal": false,
+      "perishable": false,
+      "rental": false
+     }
+    },
+    {
+     "set": "Tarot",
+     "key": "c_fool",
+     "name": "The Fool"
+    },
+    {
+     "set": "Joker",
+     "key": "j_square",
+     "name": "Square Joker",
+     "edition": null,
+     "rarity": 1,
+     "stickers": {
+      "eternal": false,
+      "perishable": false,
+      "rental": false
+     }
+    },
+    {
+     "set": "Tarot",
+     "key": "c_world",
+     "name": "The World"
+    },
+    {
+     "set": "Joker",
+     "key": "j_to_the_moon",
+     "name": "To the Moon",
+     "edition": null,
+     "rarity": 2,
+     "stickers": {
+      "eternal": false,
+      "perishable": false,
+      "rental": false
+     }
+    },
+    {
+     "set": "Joker",
+     "key": "j_idol",
+     "name": "The Idol",
+     "edition": null,
+     "rarity": 2,
+     "stickers": {
+      "eternal": false,
+      "perishable": false,
+      "rental": false
+     }
+    },
+    {
+     "set": "Joker",
+     "key": "j_business",
+     "name": "Business Card",
+     "edition": null,
+     "rarity": 1,
+     "stickers": {
+      "eternal": false,
+      "perishable": false,
+      "rental": false
+     }
+    },
+    {
+     "set": "Planet",
+     "key": "c_venus",
+     "name": "Venus"
+    },
+    {
+     "set": "Tarot",
+     "key": "c_tower",
+     "name": "The Tower"
+    },
+    {
+     "set": "Joker",
+     "key": "j_swashbuckler",
+     "name": "Swashbuckler",
+     "edition": null,
+     "rarity": 1,
+     "stickers": {
+      "eternal": false,
+      "perishable": false,
+      "rental": false
+     }
+    },
+    {
+     "set": "Planet",
+     "key": "c_saturn",
+     "name": "Saturn"
+    },
+    {
+     "set": "Joker",
+     "key": "j_shoot_the_moon",
+     "name": "Shoot the Moon",
+     "edition": null,
+     "rarity": 1,
+     "stickers": {
+      "eternal": false,
+      "perishable": false,
+      "rental": false
+     }
+    },
+    {
+     "set": "Joker",
+     "key": "j_hiker",
+     "name": "Hiker",
+     "edition": null,
+     "rarity": 2,
+     "stickers": {
+      "eternal": false,
+      "perishable": false,
+      "rental": false
+     }
+    },
+    {
+     "set": "Planet",
+     "key": "c_saturn",
+     "name": "Saturn"
+    },
+    {
+     "set": "Joker",
+     "key": "j_order",
+     "name": "The Order",
+     "edition": null,
+     "rarity": 3,
+     "stickers": {
+      "eternal": false,
+      "perishable": false,
+      "rental": false
+     }
+    },
+    {
+     "set": "Planet",
+     "key": "c_neptune",
+     "name": "Neptune"
+    },
+    {
+     "set": "Joker",
+     "key": "j_hallucination",
+     "name": "Hallucination",
+     "edition": null,
+     "rarity": 1,
+     "stickers": {
+      "eternal": false,
+      "perishable": false,
+      "rental": false
+     }
+    },
+    {
+     "set": "Joker",
+     "key": "j_ring_master",
+     "name": "Showman",
+     "edition": null,
+     "rarity": 2,
+     "stickers": {
+      "eternal": false,
+      "perishable": false,
+      "rental": false
+     }
+    },
+    {
+     "set": "Joker",
+     "key": "j_flower_pot",
+     "name": "Flower Pot",
+     "edition": null,
+     "rarity": 2,
+     "stickers": {
+      "eternal": false,
+      "perishable": false,
+      "rental": false
+     }
+    },
+    {
+     "set": "Joker",
+     "key": "j_drivers_license",
+     "name": "Driver's License",
+     "edition": null,
+     "rarity": 3,
+     "stickers": {
+      "eternal": false,
+      "perishable": false,
+      "rental": false
+     }
+    },
+    {
+     "set": "Tarot",
+     "key": "c_hanged_man",
+     "name": "The Hanged Man"
+    },
+    {
+     "set": "Joker",
+     "key": "j_pareidolia",
+     "name": "Pareidolia",
+     "edition": null,
+     "rarity": 2,
+     "stickers": {
+      "eternal": false,
+      "perishable": false,
+      "rental": false
+     }
+    },
+    {
+     "set": "Joker",
+     "key": "j_riff_raff",
+     "name": "Riff-raff",
+     "edition": null,
+     "rarity": 1,
+     "stickers": {
+      "eternal": false,
+      "perishable": false,
+      "rental": false
+     }
+    },
+    {
+     "set": "Joker",
+     "key": "j_clever",
+     "name": "Clever Joker",
+     "edition": null,
+     "rarity": 1,
+     "stickers": {
+      "eternal": false,
+      "perishable": false,
+      "rental": false
+     }
+    },
+    {
+     "set": "Joker",
+     "key": "j_banner",
+     "name": "Banner",
+     "edition": null,
+     "rarity": 1,
+     "stickers": {
+      "eternal": false,
+      "perishable": false,
+      "rental": false
+     }
+    },
+    {
+     "set": "Tarot",
+     "key": "c_heirophant",
+     "name": "The Hierophant"
+    }
+   ],
+   "shops": [
+    {
+     "visit": "after_small",
+     "analyzer_label": "bigBlind",
+     "packs": [
+      {
+       "key": "p_buffoon_normal",
+       "name": "Buffoon Pack",
+       "kind": "Buffoon",
+       "size": 2,
+       "choices": 1,
+       "cards": [
+        {
+         "set": "Joker",
+         "key": "j_ceremonial",
+         "name": "Ceremonial Dagger",
+         "edition": null,
+         "rarity": 2,
+         "stickers": {
+          "eternal": false,
+          "perishable": false,
+          "rental": false
+         },
+         "analyzer_gap": "collides_with_displayed_shop"
+        },
+        {
+         "set": "Joker",
+         "key": "j_even_steven",
+         "name": "Even Steven",
+         "edition": null,
+         "rarity": 1,
+         "stickers": {
+          "eternal": false,
+          "perishable": false,
+          "rental": false
+         }
+        }
+       ]
+      },
+      {
+       "key": "p_arcana_normal",
+       "name": "Arcana Pack",
+       "kind": "Arcana",
+       "size": 3,
+       "choices": 1,
+       "cards": [
+        {
+         "set": "Spectral",
+         "key": "c_soul",
+         "name": "The Soul"
+        },
+        {
+         "set": "Tarot",
+         "key": "c_death",
+         "name": "Death"
+        },
+        {
+         "set": "Tarot",
+         "key": "c_judgement",
+         "name": "Judgement"
+        }
+       ]
+      }
+     ]
+    },
+    {
+     "visit": "after_big",
+     "analyzer_label": "bossBlind",
+     "packs": [
+      {
+       "key": "p_celestial_jumbo",
+       "name": "Jumbo Celestial Pack",
+       "kind": "Celestial",
+       "size": 5,
+       "choices": 1,
+       "cards": [
+        {
+         "set": "Planet",
+         "key": "c_uranus",
+         "name": "Uranus"
+        },
+        {
+         "set": "Planet",
+         "key": "c_saturn",
+         "name": "Saturn"
+        },
+        {
+         "set": "Planet",
+         "key": "c_jupiter",
+         "name": "Jupiter"
+        },
+        {
+         "set": "Planet",
+         "key": "c_earth",
+         "name": "Earth"
+        },
+        {
+         "set": "Planet",
+         "key": "c_pluto",
+         "name": "Pluto"
+        }
+       ]
+      },
+      {
+       "key": "p_buffoon_normal",
+       "name": "Buffoon Pack",
+       "kind": "Buffoon",
+       "size": 2,
+       "choices": 1,
+       "cards": [
+        {
+         "set": "Joker",
+         "key": "j_photograph",
+         "name": "Photograph",
+         "edition": null,
+         "rarity": 1,
+         "stickers": {
+          "eternal": false,
+          "perishable": false,
+          "rental": false
+         }
+        },
+        {
+         "set": "Joker",
+         "key": "j_vampire",
+         "name": "Vampire",
+         "edition": null,
+         "rarity": 2,
+         "stickers": {
+          "eternal": false,
+          "perishable": false,
+          "rental": false
+         }
+        }
+       ]
+      }
+     ]
+    }
+   ],
+   "soul_spawns": [
+    {
+     "shop": 0,
+     "visit": "after_small",
+     "pack": 1,
+     "card": 0,
+     "nth_soul_in_run": 1,
+     "legendary_if_all_prior_souls_used": "j_triboulet"
+    }
+   ],
+   "deck_order_unverified": {
+    "note": "Blueprint model of the per-blind deck shuffle (index 0 = first card drawn). No second source; excluded from parity by default.",
+    "small": [
+     "D_7",
+     "H_6",
+     "S_T",
+     "H_T",
+     "C_A",
+     "D_K",
+     "H_A",
+     "S_9",
+     "S_7",
+     "S_K",
+     "D_3",
+     "H_7",
+     "S_J",
+     "D_8",
+     "D_4",
+     "C_5",
+     "S_A",
+     "H_9",
+     "C_7",
+     "S_4",
+     "D_5",
+     "H_4",
+     "D_9",
+     "C_T",
+     "S_6",
+     "C_K",
+     "C_4",
+     "S_8",
+     "D_2",
+     "H_Q",
+     "S_5",
+     "S_2",
+     "H_8",
+     "D_Q",
+     "C_9",
+     "C_3",
+     "C_8",
+     "D_A",
+     "H_K",
+     "D_6",
+     "C_J",
+     "D_J",
+     "S_3",
+     "H_5",
+     "H_J",
+     "D_T",
+     "H_2",
+     "S_Q",
+     "C_6",
+     "H_3",
+     "C_2",
+     "C_Q"
+    ],
+    "big": [
+     "S_J",
+     "C_8",
+     "S_4",
+     "S_A",
+     "H_9",
+     "H_2",
+     "S_6",
+     "D_6",
+     "H_Q",
+     "H_J",
+     "C_9",
+     "C_4",
+     "C_K",
+     "S_7",
+     "H_4",
+     "C_6",
+     "D_Q",
+     "C_J",
+     "S_3",
+     "D_J",
+     "D_4",
+     "C_Q",
+     "D_7",
+     "C_A",
+     "H_T",
+     "S_T",
+     "C_5",
+     "H_K",
+     "H_3",
+     "D_K",
+     "D_3",
+     "D_2",
+     "D_8",
+     "H_7",
+     "H_8",
+     "D_9",
+     "S_9",
+     "D_5",
+     "S_Q",
+     "S_K",
+     "C_7",
+     "H_A",
+     "H_5",
+     "S_8",
+     "C_T",
+     "S_2",
+     "S_5",
+     "C_2",
+     "D_T",
+     "D_A",
+     "H_6",
+     "C_3"
+    ],
+    "boss": [
+     "H_9",
+     "C_3",
+     "H_8",
+     "H_Q",
+     "H_T",
+     "C_Q",
+     "D_9",
+     "D_6",
+     "S_4",
+     "C_J",
+     "D_T",
+     "D_4",
+     "H_3",
+     "S_7",
+     "D_J",
+     "H_J",
+     "S_6",
+     "H_4",
+     "C_T",
+     "D_Q",
+     "S_8",
+     "C_7",
+     "C_6",
+     "H_6",
+     "S_T",
+     "C_4",
+     "S_K",
+     "D_7",
+     "S_2",
+     "C_5",
+     "S_J",
+     "H_2",
+     "H_7",
+     "S_Q",
+     "C_2",
+     "H_K",
+     "S_9",
+     "D_8",
+     "D_3",
+     "H_5",
+     "H_A",
+     "D_A",
+     "C_8",
+     "D_K",
+     "C_9",
+     "S_A",
+     "C_A",
+     "S_5",
+     "S_3",
+     "D_5",
+     "C_K",
+     "D_2"
+    ]
+   }
+  },
+  "2": {
+   "boss": {
+    "key": "bl_goad",
+    "name": "The Goad"
+   },
+   "voucher": {
+    "key": "v_paint_brush",
+    "name": "Paint Brush"
+   },
+   "tags": {
+    "small": {
+     "key": "tag_handy",
+     "name": "Handy Tag"
+    },
+    "big": {
+     "key": "tag_negative",
+     "name": "Negative Tag"
+    }
+   },
+   "shop_queue": [
+    {
+     "set": "Joker",
+     "key": "j_devious",
+     "name": "Devious Joker",
+     "edition": null,
+     "rarity": 1,
+     "stickers": {
+      "eternal": false,
+      "perishable": false,
+      "rental": false
+     }
+    },
+    {
+     "set": "Joker",
+     "key": "j_raised_fist",
+     "name": "Raised Fist",
+     "edition": null,
+     "rarity": 1,
+     "stickers": {
+      "eternal": false,
+      "perishable": false,
+      "rental": false
+     }
+    },
+    {
+     "set": "Tarot",
+     "key": "c_hanged_man",
+     "name": "The Hanged Man"
+    },
+    {
+     "set": "Joker",
+     "key": "j_arrowhead",
+     "name": "Arrowhead",
+     "edition": null,
+     "rarity": 2,
+     "stickers": {
+      "eternal": false,
+      "perishable": false,
+      "rental": false
+     }
+    },
+    {
+     "set": "Joker",
+     "key": "j_ring_master",
+     "name": "Showman",
+     "edition": null,
+     "rarity": 2,
+     "stickers": {
+      "eternal": false,
+      "perishable": false,
+      "rental": false
+     }
+    },
+    {
+     "set": "Tarot",
+     "key": "c_justice",
+     "name": "Justice"
+    },
+    {
+     "set": "Joker",
+     "key": "j_popcorn",
+     "name": "Popcorn",
+     "edition": null,
+     "rarity": 1,
+     "stickers": {
+      "eternal": false,
+      "perishable": false,
+      "rental": false
+     }
+    },
+    {
+     "set": "Joker",
+     "key": "j_business",
+     "name": "Business Card",
+     "edition": null,
+     "rarity": 1,
+     "stickers": {
+      "eternal": false,
+      "perishable": false,
+      "rental": false
+     }
+    },
+    {
+     "set": "Planet",
+     "key": "c_jupiter",
+     "name": "Jupiter"
+    },
+    {
+     "set": "Joker",
+     "key": "j_greedy_joker",
+     "name": "Greedy Joker",
+     "edition": null,
+     "rarity": 1,
+     "stickers": {
+      "eternal": false,
+      "perishable": false,
+      "rental": false
+     }
+    },
+    {
+     "set": "Tarot",
+     "key": "c_emperor",
+     "name": "The Emperor"
+    },
+    {
+     "set": "Joker",
+     "key": "j_clever",
+     "name": "Clever Joker",
+     "edition": null,
+     "rarity": 1,
+     "stickers": {
+      "eternal": false,
+      "perishable": false,
+      "rental": false
+     }
+    },
+    {
+     "set": "Joker",
+     "key": "j_egg",
+     "name": "Egg",
+     "edition": null,
+     "rarity": 1,
+     "stickers": {
+      "eternal": false,
+      "perishable": false,
+      "rental": false
+     }
+    },
+    {
+     "set": "Joker",
+     "key": "j_obelisk",
+     "name": "Obelisk",
+     "edition": null,
+     "rarity": 3,
+     "stickers": {
+      "eternal": false,
+      "perishable": false,
+      "rental": false
+     }
+    },
+    {
+     "set": "Joker",
+     "key": "j_zany",
+     "name": "Zany Joker",
+     "edition": null,
+     "rarity": 1,
+     "stickers": {
+      "eternal": false,
+      "perishable": false,
+      "rental": false
+     }
+    },
+    {
+     "set": "Joker",
+     "key": "j_misprint",
+     "name": "Misprint",
+     "edition": null,
+     "rarity": 1,
+     "stickers": {
+      "eternal": false,
+      "perishable": false,
+      "rental": false
+     }
+    },
+    {
+     "set": "Joker",
+     "key": "j_delayed_grat",
+     "name": "Delayed Gratification",
+     "edition": null,
+     "rarity": 1,
+     "stickers": {
+      "eternal": false,
+      "perishable": false,
+      "rental": false
+     }
+    },
+    {
+     "set": "Joker",
+     "key": "j_misprint",
+     "name": "Misprint",
+     "edition": null,
+     "rarity": 1,
+     "stickers": {
+      "eternal": false,
+      "perishable": false,
+      "rental": false
+     }
+    },
+    {
+     "set": "Joker",
+     "key": "j_tribe",
+     "name": "The Tribe",
+     "edition": null,
+     "rarity": 3,
+     "stickers": {
+      "eternal": false,
+      "perishable": false,
+      "rental": false
+     }
+    },
+    {
+     "set": "Joker",
+     "key": "j_supernova",
+     "name": "Supernova",
+     "edition": null,
+     "rarity": 1,
+     "stickers": {
+      "eternal": false,
+      "perishable": false,
+      "rental": false
+     }
+    },
+    {
+     "set": "Joker",
+     "key": "j_golden",
+     "name": "Golden Joker",
+     "edition": null,
+     "rarity": 1,
+     "stickers": {
+      "eternal": false,
+      "perishable": false,
+      "rental": false
+     }
+    },
+    {
+     "set": "Planet",
+     "key": "c_jupiter",
+     "name": "Jupiter"
+    },
+    {
+     "set": "Planet",
+     "key": "c_pluto",
+     "name": "Pluto"
+    },
+    {
+     "set": "Joker",
+     "key": "j_delayed_grat",
+     "name": "Delayed Gratification",
+     "edition": null,
+     "rarity": 1,
+     "stickers": {
+      "eternal": false,
+      "perishable": false,
+      "rental": false
+     }
+    },
+    {
+     "set": "Joker",
+     "key": "j_walkie_talkie",
+     "name": "Walkie Talkie",
+     "edition": null,
+     "rarity": 1,
+     "stickers": {
+      "eternal": false,
+      "perishable": false,
+      "rental": false
+     }
+    },
+    {
+     "set": "Joker",
+     "key": "j_mad",
+     "name": "Mad Joker",
+     "edition": null,
+     "rarity": 1,
+     "stickers": {
+      "eternal": false,
+      "perishable": false,
+      "rental": false
+     }
+    },
+    {
+     "set": "Planet",
+     "key": "c_mercury",
+     "name": "Mercury"
+    },
+    {
+     "set": "Joker",
+     "key": "j_zany",
+     "name": "Zany Joker",
+     "edition": null,
+     "rarity": 1,
+     "stickers": {
+      "eternal": false,
+      "perishable": false,
+      "rental": false
+     }
+    },
+    {
+     "set": "Planet",
+     "key": "c_earth",
+     "name": "Earth"
+    },
+    {
+     "set": "Joker",
+     "key": "j_green_joker",
+     "name": "Green Joker",
+     "edition": null,
+     "rarity": 1,
+     "stickers": {
+      "eternal": false,
+      "perishable": false,
+      "rental": false
+     }
+    },
+    {
+     "set": "Planet",
+     "key": "c_saturn",
+     "name": "Saturn"
+    },
+    {
+     "set": "Joker",
+     "key": "j_flash",
+     "name": "Flash Card",
+     "edition": null,
+     "rarity": 2,
+     "stickers": {
+      "eternal": false,
+      "perishable": false,
+      "rental": false
+     }
+    },
+    {
+     "set": "Joker",
+     "key": "j_greedy_joker",
+     "name": "Greedy Joker",
+     "edition": null,
+     "rarity": 1,
+     "stickers": {
+      "eternal": false,
+      "perishable": false,
+      "rental": false
+     }
+    },
+    {
+     "set": "Joker",
+     "key": "j_troubadour",
+     "name": "Troubadour",
+     "edition": null,
+     "rarity": 2,
+     "stickers": {
+      "eternal": false,
+      "perishable": false,
+      "rental": false
+     }
+    },
+    {
+     "set": "Joker",
+     "key": "j_bootstraps",
+     "name": "Bootstraps",
+     "edition": null,
+     "rarity": 2,
+     "stickers": {
+      "eternal": false,
+      "perishable": false,
+      "rental": false
+     }
+    },
+    {
+     "set": "Joker",
+     "key": "j_space",
+     "name": "Space Joker",
+     "edition": null,
+     "rarity": 2,
+     "stickers": {
+      "eternal": false,
+      "perishable": false,
+      "rental": false
+     }
+    },
+    {
+     "set": "Tarot",
+     "key": "c_star",
+     "name": "The Star"
+    },
+    {
+     "set": "Joker",
+     "key": "j_scholar",
+     "name": "Scholar",
+     "edition": null,
+     "rarity": 1,
+     "stickers": {
+      "eternal": false,
+      "perishable": false,
+      "rental": false
+     }
+    },
+    {
+     "set": "Joker",
+     "key": "j_photograph",
+     "name": "Photograph",
+     "edition": null,
+     "rarity": 1,
+     "stickers": {
+      "eternal": false,
+      "perishable": false,
+      "rental": false
+     }
+    },
+    {
+     "set": "Joker",
+     "key": "j_crafty",
+     "name": "Crafty Joker",
+     "edition": null,
+     "rarity": 1,
+     "stickers": {
+      "eternal": false,
+      "perishable": false,
+      "rental": false
+     }
+    },
+    {
+     "set": "Tarot",
+     "key": "c_fool",
+     "name": "The Fool"
+    },
+    {
+     "set": "Joker",
+     "key": "j_business",
+     "name": "Business Card",
+     "edition": null,
+     "rarity": 1,
+     "stickers": {
+      "eternal": false,
+      "perishable": false,
+      "rental": false
+     }
+    },
+    {
+     "set": "Tarot",
+     "key": "c_strength",
+     "name": "Strength"
+    },
+    {
+     "set": "Planet",
+     "key": "c_pluto",
+     "name": "Pluto"
+    },
+    {
+     "set": "Joker",
+     "key": "j_abstract",
+     "name": "Abstract Joker",
+     "edition": null,
+     "rarity": 1,
+     "stickers": {
+      "eternal": false,
+      "perishable": false,
+      "rental": false
+     }
+    },
+    {
+     "set": "Joker",
+     "key": "j_scholar",
+     "name": "Scholar",
+     "edition": null,
+     "rarity": 1,
+     "stickers": {
+      "eternal": false,
+      "perishable": false,
+      "rental": false
+     }
+    },
+    {
+     "set": "Joker",
+     "key": "j_scary_face",
+     "name": "Scary Face",
+     "edition": null,
+     "rarity": 1,
+     "stickers": {
+      "eternal": false,
+      "perishable": false,
+      "rental": false
+     }
+    },
+    {
+     "set": "Joker",
+     "key": "j_idol",
+     "name": "The Idol",
+     "edition": null,
+     "rarity": 2,
+     "stickers": {
+      "eternal": false,
+      "perishable": false,
+      "rental": false
+     }
+    },
+    {
+     "set": "Joker",
+     "key": "j_runner",
+     "name": "Runner",
+     "edition": "e_holo",
+     "rarity": 1,
+     "stickers": {
+      "eternal": false,
+      "perishable": false,
+      "rental": false
+     }
+    },
+    {
+     "set": "Joker",
+     "key": "j_mime",
+     "name": "Mime",
+     "edition": null,
+     "rarity": 2,
+     "stickers": {
+      "eternal": false,
+      "perishable": false,
+      "rental": false
+     }
+    }
+   ],
+   "shops": [
+    {
+     "visit": "after_prev_boss",
+     "analyzer_label": "smallBlind",
+     "packs": [
+      {
+       "key": "p_standard_jumbo",
+       "name": "Jumbo Standard Pack",
+       "kind": "Standard",
+       "size": 5,
+       "choices": 1,
+       "cards": [
+        {
+         "set": "Base",
+         "key": "D_J",
+         "name": "Jack of Diamonds",
+         "enhancement": null,
+         "edition": null,
+         "seal": null
+        },
+        {
+         "set": "Base",
+         "key": "D_6",
+         "name": "6 of Diamonds",
+         "enhancement": null,
+         "edition": null,
+         "seal": null
+        },
+        {
+         "set": "Base",
+         "key": "S_2",
+         "name": "2 of Spades",
+         "enhancement": "m_gold",
+         "edition": null,
+         "seal": null
+        },
+        {
+         "set": "Base",
+         "key": "D_J",
+         "name": "Jack of Diamonds",
+         "enhancement": "m_mult",
+         "edition": null,
+         "seal": null
+        },
+        {
+         "set": "Base",
+         "key": "S_5",
+         "name": "5 of Spades",
+         "enhancement": null,
+         "edition": null,
+         "seal": null
+        }
+       ]
+      },
+      {
+       "key": "p_celestial_normal",
+       "name": "Celestial Pack",
+       "kind": "Celestial",
+       "size": 3,
+       "choices": 1,
+       "cards": [
+        {
+         "set": "Planet",
+         "key": "c_uranus",
+         "name": "Uranus"
+        },
+        {
+         "set": "Planet",
+         "key": "c_mercury",
+         "name": "Mercury"
+        },
+        {
+         "set": "Planet",
+         "key": "c_neptune",
+         "name": "Neptune"
+        }
+       ]
+      }
+     ]
+    },
+    {
+     "visit": "after_small",
+     "analyzer_label": "bigBlind",
+     "packs": [
+      {
+       "key": "p_buffoon_normal",
+       "name": "Buffoon Pack",
+       "kind": "Buffoon",
+       "size": 2,
+       "choices": 1,
+       "cards": [
+        {
+         "set": "Joker",
+         "key": "j_joker",
+         "name": "Joker",
+         "edition": null,
+         "rarity": 1,
+         "stickers": {
+          "eternal": false,
+          "perishable": false,
+          "rental": false
+         }
+        },
+        {
+         "set": "Joker",
+         "key": "j_rocket",
+         "name": "Rocket",
+         "edition": null,
+         "rarity": 2,
+         "stickers": {
+          "eternal": false,
+          "perishable": false,
+          "rental": false
+         }
+        }
+       ]
+      },
+      {
+       "key": "p_spectral_normal",
+       "name": "Spectral Pack",
+       "kind": "Spectral",
+       "size": 2,
+       "choices": 1,
+       "cards": [
+        {
+         "set": "Spectral",
+         "key": "c_talisman",
+         "name": "Talisman"
+        },
+        {
+         "set": "Spectral",
+         "key": "c_incantation",
+         "name": "Incantation"
+        }
+       ]
+      }
+     ]
+    },
+    {
+     "visit": "after_big",
+     "analyzer_label": "bossBlind",
+     "packs": [
+      {
+       "key": "p_arcana_normal",
+       "name": "Arcana Pack",
+       "kind": "Arcana",
+       "size": 3,
+       "choices": 1,
+       "cards": [
+        {
+         "set": "Tarot",
+         "key": "c_wheel_of_fortune",
+         "name": "The Wheel of Fortune"
+        },
+        {
+         "set": "Tarot",
+         "key": "c_heirophant",
+         "name": "The Hierophant"
+        },
+        {
+         "set": "Tarot",
+         "key": "c_judgement",
+         "name": "Judgement"
+        }
+       ]
+      },
+      {
+       "key": "p_standard_normal",
+       "name": "Standard Pack",
+       "kind": "Standard",
+       "size": 3,
+       "choices": 1,
+       "cards": [
+        {
+         "set": "Base",
+         "key": "S_6",
+         "name": "6 of Spades",
+         "enhancement": null,
+         "edition": null,
+         "seal": null
+        },
+        {
+         "set": "Base",
+         "key": "S_7",
+         "name": "7 of Spades",
+         "enhancement": null,
+         "edition": null,
+         "seal": null
+        },
+        {
+         "set": "Base",
+         "key": "D_6",
+         "name": "6 of Diamonds",
+         "enhancement": "m_mult",
+         "edition": null,
+         "seal": null
+        }
+       ]
+      }
+     ]
+    }
+   ],
+   "soul_spawns": [],
+   "deck_order_unverified": {
+    "note": "Blueprint model of the per-blind deck shuffle (index 0 = first card drawn). No second source; excluded from parity by default.",
+    "small": [
+     "S_A",
+     "H_8",
+     "C_7",
+     "C_J",
+     "D_6",
+     "H_2",
+     "S_Q",
+     "S_4",
+     "D_5",
+     "D_T",
+     "C_2",
+     "D_A",
+     "S_K",
+     "S_T",
+     "D_J",
+     "H_6",
+     "D_Q",
+     "H_A",
+     "H_K",
+     "C_8",
+     "D_8",
+     "H_3",
+     "H_9",
+     "H_5",
+     "S_5",
+     "C_4",
+     "D_4",
+     "C_5",
+     "D_3",
+     "S_2",
+     "H_J",
+     "S_9",
+     "D_7",
+     "S_8",
+     "S_7",
+     "C_3",
+     "H_Q",
+     "S_6",
+     "C_A",
+     "C_6",
+     "D_2",
+     "C_9",
+     "S_J",
+     "H_4",
+     "D_K",
+     "H_7",
+     "D_9",
+     "C_T",
+     "C_Q",
+     "C_K",
+     "H_T",
+     "S_3"
+    ],
+    "big": [
+     "C_5",
+     "D_K",
+     "C_J",
+     "S_7",
+     "H_5",
+     "C_4",
+     "S_4",
+     "S_A",
+     "H_2",
+     "D_2",
+     "S_9",
+     "D_4",
+     "S_5",
+     "C_6",
+     "C_Q",
+     "H_6",
+     "S_J",
+     "H_Q",
+     "D_7",
+     "C_K",
+     "H_7",
+     "C_8",
+     "H_8",
+     "S_T",
+     "D_6",
+     "S_3",
+     "D_A",
+     "H_J",
+     "H_9",
+     "S_Q",
+     "S_2",
+     "D_8",
+     "C_2",
+     "S_8",
+     "D_9",
+     "S_6",
+     "H_A",
+     "H_K",
+     "C_A",
+     "H_4",
+     "H_3",
+     "C_3",
+     "S_K",
+     "C_9",
+     "D_3",
+     "H_T",
+     "C_7",
+     "D_J",
+     "C_T",
+     "D_5",
+     "D_Q",
+     "D_T"
+    ],
+    "boss": [
+     "S_7",
+     "S_5",
+     "H_A",
+     "H_Q",
+     "C_9",
+     "D_5",
+     "D_A",
+     "S_6",
+     "C_A",
+     "H_5",
+     "H_T",
+     "D_4",
+     "C_Q",
+     "H_K",
+     "S_K",
+     "S_4",
+     "S_Q",
+     "D_9",
+     "S_8",
+     "D_8",
+     "D_6",
+     "D_2",
+     "H_J",
+     "C_3",
+     "H_9",
+     "S_9",
+     "C_5",
+     "D_7",
+     "H_3",
+     "C_2",
+     "C_T",
+     "C_6",
+     "S_3",
+     "D_T",
+     "S_J",
+     "H_2",
+     "H_7",
+     "S_T",
+     "H_6",
+     "S_2",
+     "C_4",
+     "D_Q",
+     "H_4",
+     "S_A",
+     "C_8",
+     "C_J",
+     "D_3",
+     "C_7",
+     "D_J",
+     "D_K",
+     "C_K",
+     "H_8"
+    ]
+   }
+  },
+  "3": {
+   "boss": {
+    "key": "bl_needle",
+    "name": "The Needle"
+   },
+   "voucher": {
+    "key": "v_crystal_ball",
+    "name": "Crystal Ball"
+   },
+   "tags": {
+    "small": {
+     "key": "tag_ethereal",
+     "name": "Ethereal Tag"
+    },
+    "big": {
+     "key": "tag_meteor",
+     "name": "Meteor Tag"
+    }
+   },
+   "shop_queue": [
+    {
+     "set": "Planet",
+     "key": "c_jupiter",
+     "name": "Jupiter"
+    },
+    {
+     "set": "Planet",
+     "key": "c_uranus",
+     "name": "Uranus"
+    },
+    {
+     "set": "Joker",
+     "key": "j_hanging_chad",
+     "name": "Hanging Chad",
+     "edition": null,
+     "rarity": 1,
+     "stickers": {
+      "eternal": false,
+      "perishable": false,
+      "rental": false
+     }
+    },
+    {
+     "set": "Tarot",
+     "key": "c_sun",
+     "name": "The Sun"
+    },
+    {
+     "set": "Joker",
+     "key": "j_splash",
+     "name": "Splash",
+     "edition": null,
+     "rarity": 1,
+     "stickers": {
+      "eternal": false,
+      "perishable": false,
+      "rental": false
+     }
+    },
+    {
+     "set": "Joker",
+     "key": "j_red_card",
+     "name": "Red Card",
+     "edition": null,
+     "rarity": 1,
+     "stickers": {
+      "eternal": false,
+      "perishable": false,
+      "rental": false
+     }
+    },
+    {
+     "set": "Tarot",
+     "key": "c_empress",
+     "name": "The Empress"
+    },
+    {
+     "set": "Joker",
+     "key": "j_gluttenous_joker",
+     "name": "Gluttonous Joker",
+     "edition": null,
+     "rarity": 1,
+     "stickers": {
+      "eternal": false,
+      "perishable": false,
+      "rental": false
+     }
+    },
+    {
+     "set": "Joker",
+     "key": "j_mr_bones",
+     "name": "Mr. Bones",
+     "edition": null,
+     "rarity": 2,
+     "stickers": {
+      "eternal": false,
+      "perishable": false,
+      "rental": false
+     }
+    },
+    {
+     "set": "Tarot",
+     "key": "c_hanged_man",
+     "name": "The Hanged Man"
+    },
+    {
+     "set": "Joker",
+     "key": "j_gros_michel",
+     "name": "Gros Michel",
+     "edition": null,
+     "rarity": 1,
+     "stickers": {
+      "eternal": false,
+      "perishable": false,
+      "rental": false
+     }
+    },
+    {
+     "set": "Joker",
+     "key": "j_bootstraps",
+     "name": "Bootstraps",
+     "edition": null,
+     "rarity": 2,
+     "stickers": {
+      "eternal": false,
+      "perishable": false,
+      "rental": false
+     }
+    },
+    {
+     "set": "Tarot",
+     "key": "c_star",
+     "name": "The Star"
+    },
+    {
+     "set": "Joker",
+     "key": "j_four_fingers",
+     "name": "Four Fingers",
+     "edition": "e_foil",
+     "rarity": 2,
+     "stickers": {
+      "eternal": false,
+      "perishable": false,
+      "rental": false
+     }
+    },
+    {
+     "set": "Joker",
+     "key": "j_droll",
+     "name": "Droll Joker",
+     "edition": null,
+     "rarity": 1,
+     "stickers": {
+      "eternal": false,
+      "perishable": false,
+      "rental": false
+     }
+    },
+    {
+     "set": "Joker",
+     "key": "j_acrobat",
+     "name": "Acrobat",
+     "edition": null,
+     "rarity": 2,
+     "stickers": {
+      "eternal": false,
+      "perishable": false,
+      "rental": false
+     }
+    },
+    {
+     "set": "Planet",
+     "key": "c_venus",
+     "name": "Venus"
+    },
+    {
+     "set": "Joker",
+     "key": "j_four_fingers",
+     "name": "Four Fingers",
+     "edition": null,
+     "rarity": 2,
+     "stickers": {
+      "eternal": false,
+      "perishable": false,
+      "rental": false
+     }
+    },
+    {
+     "set": "Joker",
+     "key": "j_red_card",
+     "name": "Red Card",
+     "edition": null,
+     "rarity": 1,
+     "stickers": {
+      "eternal": false,
+      "perishable": false,
+      "rental": false
+     }
+    },
+    {
+     "set": "Tarot",
+     "key": "c_temperance",
+     "name": "Temperance"
+    },
+    {
+     "set": "Joker",
+     "key": "j_card_sharp",
+     "name": "Card Sharp",
+     "edition": null,
+     "rarity": 2,
+     "stickers": {
+      "eternal": false,
+      "perishable": false,
+      "rental": false
+     }
+    },
+    {
+     "set": "Joker",
+     "key": "j_mad",
+     "name": "Mad Joker",
+     "edition": null,
+     "rarity": 1,
+     "stickers": {
+      "eternal": false,
+      "perishable": false,
+      "rental": false
+     }
+    },
+    {
+     "set": "Joker",
+     "key": "j_misprint",
+     "name": "Misprint",
+     "edition": null,
+     "rarity": 1,
+     "stickers": {
+      "eternal": false,
+      "perishable": false,
+      "rental": false
+     }
+    },
+    {
+     "set": "Tarot",
+     "key": "c_hanged_man",
+     "name": "The Hanged Man"
+    },
+    {
+     "set": "Tarot",
+     "key": "c_chariot",
+     "name": "The Chariot"
+    },
+    {
+     "set": "Planet",
+     "key": "c_venus",
+     "name": "Venus"
+    },
+    {
+     "set": "Joker",
+     "key": "j_turtle_bean",
+     "name": "Turtle Bean",
+     "edition": null,
+     "rarity": 2,
+     "stickers": {
+      "eternal": false,
+      "perishable": false,
+      "rental": false
+     }
+    },
+    {
+     "set": "Joker",
+     "key": "j_sixth_sense",
+     "name": "Sixth Sense",
+     "edition": null,
+     "rarity": 2,
+     "stickers": {
+      "eternal": false,
+      "perishable": false,
+      "rental": false
+     }
+    },
+    {
+     "set": "Joker",
+     "key": "j_green_joker",
+     "name": "Green Joker",
+     "edition": null,
+     "rarity": 1,
+     "stickers": {
+      "eternal": false,
+      "perishable": false,
+      "rental": false
+     }
+    },
+    {
+     "set": "Planet",
+     "key": "c_pluto",
+     "name": "Pluto"
+    },
+    {
+     "set": "Joker",
+     "key": "j_smiley",
+     "name": "Smiley Face",
+     "edition": null,
+     "rarity": 1,
+     "stickers": {
+      "eternal": false,
+      "perishable": false,
+      "rental": false
+     }
+    },
+    {
+     "set": "Joker",
+     "key": "j_riff_raff",
+     "name": "Riff-raff",
+     "edition": null,
+     "rarity": 1,
+     "stickers": {
+      "eternal": false,
+      "perishable": false,
+      "rental": false
+     }
+    },
+    {
+     "set": "Joker",
+     "key": "j_smiley",
+     "name": "Smiley Face",
+     "edition": null,
+     "rarity": 1,
+     "stickers": {
+      "eternal": false,
+      "perishable": false,
+      "rental": false
+     }
+    },
+    {
+     "set": "Tarot",
+     "key": "c_death",
+     "name": "Death"
+    },
+    {
+     "set": "Tarot",
+     "key": "c_sun",
+     "name": "The Sun"
+    },
+    {
+     "set": "Joker",
+     "key": "j_chaos",
+     "name": "Chaos the Clown",
+     "edition": null,
+     "rarity": 1,
+     "stickers": {
+      "eternal": false,
+      "perishable": false,
+      "rental": false
+     }
+    },
+    {
+     "set": "Planet",
+     "key": "c_mars",
+     "name": "Mars"
+    },
+    {
+     "set": "Joker",
+     "key": "j_lusty_joker",
+     "name": "Lusty Joker",
+     "edition": null,
+     "rarity": 1,
+     "stickers": {
+      "eternal": false,
+      "perishable": false,
+      "rental": false
+     }
+    },
+    {
+     "set": "Joker",
+     "key": "j_odd_todd",
+     "name": "Odd Todd",
+     "edition": null,
+     "rarity": 1,
+     "stickers": {
+      "eternal": false,
+      "perishable": false,
+      "rental": false
+     }
+    },
+    {
+     "set": "Joker",
+     "key": "j_blue_joker",
+     "name": "Blue Joker",
+     "edition": null,
+     "rarity": 1,
+     "stickers": {
+      "eternal": false,
+      "perishable": false,
+      "rental": false
+     }
+    },
+    {
+     "set": "Joker",
+     "key": "j_stencil",
+     "name": "Joker Stencil",
+     "edition": null,
+     "rarity": 2,
+     "stickers": {
+      "eternal": false,
+      "perishable": false,
+      "rental": false
+     }
+    },
+    {
+     "set": "Joker",
+     "key": "j_wily",
+     "name": "Wily Joker",
+     "edition": null,
+     "rarity": 1,
+     "stickers": {
+      "eternal": false,
+      "perishable": false,
+      "rental": false
+     }
+    },
+    {
+     "set": "Joker",
+     "key": "j_burnt",
+     "name": "Burnt Joker",
+     "edition": null,
+     "rarity": 3,
+     "stickers": {
+      "eternal": false,
+      "perishable": false,
+      "rental": false
+     }
+    },
+    {
+     "set": "Joker",
+     "key": "j_wrathful_joker",
+     "name": "Wrathful Joker",
+     "edition": null,
+     "rarity": 1,
+     "stickers": {
+      "eternal": false,
+      "perishable": false,
+      "rental": false
+     }
+    },
+    {
+     "set": "Joker",
+     "key": "j_blue_joker",
+     "name": "Blue Joker",
+     "edition": null,
+     "rarity": 1,
+     "stickers": {
+      "eternal": false,
+      "perishable": false,
+      "rental": false
+     }
+    },
+    {
+     "set": "Joker",
+     "key": "j_juggler",
+     "name": "Juggler",
+     "edition": null,
+     "rarity": 1,
+     "stickers": {
+      "eternal": false,
+      "perishable": false,
+      "rental": false
+     }
+    },
+    {
+     "set": "Joker",
+     "key": "j_odd_todd",
+     "name": "Odd Todd",
+     "edition": "e_holo",
+     "rarity": 1,
+     "stickers": {
+      "eternal": false,
+      "perishable": false,
+      "rental": false
+     }
+    },
+    {
+     "set": "Joker",
+     "key": "j_business",
+     "name": "Business Card",
+     "edition": null,
+     "rarity": 1,
+     "stickers": {
+      "eternal": false,
+      "perishable": false,
+      "rental": false
+     }
+    },
+    {
+     "set": "Joker",
+     "key": "j_egg",
+     "name": "Egg",
+     "edition": null,
+     "rarity": 1,
+     "stickers": {
+      "eternal": false,
+      "perishable": false,
+      "rental": false
+     }
+    },
+    {
+     "set": "Tarot",
+     "key": "c_star",
+     "name": "The Star"
+    }
+   ],
+   "shops": [
+    {
+     "visit": "after_prev_boss",
+     "analyzer_label": "smallBlind",
+     "packs": [
+      {
+       "key": "p_standard_normal",
+       "name": "Standard Pack",
+       "kind": "Standard",
+       "size": 3,
+       "choices": 1,
+       "cards": [
+        {
+         "set": "Base",
+         "key": "D_A",
+         "name": "Ace of Diamonds",
+         "enhancement": "m_mult",
+         "edition": null,
+         "seal": null
+        },
+        {
+         "set": "Base",
+         "key": "H_J",
+         "name": "Jack of Hearts",
+         "enhancement": null,
+         "edition": null,
+         "seal": null
+        },
+        {
+         "set": "Base",
+         "key": "C_4",
+         "name": "4 of Clubs",
+         "enhancement": null,
+         "edition": null,
+         "seal": null
+        }
+       ]
+      },
+      {
+       "key": "p_arcana_normal",
+       "name": "Arcana Pack",
+       "kind": "Arcana",
+       "size": 3,
+       "choices": 1,
+       "cards": [
+        {
+         "set": "Tarot",
+         "key": "c_lovers",
+         "name": "The Lovers"
+        },
+        {
+         "set": "Tarot",
+         "key": "c_wheel_of_fortune",
+         "name": "The Wheel of Fortune"
+        },
+        {
+         "set": "Tarot",
+         "key": "c_emperor",
+         "name": "The Emperor"
+        }
+       ]
+      }
+     ]
+    },
+    {
+     "visit": "after_small",
+     "analyzer_label": "bigBlind",
+     "packs": [
+      {
+       "key": "p_standard_normal",
+       "name": "Standard Pack",
+       "kind": "Standard",
+       "size": 3,
+       "choices": 1,
+       "cards": [
+        {
+         "set": "Base",
+         "key": "D_A",
+         "name": "Ace of Diamonds",
+         "enhancement": null,
+         "edition": null,
+         "seal": null
+        },
+        {
+         "set": "Base",
+         "key": "C_Q",
+         "name": "Queen of Clubs",
+         "enhancement": null,
+         "edition": null,
+         "seal": null
+        },
+        {
+         "set": "Base",
+         "key": "H_5",
+         "name": "5 of Hearts",
+         "enhancement": "m_wild",
+         "edition": null,
+         "seal": null
+        }
+       ]
+      },
+      {
+       "key": "p_celestial_normal",
+       "name": "Celestial Pack",
+       "kind": "Celestial",
+       "size": 3,
+       "choices": 1,
+       "cards": [
+        {
+         "set": "Planet",
+         "key": "c_saturn",
+         "name": "Saturn"
+        },
+        {
+         "set": "Planet",
+         "key": "c_mars",
+         "name": "Mars"
+        },
+        {
+         "set": "Planet",
+         "key": "c_earth",
+         "name": "Earth"
+        }
+       ]
+      }
+     ]
+    },
+    {
+     "visit": "after_big",
+     "analyzer_label": "bossBlind",
+     "packs": [
+      {
+       "key": "p_arcana_normal",
+       "name": "Arcana Pack",
+       "kind": "Arcana",
+       "size": 3,
+       "choices": 1,
+       "cards": [
+        {
+         "set": "Tarot",
+         "key": "c_world",
+         "name": "The World"
+        },
+        {
+         "set": "Tarot",
+         "key": "c_emperor",
+         "name": "The Emperor"
+        },
+        {
+         "set": "Tarot",
+         "key": "c_high_priestess",
+         "name": "The High Priestess"
+        }
+       ]
+      },
+      {
+       "key": "p_buffoon_normal",
+       "name": "Buffoon Pack",
+       "kind": "Buffoon",
+       "size": 2,
+       "choices": 1,
+       "cards": [
+        {
+         "set": "Joker",
+         "key": "j_diet_cola",
+         "name": "Diet Cola",
+         "edition": null,
+         "rarity": 2,
+         "stickers": {
+          "eternal": false,
+          "perishable": false,
+          "rental": false
+         }
+        },
+        {
+         "set": "Joker",
+         "key": "j_banner",
+         "name": "Banner",
+         "edition": "e_foil",
+         "rarity": 1,
+         "stickers": {
+          "eternal": false,
+          "perishable": false,
+          "rental": false
+         }
+        }
+       ]
+      }
+     ]
+    }
+   ],
+   "soul_spawns": [],
+   "deck_order_unverified": {
+    "note": "Blueprint model of the per-blind deck shuffle (index 0 = first card drawn). No second source; excluded from parity by default.",
+    "small": [
+     "C_2",
+     "S_T",
+     "D_K",
+     "D_T",
+     "D_3",
+     "H_T",
+     "S_J",
+     "S_9",
+     "S_2",
+     "H_4",
+     "S_4",
+     "C_6",
+     "H_6",
+     "H_J",
+     "H_K",
+     "D_J",
+     "H_A",
+     "C_5",
+     "S_7",
+     "C_9",
+     "C_K",
+     "H_Q",
+     "C_7",
+     "S_K",
+     "C_J",
+     "C_8",
+     "D_2",
+     "C_4",
+     "C_T",
+     "H_9",
+     "D_8",
+     "C_Q",
+     "C_3",
+     "S_3",
+     "D_Q",
+     "D_6",
+     "D_4",
+     "D_7",
+     "S_Q",
+     "S_8",
+     "S_6",
+     "D_9",
+     "H_8",
+     "H_5",
+     "S_5",
+     "H_3",
+     "H_2",
+     "H_7",
+     "C_A",
+     "S_A",
+     "D_A",
+     "D_5"
+    ],
+    "big": [
+     "D_4",
+     "H_Q",
+     "D_9",
+     "D_K",
+     "S_2",
+     "S_6",
+     "C_9",
+     "D_8",
+     "S_5",
+     "S_J",
+     "C_8",
+     "H_4",
+     "C_3",
+     "C_5",
+     "H_8",
+     "D_7",
+     "C_T",
+     "S_4",
+     "D_Q",
+     "H_6",
+     "H_5",
+     "H_A",
+     "S_K",
+     "C_7",
+     "S_7",
+     "H_2",
+     "H_K",
+     "D_5",
+     "D_3",
+     "H_J",
+     "D_6",
+     "C_K",
+     "C_2",
+     "H_3",
+     "C_6",
+     "H_7",
+     "H_T",
+     "S_3",
+     "S_T",
+     "S_9",
+     "C_4",
+     "S_Q",
+     "C_J",
+     "D_2",
+     "C_Q",
+     "D_J",
+     "S_A",
+     "S_8",
+     "H_9",
+     "D_T",
+     "C_A",
+     "D_A"
+    ],
+    "boss": [
+     "D_8",
+     "D_2",
+     "S_K",
+     "C_8",
+     "S_8",
+     "C_6",
+     "D_A",
+     "S_7",
+     "D_J",
+     "H_7",
+     "C_A",
+     "D_7",
+     "D_Q",
+     "C_3",
+     "H_6",
+     "H_Q",
+     "S_2",
+     "C_7",
+     "D_4",
+     "H_8",
+     "S_J",
+     "C_T",
+     "D_6",
+     "D_9",
+     "S_Q",
+     "C_K",
+     "C_9",
+     "S_6",
+     "S_A",
+     "H_3",
+     "H_5",
+     "H_2",
+     "C_2",
+     "H_9",
+     "S_5",
+     "D_T",
+     "C_5",
+     "H_4",
+     "C_4",
+     "H_J",
+     "H_K",
+     "S_T",
+     "S_3",
+     "H_T",
+     "S_4",
+     "D_K",
+     "S_9",
+     "C_J",
+     "C_Q",
+     "H_A",
+     "D_3",
+     "D_5"
+    ]
+   }
+  },
+  "4": {
+   "boss": {
+    "key": "bl_fish",
+    "name": "The Fish"
+   },
+   "voucher": {
+    "key": "v_hieroglyph",
+    "name": "Hieroglyph"
+   },
+   "tags": {
+    "small": {
+     "key": "tag_charm",
+     "name": "Charm Tag"
+    },
+    "big": {
+     "key": "tag_garbage",
+     "name": "Garbage Tag"
+    }
+   },
+   "shop_queue": [
+    {
+     "set": "Tarot",
+     "key": "c_wheel_of_fortune",
+     "name": "The Wheel of Fortune"
+    },
+    {
+     "set": "Joker",
+     "key": "j_business",
+     "name": "Business Card",
+     "edition": null,
+     "rarity": 1,
+     "stickers": {
+      "eternal": false,
+      "perishable": false,
+      "rental": false
+     }
+    },
+    {
+     "set": "Joker",
+     "key": "j_swashbuckler",
+     "name": "Swashbuckler",
+     "edition": null,
+     "rarity": 1,
+     "stickers": {
+      "eternal": false,
+      "perishable": false,
+      "rental": false
+     }
+    },
+    {
+     "set": "Planet",
+     "key": "c_mars",
+     "name": "Mars"
+    },
+    {
+     "set": "Joker",
+     "key": "j_four_fingers",
+     "name": "Four Fingers",
+     "edition": null,
+     "rarity": 2,
+     "stickers": {
+      "eternal": false,
+      "perishable": false,
+      "rental": false
+     }
+    },
+    {
+     "set": "Joker",
+     "key": "j_rough_gem",
+     "name": "Rough Gem",
+     "edition": null,
+     "rarity": 2,
+     "stickers": {
+      "eternal": false,
+      "perishable": false,
+      "rental": false
+     }
+    },
+    {
+     "set": "Joker",
+     "key": "j_mail",
+     "name": "Mail-In Rebate",
+     "edition": null,
+     "rarity": 1,
+     "stickers": {
+      "eternal": false,
+      "perishable": false,
+      "rental": false
+     }
+    },
+    {
+     "set": "Joker",
+     "key": "j_juggler",
+     "name": "Juggler",
+     "edition": null,
+     "rarity": 1,
+     "stickers": {
+      "eternal": false,
+      "perishable": false,
+      "rental": false
+     }
+    },
+    {
+     "set": "Planet",
+     "key": "c_neptune",
+     "name": "Neptune"
+    },
+    {
+     "set": "Joker",
+     "key": "j_merry_andy",
+     "name": "Merry Andy",
+     "edition": null,
+     "rarity": 2,
+     "stickers": {
+      "eternal": false,
+      "perishable": false,
+      "rental": false
+     }
+    },
+    {
+     "set": "Tarot",
+     "key": "c_temperance",
+     "name": "Temperance"
+    },
+    {
+     "set": "Joker",
+     "key": "j_greedy_joker",
+     "name": "Greedy Joker",
+     "edition": null,
+     "rarity": 1,
+     "stickers": {
+      "eternal": false,
+      "perishable": false,
+      "rental": false
+     }
+    },
+    {
+     "set": "Joker",
+     "key": "j_joker",
+     "name": "Joker",
+     "edition": null,
+     "rarity": 1,
+     "stickers": {
+      "eternal": false,
+      "perishable": false,
+      "rental": false
+     }
+    },
+    {
+     "set": "Joker",
+     "key": "j_ride_the_bus",
+     "name": "Ride the Bus",
+     "edition": null,
+     "rarity": 1,
+     "stickers": {
+      "eternal": false,
+      "perishable": false,
+      "rental": false
+     }
+    },
+    {
+     "set": "Planet",
+     "key": "c_neptune",
+     "name": "Neptune"
+    },
+    {
+     "set": "Planet",
+     "key": "c_earth",
+     "name": "Earth"
+    },
+    {
+     "set": "Joker",
+     "key": "j_dusk",
+     "name": "Dusk",
+     "edition": "e_polychrome",
+     "rarity": 2,
+     "stickers": {
+      "eternal": false,
+      "perishable": false,
+      "rental": false
+     }
+    },
+    {
+     "set": "Joker",
+     "key": "j_odd_todd",
+     "name": "Odd Todd",
+     "edition": null,
+     "rarity": 1,
+     "stickers": {
+      "eternal": false,
+      "perishable": false,
+      "rental": false
+     }
+    },
+    {
+     "set": "Joker",
+     "key": "j_crafty",
+     "name": "Crafty Joker",
+     "edition": null,
+     "rarity": 1,
+     "stickers": {
+      "eternal": false,
+      "perishable": false,
+      "rental": false
+     }
+    },
+    {
+     "set": "Joker",
+     "key": "j_bloodstone",
+     "name": "Bloodstone",
+     "edition": null,
+     "rarity": 2,
+     "stickers": {
+      "eternal": false,
+      "perishable": false,
+      "rental": false
+     }
+    },
+    {
+     "set": "Joker",
+     "key": "j_credit_card",
+     "name": "Credit Card",
+     "edition": null,
+     "rarity": 1,
+     "stickers": {
+      "eternal": false,
+      "perishable": false,
+      "rental": false
+     }
+    },
+    {
+     "set": "Joker",
+     "key": "j_juggler",
+     "name": "Juggler",
+     "edition": null,
+     "rarity": 1,
+     "stickers": {
+      "eternal": false,
+      "perishable": false,
+      "rental": false
+     }
+    },
+    {
+     "set": "Joker",
+     "key": "j_gros_michel",
+     "name": "Gros Michel",
+     "edition": null,
+     "rarity": 1,
+     "stickers": {
+      "eternal": false,
+      "perishable": false,
+      "rental": false
+     }
+    },
+    {
+     "set": "Planet",
+     "key": "c_uranus",
+     "name": "Uranus"
+    },
+    {
+     "set": "Planet",
+     "key": "c_earth",
+     "name": "Earth"
+    },
+    {
+     "set": "Joker",
+     "key": "j_scholar",
+     "name": "Scholar",
+     "edition": null,
+     "rarity": 1,
+     "stickers": {
+      "eternal": false,
+      "perishable": false,
+      "rental": false
+     }
+    },
+    {
+     "set": "Joker",
+     "key": "j_oops",
+     "name": "Oops! All 6s",
+     "edition": null,
+     "rarity": 2,
+     "stickers": {
+      "eternal": false,
+      "perishable": false,
+      "rental": false
+     }
+    },
+    {
+     "set": "Joker",
+     "key": "j_flash",
+     "name": "Flash Card",
+     "edition": null,
+     "rarity": 2,
+     "stickers": {
+      "eternal": false,
+      "perishable": false,
+      "rental": false
+     }
+    },
+    {
+     "set": "Joker",
+     "key": "j_obelisk",
+     "name": "Obelisk",
+     "edition": null,
+     "rarity": 3,
+     "stickers": {
+      "eternal": false,
+      "perishable": false,
+      "rental": false
+     }
+    },
+    {
+     "set": "Joker",
+     "key": "j_drivers_license",
+     "name": "Driver's License",
+     "edition": null,
+     "rarity": 3,
+     "stickers": {
+      "eternal": false,
+      "perishable": false,
+      "rental": false
+     }
+    },
+    {
+     "set": "Joker",
+     "key": "j_stuntman",
+     "name": "Stuntman",
+     "edition": "e_polychrome",
+     "rarity": 3,
+     "stickers": {
+      "eternal": false,
+      "perishable": false,
+      "rental": false
+     }
+    },
+    {
+     "set": "Joker",
+     "key": "j_joker",
+     "name": "Joker",
+     "edition": "e_holo",
+     "rarity": 1,
+     "stickers": {
+      "eternal": false,
+      "perishable": false,
+      "rental": false
+     }
+    },
+    {
+     "set": "Joker",
+     "key": "j_fortune_teller",
+     "name": "Fortune Teller",
+     "edition": null,
+     "rarity": 1,
+     "stickers": {
+      "eternal": false,
+      "perishable": false,
+      "rental": false
+     }
+    },
+    {
+     "set": "Joker",
+     "key": "j_wily",
+     "name": "Wily Joker",
+     "edition": null,
+     "rarity": 1,
+     "stickers": {
+      "eternal": false,
+      "perishable": false,
+      "rental": false
+     }
+    },
+    {
+     "set": "Joker",
+     "key": "j_golden",
+     "name": "Golden Joker",
+     "edition": null,
+     "rarity": 1,
+     "stickers": {
+      "eternal": false,
+      "perishable": false,
+      "rental": false
+     }
+    },
+    {
+     "set": "Joker",
+     "key": "j_luchador",
+     "name": "Luchador",
+     "edition": null,
+     "rarity": 2,
+     "stickers": {
+      "eternal": false,
+      "perishable": false,
+      "rental": false
+     }
+    },
+    {
+     "set": "Joker",
+     "key": "j_riff_raff",
+     "name": "Riff-raff",
+     "edition": null,
+     "rarity": 1,
+     "stickers": {
+      "eternal": false,
+      "perishable": false,
+      "rental": false
+     }
+    },
+    {
+     "set": "Joker",
+     "key": "j_sixth_sense",
+     "name": "Sixth Sense",
+     "edition": null,
+     "rarity": 2,
+     "stickers": {
+      "eternal": false,
+      "perishable": false,
+      "rental": false
+     }
+    },
+    {
+     "set": "Joker",
+     "key": "j_drunkard",
+     "name": "Drunkard",
+     "edition": null,
+     "rarity": 1,
+     "stickers": {
+      "eternal": false,
+      "perishable": false,
+      "rental": false
+     }
+    },
+    {
+     "set": "Joker",
+     "key": "j_runner",
+     "name": "Runner",
+     "edition": null,
+     "rarity": 1,
+     "stickers": {
+      "eternal": false,
+      "perishable": false,
+      "rental": false
+     }
+    },
+    {
+     "set": "Joker",
+     "key": "j_dusk",
+     "name": "Dusk",
+     "edition": null,
+     "rarity": 2,
+     "stickers": {
+      "eternal": false,
+      "perishable": false,
+      "rental": false
+     }
+    },
+    {
+     "set": "Joker",
+     "key": "j_superposition",
+     "name": "Superposition",
+     "edition": null,
+     "rarity": 1,
+     "stickers": {
+      "eternal": false,
+      "perishable": false,
+      "rental": false
+     }
+    },
+    {
+     "set": "Tarot",
+     "key": "c_star",
+     "name": "The Star"
+    },
+    {
+     "set": "Planet",
+     "key": "c_venus",
+     "name": "Venus"
+    },
+    {
+     "set": "Tarot",
+     "key": "c_tower",
+     "name": "The Tower"
+    },
+    {
+     "set": "Tarot",
+     "key": "c_wheel_of_fortune",
+     "name": "The Wheel of Fortune"
+    },
+    {
+     "set": "Joker",
+     "key": "j_odd_todd",
+     "name": "Odd Todd",
+     "edition": null,
+     "rarity": 1,
+     "stickers": {
+      "eternal": false,
+      "perishable": false,
+      "rental": false
+     }
+    },
+    {
+     "set": "Joker",
+     "key": "j_gros_michel",
+     "name": "Gros Michel",
+     "edition": null,
+     "rarity": 1,
+     "stickers": {
+      "eternal": false,
+      "perishable": false,
+      "rental": false
+     }
+    },
+    {
+     "set": "Joker",
+     "key": "j_reserved_parking",
+     "name": "Reserved Parking",
+     "edition": null,
+     "rarity": 1,
+     "stickers": {
+      "eternal": false,
+      "perishable": false,
+      "rental": false
+     }
+    },
+    {
+     "set": "Joker",
+     "key": "j_scholar",
+     "name": "Scholar",
+     "edition": null,
+     "rarity": 1,
+     "stickers": {
+      "eternal": false,
+      "perishable": false,
+      "rental": false
+     }
+    }
+   ],
+   "shops": [
+    {
+     "visit": "after_prev_boss",
+     "analyzer_label": "smallBlind",
+     "packs": [
+      {
+       "key": "p_buffoon_mega",
+       "name": "Mega Buffoon Pack",
+       "kind": "Buffoon",
+       "size": 4,
+       "choices": 2,
+       "cards": [
+        {
+         "set": "Joker",
+         "key": "j_green_joker",
+         "name": "Green Joker",
+         "edition": null,
+         "rarity": 1,
+         "stickers": {
+          "eternal": false,
+          "perishable": false,
+          "rental": false
+         }
+        },
+        {
+         "set": "Joker",
+         "key": "j_clever",
+         "name": "Clever Joker",
+         "edition": "e_foil",
+         "rarity": 1,
+         "stickers": {
+          "eternal": false,
+          "perishable": false,
+          "rental": false
+         }
+        },
+        {
+         "set": "Joker",
+         "key": "j_joker",
+         "name": "Joker",
+         "edition": null,
+         "rarity": 1,
+         "stickers": {
+          "eternal": false,
+          "perishable": false,
+          "rental": false
+         }
+        },
+        {
+         "set": "Joker",
+         "key": "j_seance",
+         "name": "Seance",
+         "edition": null,
+         "rarity": 2,
+         "stickers": {
+          "eternal": false,
+          "perishable": false,
+          "rental": false
+         }
+        }
+       ]
+      },
+      {
+       "key": "p_celestial_jumbo",
+       "name": "Jumbo Celestial Pack",
+       "kind": "Celestial",
+       "size": 5,
+       "choices": 1,
+       "cards": [
+        {
+         "set": "Planet",
+         "key": "c_pluto",
+         "name": "Pluto"
+        },
+        {
+         "set": "Planet",
+         "key": "c_uranus",
+         "name": "Uranus"
+        },
+        {
+         "set": "Planet",
+         "key": "c_earth",
+         "name": "Earth"
+        },
+        {
+         "set": "Planet",
+         "key": "c_mercury",
+         "name": "Mercury"
+        },
+        {
+         "set": "Planet",
+         "key": "c_jupiter",
+         "name": "Jupiter"
+        }
+       ]
+      }
+     ]
+    },
+    {
+     "visit": "after_small",
+     "analyzer_label": "bigBlind",
+     "packs": [
+      {
+       "key": "p_arcana_jumbo",
+       "name": "Jumbo Arcana Pack",
+       "kind": "Arcana",
+       "size": 5,
+       "choices": 1,
+       "cards": [
+        {
+         "set": "Tarot",
+         "key": "c_temperance",
+         "name": "Temperance"
+        },
+        {
+         "set": "Tarot",
+         "key": "c_star",
+         "name": "The Star"
+        },
+        {
+         "set": "Tarot",
+         "key": "c_hanged_man",
+         "name": "The Hanged Man"
+        },
+        {
+         "set": "Tarot",
+         "key": "c_judgement",
+         "name": "Judgement"
+        },
+        {
+         "set": "Tarot",
+         "key": "c_lovers",
+         "name": "The Lovers"
+        }
+       ]
+      },
+      {
+       "key": "p_spectral_jumbo",
+       "name": "Jumbo Spectral Pack",
+       "kind": "Spectral",
+       "size": 4,
+       "choices": 1,
+       "cards": [
+        {
+         "set": "Spectral",
+         "key": "c_ouija",
+         "name": "Ouija"
+        },
+        {
+         "set": "Spectral",
+         "key": "c_hex",
+         "name": "Hex"
+        },
+        {
+         "set": "Spectral",
+         "key": "c_medium",
+         "name": "Medium"
+        },
+        {
+         "set": "Spectral",
+         "key": "c_cryptid",
+         "name": "Cryptid"
+        }
+       ]
+      }
+     ]
+    },
+    {
+     "visit": "after_big",
+     "analyzer_label": "bossBlind",
+     "packs": [
+      {
+       "key": "p_standard_jumbo",
+       "name": "Jumbo Standard Pack",
+       "kind": "Standard",
+       "size": 5,
+       "choices": 1,
+       "cards": [
+        {
+         "set": "Base",
+         "key": "H_5",
+         "name": "5 of Hearts",
+         "enhancement": null,
+         "edition": null,
+         "seal": null
+        },
+        {
+         "set": "Base",
+         "key": "D_5",
+         "name": "5 of Diamonds",
+         "enhancement": "m_bonus",
+         "edition": null,
+         "seal": null
+        },
+        {
+         "set": "Base",
+         "key": "S_Q",
+         "name": "Queen of Spades",
+         "enhancement": null,
+         "edition": null,
+         "seal": "Purple"
+        },
+        {
+         "set": "Base",
+         "key": "C_7",
+         "name": "7 of Clubs",
+         "enhancement": null,
+         "edition": null,
+         "seal": null
+        },
+        {
+         "set": "Base",
+         "key": "D_4",
+         "name": "4 of Diamonds",
+         "enhancement": null,
+         "edition": "e_holo",
+         "seal": null
+        }
+       ]
+      },
+      {
+       "key": "p_arcana_normal",
+       "name": "Arcana Pack",
+       "kind": "Arcana",
+       "size": 3,
+       "choices": 1,
+       "cards": [
+        {
+         "set": "Tarot",
+         "key": "c_death",
+         "name": "Death"
+        },
+        {
+         "set": "Tarot",
+         "key": "c_temperance",
+         "name": "Temperance"
+        },
+        {
+         "set": "Tarot",
+         "key": "c_fool",
+         "name": "The Fool"
+        }
+       ]
+      }
+     ]
+    }
+   ],
+   "soul_spawns": [],
+   "deck_order_unverified": {
+    "note": "Blueprint model of the per-blind deck shuffle (index 0 = first card drawn). No second source; excluded from parity by default.",
+    "small": [
+     "D_Q",
+     "S_Q",
+     "S_6",
+     "S_K",
+     "S_9",
+     "C_7",
+     "C_K",
+     "S_3",
+     "C_9",
+     "D_4",
+     "D_5",
+     "S_5",
+     "S_8",
+     "C_J",
+     "S_2",
+     "H_K",
+     "D_J",
+     "H_5",
+     "H_J",
+     "H_A",
+     "S_J",
+     "C_2",
+     "H_8",
+     "D_7",
+     "D_8",
+     "C_A",
+     "D_A",
+     "C_4",
+     "H_T",
+     "C_T",
+     "H_3",
+     "D_3",
+     "D_K",
+     "H_Q",
+     "D_T",
+     "H_7",
+     "H_2",
+     "C_6",
+     "C_3",
+     "S_4",
+     "H_9",
+     "D_9",
+     "H_6",
+     "D_2",
+     "H_4",
+     "S_A",
+     "C_Q",
+     "S_T",
+     "S_7",
+     "C_8",
+     "C_5",
+     "D_6"
+    ],
+    "big": [
+     "D_4",
+     "C_4",
+     "D_J",
+     "S_T",
+     "C_A",
+     "S_4",
+     "C_8",
+     "H_9",
+     "D_Q",
+     "S_J",
+     "S_7",
+     "C_Q",
+     "S_8",
+     "C_7",
+     "H_K",
+     "D_6",
+     "H_2",
+     "S_5",
+     "H_Q",
+     "D_5",
+     "H_4",
+     "H_3",
+     "D_8",
+     "H_7",
+     "C_6",
+     "S_3",
+     "H_J",
+     "D_3",
+     "C_J",
+     "D_7",
+     "D_9",
+     "D_T",
+     "S_9",
+     "C_3",
+     "H_T",
+     "S_K",
+     "H_6",
+     "C_2",
+     "S_6",
+     "S_2",
+     "H_A",
+     "C_5",
+     "D_A",
+     "S_Q",
+     "H_8",
+     "H_5",
+     "S_A",
+     "C_K",
+     "D_K",
+     "C_T",
+     "D_2",
+     "C_9"
+    ],
+    "boss": [
+     "C_T",
+     "S_2",
+     "H_A",
+     "H_2",
+     "D_K",
+     "D_8",
+     "D_Q",
+     "D_6",
+     "D_T",
+     "D_2",
+     "H_J",
+     "H_4",
+     "S_K",
+     "S_7",
+     "C_8",
+     "H_8",
+     "S_6",
+     "C_9",
+     "S_8",
+     "C_3",
+     "S_9",
+     "D_5",
+     "D_7",
+     "S_J",
+     "C_4",
+     "D_A",
+     "S_4",
+     "S_5",
+     "S_3",
+     "C_A",
+     "S_T",
+     "S_A",
+     "C_Q",
+     "H_7",
+     "C_2",
+     "C_K",
+     "H_9",
+     "D_4",
+     "H_3",
+     "H_Q",
+     "C_5",
+     "H_T",
+     "H_6",
+     "S_Q",
+     "D_9",
+     "D_3",
+     "H_5",
+     "D_J",
+     "C_J",
+     "C_7",
+     "C_6",
+     "H_K"
+    ]
+   }
+  },
+  "5": {
+   "boss": {
+    "key": "bl_hook",
+    "name": "The Hook"
+   },
+   "voucher": {
+    "key": "v_reroll_surplus",
+    "name": "Reroll Surplus"
+   },
+   "tags": {
+    "small": {
+     "key": "tag_meteor",
+     "name": "Meteor Tag"
+    },
+    "big": {
+     "key": "tag_ethereal",
+     "name": "Ethereal Tag"
+    }
+   },
+   "shop_queue": [
+    {
+     "set": "Tarot",
+     "key": "c_devil",
+     "name": "The Devil"
+    },
+    {
+     "set": "Joker",
+     "key": "j_ride_the_bus",
+     "name": "Ride the Bus",
+     "edition": null,
+     "rarity": 1,
+     "stickers": {
+      "eternal": false,
+      "perishable": false,
+      "rental": false
+     }
+    },
+    {
+     "set": "Tarot",
+     "key": "c_sun",
+     "name": "The Sun"
+    },
+    {
+     "set": "Joker",
+     "key": "j_gluttenous_joker",
+     "name": "Gluttonous Joker",
+     "edition": null,
+     "rarity": 1,
+     "stickers": {
+      "eternal": false,
+      "perishable": false,
+      "rental": false
+     }
+    },
+    {
+     "set": "Joker",
+     "key": "j_scholar",
+     "name": "Scholar",
+     "edition": null,
+     "rarity": 1,
+     "stickers": {
+      "eternal": false,
+      "perishable": false,
+      "rental": false
+     }
+    },
+    {
+     "set": "Planet",
+     "key": "c_venus",
+     "name": "Venus"
+    },
+    {
+     "set": "Joker",
+     "key": "j_walkie_talkie",
+     "name": "Walkie Talkie",
+     "edition": null,
+     "rarity": 1,
+     "stickers": {
+      "eternal": false,
+      "perishable": false,
+      "rental": false
+     }
+    },
+    {
+     "set": "Joker",
+     "key": "j_reserved_parking",
+     "name": "Reserved Parking",
+     "edition": null,
+     "rarity": 1,
+     "stickers": {
+      "eternal": false,
+      "perishable": false,
+      "rental": false
+     }
+    },
+    {
+     "set": "Joker",
+     "key": "j_popcorn",
+     "name": "Popcorn",
+     "edition": "e_holo",
+     "rarity": 1,
+     "stickers": {
+      "eternal": false,
+      "perishable": false,
+      "rental": false
+     }
+    },
+    {
+     "set": "Joker",
+     "key": "j_hallucination",
+     "name": "Hallucination",
+     "edition": null,
+     "rarity": 1,
+     "stickers": {
+      "eternal": false,
+      "perishable": false,
+      "rental": false
+     }
+    },
+    {
+     "set": "Joker",
+     "key": "j_wrathful_joker",
+     "name": "Wrathful Joker",
+     "edition": null,
+     "rarity": 1,
+     "stickers": {
+      "eternal": false,
+      "perishable": false,
+      "rental": false
+     }
+    },
+    {
+     "set": "Joker",
+     "key": "j_juggler",
+     "name": "Juggler",
+     "edition": null,
+     "rarity": 1,
+     "stickers": {
+      "eternal": false,
+      "perishable": false,
+      "rental": false
+     }
+    },
+    {
+     "set": "Tarot",
+     "key": "c_star",
+     "name": "The Star"
+    },
+    {
+     "set": "Joker",
+     "key": "j_business",
+     "name": "Business Card",
+     "edition": null,
+     "rarity": 1,
+     "stickers": {
+      "eternal": false,
+      "perishable": false,
+      "rental": false
+     }
+    },
+    {
+     "set": "Joker",
+     "key": "j_greedy_joker",
+     "name": "Greedy Joker",
+     "edition": null,
+     "rarity": 1,
+     "stickers": {
+      "eternal": false,
+      "perishable": false,
+      "rental": false
+     }
+    },
+    {
+     "set": "Joker",
+     "key": "j_green_joker",
+     "name": "Green Joker",
+     "edition": null,
+     "rarity": 1,
+     "stickers": {
+      "eternal": false,
+      "perishable": false,
+      "rental": false
+     }
+    },
+    {
+     "set": "Joker",
+     "key": "j_ice_cream",
+     "name": "Ice Cream",
+     "edition": null,
+     "rarity": 1,
+     "stickers": {
+      "eternal": false,
+      "perishable": false,
+      "rental": false
+     }
+    },
+    {
+     "set": "Joker",
+     "key": "j_scary_face",
+     "name": "Scary Face",
+     "edition": null,
+     "rarity": 1,
+     "stickers": {
+      "eternal": false,
+      "perishable": false,
+      "rental": false
+     }
+    },
+    {
+     "set": "Joker",
+     "key": "j_mr_bones",
+     "name": "Mr. Bones",
+     "edition": null,
+     "rarity": 2,
+     "stickers": {
+      "eternal": false,
+      "perishable": false,
+      "rental": false
+     }
+    },
+    {
+     "set": "Joker",
+     "key": "j_trousers",
+     "name": "Spare Trousers",
+     "edition": null,
+     "rarity": 2,
+     "stickers": {
+      "eternal": false,
+      "perishable": false,
+      "rental": false
+     }
+    },
+    {
+     "set": "Joker",
+     "key": "j_walkie_talkie",
+     "name": "Walkie Talkie",
+     "edition": null,
+     "rarity": 1,
+     "stickers": {
+      "eternal": false,
+      "perishable": false,
+      "rental": false
+     }
+    },
+    {
+     "set": "Joker",
+     "key": "j_superposition",
+     "name": "Superposition",
+     "edition": null,
+     "rarity": 1,
+     "stickers": {
+      "eternal": false,
+      "perishable": false,
+      "rental": false
+     }
+    },
+    {
+     "set": "Joker",
+     "key": "j_odd_todd",
+     "name": "Odd Todd",
+     "edition": null,
+     "rarity": 1,
+     "stickers": {
+      "eternal": false,
+      "perishable": false,
+      "rental": false
+     }
+    },
+    {
+     "set": "Joker",
+     "key": "j_family",
+     "name": "The Family",
+     "edition": null,
+     "rarity": 3,
+     "stickers": {
+      "eternal": false,
+      "perishable": false,
+      "rental": false
+     }
+    },
+    {
+     "set": "Joker",
+     "key": "j_photograph",
+     "name": "Photograph",
+     "edition": null,
+     "rarity": 1,
+     "stickers": {
+      "eternal": false,
+      "perishable": false,
+      "rental": false
+     }
+    },
+    {
+     "set": "Joker",
+     "key": "j_wily",
+     "name": "Wily Joker",
+     "edition": null,
+     "rarity": 1,
+     "stickers": {
+      "eternal": false,
+      "perishable": false,
+      "rental": false
+     }
+    },
+    {
+     "set": "Joker",
+     "key": "j_devious",
+     "name": "Devious Joker",
+     "edition": null,
+     "rarity": 1,
+     "stickers": {
+      "eternal": false,
+      "perishable": false,
+      "rental": false
+     }
+    },
+    {
+     "set": "Joker",
+     "key": "j_even_steven",
+     "name": "Even Steven",
+     "edition": null,
+     "rarity": 1,
+     "stickers": {
+      "eternal": false,
+      "perishable": false,
+      "rental": false
+     }
+    },
+    {
+     "set": "Joker",
+     "key": "j_gluttenous_joker",
+     "name": "Gluttonous Joker",
+     "edition": null,
+     "rarity": 1,
+     "stickers": {
+      "eternal": false,
+      "perishable": false,
+      "rental": false
+     }
+    },
+    {
+     "set": "Joker",
+     "key": "j_zany",
+     "name": "Zany Joker",
+     "edition": null,
+     "rarity": 1,
+     "stickers": {
+      "eternal": false,
+      "perishable": false,
+      "rental": false
+     }
+    },
+    {
+     "set": "Joker",
+     "key": "j_credit_card",
+     "name": "Credit Card",
+     "edition": null,
+     "rarity": 1,
+     "stickers": {
+      "eternal": false,
+      "perishable": false,
+      "rental": false
+     }
+    },
+    {
+     "set": "Tarot",
+     "key": "c_empress",
+     "name": "The Empress"
+    },
+    {
+     "set": "Joker",
+     "key": "j_todo_list",
+     "name": "To Do List",
+     "edition": null,
+     "rarity": 1,
+     "stickers": {
+      "eternal": false,
+      "perishable": false,
+      "rental": false
+     }
+    },
+    {
+     "set": "Joker",
+     "key": "j_square",
+     "name": "Square Joker",
+     "edition": null,
+     "rarity": 1,
+     "stickers": {
+      "eternal": false,
+      "perishable": false,
+      "rental": false
+     }
+    },
+    {
+     "set": "Planet",
+     "key": "c_jupiter",
+     "name": "Jupiter"
+    },
+    {
+     "set": "Joker",
+     "key": "j_dna",
+     "name": "DNA",
+     "edition": null,
+     "rarity": 3,
+     "stickers": {
+      "eternal": false,
+      "perishable": false,
+      "rental": false
+     }
+    },
+    {
+     "set": "Tarot",
+     "key": "c_sun",
+     "name": "The Sun"
+    },
+    {
+     "set": "Planet",
+     "key": "c_mars",
+     "name": "Mars"
+    },
+    {
+     "set": "Joker",
+     "key": "j_baron",
+     "name": "Baron",
+     "edition": null,
+     "rarity": 3,
+     "stickers": {
+      "eternal": false,
+      "perishable": false,
+      "rental": false
+     }
+    },
+    {
+     "set": "Joker",
+     "key": "j_loyalty_card",
+     "name": "Loyalty Card",
+     "edition": null,
+     "rarity": 2,
+     "stickers": {
+      "eternal": false,
+      "perishable": false,
+      "rental": false
+     }
+    },
+    {
+     "set": "Tarot",
+     "key": "c_hanged_man",
+     "name": "The Hanged Man"
+    },
+    {
+     "set": "Planet",
+     "key": "c_earth",
+     "name": "Earth"
+    },
+    {
+     "set": "Tarot",
+     "key": "c_fool",
+     "name": "The Fool"
+    },
+    {
+     "set": "Joker",
+     "key": "j_baron",
+     "name": "Baron",
+     "edition": null,
+     "rarity": 3,
+     "stickers": {
+      "eternal": false,
+      "perishable": false,
+      "rental": false
+     }
+    },
+    {
+     "set": "Tarot",
+     "key": "c_hermit",
+     "name": "The Hermit"
+    },
+    {
+     "set": "Joker",
+     "key": "j_reserved_parking",
+     "name": "Reserved Parking",
+     "edition": null,
+     "rarity": 1,
+     "stickers": {
+      "eternal": false,
+      "perishable": false,
+      "rental": false
+     }
+    },
+    {
+     "set": "Tarot",
+     "key": "c_judgement",
+     "name": "Judgement"
+    },
+    {
+     "set": "Joker",
+     "key": "j_swashbuckler",
+     "name": "Swashbuckler",
+     "edition": "e_negative",
+     "rarity": 1,
+     "stickers": {
+      "eternal": false,
+      "perishable": false,
+      "rental": false
+     }
+    },
+    {
+     "set": "Joker",
+     "key": "j_ice_cream",
+     "name": "Ice Cream",
+     "edition": null,
+     "rarity": 1,
+     "stickers": {
+      "eternal": false,
+      "perishable": false,
+      "rental": false
+     }
+    },
+    {
+     "set": "Joker",
+     "key": "j_jolly",
+     "name": "Jolly Joker",
+     "edition": null,
+     "rarity": 1,
+     "stickers": {
+      "eternal": false,
+      "perishable": false,
+      "rental": false
+     }
+    }
+   ],
+   "shops": [
+    {
+     "visit": "after_prev_boss",
+     "analyzer_label": "smallBlind",
+     "packs": [
+      {
+       "key": "p_celestial_normal",
+       "name": "Celestial Pack",
+       "kind": "Celestial",
+       "size": 3,
+       "choices": 1,
+       "cards": [
+        {
+         "set": "Planet",
+         "key": "c_saturn",
+         "name": "Saturn"
+        },
+        {
+         "set": "Planet",
+         "key": "c_pluto",
+         "name": "Pluto"
+        },
+        {
+         "set": "Planet",
+         "key": "c_neptune",
+         "name": "Neptune"
+        }
+       ]
+      },
+      {
+       "key": "p_buffoon_normal",
+       "name": "Buffoon Pack",
+       "kind": "Buffoon",
+       "size": 2,
+       "choices": 1,
+       "cards": [
+        {
+         "set": "Joker",
+         "key": "j_blue_joker",
+         "name": "Blue Joker",
+         "edition": null,
+         "rarity": 1,
+         "stickers": {
+          "eternal": false,
+          "perishable": false,
+          "rental": false
+         }
+        },
+        {
+         "set": "Joker",
+         "key": "j_burnt",
+         "name": "Burnt Joker",
+         "edition": null,
+         "rarity": 3,
+         "stickers": {
+          "eternal": false,
+          "perishable": false,
+          "rental": false
+         }
+        }
+       ]
+      }
+     ]
+    },
+    {
+     "visit": "after_small",
+     "analyzer_label": "bigBlind",
+     "packs": [
+      {
+       "key": "p_arcana_normal",
+       "name": "Arcana Pack",
+       "kind": "Arcana",
+       "size": 3,
+       "choices": 1,
+       "cards": [
+        {
+         "set": "Tarot",
+         "key": "c_heirophant",
+         "name": "The Hierophant"
+        },
+        {
+         "set": "Tarot",
+         "key": "c_moon",
+         "name": "The Moon"
+        },
+        {
+         "set": "Tarot",
+         "key": "c_hermit",
+         "name": "The Hermit"
+        }
+       ]
+      },
+      {
+       "key": "p_celestial_jumbo",
+       "name": "Jumbo Celestial Pack",
+       "kind": "Celestial",
+       "size": 5,
+       "choices": 1,
+       "cards": [
+        {
+         "set": "Planet",
+         "key": "c_venus",
+         "name": "Venus"
+        },
+        {
+         "set": "Planet",
+         "key": "c_mercury",
+         "name": "Mercury"
+        },
+        {
+         "set": "Planet",
+         "key": "c_neptune",
+         "name": "Neptune"
+        },
+        {
+         "set": "Planet",
+         "key": "c_jupiter",
+         "name": "Jupiter"
+        },
+        {
+         "set": "Planet",
+         "key": "c_mars",
+         "name": "Mars"
+        }
+       ]
+      }
+     ]
+    },
+    {
+     "visit": "after_big",
+     "analyzer_label": "bossBlind",
+     "packs": [
+      {
+       "key": "p_standard_jumbo",
+       "name": "Jumbo Standard Pack",
+       "kind": "Standard",
+       "size": 5,
+       "choices": 1,
+       "cards": [
+        {
+         "set": "Base",
+         "key": "D_Q",
+         "name": "Queen of Diamonds",
+         "enhancement": null,
+         "edition": null,
+         "seal": null
+        },
+        {
+         "set": "Base",
+         "key": "H_Q",
+         "name": "Queen of Hearts",
+         "enhancement": "m_steel",
+         "edition": null,
+         "seal": null
+        },
+        {
+         "set": "Base",
+         "key": "D_2",
+         "name": "2 of Diamonds",
+         "enhancement": null,
+         "edition": null,
+         "seal": null
+        },
+        {
+         "set": "Base",
+         "key": "D_6",
+         "name": "6 of Diamonds",
+         "enhancement": null,
+         "edition": null,
+         "seal": null
+        },
+        {
+         "set": "Base",
+         "key": "C_J",
+         "name": "Jack of Clubs",
+         "enhancement": "m_stone",
+         "edition": null,
+         "seal": null
+        }
+       ]
+      },
+      {
+       "key": "p_arcana_jumbo",
+       "name": "Jumbo Arcana Pack",
+       "kind": "Arcana",
+       "size": 5,
+       "choices": 1,
+       "cards": [
+        {
+         "set": "Tarot",
+         "key": "c_world",
+         "name": "The World"
+        },
+        {
+         "set": "Tarot",
+         "key": "c_hermit",
+         "name": "The Hermit"
+        },
+        {
+         "set": "Tarot",
+         "key": "c_wheel_of_fortune",
+         "name": "The Wheel of Fortune"
+        },
+        {
+         "set": "Tarot",
+         "key": "c_heirophant",
+         "name": "The Hierophant"
+        },
+        {
+         "set": "Tarot",
+         "key": "c_moon",
+         "name": "The Moon"
+        }
+       ]
+      }
+     ]
+    }
+   ],
+   "soul_spawns": [],
+   "deck_order_unverified": {
+    "note": "Blueprint model of the per-blind deck shuffle (index 0 = first card drawn). No second source; excluded from parity by default.",
+    "small": [
+     "D_2",
+     "C_3",
+     "H_8",
+     "D_K",
+     "C_T",
+     "C_J",
+     "H_9",
+     "S_6",
+     "D_7",
+     "H_3",
+     "H_2",
+     "D_8",
+     "S_2",
+     "S_K",
+     "D_Q",
+     "H_T",
+     "D_J",
+     "H_K",
+     "S_8",
+     "H_6",
+     "S_5",
+     "S_4",
+     "H_5",
+     "D_9",
+     "C_6",
+     "S_T",
+     "C_4",
+     "H_7",
+     "C_A",
+     "S_9",
+     "S_Q",
+     "S_J",
+     "H_4",
+     "C_8",
+     "S_A",
+     "D_T",
+     "C_7",
+     "D_6",
+     "C_K",
+     "S_7",
+     "D_3",
+     "C_5",
+     "H_J",
+     "H_Q",
+     "D_A",
+     "D_5",
+     "C_Q",
+     "C_9",
+     "D_4",
+     "C_2",
+     "H_A",
+     "S_3"
+    ],
+    "big": [
+     "D_T",
+     "S_J",
+     "S_7",
+     "H_9",
+     "H_J",
+     "D_K",
+     "C_J",
+     "H_2",
+     "H_A",
+     "S_5",
+     "C_5",
+     "H_4",
+     "C_2",
+     "C_8",
+     "D_3",
+     "C_T",
+     "C_3",
+     "D_4",
+     "D_A",
+     "D_9",
+     "C_9",
+     "C_6",
+     "S_3",
+     "S_T",
+     "D_Q",
+     "S_K",
+     "D_8",
+     "C_Q",
+     "S_8",
+     "D_J",
+     "H_5",
+     "H_8",
+     "D_5",
+     "S_Q",
+     "C_A",
+     "C_4",
+     "C_7",
+     "H_T",
+     "S_4",
+     "C_K",
+     "D_7",
+     "D_6",
+     "H_3",
+     "H_6",
+     "H_Q",
+     "S_9",
+     "S_A",
+     "H_K",
+     "D_2",
+     "H_7",
+     "S_2",
+     "S_6"
+    ],
+    "boss": [
+     "C_3",
+     "D_5",
+     "C_8",
+     "S_9",
+     "C_5",
+     "H_9",
+     "S_6",
+     "D_2",
+     "S_A",
+     "D_Q",
+     "H_7",
+     "S_2",
+     "S_T",
+     "C_7",
+     "H_3",
+     "H_6",
+     "S_Q",
+     "S_3",
+     "C_9",
+     "H_5",
+     "S_7",
+     "C_4",
+     "H_J",
+     "D_6",
+     "H_T",
+     "S_8",
+     "C_A",
+     "D_8",
+     "C_K",
+     "H_8",
+     "C_Q",
+     "D_J",
+     "C_T",
+     "C_2",
+     "H_K",
+     "D_3",
+     "S_5",
+     "D_K",
+     "S_4",
+     "D_T",
+     "D_4",
+     "C_6",
+     "D_7",
+     "H_Q",
+     "H_4",
+     "S_J",
+     "D_A",
+     "C_J",
+     "H_2",
+     "D_9",
+     "H_A",
+     "S_K"
+    ]
+   }
+  },
+  "6": {
+   "boss": {
+    "key": "bl_house",
+    "name": "The House"
+   },
+   "voucher": {
+    "key": "v_hieroglyph",
+    "name": "Hieroglyph"
+   },
+   "tags": {
+    "small": {
+     "key": "tag_uncommon",
+     "name": "Uncommon Tag"
+    },
+    "big": {
+     "key": "tag_juggle",
+     "name": "Juggle Tag"
+    }
+   },
+   "shop_queue": [
+    {
+     "set": "Tarot",
+     "key": "c_judgement",
+     "name": "Judgement"
+    },
+    {
+     "set": "Joker",
+     "key": "j_scholar",
+     "name": "Scholar",
+     "edition": null,
+     "rarity": 1,
+     "stickers": {
+      "eternal": false,
+      "perishable": false,
+      "rental": false
+     }
+    },
+    {
+     "set": "Joker",
+     "key": "j_stuntman",
+     "name": "Stuntman",
+     "edition": null,
+     "rarity": 3,
+     "stickers": {
+      "eternal": false,
+      "perishable": false,
+      "rental": false
+     }
+    },
+    {
+     "set": "Joker",
+     "key": "j_jolly",
+     "name": "Jolly Joker",
+     "edition": null,
+     "rarity": 1,
+     "stickers": {
+      "eternal": false,
+      "perishable": false,
+      "rental": false
+     }
+    },
+    {
+     "set": "Joker",
+     "key": "j_ride_the_bus",
+     "name": "Ride the Bus",
+     "edition": null,
+     "rarity": 1,
+     "stickers": {
+      "eternal": false,
+      "perishable": false,
+      "rental": false
+     }
+    },
+    {
+     "set": "Joker",
+     "key": "j_todo_list",
+     "name": "To Do List",
+     "edition": null,
+     "rarity": 1,
+     "stickers": {
+      "eternal": false,
+      "perishable": false,
+      "rental": false
+     }
+    },
+    {
+     "set": "Joker",
+     "key": "j_wrathful_joker",
+     "name": "Wrathful Joker",
+     "edition": null,
+     "rarity": 1,
+     "stickers": {
+      "eternal": false,
+      "perishable": false,
+      "rental": false
+     }
+    },
+    {
+     "set": "Joker",
+     "key": "j_delayed_grat",
+     "name": "Delayed Gratification",
+     "edition": null,
+     "rarity": 1,
+     "stickers": {
+      "eternal": false,
+      "perishable": false,
+      "rental": false
+     }
+    },
+    {
+     "set": "Joker",
+     "key": "j_blue_joker",
+     "name": "Blue Joker",
+     "edition": null,
+     "rarity": 1,
+     "stickers": {
+      "eternal": false,
+      "perishable": false,
+      "rental": false
+     }
+    },
+    {
+     "set": "Joker",
+     "key": "j_square",
+     "name": "Square Joker",
+     "edition": null,
+     "rarity": 1,
+     "stickers": {
+      "eternal": false,
+      "perishable": false,
+      "rental": false
+     }
+    },
+    {
+     "set": "Joker",
+     "key": "j_8_ball",
+     "name": "8 Ball",
+     "edition": null,
+     "rarity": 1,
+     "stickers": {
+      "eternal": false,
+      "perishable": false,
+      "rental": false
+     }
+    },
+    {
+     "set": "Joker",
+     "key": "j_hallucination",
+     "name": "Hallucination",
+     "edition": null,
+     "rarity": 1,
+     "stickers": {
+      "eternal": false,
+      "perishable": false,
+      "rental": false
+     }
+    },
+    {
+     "set": "Planet",
+     "key": "c_mars",
+     "name": "Mars"
+    },
+    {
+     "set": "Joker",
+     "key": "j_mad",
+     "name": "Mad Joker",
+     "edition": null,
+     "rarity": 1,
+     "stickers": {
+      "eternal": false,
+      "perishable": false,
+      "rental": false
+     }
+    },
+    {
+     "set": "Joker",
+     "key": "j_even_steven",
+     "name": "Even Steven",
+     "edition": null,
+     "rarity": 1,
+     "stickers": {
+      "eternal": false,
+      "perishable": false,
+      "rental": false
+     }
+    },
+    {
+     "set": "Planet",
+     "key": "c_jupiter",
+     "name": "Jupiter"
+    },
+    {
+     "set": "Joker",
+     "key": "j_credit_card",
+     "name": "Credit Card",
+     "edition": null,
+     "rarity": 1,
+     "stickers": {
+      "eternal": false,
+      "perishable": false,
+      "rental": false
+     }
+    },
+    {
+     "set": "Joker",
+     "key": "j_obelisk",
+     "name": "Obelisk",
+     "edition": null,
+     "rarity": 3,
+     "stickers": {
+      "eternal": false,
+      "perishable": false,
+      "rental": false
+     }
+    },
+    {
+     "set": "Joker",
+     "key": "j_walkie_talkie",
+     "name": "Walkie Talkie",
+     "edition": null,
+     "rarity": 1,
+     "stickers": {
+      "eternal": false,
+      "perishable": false,
+      "rental": false
+     }
+    },
+    {
+     "set": "Planet",
+     "key": "c_pluto",
+     "name": "Pluto"
+    },
+    {
+     "set": "Joker",
+     "key": "j_lusty_joker",
+     "name": "Lusty Joker",
+     "edition": "e_holo",
+     "rarity": 1,
+     "stickers": {
+      "eternal": false,
+      "perishable": false,
+      "rental": false
+     }
+    },
+    {
+     "set": "Joker",
+     "key": "j_fibonacci",
+     "name": "Fibonacci",
+     "edition": null,
+     "rarity": 2,
+     "stickers": {
+      "eternal": false,
+      "perishable": false,
+      "rental": false
+     }
+    },
+    {
+     "set": "Joker",
+     "key": "j_mystic_summit",
+     "name": "Mystic Summit",
+     "edition": null,
+     "rarity": 1,
+     "stickers": {
+      "eternal": false,
+      "perishable": false,
+      "rental": false
+     }
+    },
+    {
+     "set": "Joker",
+     "key": "j_wily",
+     "name": "Wily Joker",
+     "edition": null,
+     "rarity": 1,
+     "stickers": {
+      "eternal": false,
+      "perishable": false,
+      "rental": false
+     }
+    },
+    {
+     "set": "Joker",
+     "key": "j_jolly",
+     "name": "Jolly Joker",
+     "edition": null,
+     "rarity": 1,
+     "stickers": {
+      "eternal": false,
+      "perishable": false,
+      "rental": false
+     }
+    },
+    {
+     "set": "Tarot",
+     "key": "c_fool",
+     "name": "The Fool"
+    },
+    {
+     "set": "Joker",
+     "key": "j_sly",
+     "name": "Sly Joker",
+     "edition": null,
+     "rarity": 1,
+     "stickers": {
+      "eternal": false,
+      "perishable": false,
+      "rental": false
+     }
+    },
+    {
+     "set": "Joker",
+     "key": "j_gluttenous_joker",
+     "name": "Gluttonous Joker",
+     "edition": null,
+     "rarity": 1,
+     "stickers": {
+      "eternal": false,
+      "perishable": false,
+      "rental": false
+     }
+    },
+    {
+     "set": "Joker",
+     "key": "j_8_ball",
+     "name": "8 Ball",
+     "edition": null,
+     "rarity": 1,
+     "stickers": {
+      "eternal": false,
+      "perishable": false,
+      "rental": false
+     }
+    },
+    {
+     "set": "Joker",
+     "key": "j_cartomancer",
+     "name": "Cartomancer",
+     "edition": null,
+     "rarity": 2,
+     "stickers": {
+      "eternal": false,
+      "perishable": false,
+      "rental": false
+     }
+    },
+    {
+     "set": "Joker",
+     "key": "j_dna",
+     "name": "DNA",
+     "edition": null,
+     "rarity": 3,
+     "stickers": {
+      "eternal": false,
+      "perishable": false,
+      "rental": false
+     }
+    },
+    {
+     "set": "Joker",
+     "key": "j_raised_fist",
+     "name": "Raised Fist",
+     "edition": null,
+     "rarity": 1,
+     "stickers": {
+      "eternal": false,
+      "perishable": false,
+      "rental": false
+     }
+    },
+    {
+     "set": "Joker",
+     "key": "j_mail",
+     "name": "Mail-In Rebate",
+     "edition": null,
+     "rarity": 1,
+     "stickers": {
+      "eternal": false,
+      "perishable": false,
+      "rental": false
+     }
+    },
+    {
+     "set": "Joker",
+     "key": "j_hanging_chad",
+     "name": "Hanging Chad",
+     "edition": null,
+     "rarity": 1,
+     "stickers": {
+      "eternal": false,
+      "perishable": false,
+      "rental": false
+     }
+    },
+    {
+     "set": "Joker",
+     "key": "j_crazy",
+     "name": "Crazy Joker",
+     "edition": null,
+     "rarity": 1,
+     "stickers": {
+      "eternal": false,
+      "perishable": false,
+      "rental": false
+     }
+    },
+    {
+     "set": "Joker",
+     "key": "j_devious",
+     "name": "Devious Joker",
+     "edition": null,
+     "rarity": 1,
+     "stickers": {
+      "eternal": false,
+      "perishable": false,
+      "rental": false
+     }
+    },
+    {
+     "set": "Joker",
+     "key": "j_ride_the_bus",
+     "name": "Ride the Bus",
+     "edition": null,
+     "rarity": 1,
+     "stickers": {
+      "eternal": false,
+      "perishable": false,
+      "rental": false
+     }
+    },
+    {
+     "set": "Joker",
+     "key": "j_blue_joker",
+     "name": "Blue Joker",
+     "edition": null,
+     "rarity": 1,
+     "stickers": {
+      "eternal": false,
+      "perishable": false,
+      "rental": false
+     }
+    },
+    {
+     "set": "Joker",
+     "key": "j_wily",
+     "name": "Wily Joker",
+     "edition": "e_holo",
+     "rarity": 1,
+     "stickers": {
+      "eternal": false,
+      "perishable": false,
+      "rental": false
+     }
+    },
+    {
+     "set": "Tarot",
+     "key": "c_judgement",
+     "name": "Judgement"
+    },
+    {
+     "set": "Joker",
+     "key": "j_stuntman",
+     "name": "Stuntman",
+     "edition": null,
+     "rarity": 3,
+     "stickers": {
+      "eternal": false,
+      "perishable": false,
+      "rental": false
+     }
+    },
+    {
+     "set": "Joker",
+     "key": "j_golden",
+     "name": "Golden Joker",
+     "edition": null,
+     "rarity": 1,
+     "stickers": {
+      "eternal": false,
+      "perishable": false,
+      "rental": false
+     }
+    },
+    {
+     "set": "Joker",
+     "key": "j_sock_and_buskin",
+     "name": "Sock and Buskin",
+     "edition": null,
+     "rarity": 2,
+     "stickers": {
+      "eternal": false,
+      "perishable": false,
+      "rental": false
+     }
+    },
+    {
+     "set": "Joker",
+     "key": "j_todo_list",
+     "name": "To Do List",
+     "edition": null,
+     "rarity": 1,
+     "stickers": {
+      "eternal": false,
+      "perishable": false,
+      "rental": false
+     }
+    },
+    {
+     "set": "Joker",
+     "key": "j_popcorn",
+     "name": "Popcorn",
+     "edition": null,
+     "rarity": 1,
+     "stickers": {
+      "eternal": false,
+      "perishable": false,
+      "rental": false
+     }
+    },
+    {
+     "set": "Joker",
+     "key": "j_card_sharp",
+     "name": "Card Sharp",
+     "edition": null,
+     "rarity": 2,
+     "stickers": {
+      "eternal": false,
+      "perishable": false,
+      "rental": false
+     }
+    },
+    {
+     "set": "Joker",
+     "key": "j_todo_list",
+     "name": "To Do List",
+     "edition": null,
+     "rarity": 1,
+     "stickers": {
+      "eternal": false,
+      "perishable": false,
+      "rental": false
+     }
+    },
+    {
+     "set": "Planet",
+     "key": "c_neptune",
+     "name": "Neptune"
+    },
+    {
+     "set": "Joker",
+     "key": "j_delayed_grat",
+     "name": "Delayed Gratification",
+     "edition": null,
+     "rarity": 1,
+     "stickers": {
+      "eternal": false,
+      "perishable": false,
+      "rental": false
+     }
+    },
+    {
+     "set": "Joker",
+     "key": "j_golden",
+     "name": "Golden Joker",
+     "edition": null,
+     "rarity": 1,
+     "stickers": {
+      "eternal": false,
+      "perishable": false,
+      "rental": false
+     }
+    }
+   ],
+   "shops": [
+    {
+     "visit": "after_prev_boss",
+     "analyzer_label": "smallBlind",
+     "packs": [
+      {
+       "key": "p_celestial_normal",
+       "name": "Celestial Pack",
+       "kind": "Celestial",
+       "size": 3,
+       "choices": 1,
+       "cards": [
+        {
+         "set": "Planet",
+         "key": "c_jupiter",
+         "name": "Jupiter"
+        },
+        {
+         "set": "Planet",
+         "key": "c_mercury",
+         "name": "Mercury"
+        },
+        {
+         "set": "Planet",
+         "key": "c_mars",
+         "name": "Mars"
+        }
+       ]
+      },
+      {
+       "key": "p_arcana_jumbo",
+       "name": "Jumbo Arcana Pack",
+       "kind": "Arcana",
+       "size": 5,
+       "choices": 1,
+       "cards": [
+        {
+         "set": "Tarot",
+         "key": "c_world",
+         "name": "The World"
+        },
+        {
+         "set": "Tarot",
+         "key": "c_justice",
+         "name": "Justice"
+        },
+        {
+         "set": "Tarot",
+         "key": "c_moon",
+         "name": "The Moon"
+        },
+        {
+         "set": "Tarot",
+         "key": "c_hanged_man",
+         "name": "The Hanged Man"
+        },
+        {
+         "set": "Tarot",
+         "key": "c_heirophant",
+         "name": "The Hierophant"
+        }
+       ]
+      }
+     ]
+    },
+    {
+     "visit": "after_small",
+     "analyzer_label": "bigBlind",
+     "packs": [
+      {
+       "key": "p_arcana_jumbo",
+       "name": "Jumbo Arcana Pack",
+       "kind": "Arcana",
+       "size": 5,
+       "choices": 1,
+       "cards": [
+        {
+         "set": "Tarot",
+         "key": "c_judgement",
+         "name": "Judgement"
+        },
+        {
+         "set": "Tarot",
+         "key": "c_hanged_man",
+         "name": "The Hanged Man"
+        },
+        {
+         "set": "Tarot",
+         "key": "c_world",
+         "name": "The World"
+        },
+        {
+         "set": "Tarot",
+         "key": "c_chariot",
+         "name": "The Chariot"
+        },
+        {
+         "set": "Tarot",
+         "key": "c_star",
+         "name": "The Star"
+        }
+       ]
+      },
+      {
+       "key": "p_standard_normal",
+       "name": "Standard Pack",
+       "kind": "Standard",
+       "size": 3,
+       "choices": 1,
+       "cards": [
+        {
+         "set": "Base",
+         "key": "H_Q",
+         "name": "Queen of Hearts",
+         "enhancement": null,
+         "edition": null,
+         "seal": null
+        },
+        {
+         "set": "Base",
+         "key": "H_K",
+         "name": "King of Hearts",
+         "enhancement": "m_gold",
+         "edition": null,
+         "seal": "Red"
+        },
+        {
+         "set": "Base",
+         "key": "H_4",
+         "name": "4 of Hearts",
+         "enhancement": null,
+         "edition": null,
+         "seal": null
+        }
+       ]
+      }
+     ]
+    },
+    {
+     "visit": "after_big",
+     "analyzer_label": "bossBlind",
+     "packs": [
+      {
+       "key": "p_celestial_normal",
+       "name": "Celestial Pack",
+       "kind": "Celestial",
+       "size": 3,
+       "choices": 1,
+       "cards": [
+        {
+         "set": "Planet",
+         "key": "c_neptune",
+         "name": "Neptune"
+        },
+        {
+         "set": "Planet",
+         "key": "c_saturn",
+         "name": "Saturn"
+        },
+        {
+         "set": "Planet",
+         "key": "c_venus",
+         "name": "Venus"
+        }
+       ]
+      },
+      {
+       "key": "p_arcana_jumbo",
+       "name": "Jumbo Arcana Pack",
+       "kind": "Arcana",
+       "size": 5,
+       "choices": 1,
+       "cards": [
+        {
+         "set": "Tarot",
+         "key": "c_lovers",
+         "name": "The Lovers"
+        },
+        {
+         "set": "Tarot",
+         "key": "c_hermit",
+         "name": "The Hermit"
+        },
+        {
+         "set": "Tarot",
+         "key": "c_sun",
+         "name": "The Sun"
+        },
+        {
+         "set": "Tarot",
+         "key": "c_death",
+         "name": "Death"
+        },
+        {
+         "set": "Tarot",
+         "key": "c_emperor",
+         "name": "The Emperor"
+        }
+       ]
+      }
+     ]
+    }
+   ],
+   "soul_spawns": [],
+   "deck_order_unverified": {
+    "note": "Blueprint model of the per-blind deck shuffle (index 0 = first card drawn). No second source; excluded from parity by default.",
+    "small": [
+     "H_A",
+     "C_J",
+     "D_3",
+     "D_8",
+     "D_2",
+     "S_4",
+     "D_A",
+     "H_4",
+     "H_7",
+     "D_T",
+     "C_8",
+     "S_2",
+     "D_5",
+     "C_T",
+     "S_K",
+     "D_K",
+     "H_Q",
+     "H_9",
+     "S_J",
+     "D_4",
+     "H_K",
+     "C_5",
+     "C_Q",
+     "S_T",
+     "C_K",
+     "S_6",
+     "C_2",
+     "H_8",
+     "S_A",
+     "C_A",
+     "H_J",
+     "D_7",
+     "H_6",
+     "D_9",
+     "C_6",
+     "S_5",
+     "H_5",
+     "S_3",
+     "D_J",
+     "S_Q",
+     "H_3",
+     "H_T",
+     "H_2",
+     "C_3",
+     "C_9",
+     "D_Q",
+     "D_6",
+     "S_7",
+     "S_9",
+     "C_4",
+     "S_8",
+     "C_7"
+    ],
+    "big": [
+     "S_4",
+     "S_5",
+     "H_T",
+     "S_9",
+     "D_9",
+     "C_5",
+     "C_K",
+     "D_8",
+     "D_T",
+     "H_9",
+     "D_5",
+     "H_A",
+     "D_4",
+     "D_3",
+     "C_8",
+     "S_2",
+     "S_3",
+     "D_K",
+     "S_T",
+     "C_J",
+     "H_Q",
+     "C_2",
+     "C_A",
+     "D_J",
+     "D_2",
+     "S_6",
+     "S_Q",
+     "C_T",
+     "S_J",
+     "H_8",
+     "H_6",
+     "H_7",
+     "C_6",
+     "C_9",
+     "H_K",
+     "C_7",
+     "D_6",
+     "S_8",
+     "C_Q",
+     "S_K",
+     "D_Q",
+     "C_3",
+     "H_J",
+     "H_3",
+     "H_4",
+     "S_A",
+     "D_A",
+     "H_5",
+     "D_7",
+     "S_7",
+     "C_4",
+     "H_2"
+    ],
+    "boss": [
+     "C_7",
+     "S_9",
+     "S_8",
+     "D_T",
+     "D_Q",
+     "S_2",
+     "S_T",
+     "C_6",
+     "C_J",
+     "S_J",
+     "H_8",
+     "D_6",
+     "S_Q",
+     "D_2",
+     "H_9",
+     "D_A",
+     "D_5",
+     "H_7",
+     "C_9",
+     "C_4",
+     "C_3",
+     "S_6",
+     "S_K",
+     "H_4",
+     "H_5",
+     "D_7",
+     "C_Q",
+     "S_4",
+     "D_9",
+     "C_T",
+     "C_8",
+     "S_5",
+     "S_A",
+     "S_3",
+     "D_K",
+     "H_3",
+     "H_K",
+     "H_6",
+     "H_2",
+     "H_J",
+     "C_A",
+     "C_5",
+     "D_8",
+     "D_J",
+     "C_2",
+     "D_4",
+     "H_Q",
+     "H_T",
+     "D_3",
+     "H_A",
+     "C_K",
+     "S_7"
+    ]
+   }
+  },
+  "7": {
+   "boss": {
+    "key": "bl_pillar",
+    "name": "The Pillar"
+   },
+   "voucher": {
+    "key": "v_paint_brush",
+    "name": "Paint Brush"
+   },
+   "tags": {
+    "small": {
+     "key": "tag_negative",
+     "name": "Negative Tag"
+    },
+    "big": {
+     "key": "tag_standard",
+     "name": "Standard Tag"
+    }
+   },
+   "shop_queue": [
+    {
+     "set": "Planet",
+     "key": "c_earth",
+     "name": "Earth"
+    },
+    {
+     "set": "Planet",
+     "key": "c_earth",
+     "name": "Earth",
+     "analyzer_gap": "same_shop_duplicate"
+    },
+    {
+     "set": "Planet",
+     "key": "c_uranus",
+     "name": "Uranus"
+    },
+    {
+     "set": "Joker",
+     "key": "j_ride_the_bus",
+     "name": "Ride the Bus",
+     "edition": null,
+     "rarity": 1,
+     "stickers": {
+      "eternal": false,
+      "perishable": false,
+      "rental": false
+     }
+    },
+    {
+     "set": "Tarot",
+     "key": "c_tower",
+     "name": "The Tower"
+    },
+    {
+     "set": "Planet",
+     "key": "c_venus",
+     "name": "Venus"
+    },
+    {
+     "set": "Joker",
+     "key": "j_gros_michel",
+     "name": "Gros Michel",
+     "edition": null,
+     "rarity": 1,
+     "stickers": {
+      "eternal": false,
+      "perishable": false,
+      "rental": false
+     }
+    },
+    {
+     "set": "Planet",
+     "key": "c_neptune",
+     "name": "Neptune"
+    },
+    {
+     "set": "Joker",
+     "key": "j_reserved_parking",
+     "name": "Reserved Parking",
+     "edition": null,
+     "rarity": 1,
+     "stickers": {
+      "eternal": false,
+      "perishable": false,
+      "rental": false
+     }
+    },
+    {
+     "set": "Joker",
+     "key": "j_banner",
+     "name": "Banner",
+     "edition": null,
+     "rarity": 1,
+     "stickers": {
+      "eternal": false,
+      "perishable": false,
+      "rental": false
+     }
+    },
+    {
+     "set": "Joker",
+     "key": "j_clever",
+     "name": "Clever Joker",
+     "edition": null,
+     "rarity": 1,
+     "stickers": {
+      "eternal": false,
+      "perishable": false,
+      "rental": false
+     }
+    },
+    {
+     "set": "Joker",
+     "key": "j_ring_master",
+     "name": "Showman",
+     "edition": null,
+     "rarity": 2,
+     "stickers": {
+      "eternal": false,
+      "perishable": false,
+      "rental": false
+     }
+    },
+    {
+     "set": "Joker",
+     "key": "j_blue_joker",
+     "name": "Blue Joker",
+     "edition": null,
+     "rarity": 1,
+     "stickers": {
+      "eternal": false,
+      "perishable": false,
+      "rental": false
+     }
+    },
+    {
+     "set": "Joker",
+     "key": "j_supernova",
+     "name": "Supernova",
+     "edition": null,
+     "rarity": 1,
+     "stickers": {
+      "eternal": false,
+      "perishable": false,
+      "rental": false
+     }
+    },
+    {
+     "set": "Joker",
+     "key": "j_credit_card",
+     "name": "Credit Card",
+     "edition": null,
+     "rarity": 1,
+     "stickers": {
+      "eternal": false,
+      "perishable": false,
+      "rental": false
+     }
+    },
+    {
+     "set": "Joker",
+     "key": "j_faceless",
+     "name": "Faceless Joker",
+     "edition": null,
+     "rarity": 1,
+     "stickers": {
+      "eternal": false,
+      "perishable": false,
+      "rental": false
+     }
+    },
+    {
+     "set": "Joker",
+     "key": "j_sixth_sense",
+     "name": "Sixth Sense",
+     "edition": null,
+     "rarity": 2,
+     "stickers": {
+      "eternal": false,
+      "perishable": false,
+      "rental": false
+     }
+    },
+    {
+     "set": "Joker",
+     "key": "j_sly",
+     "name": "Sly Joker",
+     "edition": null,
+     "rarity": 1,
+     "stickers": {
+      "eternal": false,
+      "perishable": false,
+      "rental": false
+     }
+    },
+    {
+     "set": "Joker",
+     "key": "j_bloodstone",
+     "name": "Bloodstone",
+     "edition": null,
+     "rarity": 2,
+     "stickers": {
+      "eternal": false,
+      "perishable": false,
+      "rental": false
+     }
+    },
+    {
+     "set": "Joker",
+     "key": "j_midas_mask",
+     "name": "Midas Mask",
+     "edition": null,
+     "rarity": 2,
+     "stickers": {
+      "eternal": false,
+      "perishable": false,
+      "rental": false
+     }
+    },
+    {
+     "set": "Planet",
+     "key": "c_venus",
+     "name": "Venus"
+    },
+    {
+     "set": "Tarot",
+     "key": "c_temperance",
+     "name": "Temperance"
+    },
+    {
+     "set": "Tarot",
+     "key": "c_hermit",
+     "name": "The Hermit"
+    },
+    {
+     "set": "Joker",
+     "key": "j_delayed_grat",
+     "name": "Delayed Gratification",
+     "edition": null,
+     "rarity": 1,
+     "stickers": {
+      "eternal": false,
+      "perishable": false,
+      "rental": false
+     }
+    },
+    {
+     "set": "Planet",
+     "key": "c_venus",
+     "name": "Venus",
+     "analyzer_gap": "downstream_resample_shift"
+    },
+    {
+     "set": "Tarot",
+     "key": "c_hermit",
+     "name": "The Hermit"
+    },
+    {
+     "set": "Joker",
+     "key": "j_mime",
+     "name": "Mime",
+     "edition": null,
+     "rarity": 2,
+     "stickers": {
+      "eternal": false,
+      "perishable": false,
+      "rental": false
+     }
+    },
+    {
+     "set": "Joker",
+     "key": "j_satellite",
+     "name": "Satellite",
+     "edition": null,
+     "rarity": 2,
+     "stickers": {
+      "eternal": false,
+      "perishable": false,
+      "rental": false
+     }
+    },
+    {
+     "set": "Joker",
+     "key": "j_turtle_bean",
+     "name": "Turtle Bean",
+     "edition": null,
+     "rarity": 2,
+     "stickers": {
+      "eternal": false,
+      "perishable": false,
+      "rental": false
+     }
+    },
+    {
+     "set": "Joker",
+     "key": "j_oops",
+     "name": "Oops! All 6s",
+     "edition": "e_holo",
+     "rarity": 2,
+     "stickers": {
+      "eternal": false,
+      "perishable": false,
+      "rental": false
+     }
+    },
+    {
+     "set": "Planet",
+     "key": "c_neptune",
+     "name": "Neptune"
+    },
+    {
+     "set": "Joker",
+     "key": "j_turtle_bean",
+     "name": "Turtle Bean",
+     "edition": null,
+     "rarity": 2,
+     "stickers": {
+      "eternal": false,
+      "perishable": false,
+      "rental": false
+     }
+    },
+    {
+     "set": "Joker",
+     "key": "j_mystic_summit",
+     "name": "Mystic Summit",
+     "edition": "e_foil",
+     "rarity": 1,
+     "stickers": {
+      "eternal": false,
+      "perishable": false,
+      "rental": false
+     }
+    },
+    {
+     "set": "Joker",
+     "key": "j_lusty_joker",
+     "name": "Lusty Joker",
+     "edition": null,
+     "rarity": 1,
+     "stickers": {
+      "eternal": false,
+      "perishable": false,
+      "rental": false
+     }
+    },
+    {
+     "set": "Planet",
+     "key": "c_mercury",
+     "name": "Mercury"
+    },
+    {
+     "set": "Planet",
+     "key": "c_uranus",
+     "name": "Uranus"
+    },
+    {
+     "set": "Joker",
+     "key": "j_clever",
+     "name": "Clever Joker",
+     "edition": null,
+     "rarity": 1,
+     "stickers": {
+      "eternal": false,
+      "perishable": false,
+      "rental": false
+     }
+    },
+    {
+     "set": "Tarot",
+     "key": "c_heirophant",
+     "name": "The Hierophant"
+    },
+    {
+     "set": "Joker",
+     "key": "j_8_ball",
+     "name": "8 Ball",
+     "edition": null,
+     "rarity": 1,
+     "stickers": {
+      "eternal": false,
+      "perishable": false,
+      "rental": false
+     }
+    },
+    {
+     "set": "Tarot",
+     "key": "c_fool",
+     "name": "The Fool"
+    },
+    {
+     "set": "Tarot",
+     "key": "c_magician",
+     "name": "The Magician"
+    },
+    {
+     "set": "Joker",
+     "key": "j_riff_raff",
+     "name": "Riff-raff",
+     "edition": null,
+     "rarity": 1,
+     "stickers": {
+      "eternal": false,
+      "perishable": false,
+      "rental": false
+     }
+    },
+    {
+     "set": "Tarot",
+     "key": "c_devil",
+     "name": "The Devil"
+    },
+    {
+     "set": "Planet",
+     "key": "c_mercury",
+     "name": "Mercury"
+    },
+    {
+     "set": "Joker",
+     "key": "j_shortcut",
+     "name": "Shortcut",
+     "edition": null,
+     "rarity": 2,
+     "stickers": {
+      "eternal": false,
+      "perishable": false,
+      "rental": false
+     }
+    },
+    {
+     "set": "Joker",
+     "key": "j_banner",
+     "name": "Banner",
+     "edition": null,
+     "rarity": 1,
+     "stickers": {
+      "eternal": false,
+      "perishable": false,
+      "rental": false
+     }
+    },
+    {
+     "set": "Planet",
+     "key": "c_uranus",
+     "name": "Uranus"
+    },
+    {
+     "set": "Joker",
+     "key": "j_joker",
+     "name": "Joker",
+     "edition": null,
+     "rarity": 1,
+     "stickers": {
+      "eternal": false,
+      "perishable": false,
+      "rental": false
+     }
+    },
+    {
+     "set": "Joker",
+     "key": "j_constellation",
+     "name": "Constellation",
+     "edition": null,
+     "rarity": 2,
+     "stickers": {
+      "eternal": false,
+      "perishable": false,
+      "rental": false
+     }
+    },
+    {
+     "set": "Joker",
+     "key": "j_blueprint",
+     "name": "Blueprint",
+     "edition": null,
+     "rarity": 3,
+     "stickers": {
+      "eternal": false,
+      "perishable": false,
+      "rental": false
+     }
+    }
+   ],
+   "shops": [
+    {
+     "visit": "after_prev_boss",
+     "analyzer_label": "smallBlind",
+     "packs": [
+      {
+       "key": "p_standard_jumbo",
+       "name": "Jumbo Standard Pack",
+       "kind": "Standard",
+       "size": 5,
+       "choices": 1,
+       "cards": [
+        {
+         "set": "Base",
+         "key": "D_3",
+         "name": "3 of Diamonds",
+         "enhancement": "m_glass",
+         "edition": null,
+         "seal": null
+        },
+        {
+         "set": "Base",
+         "key": "C_4",
+         "name": "4 of Clubs",
+         "enhancement": "m_lucky",
+         "edition": null,
+         "seal": null
+        },
+        {
+         "set": "Base",
+         "key": "C_3",
+         "name": "3 of Clubs",
+         "enhancement": null,
+         "edition": null,
+         "seal": null
+        },
+        {
+         "set": "Base",
+         "key": "D_4",
+         "name": "4 of Diamonds",
+         "enhancement": null,
+         "edition": null,
+         "seal": null
+        },
+        {
+         "set": "Base",
+         "key": "D_Q",
+         "name": "Queen of Diamonds",
+         "enhancement": "m_wild",
+         "edition": null,
+         "seal": "Blue"
+        }
+       ]
+      },
+      {
+       "key": "p_arcana_jumbo",
+       "name": "Jumbo Arcana Pack",
+       "kind": "Arcana",
+       "size": 5,
+       "choices": 1,
+       "cards": [
+        {
+         "set": "Tarot",
+         "key": "c_tower",
+         "name": "The Tower"
+        },
+        {
+         "set": "Tarot",
+         "key": "c_hanged_man",
+         "name": "The Hanged Man"
+        },
+        {
+         "set": "Tarot",
+         "key": "c_moon",
+         "name": "The Moon"
+        },
+        {
+         "set": "Tarot",
+         "key": "c_magician",
+         "name": "The Magician"
+        },
+        {
+         "set": "Tarot",
+         "key": "c_chariot",
+         "name": "The Chariot"
+        }
+       ]
+      }
+     ]
+    },
+    {
+     "visit": "after_small",
+     "analyzer_label": "bigBlind",
+     "packs": [
+      {
+       "key": "p_celestial_normal",
+       "name": "Celestial Pack",
+       "kind": "Celestial",
+       "size": 3,
+       "choices": 1,
+       "cards": [
+        {
+         "set": "Planet",
+         "key": "c_uranus",
+         "name": "Uranus",
+         "analyzer_gap": "collides_with_displayed_shop"
+        },
+        {
+         "set": "Planet",
+         "key": "c_saturn",
+         "name": "Saturn"
+        },
+        {
+         "set": "Planet",
+         "key": "c_mercury",
+         "name": "Mercury"
+        }
+       ]
+      },
+      {
+       "key": "p_arcana_normal",
+       "name": "Arcana Pack",
+       "kind": "Arcana",
+       "size": 3,
+       "choices": 1,
+       "cards": [
+        {
+         "set": "Tarot",
+         "key": "c_hanged_man",
+         "name": "The Hanged Man"
+        },
+        {
+         "set": "Tarot",
+         "key": "c_emperor",
+         "name": "The Emperor"
+        },
+        {
+         "set": "Tarot",
+         "key": "c_temperance",
+         "name": "Temperance"
+        }
+       ]
+      }
+     ]
+    },
+    {
+     "visit": "after_big",
+     "analyzer_label": "bossBlind",
+     "packs": [
+      {
+       "key": "p_celestial_normal",
+       "name": "Celestial Pack",
+       "kind": "Celestial",
+       "size": 3,
+       "choices": 1,
+       "cards": [
+        {
+         "set": "Planet",
+         "key": "c_mars",
+         "name": "Mars"
+        },
+        {
+         "set": "Planet",
+         "key": "c_venus",
+         "name": "Venus",
+         "analyzer_gap": "collides_with_displayed_shop"
+        },
+        {
+         "set": "Planet",
+         "key": "c_neptune",
+         "name": "Neptune",
+         "analyzer_gap": "downstream_resample_shift"
+        }
+       ]
+      },
+      {
+       "key": "p_arcana_normal",
+       "name": "Arcana Pack",
+       "kind": "Arcana",
+       "size": 3,
+       "choices": 1,
+       "cards": [
+        {
+         "set": "Tarot",
+         "key": "c_high_priestess",
+         "name": "The High Priestess"
+        },
+        {
+         "set": "Tarot",
+         "key": "c_devil",
+         "name": "The Devil"
+        },
+        {
+         "set": "Tarot",
+         "key": "c_temperance",
+         "name": "Temperance"
+        }
+       ]
+      }
+     ]
+    }
+   ],
+   "soul_spawns": [],
+   "deck_order_unverified": {
+    "note": "Blueprint model of the per-blind deck shuffle (index 0 = first card drawn). No second source; excluded from parity by default.",
+    "small": [
+     "S_J",
+     "S_7",
+     "H_A",
+     "C_5",
+     "D_K",
+     "D_J",
+     "C_A",
+     "D_2",
+     "C_9",
+     "H_3",
+     "C_Q",
+     "H_K",
+     "H_T",
+     "C_6",
+     "S_2",
+     "C_2",
+     "S_Q",
+     "C_8",
+     "S_8",
+     "H_5",
+     "H_Q",
+     "S_A",
+     "D_6",
+     "C_J",
+     "H_7",
+     "C_T",
+     "D_T",
+     "S_3",
+     "S_K",
+     "D_3",
+     "H_4",
+     "H_J",
+     "S_6",
+     "H_8",
+     "S_T",
+     "D_A",
+     "D_9",
+     "D_4",
+     "C_K",
+     "H_9",
+     "S_9",
+     "D_7",
+     "D_8",
+     "D_Q",
+     "S_4",
+     "D_5",
+     "S_5",
+     "C_7",
+     "C_4",
+     "H_6",
+     "H_2",
+     "C_3"
+    ],
+    "big": [
+     "H_2",
+     "H_9",
+     "H_4",
+     "S_T",
+     "H_T",
+     "D_7",
+     "D_8",
+     "H_8",
+     "C_5",
+     "H_Q",
+     "C_A",
+     "C_K",
+     "C_6",
+     "D_5",
+     "C_J",
+     "H_J",
+     "S_K",
+     "D_4",
+     "S_8",
+     "C_7",
+     "H_3",
+     "H_A",
+     "H_6",
+     "C_4",
+     "C_T",
+     "D_2",
+     "C_2",
+     "S_7",
+     "D_T",
+     "S_4",
+     "S_2",
+     "S_5",
+     "S_Q",
+     "C_8",
+     "C_Q",
+     "D_A",
+     "H_K",
+     "C_3",
+     "H_7",
+     "D_9",
+     "S_3",
+     "D_6",
+     "H_5",
+     "D_J",
+     "S_A",
+     "S_6",
+     "S_J",
+     "D_K",
+     "D_Q",
+     "C_9",
+     "S_9",
+     "D_3"
+    ],
+    "boss": [
+     "C_K",
+     "C_Q",
+     "H_3",
+     "C_T",
+     "D_8",
+     "H_A",
+     "C_7",
+     "S_J",
+     "S_9",
+     "D_4",
+     "C_8",
+     "S_A",
+     "C_2",
+     "S_K",
+     "H_8",
+     "H_2",
+     "S_5",
+     "S_7",
+     "S_T",
+     "H_T",
+     "D_J",
+     "S_6",
+     "C_3",
+     "H_Q",
+     "C_6",
+     "H_6",
+     "D_Q",
+     "D_6",
+     "D_T",
+     "H_J",
+     "C_5",
+     "H_9",
+     "C_9",
+     "S_2",
+     "D_7",
+     "D_A",
+     "H_4",
+     "S_8",
+     "D_9",
+     "C_4",
+     "D_K",
+     "D_5",
+     "C_A",
+     "H_5",
+     "S_Q",
+     "H_7",
+     "C_J",
+     "D_3",
+     "S_3",
+     "H_K",
+     "S_4",
+     "D_2"
+    ]
+   }
+  },
+  "8": {
+   "boss": {
+    "key": "bl_final_leaf",
+    "name": "Verdant Leaf"
+   },
+   "voucher": {
+    "key": "v_blank",
+    "name": "Blank"
+   },
+   "tags": {
+    "small": {
+     "key": "tag_buffoon",
+     "name": "Buffoon Tag"
+    },
+    "big": {
+     "key": "tag_negative",
+     "name": "Negative Tag"
+    }
+   },
+   "shop_queue": [
+    {
+     "set": "Tarot",
+     "key": "c_high_priestess",
+     "name": "The High Priestess"
+    },
+    {
+     "set": "Tarot",
+     "key": "c_sun",
+     "name": "The Sun"
+    },
+    {
+     "set": "Planet",
+     "key": "c_pluto",
+     "name": "Pluto"
+    },
+    {
+     "set": "Joker",
+     "key": "j_chaos",
+     "name": "Chaos the Clown",
+     "edition": "e_negative",
+     "rarity": 1,
+     "stickers": {
+      "eternal": false,
+      "perishable": false,
+      "rental": false
+     }
+    },
+    {
+     "set": "Joker",
+     "key": "j_ride_the_bus",
+     "name": "Ride the Bus",
+     "edition": null,
+     "rarity": 1,
+     "stickers": {
+      "eternal": false,
+      "perishable": false,
+      "rental": false
+     }
+    },
+    {
+     "set": "Joker",
+     "key": "j_half",
+     "name": "Half Joker",
+     "edition": null,
+     "rarity": 1,
+     "stickers": {
+      "eternal": false,
+      "perishable": false,
+      "rental": false
+     }
+    },
+    {
+     "set": "Planet",
+     "key": "c_earth",
+     "name": "Earth"
+    },
+    {
+     "set": "Joker",
+     "key": "j_joker",
+     "name": "Joker",
+     "edition": "e_holo",
+     "rarity": 1,
+     "stickers": {
+      "eternal": false,
+      "perishable": false,
+      "rental": false
+     }
+    },
+    {
+     "set": "Joker",
+     "key": "j_fibonacci",
+     "name": "Fibonacci",
+     "edition": null,
+     "rarity": 2,
+     "stickers": {
+      "eternal": false,
+      "perishable": false,
+      "rental": false
+     }
+    },
+    {
+     "set": "Joker",
+     "key": "j_blue_joker",
+     "name": "Blue Joker",
+     "edition": null,
+     "rarity": 1,
+     "stickers": {
+      "eternal": false,
+      "perishable": false,
+      "rental": false
+     }
+    },
+    {
+     "set": "Joker",
+     "key": "j_splash",
+     "name": "Splash",
+     "edition": null,
+     "rarity": 1,
+     "stickers": {
+      "eternal": false,
+      "perishable": false,
+      "rental": false
+     }
+    },
+    {
+     "set": "Joker",
+     "key": "j_smiley",
+     "name": "Smiley Face",
+     "edition": null,
+     "rarity": 1,
+     "stickers": {
+      "eternal": false,
+      "perishable": false,
+      "rental": false
+     }
+    },
+    {
+     "set": "Joker",
+     "key": "j_brainstorm",
+     "name": "Brainstorm",
+     "edition": null,
+     "rarity": 3,
+     "stickers": {
+      "eternal": false,
+      "perishable": false,
+      "rental": false
+     }
+    },
+    {
+     "set": "Joker",
+     "key": "j_burglar",
+     "name": "Burglar",
+     "edition": null,
+     "rarity": 2,
+     "stickers": {
+      "eternal": false,
+      "perishable": false,
+      "rental": false
+     }
+    },
+    {
+     "set": "Joker",
+     "key": "j_mail",
+     "name": "Mail-In Rebate",
+     "edition": null,
+     "rarity": 1,
+     "stickers": {
+      "eternal": false,
+      "perishable": false,
+      "rental": false
+     }
+    },
+    {
+     "set": "Planet",
+     "key": "c_venus",
+     "name": "Venus"
+    },
+    {
+     "set": "Joker",
+     "key": "j_cartomancer",
+     "name": "Cartomancer",
+     "edition": null,
+     "rarity": 2,
+     "stickers": {
+      "eternal": false,
+      "perishable": false,
+      "rental": false
+     }
+    },
+    {
+     "set": "Planet",
+     "key": "c_earth",
+     "name": "Earth"
+    },
+    {
+     "set": "Joker",
+     "key": "j_vampire",
+     "name": "Vampire",
+     "edition": null,
+     "rarity": 2,
+     "stickers": {
+      "eternal": false,
+      "perishable": false,
+      "rental": false
+     }
+    },
+    {
+     "set": "Joker",
+     "key": "j_castle",
+     "name": "Castle",
+     "edition": null,
+     "rarity": 2,
+     "stickers": {
+      "eternal": false,
+      "perishable": false,
+      "rental": false
+     }
+    },
+    {
+     "set": "Tarot",
+     "key": "c_devil",
+     "name": "The Devil"
+    },
+    {
+     "set": "Joker",
+     "key": "j_tribe",
+     "name": "The Tribe",
+     "edition": null,
+     "rarity": 3,
+     "stickers": {
+      "eternal": false,
+      "perishable": false,
+      "rental": false
+     }
+    },
+    {
+     "set": "Joker",
+     "key": "j_hallucination",
+     "name": "Hallucination",
+     "edition": null,
+     "rarity": 1,
+     "stickers": {
+      "eternal": false,
+      "perishable": false,
+      "rental": false
+     }
+    },
+    {
+     "set": "Joker",
+     "key": "j_mad",
+     "name": "Mad Joker",
+     "edition": null,
+     "rarity": 1,
+     "stickers": {
+      "eternal": false,
+      "perishable": false,
+      "rental": false
+     }
+    },
+    {
+     "set": "Joker",
+     "key": "j_order",
+     "name": "The Order",
+     "edition": null,
+     "rarity": 3,
+     "stickers": {
+      "eternal": false,
+      "perishable": false,
+      "rental": false
+     }
+    },
+    {
+     "set": "Joker",
+     "key": "j_blue_joker",
+     "name": "Blue Joker",
+     "edition": null,
+     "rarity": 1,
+     "stickers": {
+      "eternal": false,
+      "perishable": false,
+      "rental": false
+     }
+    },
+    {
+     "set": "Planet",
+     "key": "c_pluto",
+     "name": "Pluto"
+    },
+    {
+     "set": "Joker",
+     "key": "j_campfire",
+     "name": "Campfire",
+     "edition": null,
+     "rarity": 3,
+     "stickers": {
+      "eternal": false,
+      "perishable": false,
+      "rental": false
+     }
+    },
+    {
+     "set": "Joker",
+     "key": "j_card_sharp",
+     "name": "Card Sharp",
+     "edition": null,
+     "rarity": 2,
+     "stickers": {
+      "eternal": false,
+      "perishable": false,
+      "rental": false
+     }
+    },
+    {
+     "set": "Joker",
+     "key": "j_green_joker",
+     "name": "Green Joker",
+     "edition": null,
+     "rarity": 1,
+     "stickers": {
+      "eternal": false,
+      "perishable": false,
+      "rental": false
+     }
+    },
+    {
+     "set": "Joker",
+     "key": "j_devious",
+     "name": "Devious Joker",
+     "edition": null,
+     "rarity": 1,
+     "stickers": {
+      "eternal": false,
+      "perishable": false,
+      "rental": false
+     }
+    },
+    {
+     "set": "Joker",
+     "key": "j_wily",
+     "name": "Wily Joker",
+     "edition": null,
+     "rarity": 1,
+     "stickers": {
+      "eternal": false,
+      "perishable": false,
+      "rental": false
+     }
+    },
+    {
+     "set": "Tarot",
+     "key": "c_heirophant",
+     "name": "The Hierophant"
+    },
+    {
+     "set": "Joker",
+     "key": "j_half",
+     "name": "Half Joker",
+     "edition": null,
+     "rarity": 1,
+     "stickers": {
+      "eternal": false,
+      "perishable": false,
+      "rental": false
+     }
+    },
+    {
+     "set": "Joker",
+     "key": "j_greedy_joker",
+     "name": "Greedy Joker",
+     "edition": null,
+     "rarity": 1,
+     "stickers": {
+      "eternal": false,
+      "perishable": false,
+      "rental": false
+     }
+    },
+    {
+     "set": "Joker",
+     "key": "j_gift",
+     "name": "Gift Card",
+     "edition": null,
+     "rarity": 2,
+     "stickers": {
+      "eternal": false,
+      "perishable": false,
+      "rental": false
+     }
+    },
+    {
+     "set": "Tarot",
+     "key": "c_fool",
+     "name": "The Fool"
+    },
+    {
+     "set": "Tarot",
+     "key": "c_judgement",
+     "name": "Judgement"
+    },
+    {
+     "set": "Joker",
+     "key": "j_raised_fist",
+     "name": "Raised Fist",
+     "edition": "e_foil",
+     "rarity": 1,
+     "stickers": {
+      "eternal": false,
+      "perishable": false,
+      "rental": false
+     }
+    },
+    {
+     "set": "Planet",
+     "key": "c_saturn",
+     "name": "Saturn"
+    },
+    {
+     "set": "Joker",
+     "key": "j_hallucination",
+     "name": "Hallucination",
+     "edition": null,
+     "rarity": 1,
+     "stickers": {
+      "eternal": false,
+      "perishable": false,
+      "rental": false
+     }
+    },
+    {
+     "set": "Joker",
+     "key": "j_to_the_moon",
+     "name": "To the Moon",
+     "edition": null,
+     "rarity": 2,
+     "stickers": {
+      "eternal": false,
+      "perishable": false,
+      "rental": false
+     }
+    },
+    {
+     "set": "Joker",
+     "key": "j_supernova",
+     "name": "Supernova",
+     "edition": null,
+     "rarity": 1,
+     "stickers": {
+      "eternal": false,
+      "perishable": false,
+      "rental": false
+     }
+    },
+    {
+     "set": "Planet",
+     "key": "c_earth",
+     "name": "Earth"
+    },
+    {
+     "set": "Tarot",
+     "key": "c_hermit",
+     "name": "The Hermit"
+    },
+    {
+     "set": "Joker",
+     "key": "j_misprint",
+     "name": "Misprint",
+     "edition": null,
+     "rarity": 1,
+     "stickers": {
+      "eternal": false,
+      "perishable": false,
+      "rental": false
+     }
+    },
+    {
+     "set": "Planet",
+     "key": "c_mars",
+     "name": "Mars"
+    },
+    {
+     "set": "Joker",
+     "key": "j_reserved_parking",
+     "name": "Reserved Parking",
+     "edition": null,
+     "rarity": 1,
+     "stickers": {
+      "eternal": false,
+      "perishable": false,
+      "rental": false
+     }
+    },
+    {
+     "set": "Joker",
+     "key": "j_golden",
+     "name": "Golden Joker",
+     "edition": null,
+     "rarity": 1,
+     "stickers": {
+      "eternal": false,
+      "perishable": false,
+      "rental": false
+     }
+    },
+    {
+     "set": "Tarot",
+     "key": "c_magician",
+     "name": "The Magician"
+    }
+   ],
+   "shops": [
+    {
+     "visit": "after_prev_boss",
+     "analyzer_label": "smallBlind",
+     "packs": [
+      {
+       "key": "p_arcana_jumbo",
+       "name": "Jumbo Arcana Pack",
+       "kind": "Arcana",
+       "size": 5,
+       "choices": 1,
+       "cards": [
+        {
+         "set": "Tarot",
+         "key": "c_magician",
+         "name": "The Magician"
+        },
+        {
+         "set": "Tarot",
+         "key": "c_devil",
+         "name": "The Devil"
+        },
+        {
+         "set": "Tarot",
+         "key": "c_emperor",
+         "name": "The Emperor"
+        },
+        {
+         "set": "Tarot",
+         "key": "c_strength",
+         "name": "Strength"
+        },
+        {
+         "set": "Tarot",
+         "key": "c_high_priestess",
+         "name": "The High Priestess",
+         "analyzer_gap": "collides_with_displayed_shop"
+        }
+       ]
+      },
+      {
+       "key": "p_arcana_normal",
+       "name": "Arcana Pack",
+       "kind": "Arcana",
+       "size": 3,
+       "choices": 1,
+       "cards": [
+        {
+         "set": "Tarot",
+         "key": "c_hermit",
+         "name": "The Hermit"
+        },
+        {
+         "set": "Tarot",
+         "key": "c_heirophant",
+         "name": "The Hierophant",
+         "analyzer_gap": "downstream_resample_shift"
+        },
+        {
+         "set": "Tarot",
+         "key": "c_chariot",
+         "name": "The Chariot"
+        }
+       ]
+      }
+     ]
+    },
+    {
+     "visit": "after_small",
+     "analyzer_label": "bigBlind",
+     "packs": [
+      {
+       "key": "p_arcana_jumbo",
+       "name": "Jumbo Arcana Pack",
+       "kind": "Arcana",
+       "size": 5,
+       "choices": 1,
+       "cards": [
+        {
+         "set": "Tarot",
+         "key": "c_moon",
+         "name": "The Moon"
+        },
+        {
+         "set": "Tarot",
+         "key": "c_world",
+         "name": "The World"
+        },
+        {
+         "set": "Tarot",
+         "key": "c_temperance",
+         "name": "Temperance"
+        },
+        {
+         "set": "Tarot",
+         "key": "c_death",
+         "name": "Death"
+        },
+        {
+         "set": "Tarot",
+         "key": "c_high_priestess",
+         "name": "The High Priestess",
+         "analyzer_gap": "downstream_resample_shift"
+        }
+       ]
+      },
+      {
+       "key": "p_celestial_normal",
+       "name": "Celestial Pack",
+       "kind": "Celestial",
+       "size": 3,
+       "choices": 1,
+       "cards": [
+        {
+         "set": "Planet",
+         "key": "c_pluto",
+         "name": "Pluto",
+         "analyzer_gap": "collides_with_displayed_shop"
+        },
+        {
+         "set": "Planet",
+         "key": "c_neptune",
+         "name": "Neptune"
+        },
+        {
+         "set": "Planet",
+         "key": "c_mars",
+         "name": "Mars"
+        }
+       ]
+      }
+     ]
+    },
+    {
+     "visit": "after_big",
+     "analyzer_label": "bossBlind",
+     "packs": [
+      {
+       "key": "p_arcana_jumbo",
+       "name": "Jumbo Arcana Pack",
+       "kind": "Arcana",
+       "size": 5,
+       "choices": 1,
+       "cards": [
+        {
+         "set": "Tarot",
+         "key": "c_world",
+         "name": "The World"
+        },
+        {
+         "set": "Tarot",
+         "key": "c_lovers",
+         "name": "The Lovers"
+        },
+        {
+         "set": "Tarot",
+         "key": "c_temperance",
+         "name": "Temperance"
+        },
+        {
+         "set": "Tarot",
+         "key": "c_devil",
+         "name": "The Devil",
+         "analyzer_gap": "downstream_resample_shift"
+        },
+        {
+         "set": "Tarot",
+         "key": "c_justice",
+         "name": "Justice"
+        }
+       ]
+      },
+      {
+       "key": "p_arcana_jumbo",
+       "name": "Jumbo Arcana Pack",
+       "kind": "Arcana",
+       "size": 5,
+       "choices": 1,
+       "cards": [
+        {
+         "set": "Tarot",
+         "key": "c_chariot",
+         "name": "The Chariot"
+        },
+        {
+         "set": "Tarot",
+         "key": "c_lovers",
+         "name": "The Lovers"
+        },
+        {
+         "set": "Tarot",
+         "key": "c_strength",
+         "name": "Strength"
+        },
+        {
+         "set": "Tarot",
+         "key": "c_judgement",
+         "name": "Judgement"
+        },
+        {
+         "set": "Tarot",
+         "key": "c_devil",
+         "name": "The Devil"
+        }
+       ]
+      }
+     ]
+    }
+   ],
+   "soul_spawns": [],
+   "deck_order_unverified": {
+    "note": "Blueprint model of the per-blind deck shuffle (index 0 = first card drawn). No second source; excluded from parity by default.",
+    "small": [
+     "C_3",
+     "D_4",
+     "C_6",
+     "C_4",
+     "D_Q",
+     "D_2",
+     "D_A",
+     "D_6",
+     "H_6",
+     "S_A",
+     "S_J",
+     "H_8",
+     "D_K",
+     "D_8",
+     "D_3",
+     "C_9",
+     "D_9",
+     "S_2",
+     "C_A",
+     "H_J",
+     "S_7",
+     "H_3",
+     "H_5",
+     "C_K",
+     "C_2",
+     "C_7",
+     "S_K",
+     "C_Q",
+     "H_T",
+     "H_7",
+     "D_J",
+     "S_6",
+     "S_5",
+     "S_8",
+     "S_4",
+     "C_5",
+     "H_A",
+     "S_3",
+     "D_7",
+     "D_5",
+     "C_T",
+     "C_8",
+     "H_9",
+     "H_K",
+     "H_Q",
+     "S_T",
+     "S_Q",
+     "S_9",
+     "H_2",
+     "D_T",
+     "H_4",
+     "C_J"
+    ],
+    "big": [
+     "C_8",
+     "C_7",
+     "H_T",
+     "D_4",
+     "S_2",
+     "S_J",
+     "H_7",
+     "C_4",
+     "C_9",
+     "S_T",
+     "D_J",
+     "C_K",
+     "D_7",
+     "H_A",
+     "D_8",
+     "C_6",
+     "C_A",
+     "H_4",
+     "H_9",
+     "C_5",
+     "H_8",
+     "C_T",
+     "H_2",
+     "D_5",
+     "C_Q",
+     "S_7",
+     "S_6",
+     "D_Q",
+     "H_6",
+     "D_9",
+     "S_3",
+     "D_K",
+     "D_6",
+     "D_2",
+     "S_9",
+     "S_Q",
+     "C_2",
+     "S_4",
+     "H_5",
+     "H_J",
+     "D_A",
+     "S_K",
+     "C_J",
+     "S_A",
+     "D_T",
+     "S_5",
+     "H_K",
+     "D_3",
+     "H_Q",
+     "S_8",
+     "C_3",
+     "H_3"
+    ],
+    "boss": [
+     "H_4",
+     "S_J",
+     "H_Q",
+     "C_4",
+     "H_J",
+     "D_9",
+     "C_A",
+     "H_6",
+     "C_9",
+     "C_Q",
+     "S_K",
+     "S_5",
+     "H_2",
+     "S_A",
+     "C_2",
+     "C_6",
+     "S_3",
+     "D_T",
+     "C_K",
+     "C_5",
+     "S_2",
+     "H_T",
+     "S_6",
+     "S_4",
+     "D_2",
+     "S_9",
+     "D_7",
+     "C_3",
+     "D_4",
+     "C_T",
+     "S_T",
+     "S_7",
+     "H_5",
+     "D_6",
+     "C_7",
+     "S_8",
+     "C_8",
+     "H_7",
+     "D_K",
+     "S_Q",
+     "D_A",
+     "H_A",
+     "D_J",
+     "H_8",
+     "D_8",
+     "D_Q",
+     "C_J",
+     "D_5",
+     "H_3",
+     "H_K",
+     "D_3",
+     "H_9"
+    ]
+   }
+  }
+ },
+ "legendary_stream": [
+  "j_triboulet",
+  "j_chicot",
+  "j_triboulet",
+  "j_caino",
+  "j_chicot"
+ ],
+ "legendary_stream_note": "Raw Joker4 stream (no purchase-locking).  The k-th Soul used in the run yields entry k only if every earlier legendary was used and none is still owned (owned legendaries are resampled past unless Showman).",
+ "first_soul_joker_by_ante": {
+  "1": {
+   "key": "j_triboulet",
+   "edition": null
+  },
+  "2": {
+   "key": "j_triboulet",
+   "edition": null
+  },
+  "3": {
+   "key": "j_triboulet",
+   "edition": null
+  },
+  "4": {
+   "key": "j_triboulet",
+   "edition": null
+  },
+  "5": {
+   "key": "j_triboulet",
+   "edition": null
+  },
+  "6": {
+   "key": "j_triboulet",
+   "edition": null
+  },
+  "7": {
+   "key": "j_triboulet",
+   "edition": null
+  },
+  "8": {
+   "key": "j_triboulet",
+   "edition": null
+  }
+ },
+ "voucher_chain_if_bought": {
+  "note": "Branch: the voucher shown in ante N is bought (Blueprint applies the buy after ante N's queue, before ante N+1).  Level-2 voucher becomes available; bought one leaves the pool.  Shop queue shown for ante N+1 reflects any rate change (Tarot/Planet Merchant, Magic Trick...).",
+  "antes": {
+   "1": {
+    "voucher": {
+     "key": "v_wasteful",
+     "name": "Wasteful"
+    },
+    "after_buying": null,
+    "shop_queue_first6_names": [
+     "Mars",
+     "Ceremonial Dagger",
+     "Justice",
+     "Marble Joker",
+     "Blue Joker",
+     "The Chariot"
+    ]
+   },
+   "2": {
+    "voucher": {
+     "key": "v_paint_brush",
+     "name": "Paint Brush"
+    },
+    "after_buying": "v_wasteful",
+    "shop_queue_first6_names": [
+     "Devious Joker",
+     "Raised Fist",
+     "The Hanged Man",
+     "Arrowhead",
+     "Showman",
+     "Justice"
+    ]
+   },
+   "3": {
+    "voucher": {
+     "key": "v_crystal_ball",
+     "name": "Crystal Ball"
+    },
+    "after_buying": "v_paint_brush",
+    "shop_queue_first6_names": [
+     "Jupiter",
+     "Uranus",
+     "Hanging Chad",
+     "The Sun",
+     "Splash",
+     "Red Card"
+    ]
+   },
+   "4": {
+    "voucher": {
+     "key": "v_hieroglyph",
+     "name": "Hieroglyph"
+    },
+    "after_buying": "v_crystal_ball",
+    "shop_queue_first6_names": [
+     "The Wheel of Fortune",
+     "Business Card",
+     "Swashbuckler",
+     "Mars",
+     "Four Fingers",
+     "Rough Gem"
+    ]
+   },
+   "5": {
+    "voucher": {
+     "key": "v_reroll_surplus",
+     "name": "Reroll Surplus"
+    },
+    "after_buying": "v_hieroglyph",
+    "shop_queue_first6_names": [
+     "The Devil",
+     "Ride the Bus",
+     "The Sun",
+     "Gluttonous Joker",
+     "Scholar",
+     "Venus"
+    ]
+   },
+   "6": {
+    "voucher": {
+     "key": "v_palette",
+     "name": "Palette"
+    },
+    "after_buying": "v_reroll_surplus",
+    "shop_queue_first6_names": [
+     "Judgement",
+     "Scholar",
+     "Stuntman",
+     "Jolly Joker",
+     "Ride the Bus",
+     "To Do List"
+    ]
+   },
+   "7": {
+    "voucher": {
+     "key": "v_petroglyph",
+     "name": "Petroglyph"
+    },
+    "after_buying": "v_palette",
+    "shop_queue_first6_names": [
+     "Earth",
+     "Earth",
+     "Uranus",
+     "Ride the Bus",
+     "The Tower",
+     "Venus"
+    ]
+   },
+   "8": {
+    "voucher": {
+     "key": "v_blank",
+     "name": "Blank"
+    },
+    "after_buying": "v_petroglyph",
+    "shop_queue_first6_names": [
+     "The High Priestess",
+     "The Sun",
+     "Pluto",
+     "Chaos the Clown",
+     "Ride the Bus",
+     "Half Joker"
+    ]
+   }
+  }
+ },
+ "variants": {
+  "game_faithful_used_jokers": {
+   "note": "Same streams as the primary data plus the game's used_jokers semantics (card.lua Card:set_ability marks every created card; get_current_pool resamples past marked keys): slot 2 of a shop cannot repeat slot 1, and a pack opened with the shop displayed cannot contain a displayed card.  Published analyzers omit this.  Primary items that change carry `analyzer_gap`; apply `overrides` (path -> value) to obtain the faithful sequence. Boss/voucher/tags/pack kinds never differ.  Policy: packs opened at the visit, before any reroll.",
+   "driver": "mp/oracle/blueprint_runner/run_blueprint_faithful.ts",
+   "generated_at": "2026-08-21T16:01:01.336Z",
+   "fields_differing": 11,
+   "reasons": {
+    "same_shop_duplicate": 1,
+    "collides_with_displayed_shop": 5,
+    "downstream_resample_shift": 5
+   },
+   "overrides": [
+    {
+     "path": "antes.1.shops[0].packs[0].cards[0]",
+     "value": {
+      "set": "Joker",
+      "key": "j_luchador",
+      "edition": null,
+      "rarity": 2,
+      "stickers": {
+       "eternal": false,
+       "perishable": false,
+       "rental": false
+      },
+      "name": "Luchador"
+     }
+    },
+    {
+     "path": "antes.7.shop_queue[1]",
+     "value": {
+      "set": "Planet",
+      "key": "c_venus",
+      "name": "Venus"
+     }
+    },
+    {
+     "path": "antes.7.shop_queue[24]",
+     "value": {
+      "set": "Planet",
+      "key": "c_earth",
+      "name": "Earth"
+     }
+    },
+    {
+     "path": "antes.7.shops[1].packs[0].cards[0]",
+     "value": {
+      "set": "Planet",
+      "key": "c_jupiter",
+      "name": "Jupiter"
+     }
+    },
+    {
+     "path": "antes.7.shops[2].packs[0].cards[1]",
+     "value": {
+      "set": "Planet",
+      "key": "c_neptune",
+      "name": "Neptune"
+     }
+    },
+    {
+     "path": "antes.7.shops[2].packs[0].cards[2]",
+     "value": {
+      "set": "Planet",
+      "key": "c_saturn",
+      "name": "Saturn"
+     }
+    },
+    {
+     "path": "antes.8.shops[0].packs[0].cards[4]",
+     "value": {
+      "set": "Tarot",
+      "key": "c_heirophant",
+      "name": "The Hierophant"
+     }
+    },
+    {
+     "path": "antes.8.shops[0].packs[1].cards[1]",
+     "value": {
+      "set": "Tarot",
+      "key": "c_death",
+      "name": "Death"
+     }
+    },
+    {
+     "path": "antes.8.shops[1].packs[0].cards[4]",
+     "value": {
+      "set": "Tarot",
+      "key": "c_devil",
+      "name": "The Devil"
+     }
+    },
+    {
+     "path": "antes.8.shops[1].packs[1].cards[0]",
+     "value": {
+      "set": "Planet",
+      "key": "c_uranus",
+      "name": "Uranus"
+     }
+    },
+    {
+     "path": "antes.8.shops[2].packs[0].cards[3]",
+     "value": {
+      "set": "Tarot",
+      "key": "c_death",
+      "name": "Death"
+     }
+    }
+   ]
+  }
+ }
+}

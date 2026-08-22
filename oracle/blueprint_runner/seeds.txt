@@ -1,0 +1,128 @@
+# Community / analyzer-documented seeds (see SOURCES.md for provenance of each claim)
+ALEEB      # balatrohq example seed (full ante-1 SSR available); gamerant "multiple legendaries in first five shops"
+OG4YQPSI   # balatrohq: Hieroglyph + Soul->Perkeo ante 1; Baron + Reroll Surplus ante 2
+2K9H9HN    # Blueprint fixture; balatrohq: ante 2 Souls -> Perkeo & Triboulet, Crystal Ball, Vampire
+7LB2WVPK   # Blueprint fixture; balatrohq: ante 3 Seed Money + Ride the Bus + The Tribe
+3SZ71111   # Blueprint fixture (Red Deck)
+7ODNKXP    # Blueprint fixture
+9ZXMM1M    # Blueprint fixture
+SF9SZOB1   # Blueprint fixture
+U8RJYV6M   # Blueprint fixture
+V3PUR5L4   # Blueprint fixture
+VNOMH111   # Blueprint fixture
+HSC1L2DX   # gamerant: DNA in first shop
+8Q47WV6K   # gamerant: two legendaries via Soul cards
+4T1SZKLF   # gamerant
+XD55DZ57   # gamerant (Ghost deck claim)
+PTSBMSMQ   # gamerant: Mime + Ankh in ante 1
+LHZYIWR6   # gamerant: double Blueprint + Baron by ante 2
+29ZSW8MY   # gamerant: Blueprint + Brainstorm by ante 2
+PQNVFI72   # gamerant: Photograph/Ancient Joker ante 1, Triboulet ante 3
+9Q9HQXZG   # balatrohq prose: Baron-Mime
+HPR8Q7K    # Blueprint SeedsWithLegendary list
+5YVHAEP    # Blueprint SeedsWithLegendary list
+8QBRTPD    # Blueprint SeedsWithLegendary list
+IMMOLATE   # the analyzer's own namesake seed
+A          # 1-char seed edge case
+11111111   # all-digit seed edge case
+# 100 reproducible random seeds: random.Random(20260821), 8 chars from the game's seed alphabet
+5UIUKHCI
+SMC7XNT8
+WLAVAQ75
+4H2L46CE
+K84ZCS3Q
+RXI42HZ2
+8I5QXNGE
+GVYT2DGJ
+UCAMJYYK
+GVQL737K
+WBC1DGJQ
+D7Y5419A
+C19P8BQ4
+9QV2ZT9X
+YD2HMRBR
+34JCNMPA
+U516KUJP
+A1UAS1G5
+APH9LX2Y
+HS8LL7TC
+WIF67A3S
+BA1D48RK
+15H9Z3IY
+1MD1YZ9T
+2BRGI767
+SQVZX29L
+MIM66QT9
+JQB4BN6F
+29DAQVG1
+T5A1T1DZ
+AMPYZUIU
+C93K3YWJ
+EVB8882H
+5AWWF1M1
+CCBWC6CR
+ICUESE5D
+8IZ7HHE4
+YB54A1EH
+D4TDD2B6
+967889YL
+XDW9VBHQ
+MRBF7L15
+USQF4ZAV
+K8PU119J
+1KV4W6YS
+8UU564MF
+CMEEXU8I
+PJ5TB88W
+4R219TNX
+28V7DD4H
+R8DFV7RD
+93W4UHC4
+K94TS4B8
+2CP4KSXZ
+29Y3L4S9
+56QZEVDV
+4K8A9QER
+H1EWXLNE
+S1QJX1CS
+7YTVQERM
+CHPB293X
+46Y8UZEG
+C1ZLPKAA
+M2LAET6A
+MSQZGPMX
+7UNQV1C9
+7I4M53DL
+51F2NVWK
+8Y7ABZ7C
+7PEE6NA5
+9VIGPRT6
+BQ6A2D42
+I68YASXJ
+PI1J5YAG
+41Y71M6E
+ECG8NVDZ
+KPGY6GCH
+4UEGRRRA
+SLRSKCG1
+EGE5ZY77
+2H9N3ISZ
+CIGHYTAU
+M6XD1INZ
+MM1H85E3
+LMGJPMKP
+X7FG4FH8
+J3GHQHJM
+1558AXDL
+R8W2CT59
+AE1K7DG1
+RUXS91YF
+M4LV5E89
+QY3TQZJ9
+2GHBLJD9
+8SIYIK9C
+YPB7TZWJ
+FSXYRB3J
+6H6WNQM2
+WVPJKPRD
+PT6IF52R

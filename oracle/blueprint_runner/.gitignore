@@ -1,0 +1,5 @@
+# Third-party clones + node_modules live here. NEVER commit them.
+vendor/
+node_modules/
+*.log
+_raw/

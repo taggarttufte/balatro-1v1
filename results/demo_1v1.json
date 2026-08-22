@@ -1,0 +1,4309 @@
+{
+ "mode": "1v1",
+ "player": "scripted:hand=greedy,reroll=1,buy=1,pack=0",
+ "reference": "scripted:hand=greedy,buy=1",
+ "deck": "b_red",
+ "stake": 1,
+ "lives": 4,
+ "max_antes": 8,
+ "seeds": [
+  "11111111",
+  "1558AXDL",
+  "15H9Z3IY",
+  "1KV4W6YS",
+  "1MD1YZ9T",
+  "28V7DD4H",
+  "29DAQVG1",
+  "29Y3L4S9",
+  "29ZSW8MY",
+  "2BRGI767",
+  "2CP4KSXZ",
+  "2GHBLJD9",
+  "2H9N3ISZ",
+  "2K9H9HN",
+  "34JCNMPA",
+  "3SZ71111",
+  "41Y71M6E",
+  "46Y8UZEG",
+  "4H2L46CE",
+  "4K8A9QER",
+  "4R219TNX",
+  "4T1SZKLF",
+  "4UEGRRRA",
+  "51F2NVWK",
+  "56QZEVDV",
+  "5AWWF1M1",
+  "5UIUKHCI",
+  "5YVHAEP",
+  "6H6WNQM2",
+  "7I4M53DL",
+  "7LB2WVPK",
+  "7ODNKXP",
+  "7PEE6NA5",
+  "7UNQV1C9",
+  "7YTVQERM",
+  "8I5QXNGE",
+  "8IZ7HHE4",
+  "8Q47WV6K",
+  "8QBRTPD",
+  "8SIYIK9C",
+  "8UU564MF",
+  "8Y7ABZ7C",
+  "93W4UHC4",
+  "967889YL",
+  "9Q9HQXZG",
+  "9QV2ZT9X",
+  "9VIGPRT6",
+  "9ZXMM1M",
+  "A",
+  "A1UAS1G5",
+  "AE1K7DG1",
+  "ALEEB",
+  "AMPYZUIU",
+  "APH9LX2Y",
+  "BA1D48RK",
+  "BQ6A2D42",
+  "C19P8BQ4",
+  "C1ZLPKAA",
+  "C93K3YWJ",
+  "CCBWC6CR",
+  "CHPB293X",
+  "CIGHYTAU",
+  "CMEEXU8I",
+  "D4TDD2B6",
+  "D7Y5419A",
+  "ECG8NVDZ",
+  "EGE5ZY77",
+  "EVB8882H",
+  "FSXYRB3J",
+  "GVQL737K",
+  "GVYT2DGJ",
+  "H1EWXLNE",
+  "HPR8Q7K",
+  "HS8LL7TC",
+  "HSC1L2DX",
+  "I68YASXJ",
+  "ICUESE5D",
+  "IMMOLATE",
+  "J3GHQHJM",
+  "JQB4BN6F",
+  "K84ZCS3Q",
+  "K8PU119J",
+  "K94TS4B8",
+  "KPGY6GCH",
+  "LHZYIWR6",
+  "LMGJPMKP",
+  "M2LAET6A",
+  "M4LV5E89",
+  "M6XD1INZ",
+  "MIM66QT9",
+  "MM1H85E3",
+  "MRBF7L15",
+  "MSQZGPMX",
+  "OG4YQPSI",
+  "PI1J5YAG",
+  "PJ5TB88W",
+  "PQNVFI72",
+  "PT6IF52R",
+  "PTSBMSMQ",
+  "QY3TQZJ9",
+  "R8DFV7RD",
+  "R8W2CT59",
+  "RUXS91YF",
+  "RXI42HZ2",
+  "S1QJX1CS",
+  "SF9SZOB1",
+  "SLRSKCG1",
+  "SMC7XNT8",
+  "SQVZX29L",
+  "T5A1T1DZ",
+  "U516KUJP",
+  "U8RJYV6M",
+  "UCAMJYYK",
+  "USQF4ZAV",
+  "V3PUR5L4",
+  "VNOMH111",
+  "WBC1DGJQ",
+  "WIF67A3S",
+  "WLAVAQ75",
+  "WVPJKPRD",
+  "X7FG4FH8",
+  "XD55DZ57",
+  "XDW9VBHQ",
+  "YB54A1EH",
+  "YD2HMRBR",
+  "YPB7TZWJ"
+ ],
+ "n_seeds": 126,
+ "wall_clock_s": 21.746644973754883,
+ "per_seed": [
+  {
+   "seed": "11111111",
+   "winner": 1,
+   "lives": [
+    0,
+    3
+   ],
+   "lives_margin": -3,
+   "pvp_log": [
+    [
+     2,
+     0,
+     524,
+     918
+    ]
+   ],
+   "log_score_margins": [
+    -0.5598878597640633
+   ],
+   "mean_log_score_margin": -0.5598878597640633,
+   "final_ante": [
+    3,
+    3
+   ],
+   "final_money": [
+    13,
+    21
+   ],
+   "steps": 159,
+   "done": true
+  },
+  {
+   "seed": "1558AXDL",
+   "winner": 1,
+   "lives": [
+    0,
+    4
+   ],
+   "lives_margin": -4,
+   "pvp_log": [
+    [
+     2,
+     0,
+     780,
+     1892
+    ]
+   ],
+   "log_score_margins": [
+    -0.8853430013696366
+   ],
+   "mean_log_score_margin": -0.8853430013696366,
+   "final_ante": [
+    3,
+    3
+   ],
+   "final_money": [
+    9,
+    44
+   ],
+   "steps": 155,
+   "done": true
+  },
+  {
+   "seed": "15H9Z3IY",
+   "winner": 0,
+   "lives": [
+    4,
+    0
+   ],
+   "lives_margin": 4,
+   "pvp_log": [],
+   "log_score_margins": [],
+   "mean_log_score_margin": 0.0,
+   "final_ante": [
+    2,
+    2
+   ],
+   "final_money": [
+    2,
+    28
+   ],
+   "steps": 87,
+   "done": true
+  },
+  {
+   "seed": "1KV4W6YS",
+   "winner": 1,
+   "lives": [
+    0,
+    3
+   ],
+   "lives_margin": -3,
+   "pvp_log": [
+    [
+     2,
+     1,
+     1504,
+     1092
+    ],
+    [
+     3,
+     0,
+     3247,
+     4280
+    ]
+   ],
+   "log_score_margins": [
+    0.319866689006437,
+    -0.27614720486337774
+   ],
+   "mean_log_score_margin": 0.02185974207152963,
+   "final_ante": [
+    3,
+    3
+   ],
+   "final_money": [
+    13,
+    55
+   ],
+   "steps": 145,
+   "done": true
+  },
+  {
+   "seed": "1MD1YZ9T",
+   "winner": 0,
+   "lives": [
+    3,
+    0
+   ],
+   "lives_margin": 3,
+   "pvp_log": [
+    [
+     2,
+     0,
+     1100,
+     2562
+    ],
+    [
+     3,
+     1,
+     2722,
+     2715
+    ]
+   ],
+   "log_score_margins": [
+    -0.8449595896413911,
+    0.0025740039951722693
+   ],
+   "mean_log_score_margin": -0.4211927928231094,
+   "final_ante": [
+    4,
+    4
+   ],
+   "final_money": [
+    0,
+    68
+   ],
+   "steps": 164,
+   "done": true
+  },
+  {
+   "seed": "28V7DD4H",
+   "winner": 0,
+   "lives": [
+    1,
+    0
+   ],
+   "lives_margin": 1,
+   "pvp_log": [],
+   "log_score_margins": [],
+   "mean_log_score_margin": 0.0,
+   "final_ante": [
+    2,
+    2
+   ],
+   "final_money": [
+    24,
+    42
+   ],
+   "steps": 84,
+   "done": true
+  },
+  {
+   "seed": "29DAQVG1",
+   "winner": 1,
+   "lives": [
+    0,
+    1
+   ],
+   "lives_margin": -1,
+   "pvp_log": [
+    [
+     2,
+     0,
+     2303,
+     3698
+    ],
+    [
+     3,
+     1,
+     2255,
+     1968
+    ]
+   ],
+   "log_score_margins": [
+    -0.473415770016671,
+    0.13606753397882354
+   ],
+   "mean_log_score_margin": -0.16867411801892374,
+   "final_ante": [
+    4,
+    4
+   ],
+   "final_money": [
+    9,
+    77
+   ],
+   "steps": 194,
+   "done": true
+  },
+  {
+   "seed": "29Y3L4S9",
+   "winner": 1,
+   "lives": [
+    0,
+    2
+   ],
+   "lives_margin": -2,
+   "pvp_log": [
+    [
+     2,
+     0,
+     517,
+     2216
+    ]
+   ],
+   "log_score_margins": [
+    -1.4539349673568287
+   ],
+   "mean_log_score_margin": -1.4539349673568287,
+   "final_ante": [
+    3,
+    3
+   ],
+   "final_money": [
+    12,
+    47
+   ],
+   "steps": 121,
+   "done": true
+  },
+  {
+   "seed": "29ZSW8MY",
+   "winner": 1,
+   "lives": [
+    0,
+    3
+   ],
+   "lives_margin": -3,
+   "pvp_log": [
+    [
+     2,
+     0,
+     2284,
+     3617
+    ]
+   ],
+   "log_score_margins": [
+    -0.4595553626269364
+   ],
+   "mean_log_score_margin": -0.4595553626269364,
+   "final_ante": [
+    3,
+    3
+   ],
+   "final_money": [
+    0,
+    32
+   ],
+   "steps": 140,
+   "done": true
+  },
+  {
+   "seed": "2BRGI767",
+   "winner": 0,
+   "lives": [
+    3,
+    0
+   ],
+   "lives_margin": 3,
+   "pvp_log": [
+    [
+     2,
+     1,
+     2804,
+     1312
+    ]
+   ],
+   "log_score_margins": [
+    0.7590889436540005
+   ],
+   "mean_log_score_margin": 0.7590889436540005,
+   "final_ante": [
+    3,
+    3
+   ],
+   "final_money": [
+    1,
+    54
+   ],
+   "steps": 136,
+   "done": true
+  },
+  {
+   "seed": "2CP4KSXZ",
+   "winner": 1,
+   "lives": [
+    0,
+    4
+   ],
+   "lives_margin": -4,
+   "pvp_log": [
+    [
+     2,
+     0,
+     1060,
+     52552
+    ]
+   ],
+   "log_score_margins": [
+    -3.9026103245487835
+   ],
+   "mean_log_score_margin": -3.9026103245487835,
+   "final_ante": [
+    3,
+    3
+   ],
+   "final_money": [
+    10,
+    58
+   ],
+   "steps": 115,
+   "done": true
+  },
+  {
+   "seed": "2GHBLJD9",
+   "winner": 0,
+   "lives": [
+    2,
+    0
+   ],
+   "lives_margin": 2,
+   "pvp_log": [
+    [
+     2,
+     1,
+     724,
+     568
+    ]
+   ],
+   "log_score_margins": [
+    0.24229122072834386
+   ],
+   "mean_log_score_margin": 0.24229122072834386,
+   "final_ante": [
+    2,
+    2
+   ],
+   "final_money": [
+    1,
+    31
+   ],
+   "steps": 101,
+   "done": true
+  },
+  {
+   "seed": "2H9N3ISZ",
+   "winner": 1,
+   "lives": [
+    0,
+    4
+   ],
+   "lives_margin": -4,
+   "pvp_log": [
+    [
+     2,
+     0,
+     368,
+     2576
+    ]
+   ],
+   "log_score_margins": [
+    -1.9435845666118379
+   ],
+   "mean_log_score_margin": -1.9435845666118379,
+   "final_ante": [
+    3,
+    3
+   ],
+   "final_money": [
+    9,
+    50
+   ],
+   "steps": 121,
+   "done": true
+  },
+  {
+   "seed": "2K9H9HN",
+   "winner": 0,
+   "lives": [
+    2,
+    0
+   ],
+   "lives_margin": 2,
+   "pvp_log": [
+    [
+     2,
+     0,
+     894,
+     923
+    ]
+   ],
+   "log_score_margins": [
+    -0.0318883533668286
+   ],
+   "mean_log_score_margin": -0.0318883533668286,
+   "final_ante": [
+    3,
+    3
+   ],
+   "final_money": [
+    1,
+    53
+   ],
+   "steps": 136,
+   "done": true
+  },
+  {
+   "seed": "34JCNMPA",
+   "winner": 0,
+   "lives": [
+    2,
+    0
+   ],
+   "lives_margin": 2,
+   "pvp_log": [
+    [
+     2,
+     1,
+     1020,
+     1016
+    ]
+   ],
+   "log_score_margins": [
+    0.003925422116105359
+   ],
+   "mean_log_score_margin": 0.003925422116105359,
+   "final_ante": [
+    2,
+    2
+   ],
+   "final_money": [
+    -16,
+    27
+   ],
+   "steps": 95,
+   "done": true
+  },
+  {
+   "seed": "3SZ71111",
+   "winner": 1,
+   "lives": [
+    0,
+    4
+   ],
+   "lives_margin": -4,
+   "pvp_log": [
+    [
+     2,
+     0,
+     924,
+     1400
+    ]
+   ],
+   "log_score_margins": [
+    -0.4151478088245817
+   ],
+   "mean_log_score_margin": -0.4151478088245817,
+   "final_ante": [
+    3,
+    3
+   ],
+   "final_money": [
+    19,
+    11
+   ],
+   "steps": 115,
+   "done": true
+  },
+  {
+   "seed": "41Y71M6E",
+   "winner": 0,
+   "lives": [
+    2,
+    0
+   ],
+   "lives_margin": 2,
+   "pvp_log": [
+    [
+     2,
+     1,
+     2552,
+     1520
+    ]
+   ],
+   "log_score_margins": [
+    0.517901124982191
+   ],
+   "mean_log_score_margin": 0.517901124982191,
+   "final_ante": [
+    3,
+    3
+   ],
+   "final_money": [
+    -5,
+    77
+   ],
+   "steps": 132,
+   "done": true
+  },
+  {
+   "seed": "46Y8UZEG",
+   "winner": 1,
+   "lives": [
+    0,
+    2
+   ],
+   "lives_margin": -2,
+   "pvp_log": [
+    [
+     2,
+     0,
+     688,
+     3194
+    ]
+   ],
+   "log_score_margins": [
+    -1.5341010957979773
+   ],
+   "mean_log_score_margin": -1.5341010957979773,
+   "final_ante": [
+    3,
+    3
+   ],
+   "final_money": [
+    10,
+    57
+   ],
+   "steps": 132,
+   "done": true
+  },
+  {
+   "seed": "4H2L46CE",
+   "winner": 1,
+   "lives": [
+    0,
+    1
+   ],
+   "lives_margin": -1,
+   "pvp_log": [
+    [
+     2,
+     1,
+     1568,
+     728
+    ]
+   ],
+   "log_score_margins": [
+    0.7665200207243741
+   ],
+   "mean_log_score_margin": 0.7665200207243741,
+   "final_ante": [
+    3,
+    3
+   ],
+   "final_money": [
+    1,
+    42
+   ],
+   "steps": 123,
+   "done": true
+  },
+  {
+   "seed": "4K8A9QER",
+   "winner": 1,
+   "lives": [
+    0,
+    4
+   ],
+   "lives_margin": -4,
+   "pvp_log": [
+    [
+     2,
+     0,
+     1628,
+     1704
+    ],
+    [
+     3,
+     0,
+     5225,
+     6490
+    ]
+   ],
+   "log_score_margins": [
+    -0.04559878111557225,
+    -0.21677043495291137
+   ],
+   "mean_log_score_margin": -0.1311846080342418,
+   "final_ante": [
+    3,
+    3
+   ],
+   "final_money": [
+    4,
+    37
+   ],
+   "steps": 147,
+   "done": true
+  },
+  {
+   "seed": "4R219TNX",
+   "winner": 1,
+   "lives": [
+    0,
+    4
+   ],
+   "lives_margin": -4,
+   "pvp_log": [
+    [
+     2,
+     0,
+     464,
+     2513
+    ]
+   ],
+   "log_score_margins": [
+    -1.687592983562837
+   ],
+   "mean_log_score_margin": -1.687592983562837,
+   "final_ante": [
+    3,
+    3
+   ],
+   "final_money": [
+    8,
+    21
+   ],
+   "steps": 132,
+   "done": true
+  },
+  {
+   "seed": "4T1SZKLF",
+   "winner": 0,
+   "lives": [
+    1,
+    0
+   ],
+   "lives_margin": 1,
+   "pvp_log": [
+    [
+     2,
+     1,
+     684,
+     656
+    ],
+    [
+     3,
+     1,
+     6760,
+     4156
+    ]
+   ],
+   "log_score_margins": [
+    0.041734819777615506,
+    0.48637714783803965
+   ],
+   "mean_log_score_margin": 0.2640559838078276,
+   "final_ante": [
+    4,
+    4
+   ],
+   "final_money": [
+    12,
+    84
+   ],
+   "steps": 177,
+   "done": true
+  },
+  {
+   "seed": "4UEGRRRA",
+   "winner": 1,
+   "lives": [
+    0,
+    1
+   ],
+   "lives_margin": -1,
+   "pvp_log": [
+    [
+     2,
+     0,
+     1664,
+     2492
+    ],
+    [
+     3,
+     0,
+     3278,
+     10288
+    ]
+   ],
+   "log_score_margins": [
+    -0.40366168110901324,
+    -1.1435368655311606
+   ],
+   "mean_log_score_margin": -0.7735992733200869,
+   "final_ante": [
+    3,
+    3
+   ],
+   "final_money": [
+    1,
+    66
+   ],
+   "steps": 151,
+   "done": true
+  },
+  {
+   "seed": "51F2NVWK",
+   "winner": 1,
+   "lives": [
+    0,
+    2
+   ],
+   "lives_margin": -2,
+   "pvp_log": [
+    [
+     2,
+     0,
+     572,
+     1138
+    ]
+   ],
+   "log_score_margins": [
+    -0.687020246732442
+   ],
+   "mean_log_score_margin": -0.687020246732442,
+   "final_ante": [
+    2,
+    2
+   ],
+   "final_money": [
+    15,
+    32
+   ],
+   "steps": 105,
+   "done": true
+  },
+  {
+   "seed": "56QZEVDV",
+   "winner": 1,
+   "lives": [
+    0,
+    2
+   ],
+   "lives_margin": -2,
+   "pvp_log": [
+    [
+     2,
+     0,
+     459,
+     4536
+    ],
+    [
+     3,
+     1,
+     6519,
+     6488
+    ]
+   ],
+   "log_score_margins": [
+    -2.2887947901808223,
+    0.004765940299529703
+   ],
+   "mean_log_score_margin": -1.1420144249406463,
+   "final_ante": [
+    4,
+    4
+   ],
+   "final_money": [
+    0,
+    71
+   ],
+   "steps": 182,
+   "done": true
+  },
+  {
+   "seed": "5AWWF1M1",
+   "winner": 1,
+   "lives": [
+    0,
+    2
+   ],
+   "lives_margin": -2,
+   "pvp_log": [
+    [
+     2,
+     0,
+     884,
+     2944
+    ]
+   ],
+   "log_score_margins": [
+    -1.2022764510777577
+   ],
+   "mean_log_score_margin": -1.2022764510777577,
+   "final_ante": [
+    3,
+    3
+   ],
+   "final_money": [
+    5,
+    40
+   ],
+   "steps": 138,
+   "done": true
+  },
+  {
+   "seed": "5UIUKHCI",
+   "winner": 0,
+   "lives": [
+    1,
+    0
+   ],
+   "lives_margin": 1,
+   "pvp_log": [
+    [
+     2,
+     0,
+     856,
+     1612
+    ]
+   ],
+   "log_score_margins": [
+    -0.6324131595274292
+   ],
+   "mean_log_score_margin": -0.6324131595274292,
+   "final_ante": [
+    3,
+    3
+   ],
+   "final_money": [
+    9,
+    43
+   ],
+   "steps": 132,
+   "done": true
+  },
+  {
+   "seed": "5YVHAEP",
+   "winner": 0,
+   "lives": [
+    1,
+    0
+   ],
+   "lives_margin": 1,
+   "pvp_log": [
+    [
+     2,
+     1,
+     1248,
+     916
+    ],
+    [
+     3,
+     1,
+     4595,
+     2459
+    ]
+   ],
+   "log_score_margins": [
+    0.30899103786911297,
+    0.6250250100422381
+   ],
+   "mean_log_score_margin": 0.46700802395567553,
+   "final_ante": [
+    3,
+    3
+   ],
+   "final_money": [
+    7,
+    41
+   ],
+   "steps": 173,
+   "done": true
+  },
+  {
+   "seed": "6H6WNQM2",
+   "winner": 1,
+   "lives": [
+    0,
+    3
+   ],
+   "lives_margin": -3,
+   "pvp_log": [
+    [
+     2,
+     0,
+     4272,
+     5320
+    ],
+    [
+     3,
+     0,
+     3991,
+     7025
+    ]
+   ],
+   "log_score_margins": [
+    -0.21934509895234378,
+    -0.5653251953944185
+   ],
+   "mean_log_score_margin": -0.39233514717338114,
+   "final_ante": [
+    3,
+    3
+   ],
+   "final_money": [
+    4,
+    40
+   ],
+   "steps": 152,
+   "done": true
+  },
+  {
+   "seed": "7I4M53DL",
+   "winner": 1,
+   "lives": [
+    0,
+    3
+   ],
+   "lives_margin": -3,
+   "pvp_log": [
+    [
+     2,
+     0,
+     1020,
+     1456
+    ]
+   ],
+   "log_score_margins": [
+    -0.3555969880305394
+   ],
+   "mean_log_score_margin": -0.3555969880305394,
+   "final_ante": [
+    2,
+    2
+   ],
+   "final_money": [
+    5,
+    22
+   ],
+   "steps": 106,
+   "done": true
+  },
+  {
+   "seed": "7LB2WVPK",
+   "winner": 0,
+   "lives": [
+    2,
+    0
+   ],
+   "lives_margin": 2,
+   "pvp_log": [
+    [
+     2,
+     1,
+     1336,
+     1324
+    ]
+   ],
+   "log_score_margins": [
+    0.009015838681620814
+   ],
+   "mean_log_score_margin": 0.009015838681620814,
+   "final_ante": [
+    2,
+    2
+   ],
+   "final_money": [
+    1,
+    46
+   ],
+   "steps": 98,
+   "done": true
+  },
+  {
+   "seed": "7ODNKXP",
+   "winner": 1,
+   "lives": [
+    0,
+    1
+   ],
+   "lives_margin": -1,
+   "pvp_log": [
+    [
+     2,
+     0,
+     421,
+     565
+    ]
+   ],
+   "log_score_margins": [
+    -0.29358876416717106
+   ],
+   "mean_log_score_margin": -0.29358876416717106,
+   "final_ante": [
+    3,
+    3
+   ],
+   "final_money": [
+    17,
+    41
+   ],
+   "steps": 166,
+   "done": true
+  },
+  {
+   "seed": "7PEE6NA5",
+   "winner": 1,
+   "lives": [
+    0,
+    1
+   ],
+   "lives_margin": -1,
+   "pvp_log": [
+    [
+     2,
+     0,
+     1860,
+     2418
+    ]
+   ],
+   "log_score_margins": [
+    -0.26224025396777684
+   ],
+   "mean_log_score_margin": -0.26224025396777684,
+   "final_ante": [
+    3,
+    3
+   ],
+   "final_money": [
+    8,
+    74
+   ],
+   "steps": 131,
+   "done": true
+  },
+  {
+   "seed": "7UNQV1C9",
+   "winner": 1,
+   "lives": [
+    0,
+    4
+   ],
+   "lives_margin": -4,
+   "pvp_log": [
+    [
+     2,
+     0,
+     716,
+     7184
+    ]
+   ],
+   "log_score_margins": [
+    -2.3046749579135053
+   ],
+   "mean_log_score_margin": -2.3046749579135053,
+   "final_ante": [
+    3,
+    3
+   ],
+   "final_money": [
+    8,
+    39
+   ],
+   "steps": 135,
+   "done": true
+  },
+  {
+   "seed": "7YTVQERM",
+   "winner": 1,
+   "lives": [
+    0,
+    1
+   ],
+   "lives_margin": -1,
+   "pvp_log": [
+    [
+     2,
+     0,
+     434,
+     3418
+    ]
+   ],
+   "log_score_margins": [
+    -2.0617573585506177
+   ],
+   "mean_log_score_margin": -2.0617573585506177,
+   "final_ante": [
+    3,
+    3
+   ],
+   "final_money": [
+    7,
+    69
+   ],
+   "steps": 143,
+   "done": true
+  },
+  {
+   "seed": "8I5QXNGE",
+   "winner": 1,
+   "lives": [
+    0,
+    3
+   ],
+   "lives_margin": -3,
+   "pvp_log": [
+    [
+     2,
+     0,
+     1552,
+     6388
+    ]
+   ],
+   "log_score_margins": [
+    -1.4143892174536559
+   ],
+   "mean_log_score_margin": -1.4143892174536559,
+   "final_ante": [
+    2,
+    2
+   ],
+   "final_money": [
+    7,
+    14
+   ],
+   "steps": 108,
+   "done": true
+  },
+  {
+   "seed": "8IZ7HHE4",
+   "winner": 1,
+   "lives": [
+    0,
+    4
+   ],
+   "lives_margin": -4,
+   "pvp_log": [
+    [
+     2,
+     0,
+     1480,
+     2046
+    ]
+   ],
+   "log_score_margins": [
+    -0.3236577713934903
+   ],
+   "mean_log_score_margin": -0.3236577713934903,
+   "final_ante": [
+    3,
+    3
+   ],
+   "final_money": [
+    9,
+    45
+   ],
+   "steps": 110,
+   "done": true
+  },
+  {
+   "seed": "8Q47WV6K",
+   "winner": 1,
+   "lives": [
+    0,
+    3
+   ],
+   "lives_margin": -3,
+   "pvp_log": [
+    [
+     2,
+     0,
+     469,
+     1156
+    ]
+   ],
+   "log_score_margins": [
+    -0.9008530324895725
+   ],
+   "mean_log_score_margin": -0.9008530324895725,
+   "final_ante": [
+    2,
+    2
+   ],
+   "final_money": [
+    8,
+    15
+   ],
+   "steps": 101,
+   "done": true
+  },
+  {
+   "seed": "8QBRTPD",
+   "winner": 0,
+   "lives": [
+    3,
+    0
+   ],
+   "lives_margin": 3,
+   "pvp_log": [
+    [
+     2,
+     1,
+     1820,
+     368
+    ]
+   ],
+   "log_score_margins": [
+    1.5963444356870813
+   ],
+   "mean_log_score_margin": 1.5963444356870813,
+   "final_ante": [
+    3,
+    3
+   ],
+   "final_money": [
+    1,
+    54
+   ],
+   "steps": 109,
+   "done": true
+  },
+  {
+   "seed": "8SIYIK9C",
+   "winner": 1,
+   "lives": [
+    0,
+    3
+   ],
+   "lives_margin": -3,
+   "pvp_log": [
+    [
+     2,
+     0,
+     3391,
+     4160
+    ]
+   ],
+   "log_score_margins": [
+    -0.2043357120711491
+   ],
+   "mean_log_score_margin": -0.2043357120711491,
+   "final_ante": [
+    2,
+    2
+   ],
+   "final_money": [
+    0,
+    9
+   ],
+   "steps": 109,
+   "done": true
+  },
+  {
+   "seed": "8UU564MF",
+   "winner": 0,
+   "lives": [
+    1,
+    0
+   ],
+   "lives_margin": 1,
+   "pvp_log": [
+    [
+     2,
+     null,
+     740,
+     740
+    ]
+   ],
+   "log_score_margins": [
+    0.0
+   ],
+   "mean_log_score_margin": 0.0,
+   "final_ante": [
+    3,
+    3
+   ],
+   "final_money": [
+    10,
+    56
+   ],
+   "steps": 138,
+   "done": true
+  },
+  {
+   "seed": "8Y7ABZ7C",
+   "winner": 1,
+   "lives": [
+    0,
+    1
+   ],
+   "lives_margin": -1,
+   "pvp_log": [
+    [
+     2,
+     0,
+     1024,
+     1286
+    ],
+    [
+     3,
+     0,
+     724,
+     1374
+    ]
+   ],
+   "log_score_margins": [
+    -0.22762131602361801,
+    -0.6400373552459966
+   ],
+   "mean_log_score_margin": -0.4338293356348073,
+   "final_ante": [
+    3,
+    3
+   ],
+   "final_money": [
+    12,
+    64
+   ],
+   "steps": 164,
+   "done": true
+  },
+  {
+   "seed": "93W4UHC4",
+   "winner": 0,
+   "lives": [
+    2,
+    0
+   ],
+   "lives_margin": 2,
+   "pvp_log": [
+    [
+     2,
+     1,
+     1662,
+     1142
+    ],
+    [
+     3,
+     1,
+     4878,
+     4662
+    ]
+   ],
+   "log_score_margins": [
+    0.3749668153981176,
+    0.045281263007517225
+   ],
+   "mean_log_score_margin": 0.21012403920281741,
+   "final_ante": [
+    3,
+    3
+   ],
+   "final_money": [
+    0,
+    42
+   ],
+   "steps": 152,
+   "done": true
+  },
+  {
+   "seed": "967889YL",
+   "winner": 1,
+   "lives": [
+    0,
+    4
+   ],
+   "lives_margin": -4,
+   "pvp_log": [
+    [
+     2,
+     0,
+     1500,
+     11858
+    ],
+    [
+     3,
+     0,
+     6516,
+     9774
+    ],
+    [
+     4,
+     0,
+     3421,
+     29328
+    ]
+   ],
+   "log_score_margins": [
+    -2.066955520331333,
+    -0.40541395852118534,
+    -2.1483516121546202
+   ],
+   "mean_log_score_margin": -1.540240363669046,
+   "final_ante": [
+    4,
+    4
+   ],
+   "final_money": [
+    25,
+    58
+   ],
+   "steps": 191,
+   "done": true
+  },
+  {
+   "seed": "9Q9HQXZG",
+   "winner": 1,
+   "lives": [
+    0,
+    4
+   ],
+   "lives_margin": -4,
+   "pvp_log": [
+    [
+     2,
+     0,
+     360,
+     760
+    ]
+   ],
+   "log_score_margins": [
+    -0.7457553995288055
+   ],
+   "mean_log_score_margin": -0.7457553995288055,
+   "final_ante": [
+    3,
+    3
+   ],
+   "final_money": [
+    3,
+    16
+   ],
+   "steps": 143,
+   "done": true
+  },
+  {
+   "seed": "9QV2ZT9X",
+   "winner": 0,
+   "lives": [
+    4,
+    0
+   ],
+   "lives_margin": 4,
+   "pvp_log": [
+    [
+     2,
+     1,
+     3272,
+     776
+    ]
+   ],
+   "log_score_margins": [
+    1.4380219241335324
+   ],
+   "mean_log_score_margin": 1.4380219241335324,
+   "final_ante": [
+    3,
+    3
+   ],
+   "final_money": [
+    5,
+    45
+   ],
+   "steps": 113,
+   "done": true
+  },
+  {
+   "seed": "9VIGPRT6",
+   "winner": 0,
+   "lives": [
+    3,
+    0
+   ],
+   "lives_margin": 3,
+   "pvp_log": [
+    [
+     2,
+     1,
+     2318,
+     460
+    ]
+   ],
+   "log_score_margins": [
+    1.6154932942588829
+   ],
+   "mean_log_score_margin": 1.6154932942588829,
+   "final_ante": [
+    3,
+    3
+   ],
+   "final_money": [
+    2,
+    53
+   ],
+   "steps": 132,
+   "done": true
+  },
+  {
+   "seed": "9ZXMM1M",
+   "winner": 0,
+   "lives": [
+    1,
+    0
+   ],
+   "lives_margin": 1,
+   "pvp_log": [
+    [
+     2,
+     1,
+     516,
+     490
+    ]
+   ],
+   "log_score_margins": [
+    0.05159874671390874
+   ],
+   "mean_log_score_margin": 0.05159874671390874,
+   "final_ante": [
+    3,
+    3
+   ],
+   "final_money": [
+    4,
+    60
+   ],
+   "steps": 127,
+   "done": true
+  },
+  {
+   "seed": "A",
+   "winner": 1,
+   "lives": [
+    0,
+    3
+   ],
+   "lives_margin": -3,
+   "pvp_log": [
+    [
+     2,
+     0,
+     1288,
+     2400
+    ]
+   ],
+   "log_score_margins": [
+    -0.6220185932820659
+   ],
+   "mean_log_score_margin": -0.6220185932820659,
+   "final_ante": [
+    3,
+    3
+   ],
+   "final_money": [
+    2,
+    62
+   ],
+   "steps": 148,
+   "done": true
+  },
+  {
+   "seed": "A1UAS1G5",
+   "winner": 1,
+   "lives": [
+    0,
+    4
+   ],
+   "lives_margin": -4,
+   "pvp_log": [
+    [
+     2,
+     0,
+     644,
+     10746
+    ]
+   ],
+   "log_score_margins": [
+    -2.8131316080453814
+   ],
+   "mean_log_score_margin": -2.8131316080453814,
+   "final_ante": [
+    2,
+    2
+   ],
+   "final_money": [
+    14,
+    16
+   ],
+   "steps": 102,
+   "done": true
+  },
+  {
+   "seed": "AE1K7DG1",
+   "winner": 1,
+   "lives": [
+    0,
+    4
+   ],
+   "lives_margin": -4,
+   "pvp_log": [
+    [
+     2,
+     0,
+     956,
+     4948
+    ]
+   ],
+   "log_score_margins": [
+    -1.6431374234989313
+   ],
+   "mean_log_score_margin": -1.6431374234989313,
+   "final_ante": [
+    2,
+    2
+   ],
+   "final_money": [
+    12,
+    17
+   ],
+   "steps": 100,
+   "done": true
+  },
+  {
+   "seed": "ALEEB",
+   "winner": 0,
+   "lives": [
+    3,
+    0
+   ],
+   "lives_margin": 3,
+   "pvp_log": [
+    [
+     2,
+     1,
+     2749,
+     2728
+    ],
+    [
+     3,
+     1,
+     4208,
+     3004
+    ]
+   ],
+   "log_score_margins": [
+    0.007665669952277909,
+    0.33694752180126386
+   ],
+   "mean_log_score_margin": 0.17230659587677088,
+   "final_ante": [
+    3,
+    3
+   ],
+   "final_money": [
+    1,
+    56
+   ],
+   "steps": 151,
+   "done": true
+  },
+  {
+   "seed": "AMPYZUIU",
+   "winner": 1,
+   "lives": [
+    0,
+    4
+   ],
+   "lives_margin": -4,
+   "pvp_log": [
+    [
+     2,
+     0,
+     584,
+     2224
+    ]
+   ],
+   "log_score_margins": [
+    -1.3359003473684838
+   ],
+   "mean_log_score_margin": -1.3359003473684838,
+   "final_ante": [
+    3,
+    3
+   ],
+   "final_money": [
+    1,
+    30
+   ],
+   "steps": 125,
+   "done": true
+  },
+  {
+   "seed": "APH9LX2Y",
+   "winner": 1,
+   "lives": [
+    0,
+    4
+   ],
+   "lives_margin": -4,
+   "pvp_log": [
+    [
+     2,
+     0,
+     527,
+     3310
+    ],
+    [
+     3,
+     0,
+     2720,
+     5500
+    ]
+   ],
+   "log_score_margins": [
+    -1.8359092538409847,
+    -0.7039304340922126
+   ],
+   "mean_log_score_margin": -1.2699198439665986,
+   "final_ante": [
+    3,
+    3
+   ],
+   "final_money": [
+    5,
+    37
+   ],
+   "steps": 143,
+   "done": true
+  },
+  {
+   "seed": "BA1D48RK",
+   "winner": 1,
+   "lives": [
+    0,
+    4
+   ],
+   "lives_margin": -4,
+   "pvp_log": [
+    [
+     2,
+     0,
+     1520,
+     7975
+    ]
+   ],
+   "log_score_margins": [
+    -1.6570690193823818
+   ],
+   "mean_log_score_margin": -1.6570690193823818,
+   "final_ante": [
+    3,
+    3
+   ],
+   "final_money": [
+    1,
+    35
+   ],
+   "steps": 142,
+   "done": true
+  },
+  {
+   "seed": "BQ6A2D42",
+   "winner": 1,
+   "lives": [
+    0,
+    2
+   ],
+   "lives_margin": -2,
+   "pvp_log": [
+    [
+     2,
+     0,
+     1924,
+     4644
+    ]
+   ],
+   "log_score_margins": [
+    -0.8808654045260544
+   ],
+   "mean_log_score_margin": -0.8808654045260544,
+   "final_ante": [
+    2,
+    2
+   ],
+   "final_money": [
+    4,
+    19
+   ],
+   "steps": 106,
+   "done": true
+  },
+  {
+   "seed": "C19P8BQ4",
+   "winner": 1,
+   "lives": [
+    0,
+    2
+   ],
+   "lives_margin": -2,
+   "pvp_log": [
+    [
+     2,
+     0,
+     852,
+     1582
+    ]
+   ],
+   "log_score_margins": [
+    -0.618317512389333
+   ],
+   "mean_log_score_margin": -0.618317512389333,
+   "final_ante": [
+    2,
+    2
+   ],
+   "final_money": [
+    7,
+    26
+   ],
+   "steps": 117,
+   "done": true
+  },
+  {
+   "seed": "C1ZLPKAA",
+   "winner": 0,
+   "lives": [
+    4,
+    0
+   ],
+   "lives_margin": 4,
+   "pvp_log": [
+    [
+     2,
+     1,
+     1176,
+     372
+    ]
+   ],
+   "log_score_margins": [
+    1.1491456876164605
+   ],
+   "mean_log_score_margin": 1.1491456876164605,
+   "final_ante": [
+    3,
+    3
+   ],
+   "final_money": [
+    4,
+    48
+   ],
+   "steps": 104,
+   "done": true
+  },
+  {
+   "seed": "C93K3YWJ",
+   "winner": 1,
+   "lives": [
+    0,
+    1
+   ],
+   "lives_margin": -1,
+   "pvp_log": [
+    [
+     2,
+     0,
+     782,
+     1548
+    ]
+   ],
+   "log_score_margins": [
+    -0.6822321444260657
+   ],
+   "mean_log_score_margin": -0.6822321444260657,
+   "final_ante": [
+    3,
+    3
+   ],
+   "final_money": [
+    3,
+    46
+   ],
+   "steps": 126,
+   "done": true
+  },
+  {
+   "seed": "CCBWC6CR",
+   "winner": 1,
+   "lives": [
+    0,
+    2
+   ],
+   "lives_margin": -2,
+   "pvp_log": [
+    [
+     2,
+     0,
+     1140,
+     32895
+    ],
+    [
+     3,
+     0,
+     2103,
+     25812
+    ]
+   ],
+   "log_score_margins": [
+    -3.361445998952761,
+    -2.5070379461182304
+   ],
+   "mean_log_score_margin": -2.934241972535496,
+   "final_ante": [
+    3,
+    3
+   ],
+   "final_money": [
+    6,
+    62
+   ],
+   "steps": 152,
+   "done": true
+  },
+  {
+   "seed": "CHPB293X",
+   "winner": 1,
+   "lives": [
+    0,
+    1
+   ],
+   "lives_margin": -1,
+   "pvp_log": [
+    [
+     2,
+     0,
+     604,
+     835
+    ]
+   ],
+   "log_score_margins": [
+    -0.3234001550538599
+   ],
+   "mean_log_score_margin": -0.3234001550538599,
+   "final_ante": [
+    3,
+    3
+   ],
+   "final_money": [
+    12,
+    62
+   ],
+   "steps": 146,
+   "done": true
+  },
+  {
+   "seed": "CIGHYTAU",
+   "winner": 1,
+   "lives": [
+    0,
+    4
+   ],
+   "lives_margin": -4,
+   "pvp_log": [
+    [
+     2,
+     0,
+     2240,
+     13523
+    ],
+    [
+     3,
+     0,
+     8955,
+     9592
+    ]
+   ],
+   "log_score_margins": [
+    -1.797543690026849,
+    -0.0687099670993021
+   ],
+   "mean_log_score_margin": -0.9331268285630756,
+   "final_ante": [
+    3,
+    3
+   ],
+   "final_money": [
+    8,
+    58
+   ],
+   "steps": 144,
+   "done": true
+  },
+  {
+   "seed": "CMEEXU8I",
+   "winner": 1,
+   "lives": [
+    0,
+    3
+   ],
+   "lives_margin": -3,
+   "pvp_log": [
+    [
+     2,
+     0,
+     1033,
+     1140
+    ]
+   ],
+   "log_score_margins": [
+    -0.09847029479370129
+   ],
+   "mean_log_score_margin": -0.09847029479370129,
+   "final_ante": [
+    3,
+    3
+   ],
+   "final_money": [
+    7,
+    40
+   ],
+   "steps": 156,
+   "done": true
+  },
+  {
+   "seed": "D4TDD2B6",
+   "winner": 0,
+   "lives": [
+    1,
+    0
+   ],
+   "lives_margin": 1,
+   "pvp_log": [
+    [
+     2,
+     0,
+     2400,
+     2474
+    ]
+   ],
+   "log_score_margins": [
+    -0.03035507878153787
+   ],
+   "mean_log_score_margin": -0.03035507878153787,
+   "final_ante": [
+    3,
+    3
+   ],
+   "final_money": [
+    -16,
+    59
+   ],
+   "steps": 134,
+   "done": true
+  },
+  {
+   "seed": "D7Y5419A",
+   "winner": 0,
+   "lives": [
+    2,
+    0
+   ],
+   "lives_margin": 2,
+   "pvp_log": [
+    [
+     2,
+     0,
+     576,
+     4214
+    ]
+   ],
+   "log_score_margins": [
+    -1.988562603927856
+   ],
+   "mean_log_score_margin": -1.988562603927856,
+   "final_ante": [
+    3,
+    3
+   ],
+   "final_money": [
+    7,
+    54
+   ],
+   "steps": 135,
+   "done": true
+  },
+  {
+   "seed": "ECG8NVDZ",
+   "winner": 0,
+   "lives": [
+    4,
+    0
+   ],
+   "lives_margin": 4,
+   "pvp_log": [
+    [
+     2,
+     1,
+     3650,
+     1780
+    ]
+   ],
+   "log_score_margins": [
+    0.7178260983659763
+   ],
+   "mean_log_score_margin": 0.7178260983659763,
+   "final_ante": [
+    3,
+    3
+   ],
+   "final_money": [
+    10,
+    46
+   ],
+   "steps": 119,
+   "done": true
+  },
+  {
+   "seed": "EGE5ZY77",
+   "winner": 0,
+   "lives": [
+    1,
+    0
+   ],
+   "lives_margin": 1,
+   "pvp_log": [
+    [
+     2,
+     0,
+     1095,
+     1908
+    ]
+   ],
+   "log_score_margins": [
+    -0.5549123562177867
+   ],
+   "mean_log_score_margin": -0.5549123562177867,
+   "final_ante": [
+    3,
+    3
+   ],
+   "final_money": [
+    6,
+    63
+   ],
+   "steps": 143,
+   "done": true
+  },
+  {
+   "seed": "EVB8882H",
+   "winner": 0,
+   "lives": [
+    2,
+    0
+   ],
+   "lives_margin": 2,
+   "pvp_log": [
+    [
+     2,
+     0,
+     1436,
+     2124
+    ]
+   ],
+   "log_score_margins": [
+    -0.39121419527949186
+   ],
+   "mean_log_score_margin": -0.39121419527949186,
+   "final_ante": [
+    3,
+    3
+   ],
+   "final_money": [
+    0,
+    60
+   ],
+   "steps": 134,
+   "done": true
+  },
+  {
+   "seed": "FSXYRB3J",
+   "winner": 1,
+   "lives": [
+    0,
+    2
+   ],
+   "lives_margin": -2,
+   "pvp_log": [
+    [
+     2,
+     0,
+     2542,
+     4983
+    ],
+    [
+     3,
+     0,
+     5854,
+     6504
+    ]
+   ],
+   "log_score_margins": [
+    -0.67288829504517,
+    -0.10527511491478769
+   ],
+   "mean_log_score_margin": -0.38908170497997885,
+   "final_ante": [
+    4,
+    4
+   ],
+   "final_money": [
+    0,
+    78
+   ],
+   "steps": 170,
+   "done": true
+  },
+  {
+   "seed": "GVQL737K",
+   "winner": 1,
+   "lives": [
+    0,
+    1
+   ],
+   "lives_margin": -1,
+   "pvp_log": [
+    [
+     2,
+     0,
+     572,
+     932
+    ]
+   ],
+   "log_score_margins": [
+    -0.48751948413260404
+   ],
+   "mean_log_score_margin": -0.48751948413260404,
+   "final_ante": [
+    2,
+    2
+   ],
+   "final_money": [
+    6,
+    44
+   ],
+   "steps": 117,
+   "done": true
+  },
+  {
+   "seed": "GVYT2DGJ",
+   "winner": 1,
+   "lives": [
+    0,
+    1
+   ],
+   "lives_margin": -1,
+   "pvp_log": [
+    [
+     2,
+     1,
+     7222,
+     1664
+    ],
+    [
+     3,
+     1,
+     8170,
+     3499
+    ]
+   ],
+   "log_score_margins": [
+    1.467445255636302,
+    0.847828331907202
+   ],
+   "mean_log_score_margin": 1.157636793771752,
+   "final_ante": [
+    4,
+    4
+   ],
+   "final_money": [
+    3,
+    87
+   ],
+   "steps": 175,
+   "done": true
+  },
+  {
+   "seed": "H1EWXLNE",
+   "winner": 1,
+   "lives": [
+    0,
+    2
+   ],
+   "lives_margin": -2,
+   "pvp_log": [
+    [
+     2,
+     0,
+     529,
+     1869
+    ]
+   ],
+   "log_score_margins": [
+    -1.2608167033024653
+   ],
+   "mean_log_score_margin": -1.2608167033024653,
+   "final_ante": [
+    2,
+    2
+   ],
+   "final_money": [
+    10,
+    39
+   ],
+   "steps": 105,
+   "done": true
+  },
+  {
+   "seed": "HPR8Q7K",
+   "winner": 1,
+   "lives": [
+    0,
+    2
+   ],
+   "lives_margin": -2,
+   "pvp_log": [
+    [
+     2,
+     0,
+     1144,
+     1914
+    ]
+   ],
+   "log_score_margins": [
+    -0.5143129856264057
+   ],
+   "mean_log_score_margin": -0.5143129856264057,
+   "final_ante": [
+    2,
+    2
+   ],
+   "final_money": [
+    3,
+    27
+   ],
+   "steps": 115,
+   "done": true
+  },
+  {
+   "seed": "HS8LL7TC",
+   "winner": 0,
+   "lives": [
+    1,
+    0
+   ],
+   "lives_margin": 1,
+   "pvp_log": [
+    [
+     2,
+     0,
+     1416,
+     4712
+    ],
+    [
+     3,
+     1,
+     2266,
+     2064
+    ]
+   ],
+   "log_score_margins": [
+    -1.2017826872330497,
+    0.09332714511239626
+   ],
+   "mean_log_score_margin": -0.5542277710603267,
+   "final_ante": [
+    4,
+    4
+   ],
+   "final_money": [
+    2,
+    46
+   ],
+   "steps": 185,
+   "done": true
+  },
+  {
+   "seed": "HSC1L2DX",
+   "winner": 0,
+   "lives": [
+    4,
+    0
+   ],
+   "lives_margin": 4,
+   "pvp_log": [
+    [
+     2,
+     1,
+     14600,
+     674
+    ]
+   ],
+   "log_score_margins": [
+    3.074132607629034
+   ],
+   "mean_log_score_margin": 3.074132607629034,
+   "final_ante": [
+    3,
+    3
+   ],
+   "final_money": [
+    0,
+    43
+   ],
+   "steps": 148,
+   "done": true
+  },
+  {
+   "seed": "I68YASXJ",
+   "winner": 1,
+   "lives": [
+    0,
+    1
+   ],
+   "lives_margin": -1,
+   "pvp_log": [
+    [
+     2,
+     0,
+     2812,
+     3964
+    ],
+    [
+     3,
+     1,
+     3807,
+     3493
+    ]
+   ],
+   "log_score_margins": [
+    -0.34325432557909163,
+    0.08605690521725329
+   ],
+   "mean_log_score_margin": -0.12859871018091917,
+   "final_ante": [
+    4,
+    4
+   ],
+   "final_money": [
+    15,
+    73
+   ],
+   "steps": 193,
+   "done": true
+  },
+  {
+   "seed": "ICUESE5D",
+   "winner": 0,
+   "lives": [
+    2,
+    0
+   ],
+   "lives_margin": 2,
+   "pvp_log": [
+    [
+     2,
+     1,
+     1684,
+     1680
+    ]
+   ],
+   "log_score_margins": [
+    0.0023767093778461756
+   ],
+   "mean_log_score_margin": 0.0023767093778461756,
+   "final_ante": [
+    3,
+    3
+   ],
+   "final_money": [
+    7,
+    52
+   ],
+   "steps": 118,
+   "done": true
+  },
+  {
+   "seed": "IMMOLATE",
+   "winner": 0,
+   "lives": [
+    3,
+    0
+   ],
+   "lives_margin": 3,
+   "pvp_log": [
+    [
+     2,
+     0,
+     4664,
+     5144
+    ],
+    [
+     3,
+     1,
+     2271,
+     982
+    ]
+   ],
+   "log_score_margins": [
+    -0.09793753498670554,
+    0.8378066596938751
+   ],
+   "mean_log_score_margin": 0.3699345623535848,
+   "final_ante": [
+    3,
+    3
+   ],
+   "final_money": [
+    1,
+    42
+   ],
+   "steps": 162,
+   "done": true
+  },
+  {
+   "seed": "J3GHQHJM",
+   "winner": 0,
+   "lives": [
+    4,
+    0
+   ],
+   "lives_margin": 4,
+   "pvp_log": [],
+   "log_score_margins": [],
+   "mean_log_score_margin": 0.0,
+   "final_ante": [
+    2,
+    2
+   ],
+   "final_money": [
+    1,
+    30
+   ],
+   "steps": 76,
+   "done": true
+  },
+  {
+   "seed": "JQB4BN6F",
+   "winner": 1,
+   "lives": [
+    0,
+    3
+   ],
+   "lives_margin": -3,
+   "pvp_log": [
+    [
+     2,
+     0,
+     2828,
+     4360
+    ],
+    [
+     3,
+     0,
+     3313,
+     4210
+    ]
+   ],
+   "log_score_margins": [
+    -0.4327780965411989,
+    -0.23954423017542048
+   ],
+   "mean_log_score_margin": -0.3361611633583097,
+   "final_ante": [
+    4,
+    4
+   ],
+   "final_money": [
+    6,
+    69
+   ],
+   "steps": 196,
+   "done": true
+  },
+  {
+   "seed": "K84ZCS3Q",
+   "winner": 1,
+   "lives": [
+    0,
+    4
+   ],
+   "lives_margin": -4,
+   "pvp_log": [
+    [
+     2,
+     0,
+     785,
+     9940
+    ]
+   ],
+   "log_score_margins": [
+    -2.537466105782939
+   ],
+   "mean_log_score_margin": -2.537466105782939,
+   "final_ante": [
+    3,
+    3
+   ],
+   "final_money": [
+    42,
+    29
+   ],
+   "steps": 121,
+   "done": true
+  },
+  {
+   "seed": "K8PU119J",
+   "winner": 1,
+   "lives": [
+    0,
+    4
+   ],
+   "lives_margin": -4,
+   "pvp_log": [
+    [
+     2,
+     0,
+     1998,
+     5096
+    ]
+   ],
+   "log_score_margins": [
+    -0.9360050758396419
+   ],
+   "mean_log_score_margin": -0.9360050758396419,
+   "final_ante": [
+    3,
+    3
+   ],
+   "final_money": [
+    3,
+    7
+   ],
+   "steps": 121,
+   "done": true
+  },
+  {
+   "seed": "K94TS4B8",
+   "winner": 1,
+   "lives": [
+    0,
+    1
+   ],
+   "lives_margin": -1,
+   "pvp_log": [
+    [
+     2,
+     0,
+     784,
+     950
+    ]
+   ],
+   "log_score_margins": [
+    -0.1918303447629821
+   ],
+   "mean_log_score_margin": -0.1918303447629821,
+   "final_ante": [
+    2,
+    2
+   ],
+   "final_money": [
+    18,
+    49
+   ],
+   "steps": 111,
+   "done": true
+  },
+  {
+   "seed": "KPGY6GCH",
+   "winner": 1,
+   "lives": [
+    0,
+    3
+   ],
+   "lives_margin": -3,
+   "pvp_log": [
+    [
+     2,
+     0,
+     1466,
+     7419
+    ],
+    [
+     3,
+     0,
+     4961,
+     7042
+    ]
+   ],
+   "log_score_margins": [
+    -1.6209595580184448,
+    -0.35022533049366444
+   ],
+   "mean_log_score_margin": -0.9855924442560546,
+   "final_ante": [
+    4,
+    4
+   ],
+   "final_money": [
+    1,
+    68
+   ],
+   "steps": 177,
+   "done": true
+  },
+  {
+   "seed": "LHZYIWR6",
+   "winner": 1,
+   "lives": [
+    0,
+    1
+   ],
+   "lives_margin": -1,
+   "pvp_log": [
+    [
+     2,
+     0,
+     848,
+     1622
+    ]
+   ],
+   "log_score_margins": [
+    -0.6479723812032434
+   ],
+   "mean_log_score_margin": -0.6479723812032434,
+   "final_ante": [
+    3,
+    3
+   ],
+   "final_money": [
+    10,
+    78
+   ],
+   "steps": 134,
+   "done": true
+  },
+  {
+   "seed": "LMGJPMKP",
+   "winner": 1,
+   "lives": [
+    0,
+    3
+   ],
+   "lives_margin": -3,
+   "pvp_log": [
+    [
+     2,
+     0,
+     387,
+     990
+    ]
+   ],
+   "log_score_margins": [
+    -0.9377091947067147
+   ],
+   "mean_log_score_margin": -0.9377091947067147,
+   "final_ante": [
+    3,
+    3
+   ],
+   "final_money": [
+    8,
+    45
+   ],
+   "steps": 138,
+   "done": true
+  },
+  {
+   "seed": "M2LAET6A",
+   "winner": 0,
+   "lives": [
+    2,
+    0
+   ],
+   "lives_margin": 2,
+   "pvp_log": [
+    [
+     2,
+     0,
+     1677,
+     1826
+    ],
+    [
+     3,
+     0,
+     1208,
+     6553
+    ],
+    [
+     4,
+     1,
+     11032,
+     9588
+    ]
+   ],
+   "log_score_margins": [
+    -0.085072669350855,
+    -1.6902819786439665,
+    0.14027417360662575
+   ],
+   "mean_log_score_margin": -0.5450268247960652,
+   "final_ante": [
+    5,
+    5
+   ],
+   "final_money": [
+    -17,
+    87
+   ],
+   "steps": 246,
+   "done": true
+  },
+  {
+   "seed": "M4LV5E89",
+   "winner": 1,
+   "lives": [
+    0,
+    4
+   ],
+   "lives_margin": -4,
+   "pvp_log": [
+    [
+     2,
+     0,
+     858,
+     3374
+    ]
+   ],
+   "log_score_margins": [
+    -1.3683816813223748
+   ],
+   "mean_log_score_margin": -1.3683816813223748,
+   "final_ante": [
+    3,
+    3
+   ],
+   "final_money": [
+    9,
+    57
+   ],
+   "steps": 127,
+   "done": true
+  },
+  {
+   "seed": "M6XD1INZ",
+   "winner": 0,
+   "lives": [
+    1,
+    0
+   ],
+   "lives_margin": 1,
+   "pvp_log": [
+    [
+     2,
+     1,
+     1890,
+     420
+    ]
+   ],
+   "log_score_margins": [
+    1.5022282349760765
+   ],
+   "mean_log_score_margin": 1.5022282349760765,
+   "final_ante": [
+    2,
+    2
+   ],
+   "final_money": [
+    1,
+    38
+   ],
+   "steps": 111,
+   "done": true
+  },
+  {
+   "seed": "MIM66QT9",
+   "winner": 1,
+   "lives": [
+    0,
+    3
+   ],
+   "lives_margin": -3,
+   "pvp_log": [
+    [
+     2,
+     0,
+     952,
+     4624
+    ]
+   ],
+   "log_score_margins": [
+    -1.5796167462923245
+   ],
+   "mean_log_score_margin": -1.5796167462923245,
+   "final_ante": [
+    3,
+    3
+   ],
+   "final_money": [
+    1,
+    42
+   ],
+   "steps": 125,
+   "done": true
+  },
+  {
+   "seed": "MM1H85E3",
+   "winner": 0,
+   "lives": [
+    1,
+    0
+   ],
+   "lives_margin": 1,
+   "pvp_log": [
+    [
+     2,
+     1,
+     3024,
+     1086
+    ]
+   ],
+   "log_score_margins": [
+    1.0234894833437327
+   ],
+   "mean_log_score_margin": 1.0234894833437327,
+   "final_ante": [
+    3,
+    3
+   ],
+   "final_money": [
+    1,
+    51
+   ],
+   "steps": 140,
+   "done": true
+  },
+  {
+   "seed": "MRBF7L15",
+   "winner": 1,
+   "lives": [
+    0,
+    4
+   ],
+   "lives_margin": -4,
+   "pvp_log": [
+    [
+     2,
+     0,
+     2086,
+     3732
+    ]
+   ],
+   "log_score_margins": [
+    -0.5814845718373833
+   ],
+   "mean_log_score_margin": -0.5814845718373833,
+   "final_ante": [
+    2,
+    2
+   ],
+   "final_money": [
+    3,
+    26
+   ],
+   "steps": 96,
+   "done": true
+  },
+  {
+   "seed": "MSQZGPMX",
+   "winner": 1,
+   "lives": [
+    0,
+    1
+   ],
+   "lives_margin": -1,
+   "pvp_log": [
+    [
+     2,
+     0,
+     1116,
+     2593
+    ],
+    [
+     3,
+     0,
+     1200,
+     4188
+    ]
+   ],
+   "log_score_margins": [
+    -0.8425545658071885,
+    -1.2493074988670516
+   ],
+   "mean_log_score_margin": -1.04593103233712,
+   "final_ante": [
+    3,
+    3
+   ],
+   "final_money": [
+    1,
+    59
+   ],
+   "steps": 148,
+   "done": true
+  },
+  {
+   "seed": "OG4YQPSI",
+   "winner": 1,
+   "lives": [
+    0,
+    4
+   ],
+   "lives_margin": -4,
+   "pvp_log": [
+    [
+     2,
+     0,
+     1056,
+     1244
+    ]
+   ],
+   "log_score_margins": [
+    -0.16370082302857014
+   ],
+   "mean_log_score_margin": -0.16370082302857014,
+   "final_ante": [
+    3,
+    3
+   ],
+   "final_money": [
+    9,
+    41
+   ],
+   "steps": 129,
+   "done": true
+  },
+  {
+   "seed": "PI1J5YAG",
+   "winner": 0,
+   "lives": [
+    1,
+    0
+   ],
+   "lives_margin": 1,
+   "pvp_log": [
+    [
+     2,
+     1,
+     2221,
+     424
+    ]
+   ],
+   "log_score_margins": [
+    1.6540738012751586
+   ],
+   "mean_log_score_margin": 1.6540738012751586,
+   "final_ante": [
+    2,
+    2
+   ],
+   "final_money": [
+    2,
+    41
+   ],
+   "steps": 109,
+   "done": true
+  },
+  {
+   "seed": "PJ5TB88W",
+   "winner": 1,
+   "lives": [
+    0,
+    4
+   ],
+   "lives_margin": -4,
+   "pvp_log": [
+    [
+     2,
+     0,
+     992,
+     6165
+    ]
+   ],
+   "log_score_margins": [
+    -1.826074944400923
+   ],
+   "mean_log_score_margin": -1.826074944400923,
+   "final_ante": [
+    3,
+    3
+   ],
+   "final_money": [
+    20,
+    33
+   ],
+   "steps": 134,
+   "done": true
+  },
+  {
+   "seed": "PQNVFI72",
+   "winner": 0,
+   "lives": [
+    3,
+    0
+   ],
+   "lives_margin": 3,
+   "pvp_log": [
+    [
+     2,
+     1,
+     1335,
+     948
+    ]
+   ],
+   "log_score_margins": [
+    0.3420265554866626
+   ],
+   "mean_log_score_margin": 0.3420265554866626,
+   "final_ante": [
+    3,
+    3
+   ],
+   "final_money": [
+    4,
+    60
+   ],
+   "steps": 121,
+   "done": true
+  },
+  {
+   "seed": "PT6IF52R",
+   "winner": 0,
+   "lives": [
+    1,
+    0
+   ],
+   "lives_margin": 1,
+   "pvp_log": [
+    [
+     2,
+     0,
+     1361,
+     2448
+    ]
+   ],
+   "log_score_margins": [
+    -0.5867255702427103
+   ],
+   "mean_log_score_margin": -0.5867255702427103,
+   "final_ante": [
+    3,
+    3
+   ],
+   "final_money": [
+    15,
+    44
+   ],
+   "steps": 129,
+   "done": true
+  },
+  {
+   "seed": "PTSBMSMQ",
+   "winner": 0,
+   "lives": [
+    1,
+    0
+   ],
+   "lives_margin": 1,
+   "pvp_log": [
+    [
+     2,
+     null,
+     947,
+     947
+    ]
+   ],
+   "log_score_margins": [
+    0.0
+   ],
+   "mean_log_score_margin": 0.0,
+   "final_ante": [
+    3,
+    3
+   ],
+   "final_money": [
+    7,
+    95
+   ],
+   "steps": 149,
+   "done": true
+  },
+  {
+   "seed": "QY3TQZJ9",
+   "winner": 1,
+   "lives": [
+    0,
+    4
+   ],
+   "lives_margin": -4,
+   "pvp_log": [
+    [
+     2,
+     0,
+     1220,
+     2571
+    ]
+   ],
+   "log_score_margins": [
+    -0.7450136112468053
+   ],
+   "mean_log_score_margin": -0.7450136112468053,
+   "final_ante": [
+    3,
+    3
+   ],
+   "final_money": [
+    8,
+    21
+   ],
+   "steps": 133,
+   "done": true
+  },
+  {
+   "seed": "R8DFV7RD",
+   "winner": 0,
+   "lives": [
+    1,
+    0
+   ],
+   "lives_margin": 1,
+   "pvp_log": [
+    [
+     2,
+     1,
+     732,
+     632
+    ]
+   ],
+   "log_score_margins": [
+    0.14667527974247552
+   ],
+   "mean_log_score_margin": 0.14667527974247552,
+   "final_ante": [
+    3,
+    3
+   ],
+   "final_money": [
+    -20,
+    82
+   ],
+   "steps": 147,
+   "done": true
+  },
+  {
+   "seed": "R8W2CT59",
+   "winner": 1,
+   "lives": [
+    0,
+    4
+   ],
+   "lives_margin": -4,
+   "pvp_log": [
+    [
+     2,
+     0,
+     580,
+     4098
+    ]
+   ],
+   "log_score_margins": [
+    -1.9537475636524269
+   ],
+   "mean_log_score_margin": -1.9537475636524269,
+   "final_ante": [
+    2,
+    2
+   ],
+   "final_money": [
+    7,
+    11
+   ],
+   "steps": 99,
+   "done": true
+  },
+  {
+   "seed": "RUXS91YF",
+   "winner": 1,
+   "lives": [
+    0,
+    1
+   ],
+   "lives_margin": -1,
+   "pvp_log": [],
+   "log_score_margins": [],
+   "mean_log_score_margin": 0.0,
+   "final_ante": [
+    2,
+    2
+   ],
+   "final_money": [
+    -9,
+    40
+   ],
+   "steps": 105,
+   "done": true
+  },
+  {
+   "seed": "RXI42HZ2",
+   "winner": 1,
+   "lives": [
+    0,
+    3
+   ],
+   "lives_margin": -3,
+   "pvp_log": [
+    [
+     2,
+     0,
+     3156,
+     4992
+    ],
+    [
+     3,
+     0,
+     3311,
+     8450
+    ]
+   ],
+   "log_score_margins": [
+    -0.4584147219426189,
+    -0.9367325410393335
+   ],
+   "mean_log_score_margin": -0.6975736314909762,
+   "final_ante": [
+    4,
+    4
+   ],
+   "final_money": [
+    16,
+    77
+   ],
+   "steps": 180,
+   "done": true
+  },
+  {
+   "seed": "S1QJX1CS",
+   "winner": 0,
+   "lives": [
+    3,
+    0
+   ],
+   "lives_margin": 3,
+   "pvp_log": [
+    [
+     2,
+     1,
+     1128,
+     1104
+    ]
+   ],
+   "log_score_margins": [
+    0.021486950197808774
+   ],
+   "mean_log_score_margin": 0.021486950197808774,
+   "final_ante": [
+    3,
+    3
+   ],
+   "final_money": [
+    4,
+    50
+   ],
+   "steps": 140,
+   "done": true
+  },
+  {
+   "seed": "SF9SZOB1",
+   "winner": 1,
+   "lives": [
+    0,
+    3
+   ],
+   "lives_margin": -3,
+   "pvp_log": [
+    [
+     2,
+     0,
+     1624,
+     4772
+    ],
+    [
+     3,
+     0,
+     3648,
+     13869
+    ]
+   ],
+   "log_score_margins": [
+    -1.077467222242059,
+    -1.3352750768724295
+   ],
+   "mean_log_score_margin": -1.2063711495572442,
+   "final_ante": [
+    3,
+    3
+   ],
+   "final_money": [
+    7,
+    36
+   ],
+   "steps": 157,
+   "done": true
+  },
+  {
+   "seed": "SLRSKCG1",
+   "winner": 0,
+   "lives": [
+    1,
+    0
+   ],
+   "lives_margin": 1,
+   "pvp_log": [
+    [
+     2,
+     null,
+     2424,
+     2424
+    ],
+    [
+     3,
+     0,
+     1588,
+     1696
+    ]
+   ],
+   "log_score_margins": [
+    0.0,
+    -0.06575709869751023
+   ],
+   "mean_log_score_margin": -0.032878549348755115,
+   "final_ante": [
+    4,
+    4
+   ],
+   "final_money": [
+    15,
+    118
+   ],
+   "steps": 176,
+   "done": true
+  },
+  {
+   "seed": "SMC7XNT8",
+   "winner": 0,
+   "lives": [
+    3,
+    0
+   ],
+   "lives_margin": 3,
+   "pvp_log": [
+    [
+     2,
+     1,
+     1740,
+     1617
+    ]
+   ],
+   "log_score_margins": [
+    0.07326884214975227
+   ],
+   "mean_log_score_margin": 0.07326884214975227,
+   "final_ante": [
+    3,
+    3
+   ],
+   "final_money": [
+    0,
+    84
+   ],
+   "steps": 141,
+   "done": true
+  },
+  {
+   "seed": "SQVZX29L",
+   "winner": 1,
+   "lives": [
+    0,
+    3
+   ],
+   "lives_margin": -3,
+   "pvp_log": [
+    [
+     2,
+     0,
+     1210,
+     1504
+    ]
+   ],
+   "log_score_margins": [
+    -0.21734643362988404
+   ],
+   "mean_log_score_margin": -0.21734643362988404,
+   "final_ante": [
+    3,
+    3
+   ],
+   "final_money": [
+    3,
+    42
+   ],
+   "steps": 135,
+   "done": true
+  },
+  {
+   "seed": "T5A1T1DZ",
+   "winner": 1,
+   "lives": [
+    0,
+    2
+   ],
+   "lives_margin": -2,
+   "pvp_log": [
+    [
+     2,
+     0,
+     672,
+     1380
+    ],
+    [
+     3,
+     0,
+     704,
+     1360
+    ]
+   ],
+   "log_score_margins": [
+    -0.7188178237645646,
+    -0.657777199839197
+   ],
+   "mean_log_score_margin": -0.6882975118018808,
+   "final_ante": [
+    3,
+    3
+   ],
+   "final_money": [
+    1,
+    40
+   ],
+   "steps": 138,
+   "done": true
+  },
+  {
+   "seed": "U516KUJP",
+   "winner": 1,
+   "lives": [
+    0,
+    4
+   ],
+   "lives_margin": -4,
+   "pvp_log": [
+    [
+     2,
+     0,
+     1692,
+     16205
+    ]
+   ],
+   "log_score_margins": [
+    -2.2588794408875357
+   ],
+   "mean_log_score_margin": -2.2588794408875357,
+   "final_ante": [
+    3,
+    3
+   ],
+   "final_money": [
+    2,
+    22
+   ],
+   "steps": 134,
+   "done": true
+  },
+  {
+   "seed": "U8RJYV6M",
+   "winner": 0,
+   "lives": [
+    4,
+    0
+   ],
+   "lives_margin": 4,
+   "pvp_log": [
+    [
+     2,
+     1,
+     2136,
+     556
+    ]
+   ],
+   "log_score_margins": [
+    1.3445930153918635
+   ],
+   "mean_log_score_margin": 1.3445930153918635,
+   "final_ante": [
+    3,
+    3
+   ],
+   "final_money": [
+    0,
+    45
+   ],
+   "steps": 101,
+   "done": true
+  },
+  {
+   "seed": "UCAMJYYK",
+   "winner": 1,
+   "lives": [
+    0,
+    3
+   ],
+   "lives_margin": -3,
+   "pvp_log": [
+    [
+     2,
+     0,
+     1107,
+     4292
+    ]
+   ],
+   "log_score_margins": [
+    -1.3544292009173313
+   ],
+   "mean_log_score_margin": -1.3544292009173313,
+   "final_ante": [
+    3,
+    3
+   ],
+   "final_money": [
+    1,
+    48
+   ],
+   "steps": 148,
+   "done": true
+  },
+  {
+   "seed": "USQF4ZAV",
+   "winner": 0,
+   "lives": [
+    2,
+    0
+   ],
+   "lives_margin": 2,
+   "pvp_log": [
+    [
+     2,
+     1,
+     2624,
+     2544
+    ],
+    [
+     3,
+     0,
+     4148,
+     4346
+    ]
+   ],
+   "log_score_margins": [
+    0.03095024604110108,
+    -0.04661861065592454
+   ],
+   "mean_log_score_margin": -0.00783418230741173,
+   "final_ante": [
+    4,
+    4
+   ],
+   "final_money": [
+    22,
+    65
+   ],
+   "steps": 205,
+   "done": true
+  },
+  {
+   "seed": "V3PUR5L4",
+   "winner": 1,
+   "lives": [
+    0,
+    2
+   ],
+   "lives_margin": -2,
+   "pvp_log": [
+    [
+     2,
+     1,
+     2674,
+     840
+    ],
+    [
+     3,
+     0,
+     3152,
+     8072
+    ]
+   ],
+   "log_score_margins": [
+    1.1571129993571585,
+    -0.9401707798499537
+   ],
+   "mean_log_score_margin": 0.10847110975360241,
+   "final_ante": [
+    3,
+    3
+   ],
+   "final_money": [
+    9,
+    29
+   ],
+   "steps": 162,
+   "done": true
+  },
+  {
+   "seed": "VNOMH111",
+   "winner": 1,
+   "lives": [
+    0,
+    3
+   ],
+   "lives_margin": -3,
+   "pvp_log": [
+    [
+     2,
+     0,
+     1536,
+     2352
+    ],
+    [
+     3,
+     0,
+     3488,
+     9220
+    ]
+   ],
+   "log_score_margins": [
+    -0.42585864518876626,
+    -0.9718683293523664
+   ],
+   "mean_log_score_margin": -0.6988634872705664,
+   "final_ante": [
+    3,
+    3
+   ],
+   "final_money": [
+    51,
+    33
+   ],
+   "steps": 161,
+   "done": true
+  },
+  {
+   "seed": "WBC1DGJQ",
+   "winner": 1,
+   "lives": [
+    0,
+    4
+   ],
+   "lives_margin": -4,
+   "pvp_log": [
+    [
+     2,
+     0,
+     1156,
+     2268
+    ]
+   ],
+   "log_score_margins": [
+    -0.6735087575861645
+   ],
+   "mean_log_score_margin": -0.6735087575861645,
+   "final_ante": [
+    3,
+    3
+   ],
+   "final_money": [
+    0,
+    47
+   ],
+   "steps": 134,
+   "done": true
+  },
+  {
+   "seed": "WIF67A3S",
+   "winner": 1,
+   "lives": [
+    0,
+    2
+   ],
+   "lives_margin": -2,
+   "pvp_log": [
+    [
+     2,
+     0,
+     1878,
+     3087
+    ],
+    [
+     3,
+     0,
+     2071,
+     5236
+    ]
+   ],
+   "log_score_margins": [
+    -0.4967839117312023,
+    -0.9272344909001138
+   ],
+   "mean_log_score_margin": -0.712009201315658,
+   "final_ante": [
+    3,
+    3
+   ],
+   "final_money": [
+    8,
+    37
+   ],
+   "steps": 156,
+   "done": true
+  },
+  {
+   "seed": "WLAVAQ75",
+   "winner": 0,
+   "lives": [
+    2,
+    0
+   ],
+   "lives_margin": 2,
+   "pvp_log": [
+    [
+     2,
+     1,
+     3606,
+     604
+    ]
+   ],
+   "log_score_margins": [
+    1.7854032228726977
+   ],
+   "mean_log_score_margin": 1.7854032228726977,
+   "final_ante": [
+    2,
+    2
+   ],
+   "final_money": [
+    0,
+    38
+   ],
+   "steps": 114,
+   "done": true
+  },
+  {
+   "seed": "WVPJKPRD",
+   "winner": 1,
+   "lives": [
+    0,
+    3
+   ],
+   "lives_margin": -3,
+   "pvp_log": [
+    [
+     2,
+     0,
+     996,
+     4450
+    ]
+   ],
+   "log_score_margins": [
+    -1.4961332990540157
+   ],
+   "mean_log_score_margin": -1.4961332990540157,
+   "final_ante": [
+    3,
+    3
+   ],
+   "final_money": [
+    14,
+    14
+   ],
+   "steps": 121,
+   "done": true
+  },
+  {
+   "seed": "X7FG4FH8",
+   "winner": 0,
+   "lives": [
+    3,
+    0
+   ],
+   "lives_margin": 3,
+   "pvp_log": [
+    [
+     2,
+     1,
+     1772,
+     412
+    ]
+   ],
+   "log_score_margins": [
+    1.4569807131131745
+   ],
+   "mean_log_score_margin": 1.4569807131131745,
+   "final_ante": [
+    3,
+    3
+   ],
+   "final_money": [
+    1,
+    54
+   ],
+   "steps": 143,
+   "done": true
+  },
+  {
+   "seed": "XD55DZ57",
+   "winner": 1,
+   "lives": [
+    0,
+    3
+   ],
+   "lives_margin": -3,
+   "pvp_log": [
+    [
+     2,
+     0,
+     1620,
+     12757
+    ]
+   ],
+   "log_score_margins": [
+    -2.0631152830662236
+   ],
+   "mean_log_score_margin": -2.0631152830662236,
+   "final_ante": [
+    3,
+    3
+   ],
+   "final_money": [
+    17,
+    15
+   ],
+   "steps": 126,
+   "done": true
+  },
+  {
+   "seed": "XDW9VBHQ",
+   "winner": 0,
+   "lives": [
+    1,
+    0
+   ],
+   "lives_margin": 1,
+   "pvp_log": [
+    [
+     2,
+     0,
+     572,
+     944
+    ]
+   ],
+   "log_score_margins": [
+    -0.5002992107790032
+   ],
+   "mean_log_score_margin": -0.5002992107790032,
+   "final_ante": [
+    3,
+    3
+   ],
+   "final_money": [
+    24,
+    67
+   ],
+   "steps": 134,
+   "done": true
+  },
+  {
+   "seed": "YB54A1EH",
+   "winner": 1,
+   "lives": [
+    0,
+    4
+   ],
+   "lives_margin": -4,
+   "pvp_log": [
+    [
+     2,
+     0,
+     1560,
+     3227
+    ],
+    [
+     3,
+     0,
+     1536,
+     7510
+    ]
+   ],
+   "log_score_margins": [
+    -0.7265361088744076,
+    -1.5865361481474158
+   ],
+   "mean_log_score_margin": -1.1565361285109117,
+   "final_ante": [
+    3,
+    3
+   ],
+   "final_money": [
+    11,
+    34
+   ],
+   "steps": 147,
+   "done": true
+  },
+  {
+   "seed": "YD2HMRBR",
+   "winner": 1,
+   "lives": [
+    0,
+    3
+   ],
+   "lives_margin": -3,
+   "pvp_log": [
+    [
+     2,
+     0,
+     2842,
+     3102
+    ],
+    [
+     3,
+     0,
+     2678,
+     2786
+    ]
+   ],
+   "log_score_margins": [
+    -0.08750955279737926,
+    -0.039522157937339486
+   ],
+   "mean_log_score_margin": -0.06351585536735938,
+   "final_ante": [
+    4,
+    4
+   ],
+   "final_money": [
+    7,
+    59
+   ],
+   "steps": 168,
+   "done": true
+  },
+  {
+   "seed": "YPB7TZWJ",
+   "winner": 0,
+   "lives": [
+    2,
+    0
+   ],
+   "lives_margin": 2,
+   "pvp_log": [
+    [
+     2,
+     1,
+     1829,
+     1428
+    ],
+    [
+     3,
+     1,
+     2594,
+     2220
+    ]
+   ],
+   "log_score_margins": [
+    0.24734106790559895,
+    0.15562897170556145
+   ],
+   "mean_log_score_margin": 0.2014850198055802,
+   "final_ante": [
+    3,
+    3
+   ],
+   "final_money": [
+    3,
+    57
+   ],
+   "steps": 173,
+   "done": true
+  }
+ ],
+ "summary": {
+  "lives_margin": {
+   "point": -0.9285714285714286,
+   "lo": -1.373015873015873,
+   "hi": -0.47619047619047616,
+   "n": 126
+  },
+  "mean_log_score_margin": {
+   "point": -0.45957103015721334,
+   "lo": -0.6374476786832817,
+   "hi": -0.2838530550074556,
+   "n": 126
+  },
+  "steps": {
+   "point": 136.9126984126984,
+   "lo": 132.06349206349208,
+   "hi": 141.8095238095238,
+   "n": 126
+  },
+  "winner": {
+   "point": 0.626984126984127,
+   "lo": 0.5396825396825397,
+   "hi": 0.7063492063492064,
+   "n": 126
+  },
+  "win_rate": {
+   "point": 0.373015873015873,
+   "lo": 0.29365079365079366,
+   "hi": 0.4603174603174603,
+   "n": 126
+  }
+ }
+}

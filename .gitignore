@@ -1,0 +1,11 @@
+# Extracted game source + vendored references — NEVER commit (copyright)
+_reference/
+# run artifacts
+runs/
+checkpoints/
+*.pt
+__pycache__/
+# Phase 3 W2: tournament run artifacts (.npz + JSONL per run directory)
+tournament/runs/
+# mp/agent training runs + checkpoints (W1, Phase 3)
+agent/runs/

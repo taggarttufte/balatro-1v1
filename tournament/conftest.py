@@ -1,0 +1,46 @@
+"""
+Test bootstrap for mp/tournament.
+
+Mirrors mp/engine/conftest.py's fork-guard, using the same plain sys.path-insertion style
+every mp/* module uses (never a dotted ``mp.tournament...`` absolute import, which would
+depend on ``mp`` resolving as a namespace package from whatever the caller's cwd happens to
+be).  Puts mp/ and mp/scripts on sys.path, then imports balatro_sim through
+``oracle.engine_parity.import_engine()`` — the same fork-guarded entry point
+``mp/scripts/mlb_match_demo.py`` uses — and re-asserts loudly that the fork under mp/engine
+is the one that won, so a stray BRL top-level ``balatro_sim`` can never silently shadow it.
+"""
+from __future__ import annotations
+
+import os
+import sys
+from pathlib import Path
+
+_HERE = Path(__file__).resolve().parent          # mp/tournament
+_MP_ROOT = _HERE.parent                          # mp/
+_ENGINE_ROOT = _MP_ROOT / "engine"
+_SCRIPTS_ROOT = _MP_ROOT / "scripts"
+
+for _p in (str(_MP_ROOT), str(_SCRIPTS_ROOT)):
+    if _p not in sys.path:
+        sys.path.insert(0, _p)
+
+from oracle.engine_parity import import_engine  # noqa: E402
+
+import_engine()   # raises loudly if a different balatro_sim already won the module cache
+
+
+def _assert_fork_is_the_one_imported() -> None:
+    import balatro_sim  # noqa: WPS433 (runtime import is the point)
+
+    pkg_file = Path(balatro_sim.__file__).resolve()
+    expected = _ENGINE_ROOT / "balatro_sim" / "__init__.py"
+    if pkg_file != expected:
+        raise RuntimeError(
+            "mp/tournament tests imported the wrong balatro_sim:\n"
+            f"  got:      {pkg_file}\n"
+            f"  expected: {expected}\n"
+            "Run with `python -m pytest mp/tournament/tests` from the repo root."
+        )
+
+
+_assert_fork_is_the_one_imported()
