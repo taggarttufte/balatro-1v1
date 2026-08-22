@@ -36,7 +36,7 @@ loaded into the other.
 from __future__ import annotations
 
 import math
-from typing import Protocol
+from typing import Optional, Protocol
 
 import numpy as np
 
@@ -92,17 +92,25 @@ def encode_obs_mlb(game: BalatroGame) -> np.ndarray:
 # ── Encoder objects (what the model / checkpoint are parameterised by) ──────────
 
 class ObsEncoder(Protocol):
-    """A named observation encoder. `dim` must equal `len(encode(game))`."""
-    name: str
-    dim: int
+    """A named observation encoder.
 
-    def __call__(self, game: BalatroGame) -> np.ndarray: ...
+    A FLAT encoder (`is_set = False`) returns a 1-D float32 array and `dim` equals its
+    length. A SET encoder (`is_set = True`, Phase 4 W1 `encoder_set.SetEncoder`) returns a
+    dict of padded arrays + masks and has `dim = None` — callers branch on `is_set`, never
+    on `dim` alone.
+    """
+    name: str
+    dim: Optional[int]
+    is_set: bool
+
+    def __call__(self, game: BalatroGame): ...
 
 
 class V7Encoder:
     """The default: V7's 447-dim observation, reused from the fork env."""
     name = "v7"
     dim = V7_OBS_DIM
+    is_set = False
 
     def __call__(self, game: BalatroGame) -> np.ndarray:
         return encode_obs(game)
@@ -112,16 +120,35 @@ class MLBEncoder:
     """V7 + the six MLB features. Opt in with `--encoder mlb`."""
     name = "mlb"
     dim = MLB_OBS_DIM
+    is_set = False
 
     def __call__(self, game: BalatroGame) -> np.ndarray:
         return encode_obs_mlb(game)
 
 
-ENCODERS: dict[str, type] = {"v7": V7Encoder, "mlb": MLBEncoder}
+def _set_encoder_cls():
+    """Imported lazily: `encoder_set` pulls in game_keys / consumables / shop tables that
+    a caller only wanting the 447-dim encoder should not pay for."""
+    from .encoder_set import SetEncoder
+    return SetEncoder
 
 
-def get_encoder(name: str = "v7") -> ObsEncoder:
+ENCODERS: dict[str, object] = {"v7": V7Encoder, "mlb": MLBEncoder, "set": _set_encoder_cls}
+
+
+def get_encoder(name: str = "v7", **kwargs) -> ObsEncoder:
+    """`"v7"` (447) | `"mlb"` (453) | `"set"` (the Phase 4 set encoder).
+
+    `kwargs` reach the constructor — `get_encoder("set", caps=...)` rebuilds an encoder
+    with a checkpoint's recorded caps.
+    """
     try:
-        return ENCODERS[name]()
+        entry = ENCODERS[name]
     except KeyError:
         raise ValueError(f"unknown encoder {name!r}; known: {sorted(ENCODERS)}") from None
+    cls = entry() if entry is _set_encoder_cls else entry
+    return cls(**kwargs)
+
+
+def is_set_encoder(enc) -> bool:
+    return bool(getattr(enc, "is_set", False))

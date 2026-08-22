@@ -32,10 +32,12 @@ import numpy as np
 import torch
 
 from balatro_sim.game import BalatroGame
-from mcts import MCTSConfig, NNPolicy, PolicyValueNet, get_encoder
+from mcts import MCTSConfig, MCTSPlayer, PolicyValueNet, get_encoder  # noqa: F401
 from mcts.outcome import MLBOutcome, OutcomeFn, VanillaOutcome
+from mcts.policy import make_policy
 
 from .agent import SelfPlayAgent
+from .sample import SampleBuilder
 from .checkpoint import (
     global_rng_state, load_global_rng_state, numpy_rng_state, set_numpy_rng_state,
 )
@@ -65,8 +67,17 @@ class TrainConfig:
     hidden: int = 512
     n_res_blocks: int = 4
     policy_hidden: int = 128
-    encoder: str = "v7"          # "v7" (447) | "mlb" (453)
+    # Value targets are in [0, 1] for every OutcomeFn, so the head's range should be too.
+    # "linear" is the pre-2026-08-22 unbounded head; a checkpoint that predates the field
+    # is rebuilt as "linear" by `from_checkpoint`, keeping its trained semantics.
+    value_activation: str = "sigmoid"    # sigmoid | clamp | linear
+    encoder: str = "v7"          # "v7" (447) | "mlb" (453) | "set" (Phase 4 W1)
     device: str = "cpu"
+    # Phase 4 W1 — action subsampling (brief §0.2). `subsample=False` reproduces the
+    # Phase 3 full-action-set Sample; `encoder="set"` implies `Sample` v2 either way.
+    subsample: bool = True
+    k_unvisited: int = 8
+    set_res_blocks: int = 2      # trunk depth of SetPolicyValueNet (encoder == "set")
     # Game
     ruleset: str = "vanilla"     # "vanilla" | "mlb"
     deck_key: str = "b_red"
@@ -103,21 +114,41 @@ class ColdTrainer:
         self.rng = np.random.default_rng(cfg.seed)
 
         self.encoder = get_encoder(cfg.encoder)
-        self.net = PolicyValueNet(
-            obs_dim=self.encoder.dim,
-            hidden=cfg.hidden,
-            n_res_blocks=cfg.n_res_blocks,
-            policy_hidden=cfg.policy_hidden,
-        )
-        self.policy = NNPolicy(self.net, device=cfg.device, encoder=self.encoder)
+        if self.encoder.is_set:
+            # The set net carries its own item encoders + attention block, so it uses its
+            # OWN trunk depth (`set_res_blocks`, default 2) rather than the flat net's 4:
+            # matching 4 would push it to ~2.9M params for no reason. `hidden` and
+            # `policy_hidden` are shared so the CLI knobs mean the same thing on both.
+            from mcts.model_set import SetPolicyValueNet
+            self.net = SetPolicyValueNet(
+                caps=self.encoder.caps, hidden=cfg.hidden,
+                n_res_blocks=cfg.set_res_blocks, policy_hidden=cfg.policy_hidden,
+                value_activation=cfg.value_activation,
+            )
+        else:
+            self.net = PolicyValueNet(
+                obs_dim=self.encoder.dim,
+                hidden=cfg.hidden,
+                n_res_blocks=cfg.n_res_blocks,
+                policy_hidden=cfg.policy_hidden,
+                value_activation=cfg.value_activation,
+            )
+        self.policy = make_policy(self.net, device=cfg.device, encoder=self.encoder,
+                                  batched=False)
         self.mcts_cfg = MCTSConfig(
             num_simulations=cfg.sims,
             gumbel_max_considered=cfg.max_considered,
+        )
+        self.sample_builder = (
+            SampleBuilder(self.encoder, k_unvisited=cfg.k_unvisited,
+                          subsample=cfg.subsample, rng=self.rng)
+            if (cfg.subsample or self.encoder.is_set) else None
         )
         self.agent = SelfPlayAgent(
             self.policy, self.mcts_cfg, rng=self.rng,
             max_decisions=cfg.max_decisions, encoder=self.encoder,
             outcome=self.make_outcome(), max_antes=cfg.max_antes,
+            sample_builder=self.sample_builder,
         )
         self.buffer = ReplayBuffer(capacity=cfg.buffer_capacity)
         self.trainer = Trainer(self.net, lr=cfg.lr, device=cfg.device,
@@ -199,6 +230,8 @@ class ColdTrainer:
             "config": asdict(self.cfg),
             "net_desc": self.net.describe(),
             "encoder": self.cfg.encoder,
+            "net_kind": "set" if self.encoder.is_set else "flat",
+            "encoder_caps": (self.encoder.caps.as_dict() if self.encoder.is_set else None),
             "model": self.net.state_dict(),
             "trainer": self.trainer.state_dict(),
             "counters": self.counters.as_dict(),
@@ -227,14 +260,26 @@ class ColdTrainer:
         """A resume that quietly changes the observation, the net shape or the game is a
         different experiment. Warn-worthy fields are ignored; these are hard errors."""
         old = ckpt.get("config", {})
-        for field_name in ("encoder", "ruleset", "deck_key", "stake",
-                           "hidden", "n_res_blocks", "policy_hidden"):
+        for field_name in ("encoder", "ruleset", "deck_key", "stake", "hidden",
+                           "n_res_blocks", "policy_hidden", "set_res_blocks",
+                           "value_activation"):
             if field_name in old and getattr(self.cfg, field_name) != old[field_name]:
                 raise ValueError(
                     f"checkpoint was written with {field_name}={old[field_name]!r}, "
                     f"resuming with {getattr(self.cfg, field_name)!r}. Pass the same value "
                     "or start a new run."
                 )
+        # Phase 4 W1: the observation's SHAPE also lives in the caps and the net kind.
+        want_kind = "set" if self.encoder.is_set else "flat"
+        got_kind = ckpt.get("net_kind", "flat")
+        if got_kind != want_kind:
+            raise ValueError(f"checkpoint holds a {got_kind!r} net, this run is {want_kind!r}")
+        want_caps = self.encoder.caps.as_dict() if self.encoder.is_set else None
+        got_caps = ckpt.get("encoder_caps")
+        if got_kind == "set" and got_caps and got_caps != want_caps:
+            raise ValueError(
+                f"checkpoint was written with encoder caps {got_caps}, resuming with "
+                f"{want_caps}. The padding width is part of the observation.")
 
     @classmethod
     def from_checkpoint(cls, ckpt: dict, overrides: Optional[dict] = None) -> "ColdTrainer":
@@ -242,6 +287,12 @@ class ColdTrainer:
         (device, minutes-equivalents, log settings) but not the ones `_check_config` pins."""
         cfg_fields = {f: v for f, v in ckpt["config"].items()
                       if f in TrainConfig.__dataclass_fields__}
+        # A checkpoint written before the bounded value head carries neither the config
+        # field nor the net-description key; it was trained unbounded, so resume it that
+        # way instead of silently reinterpreting its value-head weights.
+        if "value_activation" not in ckpt["config"]:
+            cfg_fields["value_activation"] = ckpt.get("net_desc", {}).get(
+                "value_activation", "linear")
         cfg_fields.update(overrides or {})
         trainer = cls(TrainConfig(**cfg_fields))
         trainer.load_state_dict(ckpt)

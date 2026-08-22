@@ -32,12 +32,16 @@ def test_scripted_spec_unknown_field_raises():
         C.parse_player_spec("scripted:not_a_real_field=1")
 
 
-def test_checkpoint_spec_raises_not_implemented_with_interface_doc():
-    with pytest.raises(NotImplementedError) as exc:
-        C.parse_player_spec("checkpoint:/some/path.pt")
-    msg = str(exc.value)
-    assert "Player" in msg
-    assert ".act(game)" in msg
+def test_checkpoint_spec_builds_an_mp_agent_player():
+    """Phase 4 close: ``checkpoint:`` wires to ``mp/agent``'s ``make_player``. A missing path
+    surfaces as the loader's own error (FileNotFoundError), not NotImplementedError; an empty
+    path gives a cold-start player that satisfies the ``Player`` protocol."""
+    pytest.importorskip("torch")
+    with pytest.raises(FileNotFoundError):
+        C.parse_player_spec("checkpoint:/definitely/not/here.pt")
+    label, player = C.parse_player_spec("checkpoint:,sims=4,device=cpu")
+    assert label.startswith("checkpoint:")
+    assert callable(getattr(player, "act", None)) and callable(getattr(player, "reset", None))
 
 
 def test_unknown_spec_kind_raises_value_error():

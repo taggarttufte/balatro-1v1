@@ -1,0 +1,6743 @@
+{
+ "player": "scripted:hand=greedy,reroll=1,buy=1",
+ "mode": "both",
+ "decks": [
+  "b_red",
+  "b_checkered",
+  "b_plasma"
+ ],
+ "stake": 1,
+ "n_solo_seeds": 150,
+ "n_tournament_seeds": 16,
+ "n_agents": 32,
+ "max_antes": 8,
+ "target_fn": "vanilla_boss",
+ "wall_clock_s": 408.42041206359863,
+ "cells": [
+  {
+   "deck": "b_red",
+   "solo": {
+    "deck": "b_red",
+    "player": "scripted:hand=greedy,reroll=1,buy=1",
+    "target_fn": "vanilla_boss_target_fn(deck_key=None, stake=None)",
+    "n_seeds": 150,
+    "lives": 4,
+    "max_antes": 8,
+    "wall_clock_s": 10.960352182388306,
+    "per_seed": [
+     {
+      "seed": "11111111",
+      "furthest_ante": 3,
+      "lives_lost": 4,
+      "final_lives": 0,
+      "n_nemesis": 1,
+      "win_rate": 0.0,
+      "margins": [
+       -652
+      ],
+      "ended_early_engine_gap": false
+     },
+     {
+      "seed": "1558AXDL",
+      "furthest_ante": 3,
+      "lives_lost": 4,
+      "final_lives": 0,
+      "n_nemesis": 1,
+      "win_rate": 0.0,
+      "margins": [
+       -1220
+      ],
+      "ended_early_engine_gap": false
+     },
+     {
+      "seed": "15H9Z3IY",
+      "furthest_ante": 3,
+      "lives_lost": 4,
+      "final_lives": 0,
+      "n_nemesis": 1,
+      "win_rate": 1.0,
+      "margins": [
+       1396
+      ],
+      "ended_early_engine_gap": false
+     },
+     {
+      "seed": "1KV4W6YS",
+      "furthest_ante": 3,
+      "lives_lost": 4,
+      "final_lives": 0,
+      "n_nemesis": 1,
+      "win_rate": 0.0,
+      "margins": [
+       -656
+      ],
+      "ended_early_engine_gap": false
+     },
+     {
+      "seed": "1MD1YZ9T",
+      "furthest_ante": 3,
+      "lives_lost": 4,
+      "final_lives": 0,
+      "n_nemesis": 2,
+      "win_rate": 0.0,
+      "margins": [
+       -905,
+       -1661
+      ],
+      "ended_early_engine_gap": false
+     },
+     {
+      "seed": "28V7DD4H",
+      "furthest_ante": 2,
+      "lives_lost": 4,
+      "final_lives": 0,
+      "n_nemesis": 0,
+      "win_rate": NaN,
+      "margins": [],
+      "ended_early_engine_gap": false
+     },
+     {
+      "seed": "29DAQVG1",
+      "furthest_ante": 2,
+      "lives_lost": 4,
+      "final_lives": 0,
+      "n_nemesis": 1,
+      "win_rate": 0.0,
+      "margins": [
+       -992
+      ],
+      "ended_early_engine_gap": false
+     },
+     {
+      "seed": "29Y3L4S9",
+      "furthest_ante": 3,
+      "lives_lost": 4,
+      "final_lives": 0,
+      "n_nemesis": 1,
+      "win_rate": 1.0,
+      "margins": [
+       380
+      ],
+      "ended_early_engine_gap": false
+     },
+     {
+      "seed": "29ZSW8MY",
+      "furthest_ante": 3,
+      "lives_lost": 4,
+      "final_lives": 0,
+      "n_nemesis": 1,
+      "win_rate": 0.0,
+      "margins": [
+       -534
+      ],
+      "ended_early_engine_gap": false
+     },
+     {
+      "seed": "2BRGI767",
+      "furthest_ante": 3,
+      "lives_lost": 4,
+      "final_lives": 0,
+      "n_nemesis": 1,
+      "win_rate": 0.0,
+      "margins": [
+       -288
+      ],
+      "ended_early_engine_gap": false
+     },
+     {
+      "seed": "2CP4KSXZ",
+      "furthest_ante": 2,
+      "lives_lost": 4,
+      "final_lives": 0,
+      "n_nemesis": 1,
+      "win_rate": 0.0,
+      "margins": [
+       -828
+      ],
+      "ended_early_engine_gap": false
+     },
+     {
+      "seed": "2GHBLJD9",
+      "furthest_ante": 2,
+      "lives_lost": 4,
+      "final_lives": 0,
+      "n_nemesis": 1,
+      "win_rate": 0.0,
+      "margins": [
+       -1032
+      ],
+      "ended_early_engine_gap": false
+     },
+     {
+      "seed": "2H9N3ISZ",
+      "furthest_ante": 4,
+      "lives_lost": 4,
+      "final_lives": 0,
+      "n_nemesis": 2,
+      "win_rate": 0.0,
+      "margins": [
+       -490,
+       -1288
+      ],
+      "ended_early_engine_gap": false
+     },
+     {
+      "seed": "2K9H9HN",
+      "furthest_ante": 3,
+      "lives_lost": 4,
+      "final_lives": 0,
+      "n_nemesis": 1,
+      "win_rate": 0.0,
+      "margins": [
+       -564
+      ],
+      "ended_early_engine_gap": false
+     },
+     {
+      "seed": "34JCNMPA",
+      "furthest_ante": 4,
+      "lives_lost": 4,
+      "final_lives": 0,
+      "n_nemesis": 2,
+      "win_rate": 0.5,
+      "margins": [
+       2944,
+       -2856
+      ],
+      "ended_early_engine_gap": false
+     },
+     {
+      "seed": "3SZ71111",
+      "furthest_ante": 3,
+      "lives_lost": 4,
+      "final_lives": 0,
+      "n_nemesis": 1,
+      "win_rate": 0.0,
+      "margins": [
+       -1204
+      ],
+      "ended_early_engine_gap": false
+     },
+     {
+      "seed": "41Y71M6E",
+      "furthest_ante": 3,
+      "lives_lost": 4,
+      "final_lives": 0,
+      "n_nemesis": 1,
+      "win_rate": 0.0,
+      "margins": [
+       -800
+      ],
+      "ended_early_engine_gap": false
+     },
+     {
+      "seed": "46Y8UZEG",
+      "furthest_ante": 3,
+      "lives_lost": 4,
+      "final_lives": 0,
+      "n_nemesis": 1,
+      "win_rate": 0.0,
+      "margins": [
+       -836
+      ],
+      "ended_early_engine_gap": false
+     },
+     {
+      "seed": "4H2L46CE",
+      "furthest_ante": 3,
+      "lives_lost": 4,
+      "final_lives": 0,
+      "n_nemesis": 2,
+      "win_rate": 0.0,
+      "margins": [
+       -72,
+       -511
+      ],
+      "ended_early_engine_gap": false
+     },
+     {
+      "seed": "4K8A9QER",
+      "furthest_ante": 3,
+      "lives_lost": 4,
+      "final_lives": 0,
+      "n_nemesis": 1,
+      "win_rate": 0.0,
+      "margins": [
+       -24
+      ],
+      "ended_early_engine_gap": false
+     },
+     {
+      "seed": "4R219TNX",
+      "furthest_ante": 2,
+      "lives_lost": 4,
+      "final_lives": 0,
+      "n_nemesis": 1,
+      "win_rate": 0.0,
+      "margins": [
+       -672
+      ],
+      "ended_early_engine_gap": false
+     },
+     {
+      "seed": "4T1SZKLF",
+      "furthest_ante": 3,
+      "lives_lost": 4,
+      "final_lives": 0,
+      "n_nemesis": 1,
+      "win_rate": 0.0,
+      "margins": [
+       -1080
+      ],
+      "ended_early_engine_gap": false
+     },
+     {
+      "seed": "4UEGRRRA",
+      "furthest_ante": 4,
+      "lives_lost": 4,
+      "final_lives": 0,
+      "n_nemesis": 2,
+      "win_rate": 0.5,
+      "margins": [
+       -266,
+       1615
+      ],
+      "ended_early_engine_gap": false
+     },
+     {
+      "seed": "51F2NVWK",
+      "furthest_ante": 3,
+      "lives_lost": 4,
+      "final_lives": 0,
+      "n_nemesis": 1,
+      "win_rate": 0.0,
+      "margins": [
+       -1056
+      ],
+      "ended_early_engine_gap": false
+     },
+     {
+      "seed": "56QZEVDV",
+      "furthest_ante": 2,
+      "lives_lost": 4,
+      "final_lives": 0,
+      "n_nemesis": 1,
+      "win_rate": 0.0,
+      "margins": [
+       -1263
+      ],
+      "ended_early_engine_gap": false
+     },
+     {
+      "seed": "5AWWF1M1",
+      "furthest_ante": 3,
+      "lives_lost": 4,
+      "final_lives": 0,
+      "n_nemesis": 1,
+      "win_rate": 0.0,
+      "margins": [
+       -876
+      ],
+      "ended_early_engine_gap": false
+     },
+     {
+      "seed": "5UIUKHCI",
+      "furthest_ante": 3,
+      "lives_lost": 4,
+      "final_lives": 0,
+      "n_nemesis": 1,
+      "win_rate": 0.0,
+      "margins": [
+       -272
+      ],
+      "ended_early_engine_gap": false
+     },
+     {
+      "seed": "5YVHAEP",
+      "furthest_ante": 2,
+      "lives_lost": 4,
+      "final_lives": 0,
+      "n_nemesis": 1,
+      "win_rate": 0.0,
+      "margins": [
+       -1140
+      ],
+      "ended_early_engine_gap": false
+     },
+     {
+      "seed": "6H6WNQM2",
+      "furthest_ante": 3,
+      "lives_lost": 4,
+      "final_lives": 0,
+      "n_nemesis": 1,
+      "win_rate": 1.0,
+      "margins": [
+       368
+      ],
+      "ended_early_engine_gap": false
+     },
+     {
+      "seed": "7I4M53DL",
+      "furthest_ante": 2,
+      "lives_lost": 4,
+      "final_lives": 0,
+      "n_nemesis": 1,
+      "win_rate": 0.0,
+      "margins": [
+       -152
+      ],
+      "ended_early_engine_gap": false
+     },
+     {
+      "seed": "7LB2WVPK",
+      "furthest_ante": 2,
+      "lives_lost": 4,
+      "final_lives": 0,
+      "n_nemesis": 1,
+      "win_rate": 0.0,
+      "margins": [
+       -780
+      ],
+      "ended_early_engine_gap": false
+     },
+     {
+      "seed": "7ODNKXP",
+      "furthest_ante": 4,
+      "lives_lost": 4,
+      "final_lives": 0,
+      "n_nemesis": 2,
+      "win_rate": 1.0,
+      "margins": [
+       2328,
+       740
+      ],
+      "ended_early_engine_gap": false
+     },
+     {
+      "seed": "7PEE6NA5",
+      "furthest_ante": 2,
+      "lives_lost": 4,
+      "final_lives": 0,
+      "n_nemesis": 0,
+      "win_rate": NaN,
+      "margins": [],
+      "ended_early_engine_gap": false
+     },
+     {
+      "seed": "7UNQV1C9",
+      "furthest_ante": 3,
+      "lives_lost": 4,
+      "final_lives": 0,
+      "n_nemesis": 2,
+      "win_rate": 0.5,
+      "margins": [
+       656,
+       -1584
+      ],
+      "ended_early_engine_gap": false
+     },
+     {
+      "seed": "7YTVQERM",
+      "furthest_ante": 3,
+      "lives_lost": 4,
+      "final_lives": 0,
+      "n_nemesis": 2,
+      "win_rate": 0.5,
+      "margins": [
+       954,
+       -624
+      ],
+      "ended_early_engine_gap": false
+     },
+     {
+      "seed": "8I5QXNGE",
+      "furthest_ante": 5,
+      "lives_lost": 4,
+      "final_lives": 0,
+      "n_nemesis": 3,
+      "win_rate": 0.6666666666666666,
+      "margins": [
+       2516,
+       1134,
+       -3760
+      ],
+      "ended_early_engine_gap": false
+     },
+     {
+      "seed": "8IZ7HHE4",
+      "furthest_ante": 2,
+      "lives_lost": 4,
+      "final_lives": 0,
+      "n_nemesis": 1,
+      "win_rate": 0.0,
+      "margins": [
+       -816
+      ],
+      "ended_early_engine_gap": false
+     },
+     {
+      "seed": "8Q47WV6K",
+      "furthest_ante": 3,
+      "lives_lost": 4,
+      "final_lives": 0,
+      "n_nemesis": 1,
+      "win_rate": 0.0,
+      "margins": [
+       -1040
+      ],
+      "ended_early_engine_gap": false
+     },
+     {
+      "seed": "8QBRTPD",
+      "furthest_ante": 3,
+      "lives_lost": 4,
+      "final_lives": 0,
+      "n_nemesis": 1,
+      "win_rate": 0.0,
+      "margins": [
+       -1232
+      ],
+      "ended_early_engine_gap": false
+     },
+     {
+      "seed": "8SIYIK9C",
+      "furthest_ante": 5,
+      "lives_lost": 4,
+      "final_lives": 0,
+      "n_nemesis": 4,
+      "win_rate": 0.75,
+      "margins": [
+       876,
+       6062,
+       1467,
+       -12918
+      ],
+      "ended_early_engine_gap": false
+     },
+     {
+      "seed": "8UU564MF",
+      "furthest_ante": 3,
+      "lives_lost": 4,
+      "final_lives": 0,
+      "n_nemesis": 1,
+      "win_rate": 1.0,
+      "margins": [
+       260
+      ],
+      "ended_early_engine_gap": false
+     },
+     {
+      "seed": "8Y7ABZ7C",
+      "furthest_ante": 3,
+      "lives_lost": 4,
+      "final_lives": 0,
+      "n_nemesis": 1,
+      "win_rate": 0.0,
+      "margins": [
+       -976
+      ],
+      "ended_early_engine_gap": false
+     },
+     {
+      "seed": "93W4UHC4",
+      "furthest_ante": 2,
+      "lives_lost": 4,
+      "final_lives": 0,
+      "n_nemesis": 1,
+      "win_rate": 0.0,
+      "margins": [
+       -560
+      ],
+      "ended_early_engine_gap": false
+     },
+     {
+      "seed": "967889YL",
+      "furthest_ante": 2,
+      "lives_lost": 4,
+      "final_lives": 0,
+      "n_nemesis": 1,
+      "win_rate": 0.0,
+      "margins": [
+       -1004
+      ],
+      "ended_early_engine_gap": false
+     },
+     {
+      "seed": "9Q9HQXZG",
+      "furthest_ante": 6,
+      "lives_lost": 4,
+      "final_lives": 0,
+      "n_nemesis": 4,
+      "win_rate": 0.5,
+      "margins": [
+       -1240,
+       1556,
+       1804,
+       -11014
+      ],
+      "ended_early_engine_gap": false
+     },
+     {
+      "seed": "9QV2ZT9X",
+      "furthest_ante": 2,
+      "lives_lost": 4,
+      "final_lives": 0,
+      "n_nemesis": 1,
+      "win_rate": 0.0,
+      "margins": [
+       -1144
+      ],
+      "ended_early_engine_gap": false
+     },
+     {
+      "seed": "9VIGPRT6",
+      "furthest_ante": 3,
+      "lives_lost": 4,
+      "final_lives": 0,
+      "n_nemesis": 1,
+      "win_rate": 0.0,
+      "margins": [
+       -1108
+      ],
+      "ended_early_engine_gap": false
+     },
+     {
+      "seed": "9ZXMM1M",
+      "furthest_ante": 3,
+      "lives_lost": 4,
+      "final_lives": 0,
+      "n_nemesis": 2,
+      "win_rate": 0.5,
+      "margins": [
+       1348,
+       -289
+      ],
+      "ended_early_engine_gap": false
+     },
+     {
+      "seed": "A",
+      "furthest_ante": 2,
+      "lives_lost": 4,
+      "final_lives": 0,
+      "n_nemesis": 1,
+      "win_rate": 0.0,
+      "margins": [
+       -700
+      ],
+      "ended_early_engine_gap": false
+     },
+     {
+      "seed": "A1UAS1G5",
+      "furthest_ante": 2,
+      "lives_lost": 4,
+      "final_lives": 0,
+      "n_nemesis": 1,
+      "win_rate": 0.0,
+      "margins": [
+       -956
+      ],
+      "ended_early_engine_gap": false
+     },
+     {
+      "seed": "AE1K7DG1",
+      "furthest_ante": 4,
+      "lives_lost": 4,
+      "final_lives": 0,
+      "n_nemesis": 2,
+      "win_rate": 0.5,
+      "margins": [
+       -668,
+       3041
+      ],
+      "ended_early_engine_gap": false
+     },
+     {
+      "seed": "ALEEB",
+      "furthest_ante": 3,
+      "lives_lost": 4,
+      "final_lives": 0,
+      "n_nemesis": 1,
+      "win_rate": 0.0,
+      "margins": [
+       -1120
+      ],
+      "ended_early_engine_gap": false
+     },
+     {
+      "seed": "AMPYZUIU",
+      "furthest_ante": 3,
+      "lives_lost": 4,
+      "final_lives": 0,
+      "n_nemesis": 1,
+      "win_rate": 0.0,
+      "margins": [
+       -480
+      ],
+      "ended_early_engine_gap": false
+     },
+     {
+      "seed": "APH9LX2Y",
+      "furthest_ante": 4,
+      "lives_lost": 4,
+      "final_lives": 0,
+      "n_nemesis": 2,
+      "win_rate": 0.5,
+      "margins": [
+       98,
+       -1628
+      ],
+      "ended_early_engine_gap": false
+     },
+     {
+      "seed": "BA1D48RK",
+      "furthest_ante": 4,
+      "lives_lost": 4,
+      "final_lives": 0,
+      "n_nemesis": 2,
+      "win_rate": 0.5,
+      "margins": [
+       1228,
+       -912
+      ],
+      "ended_early_engine_gap": false
+     },
+     {
+      "seed": "BQ6A2D42",
+      "furthest_ante": 5,
+      "lives_lost": 4,
+      "final_lives": 0,
+      "n_nemesis": 4,
+      "win_rate": 0.75,
+      "margins": [
+       9974,
+       13044,
+       370,
+       -9962
+      ],
+      "ended_early_engine_gap": false
+     },
+     {
+      "seed": "C19P8BQ4",
+      "furthest_ante": 4,
+      "lives_lost": 4,
+      "final_lives": 0,
+      "n_nemesis": 2,
+      "win_rate": 0.5,
+      "margins": [
+       1648,
+       -1695
+      ],
+      "ended_early_engine_gap": false
+     },
+     {
+      "seed": "C1ZLPKAA",
+      "furthest_ante": 3,
+      "lives_lost": 4,
+      "final_lives": 0,
+      "n_nemesis": 1,
+      "win_rate": 0.0,
+      "margins": [
+       -1228
+      ],
+      "ended_early_engine_gap": false
+     },
+     {
+      "seed": "C93K3YWJ",
+      "furthest_ante": 3,
+      "lives_lost": 4,
+      "final_lives": 0,
+      "n_nemesis": 1,
+      "win_rate": 0.0,
+      "margins": [
+       -372
+      ],
+      "ended_early_engine_gap": false
+     },
+     {
+      "seed": "CCBWC6CR",
+      "furthest_ante": 2,
+      "lives_lost": 4,
+      "final_lives": 0,
+      "n_nemesis": 1,
+      "win_rate": 0.0,
+      "margins": [
+       -280
+      ],
+      "ended_early_engine_gap": false
+     },
+     {
+      "seed": "CHPB293X",
+      "furthest_ante": 4,
+      "lives_lost": 4,
+      "final_lives": 0,
+      "n_nemesis": 2,
+      "win_rate": 1.0,
+      "margins": [
+       1160,
+       172
+      ],
+      "ended_early_engine_gap": false
+     },
+     {
+      "seed": "CIGHYTAU",
+      "furthest_ante": 4,
+      "lives_lost": 4,
+      "final_lives": 0,
+      "n_nemesis": 2,
+      "win_rate": 0.5,
+      "margins": [
+       346,
+       -1408
+      ],
+      "ended_early_engine_gap": false
+     },
+     {
+      "seed": "CMEEXU8I",
+      "furthest_ante": 3,
+      "lives_lost": 4,
+      "final_lives": 0,
+      "n_nemesis": 2,
+      "win_rate": 0.0,
+      "margins": [
+       -676,
+       -838
+      ],
+      "ended_early_engine_gap": false
+     },
+     {
+      "seed": "D4TDD2B6",
+      "furthest_ante": 3,
+      "lives_lost": 4,
+      "final_lives": 0,
+      "n_nemesis": 1,
+      "win_rate": 1.0,
+      "margins": [
+       1915
+      ],
+      "ended_early_engine_gap": false
+     },
+     {
+      "seed": "D7Y5419A",
+      "furthest_ante": 3,
+      "lives_lost": 4,
+      "final_lives": 0,
+      "n_nemesis": 1,
+      "win_rate": 1.0,
+      "margins": [
+       290
+      ],
+      "ended_early_engine_gap": false
+     },
+     {
+      "seed": "ECG8NVDZ",
+      "furthest_ante": 3,
+      "lives_lost": 4,
+      "final_lives": 0,
+      "n_nemesis": 1,
+      "win_rate": 0.0,
+      "margins": [
+       -796
+      ],
+      "ended_early_engine_gap": false
+     },
+     {
+      "seed": "EGE5ZY77",
+      "furthest_ante": 3,
+      "lives_lost": 4,
+      "final_lives": 0,
+      "n_nemesis": 1,
+      "win_rate": 1.0,
+      "margins": [
+       35
+      ],
+      "ended_early_engine_gap": false
+     },
+     {
+      "seed": "EVB8882H",
+      "furthest_ante": 3,
+      "lives_lost": 4,
+      "final_lives": 0,
+      "n_nemesis": 1,
+      "win_rate": 1.0,
+      "margins": [
+       824
+      ],
+      "ended_early_engine_gap": false
+     },
+     {
+      "seed": "FSXYRB3J",
+      "furthest_ante": 2,
+      "lives_lost": 4,
+      "final_lives": 0,
+      "n_nemesis": 1,
+      "win_rate": 0.0,
+      "margins": [
+       -812
+      ],
+      "ended_early_engine_gap": false
+     },
+     {
+      "seed": "GVQL737K",
+      "furthest_ante": 3,
+      "lives_lost": 4,
+      "final_lives": 0,
+      "n_nemesis": 1,
+      "win_rate": 1.0,
+      "margins": [
+       108
+      ],
+      "ended_early_engine_gap": false
+     },
+     {
+      "seed": "GVYT2DGJ",
+      "furthest_ante": 4,
+      "lives_lost": 4,
+      "final_lives": 0,
+      "n_nemesis": 2,
+      "win_rate": 0.5,
+      "margins": [
+       64,
+       -1157
+      ],
+      "ended_early_engine_gap": false
+     },
+     {
+      "seed": "H1EWXLNE",
+      "furthest_ante": 3,
+      "lives_lost": 4,
+      "final_lives": 0,
+      "n_nemesis": 1,
+      "win_rate": 0.0,
+      "margins": [
+       -575
+      ],
+      "ended_early_engine_gap": false
+     },
+     {
+      "seed": "HPR8Q7K",
+      "furthest_ante": 2,
+      "lives_lost": 4,
+      "final_lives": 0,
+      "n_nemesis": 1,
+      "win_rate": 0.0,
+      "margins": [
+       -456
+      ],
+      "ended_early_engine_gap": false
+     },
+     {
+      "seed": "HS8LL7TC",
+      "furthest_ante": 3,
+      "lives_lost": 4,
+      "final_lives": 0,
+      "n_nemesis": 1,
+      "win_rate": 0.0,
+      "margins": [
+       -576
+      ],
+      "ended_early_engine_gap": false
+     },
+     {
+      "seed": "HSC1L2DX",
+      "furthest_ante": 4,
+      "lives_lost": 4,
+      "final_lives": 0,
+      "n_nemesis": 2,
+      "win_rate": 0.5,
+      "margins": [
+       342,
+       -1028
+      ],
+      "ended_early_engine_gap": false
+     },
+     {
+      "seed": "I68YASXJ",
+      "furthest_ante": 3,
+      "lives_lost": 4,
+      "final_lives": 0,
+      "n_nemesis": 2,
+      "win_rate": 0.5,
+      "margins": [
+       1468,
+       -92
+      ],
+      "ended_early_engine_gap": false
+     },
+     {
+      "seed": "ICUESE5D",
+      "furthest_ante": 4,
+      "lives_lost": 4,
+      "final_lives": 0,
+      "n_nemesis": 2,
+      "win_rate": 0.0,
+      "margins": [
+       -339,
+       -1990
+      ],
+      "ended_early_engine_gap": false
+     },
+     {
+      "seed": "IMMOLATE",
+      "furthest_ante": 2,
+      "lives_lost": 4,
+      "final_lives": 0,
+      "n_nemesis": 1,
+      "win_rate": 0.0,
+      "margins": [
+       -1057
+      ],
+      "ended_early_engine_gap": false
+     },
+     {
+      "seed": "J3GHQHJM",
+      "furthest_ante": 2,
+      "lives_lost": 4,
+      "final_lives": 0,
+      "n_nemesis": 0,
+      "win_rate": NaN,
+      "margins": [],
+      "ended_early_engine_gap": false
+     },
+     {
+      "seed": "JQB4BN6F",
+      "furthest_ante": 3,
+      "lives_lost": 4,
+      "final_lives": 0,
+      "n_nemesis": 1,
+      "win_rate": 1.0,
+      "margins": [
+       982
+      ],
+      "ended_early_engine_gap": false
+     },
+     {
+      "seed": "K84ZCS3Q",
+      "furthest_ante": 4,
+      "lives_lost": 4,
+      "final_lives": 0,
+      "n_nemesis": 2,
+      "win_rate": 0.5,
+      "margins": [
+       452,
+       -1968
+      ],
+      "ended_early_engine_gap": false
+     },
+     {
+      "seed": "K8PU119J",
+      "furthest_ante": 5,
+      "lives_lost": 4,
+      "final_lives": 0,
+      "n_nemesis": 3,
+      "win_rate": 0.6666666666666666,
+      "margins": [
+       3688,
+       986,
+       -3237
+      ],
+      "ended_early_engine_gap": false
+     },
+     {
+      "seed": "K94TS4B8",
+      "furthest_ante": 2,
+      "lives_lost": 4,
+      "final_lives": 0,
+      "n_nemesis": 1,
+      "win_rate": 0.0,
+      "margins": [
+       -1148
+      ],
+      "ended_early_engine_gap": false
+     },
+     {
+      "seed": "KPGY6GCH",
+      "furthest_ante": 2,
+      "lives_lost": 4,
+      "final_lives": 0,
+      "n_nemesis": 1,
+      "win_rate": 0.0,
+      "margins": [
+       -544
+      ],
+      "ended_early_engine_gap": false
+     },
+     {
+      "seed": "LHZYIWR6",
+      "furthest_ante": 3,
+      "lives_lost": 4,
+      "final_lives": 0,
+      "n_nemesis": 1,
+      "win_rate": 0.0,
+      "margins": [
+       -899
+      ],
+      "ended_early_engine_gap": false
+     },
+     {
+      "seed": "LMGJPMKP",
+      "furthest_ante": 2,
+      "lives_lost": 4,
+      "final_lives": 0,
+      "n_nemesis": 1,
+      "win_rate": 0.0,
+      "margins": [
+       -976
+      ],
+      "ended_early_engine_gap": false
+     },
+     {
+      "seed": "M2LAET6A",
+      "furthest_ante": 4,
+      "lives_lost": 4,
+      "final_lives": 0,
+      "n_nemesis": 2,
+      "win_rate": 0.5,
+      "margins": [
+       -1144,
+       3965
+      ],
+      "ended_early_engine_gap": false
+     },
+     {
+      "seed": "M4LV5E89",
+      "furthest_ante": 3,
+      "lives_lost": 4,
+      "final_lives": 0,
+      "n_nemesis": 1,
+      "win_rate": 0.0,
+      "margins": [
+       -282
+      ],
+      "ended_early_engine_gap": false
+     },
+     {
+      "seed": "M6XD1INZ",
+      "furthest_ante": 2,
+      "lives_lost": 4,
+      "final_lives": 0,
+      "n_nemesis": 1,
+      "win_rate": 0.0,
+      "margins": [
+       -630
+      ],
+      "ended_early_engine_gap": false
+     },
+     {
+      "seed": "MIM66QT9",
+      "furthest_ante": 3,
+      "lives_lost": 4,
+      "final_lives": 0,
+      "n_nemesis": 1,
+      "win_rate": 1.0,
+      "margins": [
+       32
+      ],
+      "ended_early_engine_gap": false
+     },
+     {
+      "seed": "MM1H85E3",
+      "furthest_ante": 3,
+      "lives_lost": 4,
+      "final_lives": 0,
+      "n_nemesis": 1,
+      "win_rate": 1.0,
+      "margins": [
+       548
+      ],
+      "ended_early_engine_gap": false
+     },
+     {
+      "seed": "MRBF7L15",
+      "furthest_ante": 4,
+      "lives_lost": 4,
+      "final_lives": 0,
+      "n_nemesis": 2,
+      "win_rate": 0.5,
+      "margins": [
+       -624,
+       120
+      ],
+      "ended_early_engine_gap": false
+     },
+     {
+      "seed": "MSQZGPMX",
+      "furthest_ante": 4,
+      "lives_lost": 4,
+      "final_lives": 0,
+      "n_nemesis": 2,
+      "win_rate": 0.5,
+      "margins": [
+       -208,
+       1484
+      ],
+      "ended_early_engine_gap": false
+     },
+     {
+      "seed": "OG4YQPSI",
+      "furthest_ante": 3,
+      "lives_lost": 4,
+      "final_lives": 0,
+      "n_nemesis": 1,
+      "win_rate": 0.0,
+      "margins": [
+       -1092
+      ],
+      "ended_early_engine_gap": false
+     },
+     {
+      "seed": "PI1J5YAG",
+      "furthest_ante": 3,
+      "lives_lost": 4,
+      "final_lives": 0,
+      "n_nemesis": 2,
+      "win_rate": 0.5,
+      "margins": [
+       6934,
+       -3230
+      ],
+      "ended_early_engine_gap": false
+     },
+     {
+      "seed": "PJ5TB88W",
+      "furthest_ante": 3,
+      "lives_lost": 4,
+      "final_lives": 0,
+      "n_nemesis": 1,
+      "win_rate": 0.0,
+      "margins": [
+       -320
+      ],
+      "ended_early_engine_gap": false
+     },
+     {
+      "seed": "PQNVFI72",
+      "furthest_ante": 4,
+      "lives_lost": 4,
+      "final_lives": 0,
+      "n_nemesis": 2,
+      "win_rate": 1.0,
+      "margins": [
+       1374,
+       351
+      ],
+      "ended_early_engine_gap": false
+     },
+     {
+      "seed": "PT6IF52R",
+      "furthest_ante": 3,
+      "lives_lost": 4,
+      "final_lives": 0,
+      "n_nemesis": 2,
+      "win_rate": 0.5,
+      "margins": [
+       704,
+       -1488
+      ],
+      "ended_early_engine_gap": false
+     },
+     {
+      "seed": "PTSBMSMQ",
+      "furthest_ante": 3,
+      "lives_lost": 4,
+      "final_lives": 0,
+      "n_nemesis": 1,
+      "win_rate": 0.0,
+      "margins": [
+       -438
+      ],
+      "ended_early_engine_gap": false
+     },
+     {
+      "seed": "QY3TQZJ9",
+      "furthest_ante": 4,
+      "lives_lost": 4,
+      "final_lives": 0,
+      "n_nemesis": 2,
+      "win_rate": 0.5,
+      "margins": [
+       483,
+       -1198
+      ],
+      "ended_early_engine_gap": false
+     },
+     {
+      "seed": "R8DFV7RD",
+      "furthest_ante": 3,
+      "lives_lost": 4,
+      "final_lives": 0,
+      "n_nemesis": 1,
+      "win_rate": 0.0,
+      "margins": [
+       -488
+      ],
+      "ended_early_engine_gap": false
+     },
+     {
+      "seed": "R8W2CT59",
+      "furthest_ante": 4,
+      "lives_lost": 4,
+      "final_lives": 0,
+      "n_nemesis": 2,
+      "win_rate": 0.5,
+      "margins": [
+       116,
+       -989
+      ],
+      "ended_early_engine_gap": false
+     },
+     {
+      "seed": "RUXS91YF",
+      "furthest_ante": 2,
+      "lives_lost": 4,
+      "final_lives": 0,
+      "n_nemesis": 0,
+      "win_rate": NaN,
+      "margins": [],
+      "ended_early_engine_gap": false
+     },
+     {
+      "seed": "RXI42HZ2",
+      "furthest_ante": 3,
+      "lives_lost": 4,
+      "final_lives": 0,
+      "n_nemesis": 1,
+      "win_rate": 1.0,
+      "margins": [
+       88
+      ],
+      "ended_early_engine_gap": false
+     },
+     {
+      "seed": "S1QJX1CS",
+      "furthest_ante": 2,
+      "lives_lost": 4,
+      "final_lives": 0,
+      "n_nemesis": 1,
+      "win_rate": 0.0,
+      "margins": [
+       -664
+      ],
+      "ended_early_engine_gap": false
+     },
+     {
+      "seed": "SF9SZOB1",
+      "furthest_ante": 2,
+      "lives_lost": 4,
+      "final_lives": 0,
+      "n_nemesis": 1,
+      "win_rate": 0.0,
+      "margins": [
+       -1208
+      ],
+      "ended_early_engine_gap": false
+     },
+     {
+      "seed": "SLRSKCG1",
+      "furthest_ante": 3,
+      "lives_lost": 4,
+      "final_lives": 0,
+      "n_nemesis": 1,
+      "win_rate": 0.0,
+      "margins": [
+       -80
+      ],
+      "ended_early_engine_gap": false
+     },
+     {
+      "seed": "SMC7XNT8",
+      "furthest_ante": 2,
+      "lives_lost": 4,
+      "final_lives": 0,
+      "n_nemesis": 1,
+      "win_rate": 0.0,
+      "margins": [
+       -484
+      ],
+      "ended_early_engine_gap": false
+     },
+     {
+      "seed": "SQVZX29L",
+      "furthest_ante": 4,
+      "lives_lost": 4,
+      "final_lives": 0,
+      "n_nemesis": 2,
+      "win_rate": 0.0,
+      "margins": [
+       -96,
+       -1596
+      ],
+      "ended_early_engine_gap": false
+     },
+     {
+      "seed": "T5A1T1DZ",
+      "furthest_ante": 3,
+      "lives_lost": 4,
+      "final_lives": 0,
+      "n_nemesis": 1,
+      "win_rate": 0.0,
+      "margins": [
+       -1168
+      ],
+      "ended_early_engine_gap": false
+     },
+     {
+      "seed": "U516KUJP",
+      "furthest_ante": 3,
+      "lives_lost": 4,
+      "final_lives": 0,
+      "n_nemesis": 1,
+      "win_rate": 0.0,
+      "margins": [
+       -511
+      ],
+      "ended_early_engine_gap": false
+     },
+     {
+      "seed": "U8RJYV6M",
+      "furthest_ante": 3,
+      "lives_lost": 4,
+      "final_lives": 0,
+      "n_nemesis": 1,
+      "win_rate": 0.0,
+      "margins": [
+       -1204
+      ],
+      "ended_early_engine_gap": false
+     },
+     {
+      "seed": "UCAMJYYK",
+      "furthest_ante": 2,
+      "lives_lost": 4,
+      "final_lives": 0,
+      "n_nemesis": 1,
+      "win_rate": 0.0,
+      "margins": [
+       -16
+      ],
+      "ended_early_engine_gap": false
+     },
+     {
+      "seed": "USQF4ZAV",
+      "furthest_ante": 4,
+      "lives_lost": 4,
+      "final_lives": 0,
+      "n_nemesis": 2,
+      "win_rate": 1.0,
+      "margins": [
+       407,
+       3176
+      ],
+      "ended_early_engine_gap": false
+     },
+     {
+      "seed": "V3PUR5L4",
+      "furthest_ante": 3,
+      "lives_lost": 4,
+      "final_lives": 0,
+      "n_nemesis": 1,
+      "win_rate": 0.0,
+      "margins": [
+       -924
+      ],
+      "ended_early_engine_gap": false
+     },
+     {
+      "seed": "VNOMH111",
+      "furthest_ante": 3,
+      "lives_lost": 4,
+      "final_lives": 0,
+      "n_nemesis": 2,
+      "win_rate": 0.5,
+      "margins": [
+       1052,
+       -700
+      ],
+      "ended_early_engine_gap": false
+     },
+     {
+      "seed": "WBC1DGJQ",
+      "furthest_ante": 3,
+      "lives_lost": 4,
+      "final_lives": 0,
+      "n_nemesis": 2,
+      "win_rate": 0.0,
+      "margins": [
+       -1184,
+       -2082
+      ],
+      "ended_early_engine_gap": false
+     },
+     {
+      "seed": "WIF67A3S",
+      "furthest_ante": 3,
+      "lives_lost": 4,
+      "final_lives": 0,
+      "n_nemesis": 1,
+      "win_rate": 1.0,
+      "margins": [
+       2
+      ],
+      "ended_early_engine_gap": false
+     },
+     {
+      "seed": "WLAVAQ75",
+      "furthest_ante": 2,
+      "lives_lost": 4,
+      "final_lives": 0,
+      "n_nemesis": 1,
+      "win_rate": 0.0,
+      "margins": [
+       -164
+      ],
+      "ended_early_engine_gap": false
+     },
+     {
+      "seed": "WVPJKPRD",
+      "furthest_ante": 3,
+      "lives_lost": 4,
+      "final_lives": 0,
+      "n_nemesis": 1,
+      "win_rate": 1.0,
+      "margins": [
+       2144
+      ],
+      "ended_early_engine_gap": false
+     },
+     {
+      "seed": "X7FG4FH8",
+      "furthest_ante": 2,
+      "lives_lost": 4,
+      "final_lives": 0,
+      "n_nemesis": 1,
+      "win_rate": 0.0,
+      "margins": [
+       -1126
+      ],
+      "ended_early_engine_gap": false
+     },
+     {
+      "seed": "XD55DZ57",
+      "furthest_ante": 4,
+      "lives_lost": 4,
+      "final_lives": 0,
+      "n_nemesis": 2,
+      "win_rate": 0.5,
+      "margins": [
+       1690,
+       -2230
+      ],
+      "ended_early_engine_gap": false
+     },
+     {
+      "seed": "XDW9VBHQ",
+      "furthest_ante": 3,
+      "lives_lost": 4,
+      "final_lives": 0,
+      "n_nemesis": 2,
+      "win_rate": 0.5,
+      "margins": [
+       188,
+       -1182
+      ],
+      "ended_early_engine_gap": false
+     },
+     {
+      "seed": "YB54A1EH",
+      "furthest_ante": 3,
+      "lives_lost": 4,
+      "final_lives": 0,
+      "n_nemesis": 1,
+      "win_rate": 0.0,
+      "margins": [
+       -695
+      ],
+      "ended_early_engine_gap": false
+     },
+     {
+      "seed": "YD2HMRBR",
+      "furthest_ante": 4,
+      "lives_lost": 4,
+      "final_lives": 0,
+      "n_nemesis": 2,
+      "win_rate": 0.5,
+      "margins": [
+       2452,
+       -446
+      ],
+      "ended_early_engine_gap": false
+     },
+     {
+      "seed": "YPB7TZWJ",
+      "furthest_ante": 3,
+      "lives_lost": 4,
+      "final_lives": 0,
+      "n_nemesis": 2,
+      "win_rate": 0.5,
+      "margins": [
+       128,
+       -2056
+      ],
+      "ended_early_engine_gap": false
+     },
+     {
+      "seed": "5TITKHCI",
+      "furthest_ante": 2,
+      "lives_lost": 4,
+      "final_lives": 0,
+      "n_nemesis": 1,
+      "win_rate": 0.0,
+      "margins": [
+       -896
+      ],
+      "ended_early_engine_gap": false
+     },
+     {
+      "seed": "RMC7WNS8",
+      "furthest_ante": 4,
+      "lives_lost": 4,
+      "final_lives": 0,
+      "n_nemesis": 2,
+      "win_rate": 0.5,
+      "margins": [
+       1508,
+       -2132
+      ],
+      "ended_early_engine_gap": false
+     },
+     {
+      "seed": "VLAUZAP7",
+      "furthest_ante": 3,
+      "lives_lost": 4,
+      "final_lives": 0,
+      "n_nemesis": 1,
+      "win_rate": 0.0,
+      "margins": [
+       -904
+      ],
+      "ended_early_engine_gap": false
+     },
+     {
+      "seed": "54H2L46C",
+      "furthest_ante": 3,
+      "lives_lost": 4,
+      "final_lives": 0,
+      "n_nemesis": 1,
+      "win_rate": 0.0,
+      "margins": [
+       -1344
+      ],
+      "ended_early_engine_gap": false
+     },
+     {
+      "seed": "EK84YCRZ",
+      "furthest_ante": 3,
+      "lives_lost": 4,
+      "final_lives": 0,
+      "n_nemesis": 1,
+      "win_rate": 1.0,
+      "margins": [
+       2096
+      ],
+      "ended_early_engine_gap": false
+     },
+     {
+      "seed": "3PQWI42H",
+      "furthest_ante": 4,
+      "lives_lost": 4,
+      "final_lives": 0,
+      "n_nemesis": 2,
+      "win_rate": 0.5,
+      "margins": [
+       416,
+       -2373
+      ],
+      "ended_early_engine_gap": false
+     },
+     {
+      "seed": "Y28I5PWN",
+      "furthest_ante": 3,
+      "lives_lost": 4,
+      "final_lives": 0,
+      "n_nemesis": 1,
+      "win_rate": 0.0,
+      "margins": [
+       -840
+      ],
+      "ended_early_engine_gap": false
+     },
+     {
+      "seed": "GEGUXSZ2",
+      "furthest_ante": 4,
+      "lives_lost": 4,
+      "final_lives": 0,
+      "n_nemesis": 2,
+      "win_rate": 0.0,
+      "margins": [
+       -664,
+       -1590
+      ],
+      "ended_early_engine_gap": false
+     },
+     {
+      "seed": "DGJTCAMJ",
+      "furthest_ante": 3,
+      "lives_lost": 4,
+      "final_lives": 0,
+      "n_nemesis": 1,
+      "win_rate": 0.0,
+      "margins": [
+       -1168
+      ],
+      "ended_early_engine_gap": false
+     },
+     {
+      "seed": "XXKGUPL7",
+      "furthest_ante": 2,
+      "lives_lost": 4,
+      "final_lives": 0,
+      "n_nemesis": 1,
+      "win_rate": 0.0,
+      "margins": [
+       -788
+      ],
+      "ended_early_engine_gap": false
+     },
+     {
+      "seed": "37KVBC1D",
+      "furthest_ante": 5,
+      "lives_lost": 4,
+      "final_lives": 0,
+      "n_nemesis": 3,
+      "win_rate": 0.3333333333333333,
+      "margins": [
+       -1148,
+       1742,
+       -2468
+      ],
+      "ended_early_engine_gap": false
+     },
+     {
+      "seed": "GJPD7X54",
+      "furthest_ante": 4,
+      "lives_lost": 4,
+      "final_lives": 0,
+      "n_nemesis": 2,
+      "win_rate": 0.0,
+      "margins": [
+       -760,
+       -3268
+      ],
+      "ended_early_engine_gap": false
+     },
+     {
+      "seed": "19AC19O8",
+      "furthest_ante": 2,
+      "lives_lost": 4,
+      "final_lives": 0,
+      "n_nemesis": 1,
+      "win_rate": 0.0,
+      "margins": [
+       -668
+      ],
+      "ended_early_engine_gap": false
+     },
+     {
+      "seed": "BP49PU2Y",
+      "furthest_ante": 2,
+      "lives_lost": 4,
+      "final_lives": 0,
+      "n_nemesis": 1,
+      "win_rate": 0.0,
+      "margins": [
+       -876
+      ],
+      "ended_early_engine_gap": false
+     },
+     {
+      "seed": "S9WXD2HM",
+      "furthest_ante": 2,
+      "lives_lost": 4,
+      "final_lives": 0,
+      "n_nemesis": 1,
+      "win_rate": 0.0,
+      "margins": [
+       -760
+      ],
+      "ended_early_engine_gap": false
+     },
+     {
+      "seed": "QBQ34JCN",
+      "furthest_ante": 4,
+      "lives_lost": 4,
+      "final_lives": 0,
+      "n_nemesis": 2,
+      "win_rate": 1.0,
+      "margins": [
+       645,
+       1498
+      ],
+      "ended_early_engine_gap": false
+     },
+     {
+      "seed": "MOAT516K",
+      "furthest_ante": 2,
+      "lives_lost": 4,
+      "final_lives": 0,
+      "n_nemesis": 1,
+      "win_rate": 0.0,
+      "margins": [
+       -613
+      ],
+      "ended_early_engine_gap": false
+     },
+     {
+      "seed": "TJOA1TAR",
+      "furthest_ante": 4,
+      "lives_lost": 4,
+      "final_lives": 0,
+      "n_nemesis": 3,
+      "win_rate": 0.6666666666666666,
+      "margins": [
+       6756,
+       6113,
+       -3610
+      ],
+      "ended_early_engine_gap": false
+     },
+     {
+      "seed": "1G5AOH9L",
+      "furthest_ante": 6,
+      "lives_lost": 4,
+      "final_lives": 0,
+      "n_nemesis": 4,
+      "win_rate": 0.5,
+      "margins": [
+       -732,
+       -900,
+       8632,
+       1031
+      ],
+      "ended_early_engine_gap": false
+     },
+     {
+      "seed": "W2XHR8LL",
+      "furthest_ante": 3,
+      "lives_lost": 4,
+      "final_lives": 0,
+      "n_nemesis": 1,
+      "win_rate": 0.0,
+      "margins": [
+       -813
+      ],
+      "ended_early_engine_gap": false
+     },
+     {
+      "seed": "7SCVIF67",
+      "furthest_ante": 3,
+      "lives_lost": 4,
+      "final_lives": 0,
+      "n_nemesis": 1,
+      "win_rate": 0.0,
+      "margins": [
+       -140
+      ],
+      "ended_early_engine_gap": false
+     },
+     {
+      "seed": "A3RBA1D4",
+      "furthest_ante": 4,
+      "lives_lost": 4,
+      "final_lives": 0,
+      "n_nemesis": 2,
+      "win_rate": 1.0,
+      "margins": [
+       1953,
+       640
+      ],
+      "ended_early_engine_gap": false
+     },
+     {
+      "seed": "8QK15H9Y",
+      "furthest_ante": 3,
+      "lives_lost": 4,
+      "final_lives": 0,
+      "n_nemesis": 1,
+      "win_rate": 0.0,
+      "margins": [
+       -1208
+      ],
+      "ended_early_engine_gap": false
+     },
+     {
+      "seed": "3IX1MD1X",
+      "furthest_ante": 3,
+      "lives_lost": 4,
+      "final_lives": 0,
+      "n_nemesis": 1,
+      "win_rate": 0.0,
+      "margins": [
+       -760
+      ],
+      "ended_early_engine_gap": false
+     }
+    ],
+    "summary": {
+     "furthest_ante": {
+      "point": 3.06,
+      "lo": 2.9266666666666667,
+      "hi": 3.1866666666666665,
+      "n": 150
+     },
+     "lives_lost": {
+      "point": 4.0,
+      "lo": 4.0,
+      "hi": 4.0,
+      "n": 150
+     },
+     "win_rate": {
+      "point": 0.2796803652968037,
+      "lo": 0.2197488584474886,
+      "hi": 0.3407534246575342,
+      "n": 146
+     },
+     "n_nemesis_total": 209,
+     "margin_quantiles": {
+      "0.0": -12918,
+      "0.1": -1590,
+      "0.25": -1057,
+      "0.5": -564,
+      "0.75": 407,
+      "0.9": 1690,
+      "1.0": 13044
+     },
+     "engine_gap_seeds": 0
+    }
+   },
+   "tournament": {
+    "deck": "b_red",
+    "player": "scripted:hand=greedy,reroll=1,buy=1",
+    "n_agents": 32,
+    "max_ante": 8,
+    "base_seed": 0,
+    "n_seeds": 16,
+    "wall_clock_s": 109.77957844734192,
+    "per_seed": [
+     {
+      "seed": "11111111",
+      "ante_ranks": {
+       "2": 7.0,
+       "3": 11.0,
+       "4": 11.0,
+       "5": 7.0,
+       "6": 12.0,
+       "7": 12.0,
+       "8": 11.0
+      },
+      "n_antes_present": 7,
+      "mean_rank_frac": 0.29493087557603687
+     },
+     {
+      "seed": "1558AXDL",
+      "ante_ranks": {
+       "2": 15.5,
+       "3": 9.0,
+       "4": 3.0,
+       "5": 3.0,
+       "6": 3.0,
+       "7": 3.0,
+       "8": 3.0
+      },
+      "n_antes_present": 7,
+      "mean_rank_frac": 0.1497695852534562
+     },
+     {
+      "seed": "15H9Z3IY",
+      "ante_ranks": {
+       "2": 12.0,
+       "3": 17.0,
+       "4": 17.0,
+       "5": 19.0,
+       "6": 17.0,
+       "7": 20.0,
+       "8": 25.0
+      },
+      "n_antes_present": 7,
+      "mean_rank_frac": 0.5529953917050692
+     },
+     {
+      "seed": "1KV4W6YS",
+      "ante_ranks": {
+       "2": 9.0,
+       "3": 22.0,
+       "4": 7.0,
+       "5": 8.0,
+       "6": 7.0,
+       "7": 11.0,
+       "8": 7.0
+      },
+      "n_antes_present": 7,
+      "mean_rank_frac": 0.29493087557603687
+     },
+     {
+      "seed": "1MD1YZ9T",
+      "ante_ranks": {
+       "2": 19.0,
+       "3": 20.0,
+       "4": 12.0,
+       "5": 16.0,
+       "6": 18.0,
+       "7": 11.0,
+       "8": 21.0
+      },
+      "n_antes_present": 7,
+      "mean_rank_frac": 0.5069124423963134
+     },
+     {
+      "seed": "28V7DD4H",
+      "ante_ranks": {
+       "2": 15.5,
+       "3": 8.0,
+       "4": 22.0,
+       "5": 9.0,
+       "6": 7.0,
+       "7": 17.0,
+       "8": 11.0
+      },
+      "n_antes_present": 7,
+      "mean_rank_frac": 0.380184331797235
+     },
+     {
+      "seed": "29DAQVG1",
+      "ante_ranks": {
+       "2": 23.0,
+       "3": 7.0,
+       "4": 9.0,
+       "5": 19.0,
+       "6": 7.0,
+       "7": 11.0,
+       "8": 17.0
+      },
+      "n_antes_present": 7,
+      "mean_rank_frac": 0.39631336405529954
+     },
+     {
+      "seed": "29Y3L4S9",
+      "ante_ranks": {
+       "2": 3.0,
+       "3": 3.0,
+       "4": 3.0,
+       "5": 7.0,
+       "6": 7.0,
+       "7": 11.0,
+       "8": 7.0
+      },
+      "n_antes_present": 7,
+      "mean_rank_frac": 0.15668202764976957
+     },
+     {
+      "seed": "29ZSW8MY",
+      "ante_ranks": {
+       "2": 7.0,
+       "3": 7.0,
+       "4": 3.0,
+       "5": 3.0,
+       "6": 7.0,
+       "7": 3.0,
+       "8": 3.0
+      },
+      "n_antes_present": 7,
+      "mean_rank_frac": 0.11981566820276497
+     },
+     {
+      "seed": "2BRGI767",
+      "ante_ranks": {
+       "2": 12.0,
+       "3": 12.0,
+       "4": 16.0,
+       "5": 16.0,
+       "6": 16.0,
+       "7": 7.0,
+       "8": 7.0
+      },
+      "n_antes_present": 7,
+      "mean_rank_frac": 0.3640552995391705
+     },
+     {
+      "seed": "2CP4KSXZ",
+      "ante_ranks": {
+       "2": 17.0,
+       "3": 21.0,
+       "4": 22.0,
+       "5": 26.0,
+       "6": 25.0,
+       "7": 28.0,
+       "8": 18.0
+      },
+      "n_antes_present": 7,
+      "mean_rank_frac": 0.6912442396313364
+     },
+     {
+      "seed": "2GHBLJD9",
+      "ante_ranks": {
+       "2": 20.0,
+       "3": 9.0,
+       "4": 21.0,
+       "5": 24.0,
+       "6": 22.0,
+       "7": 8.0,
+       "8": 15.0
+      },
+      "n_antes_present": 7,
+      "mean_rank_frac": 0.5161290322580645
+     },
+     {
+      "seed": "2H9N3ISZ",
+      "ante_ranks": {
+       "2": 7.0,
+       "3": 7.0,
+       "4": 14.0,
+       "5": 7.0,
+       "6": 11.0,
+       "7": 7.0,
+       "8": 8.0
+      },
+      "n_antes_present": 7,
+      "mean_rank_frac": 0.2488479262672811
+     },
+     {
+      "seed": "2K9H9HN",
+      "ante_ranks": {
+       "2": 4.0,
+       "3": 4.0,
+       "4": 18.0,
+       "5": 7.0,
+       "6": 5.0,
+       "7": 4.0,
+       "8": 4.0
+      },
+      "n_antes_present": 7,
+      "mean_rank_frac": 0.17972350230414746
+     },
+     {
+      "seed": "34JCNMPA",
+      "ante_ranks": {
+       "2": 3.0,
+       "3": 11.0,
+       "4": 11.0,
+       "5": 4.0,
+       "6": 3.0,
+       "7": 4.0,
+       "8": 3.0
+      },
+      "n_antes_present": 7,
+      "mean_rank_frac": 0.14746543778801843
+     },
+     {
+      "seed": "3SZ71111",
+      "ante_ranks": {
+       "2": 16.0,
+       "3": 11.0,
+       "4": 24.0,
+       "5": 7.0,
+       "6": 7.0,
+       "7": 7.0,
+       "8": 7.0
+      },
+      "n_antes_present": 7,
+      "mean_rank_frac": 0.3317972350230415
+     }
+    ],
+    "summary": {
+     "mean_rank_frac": {
+      "point": 0.3332373271889401,
+      "lo": 0.25835253456221197,
+      "hi": 0.42223502304147464,
+      "n": 16
+     }
+    }
+   }
+  },
+  {
+   "deck": "b_checkered",
+   "solo": {
+    "deck": "b_checkered",
+    "player": "scripted:hand=greedy,reroll=1,buy=1",
+    "target_fn": "vanilla_boss_target_fn(deck_key=None, stake=None)",
+    "n_seeds": 150,
+    "lives": 4,
+    "max_antes": 8,
+    "wall_clock_s": 14.411384105682373,
+    "per_seed": [
+     {
+      "seed": "11111111",
+      "furthest_ante": 3,
+      "lives_lost": 4,
+      "final_lives": 0,
+      "n_nemesis": 2,
+      "win_rate": 0.0,
+      "margins": [
+       -424,
+       -2332
+      ],
+      "ended_early_engine_gap": false
+     },
+     {
+      "seed": "1558AXDL",
+      "furthest_ante": 3,
+      "lives_lost": 4,
+      "final_lives": 0,
+      "n_nemesis": 1,
+      "win_rate": 0.0,
+      "margins": [
+       -464
+      ],
+      "ended_early_engine_gap": false
+     },
+     {
+      "seed": "15H9Z3IY",
+      "furthest_ante": 3,
+      "lives_lost": 4,
+      "final_lives": 0,
+      "n_nemesis": 1,
+      "win_rate": 0.0,
+      "margins": [
+       -400
+      ],
+      "ended_early_engine_gap": false
+     },
+     {
+      "seed": "1KV4W6YS",
+      "furthest_ante": 4,
+      "lives_lost": 4,
+      "final_lives": 0,
+      "n_nemesis": 2,
+      "win_rate": 0.5,
+      "margins": [
+       1760,
+       -651
+      ],
+      "ended_early_engine_gap": false
+     },
+     {
+      "seed": "1MD1YZ9T",
+      "furthest_ante": 3,
+      "lives_lost": 4,
+      "final_lives": 0,
+      "n_nemesis": 2,
+      "win_rate": 0.5,
+      "margins": [
+       300,
+       -2776
+      ],
+      "ended_early_engine_gap": false
+     },
+     {
+      "seed": "28V7DD4H",
+      "furthest_ante": 3,
+      "lives_lost": 4,
+      "final_lives": 0,
+      "n_nemesis": 1,
+      "win_rate": 0.0,
+      "margins": [
+       -544
+      ],
+      "ended_early_engine_gap": false
+     },
+     {
+      "seed": "29DAQVG1",
+      "furthest_ante": 3,
+      "lives_lost": 4,
+      "final_lives": 0,
+      "n_nemesis": 2,
+      "win_rate": 0.0,
+      "margins": [
+       -608,
+       -22
+      ],
+      "ended_early_engine_gap": false
+     },
+     {
+      "seed": "29Y3L4S9",
+      "furthest_ante": 3,
+      "lives_lost": 4,
+      "final_lives": 0,
+      "n_nemesis": 1,
+      "win_rate": 0.0,
+      "margins": [
+       -568
+      ],
+      "ended_early_engine_gap": false
+     },
+     {
+      "seed": "29ZSW8MY",
+      "furthest_ante": 5,
+      "lives_lost": 4,
+      "final_lives": 0,
+      "n_nemesis": 3,
+      "win_rate": 0.6666666666666666,
+      "margins": [
+       195,
+       2630,
+       -5050
+      ],
+      "ended_early_engine_gap": false
+     },
+     {
+      "seed": "2BRGI767",
+      "furthest_ante": 4,
+      "lives_lost": 4,
+      "final_lives": 0,
+      "n_nemesis": 2,
+      "win_rate": 0.5,
+      "margins": [
+       760,
+       -2220
+      ],
+      "ended_early_engine_gap": false
+     },
+     {
+      "seed": "2CP4KSXZ",
+      "furthest_ante": 4,
+      "lives_lost": 4,
+      "final_lives": 0,
+      "n_nemesis": 2,
+      "win_rate": 0.5,
+      "margins": [
+       2600,
+       -556
+      ],
+      "ended_early_engine_gap": false
+     },
+     {
+      "seed": "2GHBLJD9",
+      "furthest_ante": 3,
+      "lives_lost": 4,
+      "final_lives": 0,
+      "n_nemesis": 2,
+      "win_rate": 0.0,
+      "margins": [
+       -440,
+       -2544
+      ],
+      "ended_early_engine_gap": false
+     },
+     {
+      "seed": "2H9N3ISZ",
+      "furthest_ante": 4,
+      "lives_lost": 4,
+      "final_lives": 0,
+      "n_nemesis": 2,
+      "win_rate": 0.5,
+      "margins": [
+       680,
+       -1308
+      ],
+      "ended_early_engine_gap": false
+     },
+     {
+      "seed": "2K9H9HN",
+      "furthest_ante": 4,
+      "lives_lost": 4,
+      "final_lives": 0,
+      "n_nemesis": 2,
+      "win_rate": 0.5,
+      "margins": [
+       -428,
+       845
+      ],
+      "ended_early_engine_gap": false
+     },
+     {
+      "seed": "34JCNMPA",
+      "furthest_ante": 4,
+      "lives_lost": 4,
+      "final_lives": 0,
+      "n_nemesis": 2,
+      "win_rate": 0.5,
+      "margins": [
+       2923,
+       -3028
+      ],
+      "ended_early_engine_gap": false
+     },
+     {
+      "seed": "3SZ71111",
+      "furthest_ante": 3,
+      "lives_lost": 4,
+      "final_lives": 0,
+      "n_nemesis": 1,
+      "win_rate": 0.0,
+      "margins": [
+       -384
+      ],
+      "ended_early_engine_gap": false
+     },
+     {
+      "seed": "41Y71M6E",
+      "furthest_ante": 4,
+      "lives_lost": 4,
+      "final_lives": 0,
+      "n_nemesis": 2,
+      "win_rate": 0.5,
+      "margins": [
+       1848,
+       -1550
+      ],
+      "ended_early_engine_gap": false
+     },
+     {
+      "seed": "46Y8UZEG",
+      "furthest_ante": 3,
+      "lives_lost": 4,
+      "final_lives": 0,
+      "n_nemesis": 1,
+      "win_rate": 0.0,
+      "margins": [
+       -420
+      ],
+      "ended_early_engine_gap": false
+     },
+     {
+      "seed": "4H2L46CE",
+      "furthest_ante": 4,
+      "lives_lost": 4,
+      "final_lives": 0,
+      "n_nemesis": 2,
+      "win_rate": 1.0,
+      "margins": [
+       360,
+       5910
+      ],
+      "ended_early_engine_gap": false
+     },
+     {
+      "seed": "4K8A9QER",
+      "furthest_ante": 4,
+      "lives_lost": 4,
+      "final_lives": 0,
+      "n_nemesis": 2,
+      "win_rate": 0.5,
+      "margins": [
+       1500,
+       -1280
+      ],
+      "ended_early_engine_gap": false
+     },
+     {
+      "seed": "4R219TNX",
+      "furthest_ante": 3,
+      "lives_lost": 4,
+      "final_lives": 0,
+      "n_nemesis": 2,
+      "win_rate": 0.0,
+      "margins": [
+       -460,
+       -1276
+      ],
+      "ended_early_engine_gap": false
+     },
+     {
+      "seed": "4T1SZKLF",
+      "furthest_ante": 4,
+      "lives_lost": 4,
+      "final_lives": 0,
+      "n_nemesis": 3,
+      "win_rate": 0.3333333333333333,
+      "margins": [
+       -448,
+       8505,
+       -2320
+      ],
+      "ended_early_engine_gap": false
+     },
+     {
+      "seed": "4UEGRRRA",
+      "furthest_ante": 3,
+      "lives_lost": 4,
+      "final_lives": 0,
+      "n_nemesis": 2,
+      "win_rate": 0.0,
+      "margins": [
+       -396,
+       -3088
+      ],
+      "ended_early_engine_gap": false
+     },
+     {
+      "seed": "51F2NVWK",
+      "furthest_ante": 7,
+      "lives_lost": 4,
+      "final_lives": 0,
+      "n_nemesis": 6,
+      "win_rate": 0.6666666666666666,
+      "margins": [
+       -436,
+       4592,
+       14358,
+       18080,
+       400,
+       -1228
+      ],
+      "ended_early_engine_gap": false
+     },
+     {
+      "seed": "56QZEVDV",
+      "furthest_ante": 3,
+      "lives_lost": 4,
+      "final_lives": 0,
+      "n_nemesis": 1,
+      "win_rate": 0.0,
+      "margins": [
+       -440
+      ],
+      "ended_early_engine_gap": false
+     },
+     {
+      "seed": "5AWWF1M1",
+      "furthest_ante": 4,
+      "lives_lost": 4,
+      "final_lives": 0,
+      "n_nemesis": 3,
+      "win_rate": 0.3333333333333333,
+      "margins": [
+       200,
+       -8,
+       -7092
+      ],
+      "ended_early_engine_gap": false
+     },
+     {
+      "seed": "5UIUKHCI",
+      "furthest_ante": 4,
+      "lives_lost": 4,
+      "final_lives": 0,
+      "n_nemesis": 2,
+      "win_rate": 0.5,
+      "margins": [
+       468,
+       -1496
+      ],
+      "ended_early_engine_gap": false
+     },
+     {
+      "seed": "5YVHAEP",
+      "furthest_ante": 3,
+      "lives_lost": 4,
+      "final_lives": 0,
+      "n_nemesis": 1,
+      "win_rate": 0.0,
+      "margins": [
+       -420
+      ],
+      "ended_early_engine_gap": false
+     },
+     {
+      "seed": "6H6WNQM2",
+      "furthest_ante": 4,
+      "lives_lost": 4,
+      "final_lives": 0,
+      "n_nemesis": 2,
+      "win_rate": 0.5,
+      "margins": [
+       1836,
+       -1616
+      ],
+      "ended_early_engine_gap": false
+     },
+     {
+      "seed": "7I4M53DL",
+      "furthest_ante": 5,
+      "lives_lost": 4,
+      "final_lives": 0,
+      "n_nemesis": 3,
+      "win_rate": 1.0,
+      "margins": [
+       3478,
+       2205,
+       13028
+      ],
+      "ended_early_engine_gap": false
+     },
+     {
+      "seed": "7LB2WVPK",
+      "furthest_ante": 3,
+      "lives_lost": 4,
+      "final_lives": 0,
+      "n_nemesis": 1,
+      "win_rate": 0.0,
+      "margins": [
+       -616
+      ],
+      "ended_early_engine_gap": false
+     },
+     {
+      "seed": "7ODNKXP",
+      "furthest_ante": 5,
+      "lives_lost": 4,
+      "final_lives": 0,
+      "n_nemesis": 3,
+      "win_rate": 0.6666666666666666,
+      "margins": [
+       4170,
+       2124,
+       -6456
+      ],
+      "ended_early_engine_gap": false
+     },
+     {
+      "seed": "7PEE6NA5",
+      "furthest_ante": 3,
+      "lives_lost": 4,
+      "final_lives": 0,
+      "n_nemesis": 1,
+      "win_rate": 0.0,
+      "margins": [
+       -348
+      ],
+      "ended_early_engine_gap": false
+     },
+     {
+      "seed": "7UNQV1C9",
+      "furthest_ante": 3,
+      "lives_lost": 4,
+      "final_lives": 0,
+      "n_nemesis": 1,
+      "win_rate": 0.0,
+      "margins": [
+       -696
+      ],
+      "ended_early_engine_gap": false
+     },
+     {
+      "seed": "7YTVQERM",
+      "furthest_ante": 4,
+      "lives_lost": 4,
+      "final_lives": 0,
+      "n_nemesis": 2,
+      "win_rate": 0.5,
+      "margins": [
+       404,
+       -1728
+      ],
+      "ended_early_engine_gap": false
+     },
+     {
+      "seed": "8I5QXNGE",
+      "furthest_ante": 4,
+      "lives_lost": 4,
+      "final_lives": 0,
+      "n_nemesis": 2,
+      "win_rate": 0.0,
+      "margins": [
+       -368,
+       -2308
+      ],
+      "ended_early_engine_gap": false
+     },
+     {
+      "seed": "8IZ7HHE4",
+      "furthest_ante": 4,
+      "lives_lost": 4,
+      "final_lives": 0,
+      "n_nemesis": 2,
+      "win_rate": 0.0,
+      "margins": [
+       -372,
+       -2892
+      ],
+      "ended_early_engine_gap": false
+     },
+     {
+      "seed": "8Q47WV6K",
+      "furthest_ante": 3,
+      "lives_lost": 4,
+      "final_lives": 0,
+      "n_nemesis": 1,
+      "win_rate": 0.0,
+      "margins": [
+       -392
+      ],
+      "ended_early_engine_gap": false
+     },
+     {
+      "seed": "8QBRTPD",
+      "furthest_ante": 3,
+      "lives_lost": 4,
+      "final_lives": 0,
+      "n_nemesis": 1,
+      "win_rate": 0.0,
+      "margins": [
+       -808
+      ],
+      "ended_early_engine_gap": false
+     },
+     {
+      "seed": "8SIYIK9C",
+      "furthest_ante": 4,
+      "lives_lost": 4,
+      "final_lives": 0,
+      "n_nemesis": 3,
+      "win_rate": 0.3333333333333333,
+      "margins": [
+       -416,
+       1810,
+       -4662
+      ],
+      "ended_early_engine_gap": false
+     },
+     {
+      "seed": "8UU564MF",
+      "furthest_ante": 3,
+      "lives_lost": 4,
+      "final_lives": 0,
+      "n_nemesis": 2,
+      "win_rate": 0.0,
+      "margins": [
+       -520,
+       -1728
+      ],
+      "ended_early_engine_gap": false
+     },
+     {
+      "seed": "8Y7ABZ7C",
+      "furthest_ante": 5,
+      "lives_lost": 4,
+      "final_lives": 0,
+      "n_nemesis": 3,
+      "win_rate": 0.6666666666666666,
+      "margins": [
+       2446,
+       4,
+       -6800
+      ],
+      "ended_early_engine_gap": false
+     },
+     {
+      "seed": "93W4UHC4",
+      "furthest_ante": 7,
+      "lives_lost": 4,
+      "final_lives": 0,
+      "n_nemesis": 5,
+      "win_rate": 1.0,
+      "margins": [
+       2156,
+       987,
+       1498,
+       10701,
+       2150
+      ],
+      "ended_early_engine_gap": false
+     },
+     {
+      "seed": "967889YL",
+      "furthest_ante": 4,
+      "lives_lost": 4,
+      "final_lives": 0,
+      "n_nemesis": 2,
+      "win_rate": 0.5,
+      "margins": [
+       -648,
+       3823
+      ],
+      "ended_early_engine_gap": false
+     },
+     {
+      "seed": "9Q9HQXZG",
+      "furthest_ante": 5,
+      "lives_lost": 4,
+      "final_lives": 0,
+      "n_nemesis": 3,
+      "win_rate": 0.3333333333333333,
+      "margins": [
+       -139,
+       2930,
+       -5079
+      ],
+      "ended_early_engine_gap": false
+     },
+     {
+      "seed": "9QV2ZT9X",
+      "furthest_ante": 4,
+      "lives_lost": 4,
+      "final_lives": 0,
+      "n_nemesis": 2,
+      "win_rate": 0.5,
+      "margins": [
+       -468,
+       1088
+      ],
+      "ended_early_engine_gap": false
+     },
+     {
+      "seed": "9VIGPRT6",
+      "furthest_ante": 3,
+      "lives_lost": 4,
+      "final_lives": 0,
+      "n_nemesis": 2,
+      "win_rate": 0.5,
+      "margins": [
+       1000,
+       -2016
+      ],
+      "ended_early_engine_gap": false
+     },
+     {
+      "seed": "9ZXMM1M",
+      "furthest_ante": 3,
+      "lives_lost": 4,
+      "final_lives": 0,
+      "n_nemesis": 2,
+      "win_rate": 0.5,
+      "margins": [
+       200,
+       -2655
+      ],
+      "ended_early_engine_gap": false
+     },
+     {
+      "seed": "A",
+      "furthest_ante": 3,
+      "lives_lost": 4,
+      "final_lives": 0,
+      "n_nemesis": 2,
+      "win_rate": 0.0,
+      "margins": [
+       -512,
+       -1544
+      ],
+      "ended_early_engine_gap": false
+     },
+     {
+      "seed": "A1UAS1G5",
+      "furthest_ante": 3,
+      "lives_lost": 4,
+      "final_lives": 0,
+      "n_nemesis": 2,
+      "win_rate": 0.0,
+      "margins": [
+       -368,
+       -246
+      ],
+      "ended_early_engine_gap": false
+     },
+     {
+      "seed": "AE1K7DG1",
+      "furthest_ante": 5,
+      "lives_lost": 4,
+      "final_lives": 0,
+      "n_nemesis": 3,
+      "win_rate": 0.3333333333333333,
+      "margins": [
+       -828,
+       731,
+       -8876
+      ],
+      "ended_early_engine_gap": false
+     },
+     {
+      "seed": "ALEEB",
+      "furthest_ante": 4,
+      "lives_lost": 4,
+      "final_lives": 0,
+      "n_nemesis": 2,
+      "win_rate": 0.5,
+      "margins": [
+       804,
+       -1736
+      ],
+      "ended_early_engine_gap": false
+     },
+     {
+      "seed": "AMPYZUIU",
+      "furthest_ante": 4,
+      "lives_lost": 4,
+      "final_lives": 0,
+      "n_nemesis": 2,
+      "win_rate": 0.5,
+      "margins": [
+       656,
+       -2578
+      ],
+      "ended_early_engine_gap": false
+     },
+     {
+      "seed": "APH9LX2Y",
+      "furthest_ante": 4,
+      "lives_lost": 4,
+      "final_lives": 0,
+      "n_nemesis": 3,
+      "win_rate": 0.3333333333333333,
+      "margins": [
+       2294,
+       -1688,
+       -5264
+      ],
+      "ended_early_engine_gap": false
+     },
+     {
+      "seed": "BA1D48RK",
+      "furthest_ante": 4,
+      "lives_lost": 4,
+      "final_lives": 0,
+      "n_nemesis": 2,
+      "win_rate": 0.5,
+      "margins": [
+       832,
+       -640
+      ],
+      "ended_early_engine_gap": false
+     },
+     {
+      "seed": "BQ6A2D42",
+      "furthest_ante": 4,
+      "lives_lost": 4,
+      "final_lives": 0,
+      "n_nemesis": 2,
+      "win_rate": 0.0,
+      "margins": [
+       -618,
+       -388
+      ],
+      "ended_early_engine_gap": false
+     },
+     {
+      "seed": "C19P8BQ4",
+      "furthest_ante": 3,
+      "lives_lost": 4,
+      "final_lives": 0,
+      "n_nemesis": 1,
+      "win_rate": 0.0,
+      "margins": [
+       -80
+      ],
+      "ended_early_engine_gap": false
+     },
+     {
+      "seed": "C1ZLPKAA",
+      "furthest_ante": 5,
+      "lives_lost": 4,
+      "final_lives": 0,
+      "n_nemesis": 3,
+      "win_rate": 1.0,
+      "margins": [
+       348,
+       6160,
+       64
+      ],
+      "ended_early_engine_gap": false
+     },
+     {
+      "seed": "C93K3YWJ",
+      "furthest_ante": 3,
+      "lives_lost": 4,
+      "final_lives": 0,
+      "n_nemesis": 1,
+      "win_rate": 0.0,
+      "margins": [
+       -472
+      ],
+      "ended_early_engine_gap": false
+     },
+     {
+      "seed": "CCBWC6CR",
+      "furthest_ante": 4,
+      "lives_lost": 4,
+      "final_lives": 0,
+      "n_nemesis": 2,
+      "win_rate": 0.5,
+      "margins": [
+       -412,
+       435
+      ],
+      "ended_early_engine_gap": false
+     },
+     {
+      "seed": "CHPB293X",
+      "furthest_ante": 5,
+      "lives_lost": 4,
+      "final_lives": 0,
+      "n_nemesis": 3,
+      "win_rate": 0.6666666666666666,
+      "margins": [
+       4286,
+       1776,
+       -5182
+      ],
+      "ended_early_engine_gap": false
+     },
+     {
+      "seed": "CIGHYTAU",
+      "furthest_ante": 5,
+      "lives_lost": 4,
+      "final_lives": 0,
+      "n_nemesis": 4,
+      "win_rate": 0.5,
+      "margins": [
+       2797,
+       4386,
+       -5344,
+       -7482
+      ],
+      "ended_early_engine_gap": false
+     },
+     {
+      "seed": "CMEEXU8I",
+      "furthest_ante": 5,
+      "lives_lost": 4,
+      "final_lives": 0,
+      "n_nemesis": 3,
+      "win_rate": 0.3333333333333333,
+      "margins": [
+       -424,
+       1396,
+       -1842
+      ],
+      "ended_early_engine_gap": false
+     },
+     {
+      "seed": "D4TDD2B6",
+      "furthest_ante": 4,
+      "lives_lost": 4,
+      "final_lives": 0,
+      "n_nemesis": 2,
+      "win_rate": 0.0,
+      "margins": [
+       -776,
+       -436
+      ],
+      "ended_early_engine_gap": false
+     },
+     {
+      "seed": "D7Y5419A",
+      "furthest_ante": 3,
+      "lives_lost": 4,
+      "final_lives": 0,
+      "n_nemesis": 2,
+      "win_rate": 0.0,
+      "margins": [
+       -440,
+       -3176
+      ],
+      "ended_early_engine_gap": false
+     },
+     {
+      "seed": "ECG8NVDZ",
+      "furthest_ante": 4,
+      "lives_lost": 4,
+      "final_lives": 0,
+      "n_nemesis": 2,
+      "win_rate": 0.5,
+      "margins": [
+       -660,
+       1390
+      ],
+      "ended_early_engine_gap": false
+     },
+     {
+      "seed": "EGE5ZY77",
+      "furthest_ante": 4,
+      "lives_lost": 4,
+      "final_lives": 0,
+      "n_nemesis": 2,
+      "win_rate": 0.5,
+      "margins": [
+       604,
+       -876
+      ],
+      "ended_early_engine_gap": false
+     },
+     {
+      "seed": "EVB8882H",
+      "furthest_ante": 3,
+      "lives_lost": 4,
+      "final_lives": 0,
+      "n_nemesis": 2,
+      "win_rate": 0.0,
+      "margins": [
+       -584,
+       -3371
+      ],
+      "ended_early_engine_gap": false
+     },
+     {
+      "seed": "FSXYRB3J",
+      "furthest_ante": 3,
+      "lives_lost": 4,
+      "final_lives": 0,
+      "n_nemesis": 1,
+      "win_rate": 0.0,
+      "margins": [
+       -432
+      ],
+      "ended_early_engine_gap": false
+     },
+     {
+      "seed": "GVQL737K",
+      "furthest_ante": 3,
+      "lives_lost": 4,
+      "final_lives": 0,
+      "n_nemesis": 1,
+      "win_rate": 0.0,
+      "margins": [
+       -348
+      ],
+      "ended_early_engine_gap": false
+     },
+     {
+      "seed": "GVYT2DGJ",
+      "furthest_ante": 4,
+      "lives_lost": 4,
+      "final_lives": 0,
+      "n_nemesis": 3,
+      "win_rate": 0.3333333333333333,
+      "margins": [
+       860,
+       -1123,
+       -1241
+      ],
+      "ended_early_engine_gap": false
+     },
+     {
+      "seed": "H1EWXLNE",
+      "furthest_ante": 3,
+      "lives_lost": 4,
+      "final_lives": 0,
+      "n_nemesis": 1,
+      "win_rate": 0.0,
+      "margins": [
+       -615
+      ],
+      "ended_early_engine_gap": false
+     },
+     {
+      "seed": "HPR8Q7K",
+      "furthest_ante": 3,
+      "lives_lost": 4,
+      "final_lives": 0,
+      "n_nemesis": 1,
+      "win_rate": 0.0,
+      "margins": [
+       -372
+      ],
+      "ended_early_engine_gap": false
+     },
+     {
+      "seed": "HS8LL7TC",
+      "furthest_ante": 4,
+      "lives_lost": 4,
+      "final_lives": 0,
+      "n_nemesis": 2,
+      "win_rate": 0.5,
+      "margins": [
+       16,
+       -1512
+      ],
+      "ended_early_engine_gap": false
+     },
+     {
+      "seed": "HSC1L2DX",
+      "furthest_ante": 3,
+      "lives_lost": 4,
+      "final_lives": 0,
+      "n_nemesis": 1,
+      "win_rate": 0.0,
+      "margins": [
+       -448
+      ],
+      "ended_early_engine_gap": false
+     },
+     {
+      "seed": "I68YASXJ",
+      "furthest_ante": 6,
+      "lives_lost": 4,
+      "final_lives": 0,
+      "n_nemesis": 4,
+      "win_rate": 0.75,
+      "margins": [
+       1496,
+       1527,
+       3106,
+       -9423
+      ],
+      "ended_early_engine_gap": false
+     },
+     {
+      "seed": "ICUESE5D",
+      "furthest_ante": 4,
+      "lives_lost": 4,
+      "final_lives": 0,
+      "n_nemesis": 2,
+      "win_rate": 0.5,
+      "margins": [
+       664,
+       -2176
+      ],
+      "ended_early_engine_gap": false
+     },
+     {
+      "seed": "IMMOLATE",
+      "furthest_ante": 4,
+      "lives_lost": 4,
+      "final_lives": 0,
+      "n_nemesis": 2,
+      "win_rate": 0.5,
+      "margins": [
+       -544,
+       837
+      ],
+      "ended_early_engine_gap": false
+     },
+     {
+      "seed": "J3GHQHJM",
+      "furthest_ante": 3,
+      "lives_lost": 4,
+      "final_lives": 0,
+      "n_nemesis": 1,
+      "win_rate": 0.0,
+      "margins": [
+       -608
+      ],
+      "ended_early_engine_gap": false
+     },
+     {
+      "seed": "JQB4BN6F",
+      "furthest_ante": 5,
+      "lives_lost": 4,
+      "final_lives": 0,
+      "n_nemesis": 3,
+      "win_rate": 0.3333333333333333,
+      "margins": [
+       637,
+       -809,
+       -2354
+      ],
+      "ended_early_engine_gap": false
+     },
+     {
+      "seed": "K84ZCS3Q",
+      "furthest_ante": 4,
+      "lives_lost": 4,
+      "final_lives": 0,
+      "n_nemesis": 2,
+      "win_rate": 0.5,
+      "margins": [
+       876,
+       -724
+      ],
+      "ended_early_engine_gap": false
+     },
+     {
+      "seed": "K8PU119J",
+      "furthest_ante": 4,
+      "lives_lost": 4,
+      "final_lives": 0,
+      "n_nemesis": 2,
+      "win_rate": 0.5,
+      "margins": [
+       556,
+       -2368
+      ],
+      "ended_early_engine_gap": false
+     },
+     {
+      "seed": "K94TS4B8",
+      "furthest_ante": 3,
+      "lives_lost": 4,
+      "final_lives": 0,
+      "n_nemesis": 1,
+      "win_rate": 0.0,
+      "margins": [
+       -684
+      ],
+      "ended_early_engine_gap": false
+     },
+     {
+      "seed": "KPGY6GCH",
+      "furthest_ante": 4,
+      "lives_lost": 4,
+      "final_lives": 0,
+      "n_nemesis": 2,
+      "win_rate": 0.5,
+      "margins": [
+       848,
+       -2290
+      ],
+      "ended_early_engine_gap": false
+     },
+     {
+      "seed": "LHZYIWR6",
+      "furthest_ante": 3,
+      "lives_lost": 4,
+      "final_lives": 0,
+      "n_nemesis": 1,
+      "win_rate": 0.0,
+      "margins": [
+       -576
+      ],
+      "ended_early_engine_gap": false
+     },
+     {
+      "seed": "LMGJPMKP",
+      "furthest_ante": 3,
+      "lives_lost": 4,
+      "final_lives": 0,
+      "n_nemesis": 1,
+      "win_rate": 0.0,
+      "margins": [
+       -716
+      ],
+      "ended_early_engine_gap": false
+     },
+     {
+      "seed": "M2LAET6A",
+      "furthest_ante": 5,
+      "lives_lost": 4,
+      "final_lives": 0,
+      "n_nemesis": 3,
+      "win_rate": 0.6666666666666666,
+      "margins": [
+       1586,
+       2710,
+       -3678
+      ],
+      "ended_early_engine_gap": false
+     },
+     {
+      "seed": "M4LV5E89",
+      "furthest_ante": 3,
+      "lives_lost": 4,
+      "final_lives": 0,
+      "n_nemesis": 2,
+      "win_rate": 0.5,
+      "margins": [
+       624,
+       -2688
+      ],
+      "ended_early_engine_gap": false
+     },
+     {
+      "seed": "M6XD1INZ",
+      "furthest_ante": 3,
+      "lives_lost": 4,
+      "final_lives": 0,
+      "n_nemesis": 1,
+      "win_rate": 0.0,
+      "margins": [
+       -376
+      ],
+      "ended_early_engine_gap": false
+     },
+     {
+      "seed": "MIM66QT9",
+      "furthest_ante": 4,
+      "lives_lost": 4,
+      "final_lives": 0,
+      "n_nemesis": 3,
+      "win_rate": 0.3333333333333333,
+      "margins": [
+       360,
+       -1195,
+       -5482
+      ],
+      "ended_early_engine_gap": false
+     },
+     {
+      "seed": "MM1H85E3",
+      "furthest_ante": 3,
+      "lives_lost": 4,
+      "final_lives": 0,
+      "n_nemesis": 1,
+      "win_rate": 0.0,
+      "margins": [
+       -704
+      ],
+      "ended_early_engine_gap": false
+     },
+     {
+      "seed": "MRBF7L15",
+      "furthest_ante": 4,
+      "lives_lost": 4,
+      "final_lives": 0,
+      "n_nemesis": 3,
+      "win_rate": 0.3333333333333333,
+      "margins": [
+       -264,
+       336,
+       -6672
+      ],
+      "ended_early_engine_gap": false
+     },
+     {
+      "seed": "MSQZGPMX",
+      "furthest_ante": 5,
+      "lives_lost": 4,
+      "final_lives": 0,
+      "n_nemesis": 3,
+      "win_rate": 0.6666666666666666,
+      "margins": [
+       292,
+       1119,
+       -1059
+      ],
+      "ended_early_engine_gap": false
+     },
+     {
+      "seed": "OG4YQPSI",
+      "furthest_ante": 3,
+      "lives_lost": 4,
+      "final_lives": 0,
+      "n_nemesis": 1,
+      "win_rate": 0.0,
+      "margins": [
+       -620
+      ],
+      "ended_early_engine_gap": false
+     },
+     {
+      "seed": "PI1J5YAG",
+      "furthest_ante": 3,
+      "lives_lost": 4,
+      "final_lives": 0,
+      "n_nemesis": 1,
+      "win_rate": 0.0,
+      "margins": [
+       -396
+      ],
+      "ended_early_engine_gap": false
+     },
+     {
+      "seed": "PJ5TB88W",
+      "furthest_ante": 7,
+      "lives_lost": 4,
+      "final_lives": 0,
+      "n_nemesis": 5,
+      "win_rate": 0.8,
+      "margins": [
+       1636,
+       -299,
+       4798,
+       4179,
+       20249
+      ],
+      "ended_early_engine_gap": false
+     },
+     {
+      "seed": "PQNVFI72",
+      "furthest_ante": 4,
+      "lives_lost": 4,
+      "final_lives": 0,
+      "n_nemesis": 2,
+      "win_rate": 0.0,
+      "margins": [
+       -436,
+       -1603
+      ],
+      "ended_early_engine_gap": false
+     },
+     {
+      "seed": "PT6IF52R",
+      "furthest_ante": 4,
+      "lives_lost": 4,
+      "final_lives": 0,
+      "n_nemesis": 2,
+      "win_rate": 0.5,
+      "margins": [
+       252,
+       -3032
+      ],
+      "ended_early_engine_gap": false
+     },
+     {
+      "seed": "PTSBMSMQ",
+      "furthest_ante": 3,
+      "lives_lost": 4,
+      "final_lives": 0,
+      "n_nemesis": 1,
+      "win_rate": 0.0,
+      "margins": [
+       -488
+      ],
+      "ended_early_engine_gap": false
+     },
+     {
+      "seed": "QY3TQZJ9",
+      "furthest_ante": 4,
+      "lives_lost": 4,
+      "final_lives": 0,
+      "n_nemesis": 2,
+      "win_rate": 0.5,
+      "margins": [
+       264,
+       -788
+      ],
+      "ended_early_engine_gap": false
+     },
+     {
+      "seed": "R8DFV7RD",
+      "furthest_ante": 3,
+      "lives_lost": 4,
+      "final_lives": 0,
+      "n_nemesis": 1,
+      "win_rate": 0.0,
+      "margins": [
+       -564
+      ],
+      "ended_early_engine_gap": false
+     },
+     {
+      "seed": "R8W2CT59",
+      "furthest_ante": 3,
+      "lives_lost": 4,
+      "final_lives": 0,
+      "n_nemesis": 1,
+      "win_rate": 0.0,
+      "margins": [
+       -800
+      ],
+      "ended_early_engine_gap": false
+     },
+     {
+      "seed": "RUXS91YF",
+      "furthest_ante": 3,
+      "lives_lost": 4,
+      "final_lives": 0,
+      "n_nemesis": 1,
+      "win_rate": 0.0,
+      "margins": [
+       -428
+      ],
+      "ended_early_engine_gap": false
+     },
+     {
+      "seed": "RXI42HZ2",
+      "furthest_ante": 3,
+      "lives_lost": 4,
+      "final_lives": 0,
+      "n_nemesis": 2,
+      "win_rate": 0.0,
+      "margins": [
+       -312,
+       -2400
+      ],
+      "ended_early_engine_gap": false
+     },
+     {
+      "seed": "S1QJX1CS",
+      "furthest_ante": 3,
+      "lives_lost": 4,
+      "final_lives": 0,
+      "n_nemesis": 2,
+      "win_rate": 0.0,
+      "margins": [
+       -644,
+       -2388
+      ],
+      "ended_early_engine_gap": false
+     },
+     {
+      "seed": "SF9SZOB1",
+      "furthest_ante": 4,
+      "lives_lost": 4,
+      "final_lives": 0,
+      "n_nemesis": 2,
+      "win_rate": 0.5,
+      "margins": [
+       1012,
+       -1808
+      ],
+      "ended_early_engine_gap": false
+     },
+     {
+      "seed": "SLRSKCG1",
+      "furthest_ante": 3,
+      "lives_lost": 4,
+      "final_lives": 0,
+      "n_nemesis": 2,
+      "win_rate": 0.0,
+      "margins": [
+       -360,
+       -2952
+      ],
+      "ended_early_engine_gap": false
+     },
+     {
+      "seed": "SMC7XNT8",
+      "furthest_ante": 3,
+      "lives_lost": 4,
+      "final_lives": 0,
+      "n_nemesis": 1,
+      "win_rate": 0.0,
+      "margins": [
+       -472
+      ],
+      "ended_early_engine_gap": false
+     },
+     {
+      "seed": "SQVZX29L",
+      "furthest_ante": 4,
+      "lives_lost": 4,
+      "final_lives": 0,
+      "n_nemesis": 2,
+      "win_rate": 0.5,
+      "margins": [
+       1406,
+       -910
+      ],
+      "ended_early_engine_gap": false
+     },
+     {
+      "seed": "T5A1T1DZ",
+      "furthest_ante": 3,
+      "lives_lost": 4,
+      "final_lives": 0,
+      "n_nemesis": 1,
+      "win_rate": 0.0,
+      "margins": [
+       -688
+      ],
+      "ended_early_engine_gap": false
+     },
+     {
+      "seed": "U516KUJP",
+      "furthest_ante": 3,
+      "lives_lost": 4,
+      "final_lives": 0,
+      "n_nemesis": 1,
+      "win_rate": 0.0,
+      "margins": [
+       -676
+      ],
+      "ended_early_engine_gap": false
+     },
+     {
+      "seed": "U8RJYV6M",
+      "furthest_ante": 3,
+      "lives_lost": 4,
+      "final_lives": 0,
+      "n_nemesis": 2,
+      "win_rate": 0.5,
+      "margins": [
+       300,
+       -1544
+      ],
+      "ended_early_engine_gap": false
+     },
+     {
+      "seed": "UCAMJYYK",
+      "furthest_ante": 3,
+      "lives_lost": 4,
+      "final_lives": 0,
+      "n_nemesis": 2,
+      "win_rate": 0.0,
+      "margins": [
+       -356,
+       -1988
+      ],
+      "ended_early_engine_gap": false
+     },
+     {
+      "seed": "USQF4ZAV",
+      "furthest_ante": 5,
+      "lives_lost": 4,
+      "final_lives": 0,
+      "n_nemesis": 3,
+      "win_rate": 0.6666666666666666,
+      "margins": [
+       -256,
+       3479,
+       2630
+      ],
+      "ended_early_engine_gap": false
+     },
+     {
+      "seed": "V3PUR5L4",
+      "furthest_ante": 4,
+      "lives_lost": 4,
+      "final_lives": 0,
+      "n_nemesis": 2,
+      "win_rate": 0.5,
+      "margins": [
+       738,
+       -292
+      ],
+      "ended_early_engine_gap": false
+     },
+     {
+      "seed": "VNOMH111",
+      "furthest_ante": 7,
+      "lives_lost": 4,
+      "final_lives": 0,
+      "n_nemesis": 5,
+      "win_rate": 0.6,
+      "margins": [
+       2733,
+       2879,
+       -212,
+       -4810,
+       1563
+      ],
+      "ended_early_engine_gap": false
+     },
+     {
+      "seed": "WBC1DGJQ",
+      "furthest_ante": 4,
+      "lives_lost": 4,
+      "final_lives": 0,
+      "n_nemesis": 2,
+      "win_rate": 0.0,
+      "margins": [
+       -448,
+       -1712
+      ],
+      "ended_early_engine_gap": false
+     },
+     {
+      "seed": "WIF67A3S",
+      "furthest_ante": 3,
+      "lives_lost": 4,
+      "final_lives": 0,
+      "n_nemesis": 2,
+      "win_rate": 0.0,
+      "margins": [
+       -632,
+       -2276
+      ],
+      "ended_early_engine_gap": false
+     },
+     {
+      "seed": "WLAVAQ75",
+      "furthest_ante": 4,
+      "lives_lost": 4,
+      "final_lives": 0,
+      "n_nemesis": 2,
+      "win_rate": 0.5,
+      "margins": [
+       -704,
+       1352
+      ],
+      "ended_early_engine_gap": false
+     },
+     {
+      "seed": "WVPJKPRD",
+      "furthest_ante": 4,
+      "lives_lost": 4,
+      "final_lives": 0,
+      "n_nemesis": 2,
+      "win_rate": 0.5,
+      "margins": [
+       136,
+       -2016
+      ],
+      "ended_early_engine_gap": false
+     },
+     {
+      "seed": "X7FG4FH8",
+      "furthest_ante": 3,
+      "lives_lost": 4,
+      "final_lives": 0,
+      "n_nemesis": 2,
+      "win_rate": 0.0,
+      "margins": [
+       -820,
+       -1096
+      ],
+      "ended_early_engine_gap": false
+     },
+     {
+      "seed": "XD55DZ57",
+      "furthest_ante": 3,
+      "lives_lost": 4,
+      "final_lives": 0,
+      "n_nemesis": 2,
+      "win_rate": 0.0,
+      "margins": [
+       -378,
+       -2901
+      ],
+      "ended_early_engine_gap": false
+     },
+     {
+      "seed": "XDW9VBHQ",
+      "furthest_ante": 4,
+      "lives_lost": 4,
+      "final_lives": 0,
+      "n_nemesis": 2,
+      "win_rate": 0.5,
+      "margins": [
+       -796,
+       3327
+      ],
+      "ended_early_engine_gap": false
+     },
+     {
+      "seed": "YB54A1EH",
+      "furthest_ante": 3,
+      "lives_lost": 4,
+      "final_lives": 0,
+      "n_nemesis": 2,
+      "win_rate": 0.0,
+      "margins": [
+       -444,
+       -2740
+      ],
+      "ended_early_engine_gap": false
+     },
+     {
+      "seed": "YD2HMRBR",
+      "furthest_ante": 5,
+      "lives_lost": 4,
+      "final_lives": 0,
+      "n_nemesis": 3,
+      "win_rate": 0.6666666666666666,
+      "margins": [
+       4233,
+       197,
+       -4471
+      ],
+      "ended_early_engine_gap": false
+     },
+     {
+      "seed": "YPB7TZWJ",
+      "furthest_ante": 4,
+      "lives_lost": 4,
+      "final_lives": 0,
+      "n_nemesis": 2,
+      "win_rate": 0.5,
+      "margins": [
+       1934,
+       -1284
+      ],
+      "ended_early_engine_gap": false
+     },
+     {
+      "seed": "5TITKHCI",
+      "furthest_ante": 4,
+      "lives_lost": 4,
+      "final_lives": 0,
+      "n_nemesis": 2,
+      "win_rate": 0.5,
+      "margins": [
+       1652,
+       -2656
+      ],
+      "ended_early_engine_gap": false
+     },
+     {
+      "seed": "RMC7WNS8",
+      "furthest_ante": 3,
+      "lives_lost": 4,
+      "final_lives": 0,
+      "n_nemesis": 2,
+      "win_rate": 0.0,
+      "margins": [
+       -808,
+       -2868
+      ],
+      "ended_early_engine_gap": false
+     },
+     {
+      "seed": "VLAUZAP7",
+      "furthest_ante": 3,
+      "lives_lost": 4,
+      "final_lives": 0,
+      "n_nemesis": 1,
+      "win_rate": 0.0,
+      "margins": [
+       -472
+      ],
+      "ended_early_engine_gap": false
+     },
+     {
+      "seed": "54H2L46C",
+      "furthest_ante": 4,
+      "lives_lost": 4,
+      "final_lives": 0,
+      "n_nemesis": 2,
+      "win_rate": 0.5,
+      "margins": [
+       -552,
+       2528
+      ],
+      "ended_early_engine_gap": false
+     },
+     {
+      "seed": "EK84YCRZ",
+      "furthest_ante": 4,
+      "lives_lost": 4,
+      "final_lives": 0,
+      "n_nemesis": 2,
+      "win_rate": 0.5,
+      "margins": [
+       660,
+       -2016
+      ],
+      "ended_early_engine_gap": false
+     },
+     {
+      "seed": "3PQWI42H",
+      "furthest_ante": 5,
+      "lives_lost": 4,
+      "final_lives": 0,
+      "n_nemesis": 3,
+      "win_rate": 0.6666666666666666,
+      "margins": [
+       2642,
+       74,
+       -6249
+      ],
+      "ended_early_engine_gap": false
+     },
+     {
+      "seed": "Y28I5PWN",
+      "furthest_ante": 3,
+      "lives_lost": 4,
+      "final_lives": 0,
+      "n_nemesis": 1,
+      "win_rate": 0.0,
+      "margins": [
+       -641
+      ],
+      "ended_early_engine_gap": false
+     },
+     {
+      "seed": "GEGUXSZ2",
+      "furthest_ante": 4,
+      "lives_lost": 4,
+      "final_lives": 0,
+      "n_nemesis": 3,
+      "win_rate": 0.3333333333333333,
+      "margins": [
+       1566,
+       -570,
+       -3553
+      ],
+      "ended_early_engine_gap": false
+     },
+     {
+      "seed": "DGJTCAMJ",
+      "furthest_ante": 5,
+      "lives_lost": 4,
+      "final_lives": 0,
+      "n_nemesis": 3,
+      "win_rate": 0.6666666666666666,
+      "margins": [
+       2656,
+       4992,
+       -3000
+      ],
+      "ended_early_engine_gap": false
+     },
+     {
+      "seed": "XXKGUPL7",
+      "furthest_ante": 3,
+      "lives_lost": 4,
+      "final_lives": 0,
+      "n_nemesis": 2,
+      "win_rate": 0.0,
+      "margins": [
+       -384,
+       -3216
+      ],
+      "ended_early_engine_gap": false
+     },
+     {
+      "seed": "37KVBC1D",
+      "furthest_ante": 4,
+      "lives_lost": 4,
+      "final_lives": 0,
+      "n_nemesis": 2,
+      "win_rate": 0.5,
+      "margins": [
+       624,
+       -1856
+      ],
+      "ended_early_engine_gap": false
+     },
+     {
+      "seed": "GJPD7X54",
+      "furthest_ante": 3,
+      "lives_lost": 4,
+      "final_lives": 0,
+      "n_nemesis": 2,
+      "win_rate": 0.5,
+      "margins": [
+       292,
+       -2376
+      ],
+      "ended_early_engine_gap": false
+     },
+     {
+      "seed": "19AC19O8",
+      "furthest_ante": 3,
+      "lives_lost": 4,
+      "final_lives": 0,
+      "n_nemesis": 2,
+      "win_rate": 0.5,
+      "margins": [
+       1024,
+       -2880
+      ],
+      "ended_early_engine_gap": false
+     },
+     {
+      "seed": "BP49PU2Y",
+      "furthest_ante": 5,
+      "lives_lost": 4,
+      "final_lives": 0,
+      "n_nemesis": 3,
+      "win_rate": 0.6666666666666666,
+      "margins": [
+       1626,
+       4700,
+       -1834
+      ],
+      "ended_early_engine_gap": false
+     },
+     {
+      "seed": "S9WXD2HM",
+      "furthest_ante": 3,
+      "lives_lost": 4,
+      "final_lives": 0,
+      "n_nemesis": 1,
+      "win_rate": 0.0,
+      "margins": [
+       -1020
+      ],
+      "ended_early_engine_gap": false
+     },
+     {
+      "seed": "QBQ34JCN",
+      "furthest_ante": 3,
+      "lives_lost": 4,
+      "final_lives": 0,
+      "n_nemesis": 2,
+      "win_rate": 0.0,
+      "margins": [
+       -943,
+       -492
+      ],
+      "ended_early_engine_gap": false
+     },
+     {
+      "seed": "MOAT516K",
+      "furthest_ante": 5,
+      "lives_lost": 4,
+      "final_lives": 0,
+      "n_nemesis": 3,
+      "win_rate": 0.6666666666666666,
+      "margins": [
+       212,
+       1387,
+       -2808
+      ],
+      "ended_early_engine_gap": false
+     },
+     {
+      "seed": "TJOA1TAR",
+      "furthest_ante": 3,
+      "lives_lost": 4,
+      "final_lives": 0,
+      "n_nemesis": 2,
+      "win_rate": 0.5,
+      "margins": [
+       528,
+       -402
+      ],
+      "ended_early_engine_gap": false
+     },
+     {
+      "seed": "1G5AOH9L",
+      "furthest_ante": 5,
+      "lives_lost": 4,
+      "final_lives": 0,
+      "n_nemesis": 3,
+      "win_rate": 0.3333333333333333,
+      "margins": [
+       120,
+       -2700,
+       -2473
+      ],
+      "ended_early_engine_gap": false
+     },
+     {
+      "seed": "W2XHR8LL",
+      "furthest_ante": 4,
+      "lives_lost": 4,
+      "final_lives": 0,
+      "n_nemesis": 2,
+      "win_rate": 0.0,
+      "margins": [
+       -56,
+       -214
+      ],
+      "ended_early_engine_gap": false
+     },
+     {
+      "seed": "7SCVIF67",
+      "furthest_ante": 5,
+      "lives_lost": 4,
+      "final_lives": 0,
+      "n_nemesis": 3,
+      "win_rate": 0.6666666666666666,
+      "margins": [
+       580,
+       2644,
+       -849
+      ],
+      "ended_early_engine_gap": false
+     },
+     {
+      "seed": "A3RBA1D4",
+      "furthest_ante": 3,
+      "lives_lost": 4,
+      "final_lives": 0,
+      "n_nemesis": 1,
+      "win_rate": 0.0,
+      "margins": [
+       -608
+      ],
+      "ended_early_engine_gap": false
+     },
+     {
+      "seed": "8QK15H9Y",
+      "furthest_ante": 3,
+      "lives_lost": 4,
+      "final_lives": 0,
+      "n_nemesis": 2,
+      "win_rate": 0.0,
+      "margins": [
+       -444,
+       -2912
+      ],
+      "ended_early_engine_gap": false
+     },
+     {
+      "seed": "3IX1MD1X",
+      "furthest_ante": 3,
+      "lives_lost": 4,
+      "final_lives": 0,
+      "n_nemesis": 2,
+      "win_rate": 0.0,
+      "margins": [
+       -464,
+       -2604
+      ],
+      "ended_early_engine_gap": false
+     }
+    ],
+    "summary": {
+     "furthest_ante": {
+      "point": 3.7666666666666666,
+      "lo": 3.6266666666666665,
+      "hi": 3.92,
+      "n": 150
+     },
+     "lives_lost": {
+      "point": 4.0,
+      "lo": 4.0,
+      "hi": 4.0,
+      "n": 150
+     },
+     "win_rate": {
+      "point": 0.28877777777777774,
+      "lo": 0.24355555555555555,
+      "hi": 0.3343333333333333,
+      "n": 150
+     },
+     "n_nemesis_total": 306,
+     "margin_quantiles": {
+      "0.0": -9423,
+      "0.1": -2880,
+      "0.25": -1284,
+      "0.5": -432,
+      "0.75": 738,
+      "0.9": 2630,
+      "1.0": 20249
+     },
+     "engine_gap_seeds": 0
+    }
+   },
+   "tournament": {
+    "deck": "b_checkered",
+    "player": "scripted:hand=greedy,reroll=1,buy=1",
+    "n_agents": 32,
+    "max_ante": 8,
+    "base_seed": 0,
+    "n_seeds": 16,
+    "wall_clock_s": 121.15276527404785,
+    "per_seed": [
+     {
+      "seed": "11111111",
+      "ante_ranks": {
+       "2": 7.0,
+       "3": 15.0,
+       "4": 3.0,
+       "5": 3.0,
+       "6": 14.0,
+       "7": 15.0,
+       "8": 15.0
+      },
+      "n_antes_present": 7,
+      "mean_rank_frac": 0.2995391705069124
+     },
+     {
+      "seed": "1558AXDL",
+      "ante_ranks": {
+       "2": 20.0,
+       "3": 21.0,
+       "4": 12.0,
+       "5": 8.0,
+       "6": 11.0,
+       "7": 7.0,
+       "8": 7.0
+      },
+      "n_antes_present": 7,
+      "mean_rank_frac": 0.3640552995391705
+     },
+     {
+      "seed": "15H9Z3IY",
+      "ante_ranks": {
+       "2": 16.0,
+       "3": 12.0,
+       "4": 8.0,
+       "5": 8.0,
+       "6": 12.0,
+       "7": 16.0,
+       "8": 17.0
+      },
+      "n_antes_present": 7,
+      "mean_rank_frac": 0.3778801843317972
+     },
+     {
+      "seed": "1KV4W6YS",
+      "ante_ranks": {
+       "2": 3.0,
+       "3": 7.0,
+       "4": 9.0,
+       "5": 9.0,
+       "6": 3.0,
+       "7": 3.0,
+       "8": 3.0
+      },
+      "n_antes_present": 7,
+      "mean_rank_frac": 0.1382488479262673
+     },
+     {
+      "seed": "1MD1YZ9T",
+      "ante_ranks": {
+       "2": 10.0,
+       "3": 12.0,
+       "4": 22.0,
+       "5": 19.0,
+       "6": 20.0,
+       "7": 16.0,
+       "8": 21.0
+      },
+      "n_antes_present": 7,
+      "mean_rank_frac": 0.5207373271889401
+     },
+     {
+      "seed": "28V7DD4H",
+      "ante_ranks": {
+       "2": 15.5,
+       "3": 18.0,
+       "4": 11.0,
+       "5": 11.0,
+       "6": 7.0,
+       "7": 9.0,
+       "8": 7.0
+      },
+      "n_antes_present": 7,
+      "mean_rank_frac": 0.32949308755760365
+     },
+     {
+      "seed": "29DAQVG1",
+      "ante_ranks": {
+       "2": 21.0,
+       "3": 7.0,
+       "4": 11.0,
+       "5": 12.0,
+       "6": 13.0,
+       "7": 17.0,
+       "8": 16.0
+      },
+      "n_antes_present": 7,
+      "mean_rank_frac": 0.4147465437788019
+     },
+     {
+      "seed": "29Y3L4S9",
+      "ante_ranks": {
+       "2": 18.0,
+       "3": 7.0,
+       "4": 3.0,
+       "5": 7.0,
+       "6": 9.0,
+       "7": 12.0,
+       "8": 12.0
+      },
+      "n_antes_present": 7,
+      "mean_rank_frac": 0.28110599078341014
+     },
+     {
+      "seed": "29ZSW8MY",
+      "ante_ranks": {
+       "2": 7.0,
+       "3": 7.0,
+       "4": 7.0,
+       "5": 3.0,
+       "6": 3.0,
+       "7": 7.0,
+       "8": 7.0
+      },
+      "n_antes_present": 7,
+      "mean_rank_frac": 0.15668202764976957
+     },
+     {
+      "seed": "2BRGI767",
+      "ante_ranks": {
+       "2": 3.0,
+       "3": 12.0,
+       "4": 16.0,
+       "5": 3.0,
+       "6": 3.0,
+       "7": 3.0,
+       "8": 12.0
+      },
+      "n_antes_present": 7,
+      "mean_rank_frac": 0.20737327188940094
+     },
+     {
+      "seed": "2CP4KSXZ",
+      "ante_ranks": {
+       "2": 7.0,
+       "3": 7.0,
+       "4": 7.0,
+       "5": 11.0,
+       "6": 12.0,
+       "7": 13.0,
+       "8": 13.0
+      },
+      "n_antes_present": 7,
+      "mean_rank_frac": 0.2903225806451613
+     },
+     {
+      "seed": "2GHBLJD9",
+      "ante_ranks": {
+       "2": 7.0,
+       "3": 16.0,
+       "4": 16.0,
+       "5": 9.0,
+       "6": 14.0,
+       "7": 15.0,
+       "8": 10.0
+      },
+      "n_antes_present": 7,
+      "mean_rank_frac": 0.3686635944700461
+     },
+     {
+      "seed": "2H9N3ISZ",
+      "ante_ranks": {
+       "2": 7.0,
+       "3": 7.0,
+       "4": 7.0,
+       "5": 7.0,
+       "6": 7.0,
+       "7": 8.0,
+       "8": 7.0
+      },
+      "n_antes_present": 7,
+      "mean_rank_frac": 0.19815668202764974
+     },
+     {
+      "seed": "2K9H9HN",
+      "ante_ranks": {
+       "2": 13.0,
+       "3": 3.0,
+       "4": 16.0,
+       "5": 8.0,
+       "6": 8.0,
+       "7": 8.0,
+       "8": 8.0
+      },
+      "n_antes_present": 7,
+      "mean_rank_frac": 0.2626728110599078
+     },
+     {
+      "seed": "34JCNMPA",
+      "ante_ranks": {
+       "2": 3.0,
+       "3": 21.0,
+       "4": 7.0,
+       "5": 8.0,
+       "6": 8.0,
+       "7": 13.0,
+       "8": 13.0
+      },
+      "n_antes_present": 7,
+      "mean_rank_frac": 0.304147465437788
+     },
+     {
+      "seed": "3SZ71111",
+      "ante_ranks": {
+       "2": 8.0,
+       "3": 8.0,
+       "4": 11.0,
+       "5": 3.0,
+       "6": 4.0,
+       "7": 8.0,
+       "8": 9.0
+      },
+      "n_antes_present": 7,
+      "mean_rank_frac": 0.20276497695852536
+     }
+    ],
+    "summary": {
+     "mean_rank_frac": {
+      "point": 0.294786866359447,
+      "lo": 0.24870391705069123,
+      "hi": 0.34360599078341014,
+      "n": 16
+     }
+    }
+   }
+  },
+  {
+   "deck": "b_plasma",
+   "solo": {
+    "deck": "b_plasma",
+    "player": "scripted:hand=greedy,reroll=1,buy=1",
+    "target_fn": "vanilla_boss_target_fn(deck_key=None, stake=None)",
+    "n_seeds": 150,
+    "lives": 4,
+    "max_antes": 8,
+    "wall_clock_s": 16.575661420822144,
+    "per_seed": [
+     {
+      "seed": "11111111",
+      "furthest_ante": 4,
+      "lives_lost": 4,
+      "final_lives": 0,
+      "n_nemesis": 3,
+      "win_rate": 0.3333333333333333,
+      "margins": [
+       -790,
+       2555,
+       -11849
+      ],
+      "ended_early_engine_gap": false
+     },
+     {
+      "seed": "1558AXDL",
+      "furthest_ante": 3,
+      "lives_lost": 4,
+      "final_lives": 0,
+      "n_nemesis": 2,
+      "win_rate": 0.0,
+      "margins": [
+       -341,
+       -2858
+      ],
+      "ended_early_engine_gap": false
+     },
+     {
+      "seed": "15H9Z3IY",
+      "furthest_ante": 4,
+      "lives_lost": 4,
+      "final_lives": 0,
+      "n_nemesis": 3,
+      "win_rate": 0.3333333333333333,
+      "margins": [
+       1151,
+       -5119,
+       -16748
+      ],
+      "ended_early_engine_gap": false
+     },
+     {
+      "seed": "1KV4W6YS",
+      "furthest_ante": 4,
+      "lives_lost": 4,
+      "final_lives": 0,
+      "n_nemesis": 2,
+      "win_rate": 0.5,
+      "margins": [
+       1551,
+       -4718
+      ],
+      "ended_early_engine_gap": false
+     },
+     {
+      "seed": "1MD1YZ9T",
+      "furthest_ante": 4,
+      "lives_lost": 4,
+      "final_lives": 0,
+      "n_nemesis": 2,
+      "win_rate": 0.0,
+      "margins": [
+       -478,
+       -4440
+      ],
+      "ended_early_engine_gap": false
+     },
+     {
+      "seed": "28V7DD4H",
+      "furthest_ante": 3,
+      "lives_lost": 4,
+      "final_lives": 0,
+      "n_nemesis": 2,
+      "win_rate": 0.0,
+      "margins": [
+       -862,
+       -4231
+      ],
+      "ended_early_engine_gap": false
+     },
+     {
+      "seed": "29DAQVG1",
+      "furthest_ante": 4,
+      "lives_lost": 4,
+      "final_lives": 0,
+      "n_nemesis": 2,
+      "win_rate": 0.5,
+      "margins": [
+       566,
+       -2219
+      ],
+      "ended_early_engine_gap": false
+     },
+     {
+      "seed": "29Y3L4S9",
+      "furthest_ante": 3,
+      "lives_lost": 4,
+      "final_lives": 0,
+      "n_nemesis": 2,
+      "win_rate": 0.5,
+      "margins": [
+       451,
+       -4626
+      ],
+      "ended_early_engine_gap": false
+     },
+     {
+      "seed": "29ZSW8MY",
+      "furthest_ante": 3,
+      "lives_lost": 4,
+      "final_lives": 0,
+      "n_nemesis": 2,
+      "win_rate": 0.0,
+      "margins": [
+       -378,
+       -5482
+      ],
+      "ended_early_engine_gap": false
+     },
+     {
+      "seed": "2BRGI767",
+      "furthest_ante": 6,
+      "lives_lost": 4,
+      "final_lives": 0,
+      "n_nemesis": 4,
+      "win_rate": 0.5,
+      "margins": [
+       10242,
+       -345,
+       22229,
+       -29163
+      ],
+      "ended_early_engine_gap": false
+     },
+     {
+      "seed": "2CP4KSXZ",
+      "furthest_ante": 5,
+      "lives_lost": 4,
+      "final_lives": 0,
+      "n_nemesis": 3,
+      "win_rate": 0.6666666666666666,
+      "margins": [
+       18410,
+       3427,
+       -15821
+      ],
+      "ended_early_engine_gap": false
+     },
+     {
+      "seed": "2GHBLJD9",
+      "furthest_ante": 5,
+      "lives_lost": 4,
+      "final_lives": 0,
+      "n_nemesis": 3,
+      "win_rate": 0.3333333333333333,
+      "margins": [
+       138,
+       -692,
+       -7013
+      ],
+      "ended_early_engine_gap": false
+     },
+     {
+      "seed": "2H9N3ISZ",
+      "furthest_ante": 4,
+      "lives_lost": 4,
+      "final_lives": 0,
+      "n_nemesis": 3,
+      "win_rate": 0.3333333333333333,
+      "margins": [
+       -1892,
+       3639,
+       -14185
+      ],
+      "ended_early_engine_gap": false
+     },
+     {
+      "seed": "2K9H9HN",
+      "furthest_ante": 4,
+      "lives_lost": 4,
+      "final_lives": 0,
+      "n_nemesis": 2,
+      "win_rate": 0.5,
+      "margins": [
+       1315,
+       -4910
+      ],
+      "ended_early_engine_gap": false
+     },
+     {
+      "seed": "34JCNMPA",
+      "furthest_ante": 4,
+      "lives_lost": 4,
+      "final_lives": 0,
+      "n_nemesis": 2,
+      "win_rate": 0.5,
+      "margins": [
+       3187,
+       -3389
+      ],
+      "ended_early_engine_gap": false
+     },
+     {
+      "seed": "3SZ71111",
+      "furthest_ante": 3,
+      "lives_lost": 4,
+      "final_lives": 0,
+      "n_nemesis": 2,
+      "win_rate": 0.0,
+      "margins": [
+       -525,
+       -3754
+      ],
+      "ended_early_engine_gap": false
+     },
+     {
+      "seed": "41Y71M6E",
+      "furthest_ante": 4,
+      "lives_lost": 4,
+      "final_lives": 0,
+      "n_nemesis": 2,
+      "win_rate": 0.5,
+      "margins": [
+       1324,
+       -4646
+      ],
+      "ended_early_engine_gap": false
+     },
+     {
+      "seed": "46Y8UZEG",
+      "furthest_ante": 4,
+      "lives_lost": 4,
+      "final_lives": 0,
+      "n_nemesis": 2,
+      "win_rate": 0.5,
+      "margins": [
+       953,
+       -4514
+      ],
+      "ended_early_engine_gap": false
+     },
+     {
+      "seed": "4H2L46CE",
+      "furthest_ante": 4,
+      "lives_lost": 4,
+      "final_lives": 0,
+      "n_nemesis": 2,
+      "win_rate": 0.0,
+      "margins": [
+       -1190,
+       -4492
+      ],
+      "ended_early_engine_gap": false
+     },
+     {
+      "seed": "4K8A9QER",
+      "furthest_ante": 4,
+      "lives_lost": 4,
+      "final_lives": 0,
+      "n_nemesis": 2,
+      "win_rate": 0.5,
+      "margins": [
+       1078,
+       -1235
+      ],
+      "ended_early_engine_gap": false
+     },
+     {
+      "seed": "4R219TNX",
+      "furthest_ante": 5,
+      "lives_lost": 4,
+      "final_lives": 0,
+      "n_nemesis": 3,
+      "win_rate": 0.6666666666666666,
+      "margins": [
+       1426,
+       13070,
+       -9887
+      ],
+      "ended_early_engine_gap": false
+     },
+     {
+      "seed": "4T1SZKLF",
+      "furthest_ante": 5,
+      "lives_lost": 4,
+      "final_lives": 0,
+      "n_nemesis": 4,
+      "win_rate": 0.75,
+      "margins": [
+       11284,
+       5070,
+       13565,
+       -19503
+      ],
+      "ended_early_engine_gap": false
+     },
+     {
+      "seed": "4UEGRRRA",
+      "furthest_ante": 4,
+      "lives_lost": 4,
+      "final_lives": 0,
+      "n_nemesis": 2,
+      "win_rate": 0.5,
+      "margins": [
+       932,
+       -3487
+      ],
+      "ended_early_engine_gap": false
+     },
+     {
+      "seed": "51F2NVWK",
+      "furthest_ante": 3,
+      "lives_lost": 4,
+      "final_lives": 0,
+      "n_nemesis": 2,
+      "win_rate": 0.0,
+      "margins": [
+       -167,
+       -1667
+      ],
+      "ended_early_engine_gap": false
+     },
+     {
+      "seed": "56QZEVDV",
+      "furthest_ante": 6,
+      "lives_lost": 4,
+      "final_lives": 0,
+      "n_nemesis": 4,
+      "win_rate": 0.75,
+      "margins": [
+       -1533,
+       25571,
+       8990,
+       2486
+      ],
+      "ended_early_engine_gap": false
+     },
+     {
+      "seed": "5AWWF1M1",
+      "furthest_ante": 5,
+      "lives_lost": 4,
+      "final_lives": 0,
+      "n_nemesis": 3,
+      "win_rate": 0.6666666666666666,
+      "margins": [
+       821,
+       13483,
+       -11161
+      ],
+      "ended_early_engine_gap": false
+     },
+     {
+      "seed": "5UIUKHCI",
+      "furthest_ante": 5,
+      "lives_lost": 4,
+      "final_lives": 0,
+      "n_nemesis": 3,
+      "win_rate": 0.6666666666666666,
+      "margins": [
+       9013,
+       4162,
+       -10393
+      ],
+      "ended_early_engine_gap": false
+     },
+     {
+      "seed": "5YVHAEP",
+      "furthest_ante": 5,
+      "lives_lost": 4,
+      "final_lives": 0,
+      "n_nemesis": 4,
+      "win_rate": 0.5,
+      "margins": [
+       5182,
+       5526,
+       -2490,
+       -17932
+      ],
+      "ended_early_engine_gap": false
+     },
+     {
+      "seed": "6H6WNQM2",
+      "furthest_ante": 5,
+      "lives_lost": 4,
+      "final_lives": 0,
+      "n_nemesis": 3,
+      "win_rate": 0.3333333333333333,
+      "margins": [
+       5852,
+       -593,
+       -7272
+      ],
+      "ended_early_engine_gap": false
+     },
+     {
+      "seed": "7I4M53DL",
+      "furthest_ante": 3,
+      "lives_lost": 4,
+      "final_lives": 0,
+      "n_nemesis": 1,
+      "win_rate": 0.0,
+      "margins": [
+       -33
+      ],
+      "ended_early_engine_gap": false
+     },
+     {
+      "seed": "7LB2WVPK",
+      "furthest_ante": 5,
+      "lives_lost": 4,
+      "final_lives": 0,
+      "n_nemesis": 3,
+      "win_rate": 0.6666666666666666,
+      "margins": [
+       8113,
+       7398,
+       -2748
+      ],
+      "ended_early_engine_gap": false
+     },
+     {
+      "seed": "7ODNKXP",
+      "furthest_ante": 4,
+      "lives_lost": 4,
+      "final_lives": 0,
+      "n_nemesis": 3,
+      "win_rate": 0.3333333333333333,
+      "margins": [
+       -1015,
+       7750,
+       -10352
+      ],
+      "ended_early_engine_gap": false
+     },
+     {
+      "seed": "7PEE6NA5",
+      "furthest_ante": 4,
+      "lives_lost": 4,
+      "final_lives": 0,
+      "n_nemesis": 2,
+      "win_rate": 0.5,
+      "margins": [
+       998,
+       -5327
+      ],
+      "ended_early_engine_gap": false
+     },
+     {
+      "seed": "7UNQV1C9",
+      "furthest_ante": 4,
+      "lives_lost": 4,
+      "final_lives": 0,
+      "n_nemesis": 2,
+      "win_rate": 0.5,
+      "margins": [
+       126,
+       -4457
+      ],
+      "ended_early_engine_gap": false
+     },
+     {
+      "seed": "7YTVQERM",
+      "furthest_ante": 4,
+      "lives_lost": 4,
+      "final_lives": 0,
+      "n_nemesis": 2,
+      "win_rate": 0.5,
+      "margins": [
+       680,
+       -2140
+      ],
+      "ended_early_engine_gap": false
+     },
+     {
+      "seed": "8I5QXNGE",
+      "furthest_ante": 5,
+      "lives_lost": 4,
+      "final_lives": 0,
+      "n_nemesis": 3,
+      "win_rate": 0.6666666666666666,
+      "margins": [
+       1373,
+       -3938,
+       2891
+      ],
+      "ended_early_engine_gap": false
+     },
+     {
+      "seed": "8IZ7HHE4",
+      "furthest_ante": 4,
+      "lives_lost": 4,
+      "final_lives": 0,
+      "n_nemesis": 2,
+      "win_rate": 0.5,
+      "margins": [
+       285,
+       -4317
+      ],
+      "ended_early_engine_gap": false
+     },
+     {
+      "seed": "8Q47WV6K",
+      "furthest_ante": 3,
+      "lives_lost": 4,
+      "final_lives": 0,
+      "n_nemesis": 2,
+      "win_rate": 0.0,
+      "margins": [
+       -44,
+       -5666
+      ],
+      "ended_early_engine_gap": false
+     },
+     {
+      "seed": "8QBRTPD",
+      "furthest_ante": 4,
+      "lives_lost": 4,
+      "final_lives": 0,
+      "n_nemesis": 2,
+      "win_rate": 0.5,
+      "margins": [
+       -756,
+       2762
+      ],
+      "ended_early_engine_gap": false
+     },
+     {
+      "seed": "8SIYIK9C",
+      "furthest_ante": 4,
+      "lives_lost": 4,
+      "final_lives": 0,
+      "n_nemesis": 2,
+      "win_rate": 0.5,
+      "margins": [
+       388,
+       -4133
+      ],
+      "ended_early_engine_gap": false
+     },
+     {
+      "seed": "8UU564MF",
+      "furthest_ante": 4,
+      "lives_lost": 4,
+      "final_lives": 0,
+      "n_nemesis": 2,
+      "win_rate": 0.5,
+      "margins": [
+       722,
+       -4580
+      ],
+      "ended_early_engine_gap": false
+     },
+     {
+      "seed": "8Y7ABZ7C",
+      "furthest_ante": 4,
+      "lives_lost": 4,
+      "final_lives": 0,
+      "n_nemesis": 2,
+      "win_rate": 0.5,
+      "margins": [
+       662,
+       -3653
+      ],
+      "ended_early_engine_gap": false
+     },
+     {
+      "seed": "93W4UHC4",
+      "furthest_ante": 4,
+      "lives_lost": 4,
+      "final_lives": 0,
+      "n_nemesis": 2,
+      "win_rate": 0.5,
+      "margins": [
+       1214,
+       -1326
+      ],
+      "ended_early_engine_gap": false
+     },
+     {
+      "seed": "967889YL",
+      "furthest_ante": 4,
+      "lives_lost": 4,
+      "final_lives": 0,
+      "n_nemesis": 2,
+      "win_rate": 0.5,
+      "margins": [
+       407,
+       -729
+      ],
+      "ended_early_engine_gap": false
+     },
+     {
+      "seed": "9Q9HQXZG",
+      "furthest_ante": 4,
+      "lives_lost": 4,
+      "final_lives": 0,
+      "n_nemesis": 2,
+      "win_rate": 0.0,
+      "margins": [
+       -938,
+       -3473
+      ],
+      "ended_early_engine_gap": false
+     },
+     {
+      "seed": "9QV2ZT9X",
+      "furthest_ante": 5,
+      "lives_lost": 4,
+      "final_lives": 0,
+      "n_nemesis": 4,
+      "win_rate": 0.5,
+      "margins": [
+       -1363,
+       14109,
+       14665,
+       -20311
+      ],
+      "ended_early_engine_gap": false
+     },
+     {
+      "seed": "9VIGPRT6",
+      "furthest_ante": 4,
+      "lives_lost": 4,
+      "final_lives": 0,
+      "n_nemesis": 3,
+      "win_rate": 0.3333333333333333,
+      "margins": [
+       -737,
+       12394,
+       -22
+      ],
+      "ended_early_engine_gap": false
+     },
+     {
+      "seed": "9ZXMM1M",
+      "furthest_ante": 3,
+      "lives_lost": 4,
+      "final_lives": 0,
+      "n_nemesis": 2,
+      "win_rate": 0.5,
+      "margins": [
+       3,
+       -4091
+      ],
+      "ended_early_engine_gap": false
+     },
+     {
+      "seed": "A",
+      "furthest_ante": 4,
+      "lives_lost": 4,
+      "final_lives": 0,
+      "n_nemesis": 2,
+      "win_rate": 0.5,
+      "margins": [
+       1388,
+       -3915
+      ],
+      "ended_early_engine_gap": false
+     },
+     {
+      "seed": "A1UAS1G5",
+      "furthest_ante": 4,
+      "lives_lost": 4,
+      "final_lives": 0,
+      "n_nemesis": 2,
+      "win_rate": 0.5,
+      "margins": [
+       1722,
+       -4146
+      ],
+      "ended_early_engine_gap": false
+     },
+     {
+      "seed": "AE1K7DG1",
+      "furthest_ante": 4,
+      "lives_lost": 4,
+      "final_lives": 0,
+      "n_nemesis": 2,
+      "win_rate": 0.5,
+      "margins": [
+       3362,
+       -2705
+      ],
+      "ended_early_engine_gap": false
+     },
+     {
+      "seed": "ALEEB",
+      "furthest_ante": 4,
+      "lives_lost": 4,
+      "final_lives": 0,
+      "n_nemesis": 2,
+      "win_rate": 0.0,
+      "margins": [
+       -796,
+       -6287
+      ],
+      "ended_early_engine_gap": false
+     },
+     {
+      "seed": "AMPYZUIU",
+      "furthest_ante": 4,
+      "lives_lost": 4,
+      "final_lives": 0,
+      "n_nemesis": 2,
+      "win_rate": 0.0,
+      "margins": [
+       -28,
+       -5901
+      ],
+      "ended_early_engine_gap": false
+     },
+     {
+      "seed": "APH9LX2Y",
+      "furthest_ante": 4,
+      "lives_lost": 4,
+      "final_lives": 0,
+      "n_nemesis": 2,
+      "win_rate": 0.5,
+      "margins": [
+       523,
+       -2438
+      ],
+      "ended_early_engine_gap": false
+     },
+     {
+      "seed": "BA1D48RK",
+      "furthest_ante": 4,
+      "lives_lost": 4,
+      "final_lives": 0,
+      "n_nemesis": 2,
+      "win_rate": 0.5,
+      "margins": [
+       983,
+       -891
+      ],
+      "ended_early_engine_gap": false
+     },
+     {
+      "seed": "BQ6A2D42",
+      "furthest_ante": 4,
+      "lives_lost": 4,
+      "final_lives": 0,
+      "n_nemesis": 2,
+      "win_rate": 0.5,
+      "margins": [
+       4450,
+       -310
+      ],
+      "ended_early_engine_gap": false
+     },
+     {
+      "seed": "C19P8BQ4",
+      "furthest_ante": 4,
+      "lives_lost": 4,
+      "final_lives": 0,
+      "n_nemesis": 2,
+      "win_rate": 0.5,
+      "margins": [
+       1642,
+       -3612
+      ],
+      "ended_early_engine_gap": false
+     },
+     {
+      "seed": "C1ZLPKAA",
+      "furthest_ante": 4,
+      "lives_lost": 4,
+      "final_lives": 0,
+      "n_nemesis": 2,
+      "win_rate": 0.0,
+      "margins": [
+       -1174,
+       -2954
+      ],
+      "ended_early_engine_gap": false
+     },
+     {
+      "seed": "C93K3YWJ",
+      "furthest_ante": 4,
+      "lives_lost": 4,
+      "final_lives": 0,
+      "n_nemesis": 2,
+      "win_rate": 1.0,
+      "margins": [
+       1956,
+       3238
+      ],
+      "ended_early_engine_gap": false
+     },
+     {
+      "seed": "CCBWC6CR",
+      "furthest_ante": 5,
+      "lives_lost": 4,
+      "final_lives": 0,
+      "n_nemesis": 3,
+      "win_rate": 0.6666666666666666,
+      "margins": [
+       15310,
+       2763,
+       -10700
+      ],
+      "ended_early_engine_gap": false
+     },
+     {
+      "seed": "CHPB293X",
+      "furthest_ante": 4,
+      "lives_lost": 4,
+      "final_lives": 0,
+      "n_nemesis": 3,
+      "win_rate": 0.6666666666666666,
+      "margins": [
+       3457,
+       742,
+       -10909
+      ],
+      "ended_early_engine_gap": false
+     },
+     {
+      "seed": "CIGHYTAU",
+      "furthest_ante": 4,
+      "lives_lost": 4,
+      "final_lives": 0,
+      "n_nemesis": 3,
+      "win_rate": 0.3333333333333333,
+      "margins": [
+       2952,
+       -2258,
+       -9731
+      ],
+      "ended_early_engine_gap": false
+     },
+     {
+      "seed": "CMEEXU8I",
+      "furthest_ante": 4,
+      "lives_lost": 4,
+      "final_lives": 0,
+      "n_nemesis": 2,
+      "win_rate": 0.0,
+      "margins": [
+       -652,
+       -4001
+      ],
+      "ended_early_engine_gap": false
+     },
+     {
+      "seed": "D4TDD2B6",
+      "furthest_ante": 4,
+      "lives_lost": 4,
+      "final_lives": 0,
+      "n_nemesis": 2,
+      "win_rate": 0.5,
+      "margins": [
+       2473,
+       -2622
+      ],
+      "ended_early_engine_gap": false
+     },
+     {
+      "seed": "D7Y5419A",
+      "furthest_ante": 4,
+      "lives_lost": 4,
+      "final_lives": 0,
+      "n_nemesis": 2,
+      "win_rate": 0.5,
+      "margins": [
+       1302,
+       -6217
+      ],
+      "ended_early_engine_gap": false
+     },
+     {
+      "seed": "ECG8NVDZ",
+      "furthest_ante": 4,
+      "lives_lost": 4,
+      "final_lives": 0,
+      "n_nemesis": 2,
+      "win_rate": 0.5,
+      "margins": [
+       638,
+       -4573
+      ],
+      "ended_early_engine_gap": false
+     },
+     {
+      "seed": "EGE5ZY77",
+      "furthest_ante": 4,
+      "lives_lost": 4,
+      "final_lives": 0,
+      "n_nemesis": 2,
+      "win_rate": 0.5,
+      "margins": [
+       1089,
+       -4751
+      ],
+      "ended_early_engine_gap": false
+     },
+     {
+      "seed": "EVB8882H",
+      "furthest_ante": 4,
+      "lives_lost": 4,
+      "final_lives": 0,
+      "n_nemesis": 2,
+      "win_rate": 0.5,
+      "margins": [
+       757,
+       -2258
+      ],
+      "ended_early_engine_gap": false
+     },
+     {
+      "seed": "FSXYRB3J",
+      "furthest_ante": 4,
+      "lives_lost": 4,
+      "final_lives": 0,
+      "n_nemesis": 2,
+      "win_rate": 0.5,
+      "margins": [
+       1157,
+       -5079
+      ],
+      "ended_early_engine_gap": false
+     },
+     {
+      "seed": "GVQL737K",
+      "furthest_ante": 4,
+      "lives_lost": 4,
+      "final_lives": 0,
+      "n_nemesis": 2,
+      "win_rate": 0.5,
+      "margins": [
+       499,
+       -62
+      ],
+      "ended_early_engine_gap": false
+     },
+     {
+      "seed": "GVYT2DGJ",
+      "furthest_ante": 9,
+      "lives_lost": 3,
+      "final_lives": 1,
+      "n_nemesis": 7,
+      "win_rate": 0.8571428571428571,
+      "margins": [
+       926,
+       -3193,
+       59333,
+       66196,
+       84946,
+       30119,
+       1678
+      ],
+      "ended_early_engine_gap": false
+     },
+     {
+      "seed": "H1EWXLNE",
+      "furthest_ante": 4,
+      "lives_lost": 4,
+      "final_lives": 0,
+      "n_nemesis": 3,
+      "win_rate": 0.3333333333333333,
+      "margins": [
+       -430,
+       7258,
+       -2511
+      ],
+      "ended_early_engine_gap": false
+     },
+     {
+      "seed": "HPR8Q7K",
+      "furthest_ante": 5,
+      "lives_lost": 4,
+      "final_lives": 0,
+      "n_nemesis": 3,
+      "win_rate": 0.3333333333333333,
+      "margins": [
+       759,
+       -3433,
+       -1213
+      ],
+      "ended_early_engine_gap": false
+     },
+     {
+      "seed": "HS8LL7TC",
+      "furthest_ante": 4,
+      "lives_lost": 4,
+      "final_lives": 0,
+      "n_nemesis": 2,
+      "win_rate": 0.5,
+      "margins": [
+       1470,
+       -4832
+      ],
+      "ended_early_engine_gap": false
+     },
+     {
+      "seed": "HSC1L2DX",
+      "furthest_ante": 4,
+      "lives_lost": 4,
+      "final_lives": 0,
+      "n_nemesis": 2,
+      "win_rate": 0.5,
+      "margins": [
+       698,
+       -3897
+      ],
+      "ended_early_engine_gap": false
+     },
+     {
+      "seed": "I68YASXJ",
+      "furthest_ante": 4,
+      "lives_lost": 4,
+      "final_lives": 0,
+      "n_nemesis": 2,
+      "win_rate": 0.5,
+      "margins": [
+       1399,
+       -4037
+      ],
+      "ended_early_engine_gap": false
+     },
+     {
+      "seed": "ICUESE5D",
+      "furthest_ante": 5,
+      "lives_lost": 4,
+      "final_lives": 0,
+      "n_nemesis": 3,
+      "win_rate": 0.6666666666666666,
+      "margins": [
+       313,
+       1494,
+       -4934
+      ],
+      "ended_early_engine_gap": false
+     },
+     {
+      "seed": "IMMOLATE",
+      "furthest_ante": 4,
+      "lives_lost": 4,
+      "final_lives": 0,
+      "n_nemesis": 2,
+      "win_rate": 0.5,
+      "margins": [
+       3973,
+       -4531
+      ],
+      "ended_early_engine_gap": false
+     },
+     {
+      "seed": "J3GHQHJM",
+      "furthest_ante": 4,
+      "lives_lost": 4,
+      "final_lives": 0,
+      "n_nemesis": 2,
+      "win_rate": 0.5,
+      "margins": [
+       826,
+       -3461
+      ],
+      "ended_early_engine_gap": false
+     },
+     {
+      "seed": "JQB4BN6F",
+      "furthest_ante": 4,
+      "lives_lost": 4,
+      "final_lives": 0,
+      "n_nemesis": 2,
+      "win_rate": 0.5,
+      "margins": [
+       910,
+       -743
+      ],
+      "ended_early_engine_gap": false
+     },
+     {
+      "seed": "K84ZCS3Q",
+      "furthest_ante": 4,
+      "lives_lost": 4,
+      "final_lives": 0,
+      "n_nemesis": 2,
+      "win_rate": 0.5,
+      "margins": [
+       1762,
+       -2085
+      ],
+      "ended_early_engine_gap": false
+     },
+     {
+      "seed": "K8PU119J",
+      "furthest_ante": 5,
+      "lives_lost": 4,
+      "final_lives": 0,
+      "n_nemesis": 4,
+      "win_rate": 0.5,
+      "margins": [
+       13498,
+       11308,
+       -8433,
+       -14162
+      ],
+      "ended_early_engine_gap": false
+     },
+     {
+      "seed": "K94TS4B8",
+      "furthest_ante": 4,
+      "lives_lost": 4,
+      "final_lives": 0,
+      "n_nemesis": 3,
+      "win_rate": 0.0,
+      "margins": [
+       -1018,
+       -1519,
+       -6587
+      ],
+      "ended_early_engine_gap": false
+     },
+     {
+      "seed": "KPGY6GCH",
+      "furthest_ante": 5,
+      "lives_lost": 4,
+      "final_lives": 0,
+      "n_nemesis": 3,
+      "win_rate": 0.3333333333333333,
+      "margins": [
+       8507,
+       -1022,
+       -4145
+      ],
+      "ended_early_engine_gap": false
+     },
+     {
+      "seed": "LHZYIWR6",
+      "furthest_ante": 4,
+      "lives_lost": 4,
+      "final_lives": 0,
+      "n_nemesis": 2,
+      "win_rate": 0.5,
+      "margins": [
+       1183,
+       -5771
+      ],
+      "ended_early_engine_gap": false
+     },
+     {
+      "seed": "LMGJPMKP",
+      "furthest_ante": 4,
+      "lives_lost": 4,
+      "final_lives": 0,
+      "n_nemesis": 2,
+      "win_rate": 0.5,
+      "margins": [
+       95,
+       -3050
+      ],
+      "ended_early_engine_gap": false
+     },
+     {
+      "seed": "M2LAET6A",
+      "furthest_ante": 4,
+      "lives_lost": 4,
+      "final_lives": 0,
+      "n_nemesis": 2,
+      "win_rate": 0.5,
+      "margins": [
+       -1043,
+       6630
+      ],
+      "ended_early_engine_gap": false
+     },
+     {
+      "seed": "M4LV5E89",
+      "furthest_ante": 5,
+      "lives_lost": 4,
+      "final_lives": 0,
+      "n_nemesis": 3,
+      "win_rate": 0.6666666666666666,
+      "margins": [
+       1566,
+       -3964,
+       14928
+      ],
+      "ended_early_engine_gap": false
+     },
+     {
+      "seed": "M6XD1INZ",
+      "furthest_ante": 4,
+      "lives_lost": 4,
+      "final_lives": 0,
+      "n_nemesis": 2,
+      "win_rate": 0.0,
+      "margins": [
+       -155,
+       -1477
+      ],
+      "ended_early_engine_gap": false
+     },
+     {
+      "seed": "MIM66QT9",
+      "furthest_ante": 3,
+      "lives_lost": 4,
+      "final_lives": 0,
+      "n_nemesis": 2,
+      "win_rate": 0.5,
+      "margins": [
+       1891,
+       -4318
+      ],
+      "ended_early_engine_gap": false
+     },
+     {
+      "seed": "MM1H85E3",
+      "furthest_ante": 3,
+      "lives_lost": 4,
+      "final_lives": 0,
+      "n_nemesis": 2,
+      "win_rate": 0.0,
+      "margins": [
+       -821,
+       -1860
+      ],
+      "ended_early_engine_gap": false
+     },
+     {
+      "seed": "MRBF7L15",
+      "furthest_ante": 5,
+      "lives_lost": 4,
+      "final_lives": 0,
+      "n_nemesis": 3,
+      "win_rate": 0.6666666666666666,
+      "margins": [
+       4367,
+       920,
+       -10580
+      ],
+      "ended_early_engine_gap": false
+     },
+     {
+      "seed": "MSQZGPMX",
+      "furthest_ante": 3,
+      "lives_lost": 4,
+      "final_lives": 0,
+      "n_nemesis": 2,
+      "win_rate": 0.0,
+      "margins": [
+       -70,
+       -3820
+      ],
+      "ended_early_engine_gap": false
+     },
+     {
+      "seed": "OG4YQPSI",
+      "furthest_ante": 4,
+      "lives_lost": 4,
+      "final_lives": 0,
+      "n_nemesis": 3,
+      "win_rate": 0.0,
+      "margins": [
+       -234,
+       -5188,
+       -9293
+      ],
+      "ended_early_engine_gap": false
+     },
+     {
+      "seed": "PI1J5YAG",
+      "furthest_ante": 3,
+      "lives_lost": 4,
+      "final_lives": 0,
+      "n_nemesis": 2,
+      "win_rate": 0.0,
+      "margins": [
+       -134,
+       -1535
+      ],
+      "ended_early_engine_gap": false
+     },
+     {
+      "seed": "PJ5TB88W",
+      "furthest_ante": 7,
+      "lives_lost": 4,
+      "final_lives": 0,
+      "n_nemesis": 5,
+      "win_rate": 0.6,
+      "margins": [
+       3306,
+       1615,
+       355,
+       -24512,
+       -40874
+      ],
+      "ended_early_engine_gap": false
+     },
+     {
+      "seed": "PQNVFI72",
+      "furthest_ante": 4,
+      "lives_lost": 4,
+      "final_lives": 0,
+      "n_nemesis": 2,
+      "win_rate": 0.5,
+      "margins": [
+       1518,
+       -1150
+      ],
+      "ended_early_engine_gap": false
+     },
+     {
+      "seed": "PT6IF52R",
+      "furthest_ante": 4,
+      "lives_lost": 4,
+      "final_lives": 0,
+      "n_nemesis": 2,
+      "win_rate": 0.5,
+      "margins": [
+       1121,
+       -4627
+      ],
+      "ended_early_engine_gap": false
+     },
+     {
+      "seed": "PTSBMSMQ",
+      "furthest_ante": 4,
+      "lives_lost": 4,
+      "final_lives": 0,
+      "n_nemesis": 2,
+      "win_rate": 0.5,
+      "margins": [
+       1267,
+       -5930
+      ],
+      "ended_early_engine_gap": false
+     },
+     {
+      "seed": "QY3TQZJ9",
+      "furthest_ante": 4,
+      "lives_lost": 4,
+      "final_lives": 0,
+      "n_nemesis": 2,
+      "win_rate": 0.5,
+      "margins": [
+       1870,
+       -3710
+      ],
+      "ended_early_engine_gap": false
+     },
+     {
+      "seed": "R8DFV7RD",
+      "furthest_ante": 4,
+      "lives_lost": 4,
+      "final_lives": 0,
+      "n_nemesis": 2,
+      "win_rate": 0.5,
+      "margins": [
+       802,
+       -3548
+      ],
+      "ended_early_engine_gap": false
+     },
+     {
+      "seed": "R8W2CT59",
+      "furthest_ante": 4,
+      "lives_lost": 4,
+      "final_lives": 0,
+      "n_nemesis": 2,
+      "win_rate": 0.5,
+      "margins": [
+       2071,
+       -3265
+      ],
+      "ended_early_engine_gap": false
+     },
+     {
+      "seed": "RUXS91YF",
+      "furthest_ante": 3,
+      "lives_lost": 4,
+      "final_lives": 0,
+      "n_nemesis": 2,
+      "win_rate": 0.0,
+      "margins": [
+       -182,
+       -3141
+      ],
+      "ended_early_engine_gap": false
+     },
+     {
+      "seed": "RXI42HZ2",
+      "furthest_ante": 4,
+      "lives_lost": 4,
+      "final_lives": 0,
+      "n_nemesis": 2,
+      "win_rate": 0.5,
+      "margins": [
+       2914,
+       -6186
+      ],
+      "ended_early_engine_gap": false
+     },
+     {
+      "seed": "S1QJX1CS",
+      "furthest_ante": 4,
+      "lives_lost": 4,
+      "final_lives": 0,
+      "n_nemesis": 2,
+      "win_rate": 0.5,
+      "margins": [
+       1643,
+       -5114
+      ],
+      "ended_early_engine_gap": false
+     },
+     {
+      "seed": "SF9SZOB1",
+      "furthest_ante": 5,
+      "lives_lost": 4,
+      "final_lives": 0,
+      "n_nemesis": 3,
+      "win_rate": 0.6666666666666666,
+      "margins": [
+       1322,
+       4908,
+       -8516
+      ],
+      "ended_early_engine_gap": false
+     },
+     {
+      "seed": "SLRSKCG1",
+      "furthest_ante": 4,
+      "lives_lost": 4,
+      "final_lives": 0,
+      "n_nemesis": 2,
+      "win_rate": 0.5,
+      "margins": [
+       2065,
+       -4073
+      ],
+      "ended_early_engine_gap": false
+     },
+     {
+      "seed": "SMC7XNT8",
+      "furthest_ante": 4,
+      "lives_lost": 4,
+      "final_lives": 0,
+      "n_nemesis": 2,
+      "win_rate": 0.5,
+      "margins": [
+       702,
+       -3428
+      ],
+      "ended_early_engine_gap": false
+     },
+     {
+      "seed": "SQVZX29L",
+      "furthest_ante": 6,
+      "lives_lost": 4,
+      "final_lives": 0,
+      "n_nemesis": 4,
+      "win_rate": 0.75,
+      "margins": [
+       18871,
+       25853,
+       7156,
+       -16497
+      ],
+      "ended_early_engine_gap": false
+     },
+     {
+      "seed": "T5A1T1DZ",
+      "furthest_ante": 5,
+      "lives_lost": 4,
+      "final_lives": 0,
+      "n_nemesis": 3,
+      "win_rate": 1.0,
+      "margins": [
+       76,
+       7380,
+       150
+      ],
+      "ended_early_engine_gap": false
+     },
+     {
+      "seed": "U516KUJP",
+      "furthest_ante": 3,
+      "lives_lost": 4,
+      "final_lives": 0,
+      "n_nemesis": 2,
+      "win_rate": 0.0,
+      "margins": [
+       -373,
+       -4246
+      ],
+      "ended_early_engine_gap": false
+     },
+     {
+      "seed": "U8RJYV6M",
+      "furthest_ante": 3,
+      "lives_lost": 4,
+      "final_lives": 0,
+      "n_nemesis": 2,
+      "win_rate": 0.0,
+      "margins": [
+       -503,
+       -1781
+      ],
+      "ended_early_engine_gap": false
+     },
+     {
+      "seed": "UCAMJYYK",
+      "furthest_ante": 4,
+      "lives_lost": 4,
+      "final_lives": 0,
+      "n_nemesis": 2,
+      "win_rate": 0.5,
+      "margins": [
+       3956,
+       -2154
+      ],
+      "ended_early_engine_gap": false
+     },
+     {
+      "seed": "USQF4ZAV",
+      "furthest_ante": 6,
+      "lives_lost": 4,
+      "final_lives": 0,
+      "n_nemesis": 4,
+      "win_rate": 0.75,
+      "margins": [
+       4627,
+       515,
+       5827,
+       -8926
+      ],
+      "ended_early_engine_gap": false
+     },
+     {
+      "seed": "V3PUR5L4",
+      "furthest_ante": 4,
+      "lives_lost": 4,
+      "final_lives": 0,
+      "n_nemesis": 2,
+      "win_rate": 0.0,
+      "margins": [
+       -618,
+       -696
+      ],
+      "ended_early_engine_gap": false
+     },
+     {
+      "seed": "VNOMH111",
+      "furthest_ante": 4,
+      "lives_lost": 4,
+      "final_lives": 0,
+      "n_nemesis": 2,
+      "win_rate": 0.5,
+      "margins": [
+       1990,
+       -2268
+      ],
+      "ended_early_engine_gap": false
+     },
+     {
+      "seed": "WBC1DGJQ",
+      "furthest_ante": 3,
+      "lives_lost": 4,
+      "final_lives": 0,
+      "n_nemesis": 2,
+      "win_rate": 0.0,
+      "margins": [
+       -264,
+       -4179
+      ],
+      "ended_early_engine_gap": false
+     },
+     {
+      "seed": "WIF67A3S",
+      "furthest_ante": 4,
+      "lives_lost": 4,
+      "final_lives": 0,
+      "n_nemesis": 2,
+      "win_rate": 0.5,
+      "margins": [
+       1174,
+       -4900
+      ],
+      "ended_early_engine_gap": false
+     },
+     {
+      "seed": "WLAVAQ75",
+      "furthest_ante": 3,
+      "lives_lost": 4,
+      "final_lives": 0,
+      "n_nemesis": 2,
+      "win_rate": 0.5,
+      "margins": [
+       504,
+       -4130
+      ],
+      "ended_early_engine_gap": false
+     },
+     {
+      "seed": "WVPJKPRD",
+      "furthest_ante": 4,
+      "lives_lost": 4,
+      "final_lives": 0,
+      "n_nemesis": 2,
+      "win_rate": 0.5,
+      "margins": [
+       3719,
+       -3345
+      ],
+      "ended_early_engine_gap": false
+     },
+     {
+      "seed": "X7FG4FH8",
+      "furthest_ante": 3,
+      "lives_lost": 4,
+      "final_lives": 0,
+      "n_nemesis": 2,
+      "win_rate": 0.0,
+      "margins": [
+       -293,
+       -5075
+      ],
+      "ended_early_engine_gap": false
+     },
+     {
+      "seed": "XD55DZ57",
+      "furthest_ante": 5,
+      "lives_lost": 4,
+      "final_lives": 0,
+      "n_nemesis": 4,
+      "win_rate": 0.5,
+      "margins": [
+       7246,
+       4495,
+       -4880,
+       -24686
+      ],
+      "ended_early_engine_gap": false
+     },
+     {
+      "seed": "XDW9VBHQ",
+      "furthest_ante": 4,
+      "lives_lost": 4,
+      "final_lives": 0,
+      "n_nemesis": 2,
+      "win_rate": 0.5,
+      "margins": [
+       1069,
+       -2589
+      ],
+      "ended_early_engine_gap": false
+     },
+     {
+      "seed": "YB54A1EH",
+      "furthest_ante": 4,
+      "lives_lost": 4,
+      "final_lives": 0,
+      "n_nemesis": 2,
+      "win_rate": 0.5,
+      "margins": [
+       5319,
+       -3870
+      ],
+      "ended_early_engine_gap": false
+     },
+     {
+      "seed": "YD2HMRBR",
+      "furthest_ante": 4,
+      "lives_lost": 4,
+      "final_lives": 0,
+      "n_nemesis": 2,
+      "win_rate": 0.5,
+      "margins": [
+       830,
+       -1581
+      ],
+      "ended_early_engine_gap": false
+     },
+     {
+      "seed": "YPB7TZWJ",
+      "furthest_ante": 4,
+      "lives_lost": 4,
+      "final_lives": 0,
+      "n_nemesis": 2,
+      "win_rate": 0.5,
+      "margins": [
+       2099,
+       -3531
+      ],
+      "ended_early_engine_gap": false
+     },
+     {
+      "seed": "5TITKHCI",
+      "furthest_ante": 5,
+      "lives_lost": 4,
+      "final_lives": 0,
+      "n_nemesis": 3,
+      "win_rate": 0.6666666666666666,
+      "margins": [
+       6498,
+       2074,
+       -6257
+      ],
+      "ended_early_engine_gap": false
+     },
+     {
+      "seed": "RMC7WNS8",
+      "furthest_ante": 3,
+      "lives_lost": 4,
+      "final_lives": 0,
+      "n_nemesis": 2,
+      "win_rate": 0.0,
+      "margins": [
+       -326,
+       -4248
+      ],
+      "ended_early_engine_gap": false
+     },
+     {
+      "seed": "VLAUZAP7",
+      "furthest_ante": 4,
+      "lives_lost": 4,
+      "final_lives": 0,
+      "n_nemesis": 2,
+      "win_rate": 1.0,
+      "margins": [
+       265,
+       4589
+      ],
+      "ended_early_engine_gap": false
+     },
+     {
+      "seed": "54H2L46C",
+      "furthest_ante": 4,
+      "lives_lost": 4,
+      "final_lives": 0,
+      "n_nemesis": 2,
+      "win_rate": 0.5,
+      "margins": [
+       -1771,
+       4855
+      ],
+      "ended_early_engine_gap": false
+     },
+     {
+      "seed": "EK84YCRZ",
+      "furthest_ante": 6,
+      "lives_lost": 4,
+      "final_lives": 0,
+      "n_nemesis": 4,
+      "win_rate": 0.75,
+      "margins": [
+       18103,
+       16633,
+       5422,
+       -17486
+      ],
+      "ended_early_engine_gap": false
+     },
+     {
+      "seed": "3PQWI42H",
+      "furthest_ante": 4,
+      "lives_lost": 4,
+      "final_lives": 0,
+      "n_nemesis": 2,
+      "win_rate": 0.5,
+      "margins": [
+       2950,
+       -2989
+      ],
+      "ended_early_engine_gap": false
+     },
+     {
+      "seed": "Y28I5PWN",
+      "furthest_ante": 4,
+      "lives_lost": 4,
+      "final_lives": 0,
+      "n_nemesis": 2,
+      "win_rate": 0.5,
+      "margins": [
+       1027,
+       -4183
+      ],
+      "ended_early_engine_gap": false
+     },
+     {
+      "seed": "GEGUXSZ2",
+      "furthest_ante": 4,
+      "lives_lost": 4,
+      "final_lives": 0,
+      "n_nemesis": 2,
+      "win_rate": 0.5,
+      "margins": [
+       457,
+       -2006
+      ],
+      "ended_early_engine_gap": false
+     },
+     {
+      "seed": "DGJTCAMJ",
+      "furthest_ante": 4,
+      "lives_lost": 4,
+      "final_lives": 0,
+      "n_nemesis": 2,
+      "win_rate": 0.5,
+      "margins": [
+       682,
+       -1493
+      ],
+      "ended_early_engine_gap": false
+     },
+     {
+      "seed": "XXKGUPL7",
+      "furthest_ante": 4,
+      "lives_lost": 4,
+      "final_lives": 0,
+      "n_nemesis": 2,
+      "win_rate": 0.5,
+      "margins": [
+       62,
+       -3359
+      ],
+      "ended_early_engine_gap": false
+     },
+     {
+      "seed": "37KVBC1D",
+      "furthest_ante": 5,
+      "lives_lost": 4,
+      "final_lives": 0,
+      "n_nemesis": 3,
+      "win_rate": 0.3333333333333333,
+      "margins": [
+       -259,
+       6791,
+       -3026
+      ],
+      "ended_early_engine_gap": false
+     },
+     {
+      "seed": "GJPD7X54",
+      "furthest_ante": 5,
+      "lives_lost": 4,
+      "final_lives": 0,
+      "n_nemesis": 3,
+      "win_rate": 0.3333333333333333,
+      "margins": [
+       4774,
+       -230,
+       -11218
+      ],
+      "ended_early_engine_gap": false
+     },
+     {
+      "seed": "19AC19O8",
+      "furthest_ante": 4,
+      "lives_lost": 4,
+      "final_lives": 0,
+      "n_nemesis": 2,
+      "win_rate": 0.5,
+      "margins": [
+       1279,
+       -5009
+      ],
+      "ended_early_engine_gap": false
+     },
+     {
+      "seed": "BP49PU2Y",
+      "furthest_ante": 4,
+      "lives_lost": 4,
+      "final_lives": 0,
+      "n_nemesis": 2,
+      "win_rate": 0.5,
+      "margins": [
+       2635,
+       -4374
+      ],
+      "ended_early_engine_gap": false
+     },
+     {
+      "seed": "S9WXD2HM",
+      "furthest_ante": 4,
+      "lives_lost": 4,
+      "final_lives": 0,
+      "n_nemesis": 2,
+      "win_rate": 0.5,
+      "margins": [
+       6,
+       -4134
+      ],
+      "ended_early_engine_gap": false
+     },
+     {
+      "seed": "QBQ34JCN",
+      "furthest_ante": 5,
+      "lives_lost": 4,
+      "final_lives": 0,
+      "n_nemesis": 3,
+      "win_rate": 0.6666666666666666,
+      "margins": [
+       1498,
+       -2907,
+       19245
+      ],
+      "ended_early_engine_gap": false
+     },
+     {
+      "seed": "MOAT516K",
+      "furthest_ante": 5,
+      "lives_lost": 4,
+      "final_lives": 0,
+      "n_nemesis": 3,
+      "win_rate": 0.3333333333333333,
+      "margins": [
+       5820,
+       -1390,
+       -14826
+      ],
+      "ended_early_engine_gap": false
+     },
+     {
+      "seed": "TJOA1TAR",
+      "furthest_ante": 4,
+      "lives_lost": 4,
+      "final_lives": 0,
+      "n_nemesis": 2,
+      "win_rate": 0.5,
+      "margins": [
+       725,
+       -3350
+      ],
+      "ended_early_engine_gap": false
+     },
+     {
+      "seed": "1G5AOH9L",
+      "furthest_ante": 5,
+      "lives_lost": 4,
+      "final_lives": 0,
+      "n_nemesis": 3,
+      "win_rate": 0.6666666666666666,
+      "margins": [
+       423,
+       -3638,
+       1165
+      ],
+      "ended_early_engine_gap": false
+     },
+     {
+      "seed": "W2XHR8LL",
+      "furthest_ante": 4,
+      "lives_lost": 4,
+      "final_lives": 0,
+      "n_nemesis": 3,
+      "win_rate": 0.3333333333333333,
+      "margins": [
+       1921,
+       -348,
+       -13006
+      ],
+      "ended_early_engine_gap": false
+     },
+     {
+      "seed": "7SCVIF67",
+      "furthest_ante": 4,
+      "lives_lost": 4,
+      "final_lives": 0,
+      "n_nemesis": 2,
+      "win_rate": 0.5,
+      "margins": [
+       2195,
+       -5470
+      ],
+      "ended_early_engine_gap": false
+     },
+     {
+      "seed": "A3RBA1D4",
+      "furthest_ante": 3,
+      "lives_lost": 4,
+      "final_lives": 0,
+      "n_nemesis": 2,
+      "win_rate": 0.5,
+      "margins": [
+       6030,
+       -5611
+      ],
+      "ended_early_engine_gap": false
+     },
+     {
+      "seed": "8QK15H9Y",
+      "furthest_ante": 4,
+      "lives_lost": 4,
+      "final_lives": 0,
+      "n_nemesis": 2,
+      "win_rate": 0.0,
+      "margins": [
+       -566,
+       -4414
+      ],
+      "ended_early_engine_gap": false
+     },
+     {
+      "seed": "3IX1MD1X",
+      "furthest_ante": 5,
+      "lives_lost": 4,
+      "final_lives": 0,
+      "n_nemesis": 4,
+      "win_rate": 0.75,
+      "margins": [
+       2255,
+       2626,
+       12046,
+       -10911
+      ],
+      "ended_early_engine_gap": false
+     }
+    ],
+    "summary": {
+     "furthest_ante": {
+      "point": 4.166666666666667,
+      "lo": 4.04,
+      "hi": 4.3,
+      "n": 150
+     },
+     "lives_lost": {
+      "point": 3.993333333333333,
+      "lo": 3.98,
+      "hi": 4.0,
+      "n": 150
+     },
+     "win_rate": {
+      "point": 0.4297142857142857,
+      "lo": 0.39126984126984127,
+      "hi": 0.46769841269841267,
+      "n": 150
+     },
+     "n_nemesis_total": 362,
+     "margin_quantiles": {
+      "0.0": -40874,
+      "0.1": -6186,
+      "0.25": -3870,
+      "0.5": -326,
+      "0.75": 1678,
+      "0.9": 6630,
+      "1.0": 84946
+     },
+     "engine_gap_seeds": 0
+    }
+   },
+   "tournament": {
+    "deck": "b_plasma",
+    "player": "scripted:hand=greedy,reroll=1,buy=1",
+    "n_agents": 32,
+    "max_ante": 8,
+    "base_seed": 0,
+    "n_seeds": 16,
+    "wall_clock_s": 134.80379915237427,
+    "per_seed": [
+     {
+      "seed": "11111111",
+      "ante_ranks": {
+       "2": 20.0,
+       "3": 12.0,
+       "4": 11.0,
+       "5": 13.0,
+       "6": 14.0,
+       "7": 14.0,
+       "8": 12.0
+      },
+      "n_antes_present": 7,
+      "mean_rank_frac": 0.41013824884792627
+     },
+     {
+      "seed": "1558AXDL",
+      "ante_ranks": {
+       "2": 10.0,
+       "3": 8.0,
+       "4": 7.0,
+       "5": 11.0,
+       "6": 7.0,
+       "7": 7.0,
+       "8": 12.0
+      },
+      "n_antes_present": 7,
+      "mean_rank_frac": 0.2534562211981567
+     },
+     {
+      "seed": "15H9Z3IY",
+      "ante_ranks": {
+       "2": 16.0,
+       "3": 17.0,
+       "4": 22.0,
+       "5": 12.0,
+       "6": 12.0,
+       "7": 15.0,
+       "8": 17.0
+      },
+      "n_antes_present": 7,
+      "mean_rank_frac": 0.47926267281105994
+     },
+     {
+      "seed": "1KV4W6YS",
+      "ante_ranks": {
+       "2": 12.0,
+       "3": 19.0,
+       "4": 11.0,
+       "5": 8.0,
+       "6": 7.0,
+       "7": 7.0,
+       "8": 7.0
+      },
+      "n_antes_present": 7,
+      "mean_rank_frac": 0.29493087557603687
+     },
+     {
+      "seed": "1MD1YZ9T",
+      "ante_ranks": {
+       "2": 17.0,
+       "3": 20.0,
+       "4": 16.0,
+       "5": 20.0,
+       "6": 21.0,
+       "7": 22.0,
+       "8": 22.0
+      },
+      "n_antes_present": 7,
+      "mean_rank_frac": 0.6036866359447004
+     },
+     {
+      "seed": "28V7DD4H",
+      "ante_ranks": {
+       "2": 15.5,
+       "3": 9.0,
+       "4": 11.0,
+       "5": 13.0,
+       "6": 8.0,
+       "7": 3.0,
+       "8": 7.0
+      },
+      "n_antes_present": 7,
+      "mean_rank_frac": 0.27419354838709675
+     },
+     {
+      "seed": "29DAQVG1",
+      "ante_ranks": {
+       "2": 21.0,
+       "3": 7.0,
+       "4": 7.0,
+       "5": 19.0,
+       "6": 17.0,
+       "7": 16.0,
+       "8": 20.0
+      },
+      "n_antes_present": 7,
+      "mean_rank_frac": 0.46082949308755755
+     },
+     {
+      "seed": "29Y3L4S9",
+      "ante_ranks": {
+       "2": 5.0,
+       "3": 17.0,
+       "4": 3.0,
+       "5": 3.0,
+       "6": 3.0,
+       "7": 12.0,
+       "8": 12.0
+      },
+      "n_antes_present": 7,
+      "mean_rank_frac": 0.22119815668202764
+     },
+     {
+      "seed": "29ZSW8MY",
+      "ante_ranks": {
+       "2": 20.0,
+       "3": 16.0,
+       "4": 3.0,
+       "5": 3.0,
+       "6": 3.0,
+       "7": 3.0,
+       "8": 3.0
+      },
+      "n_antes_present": 7,
+      "mean_rank_frac": 0.20276497695852536
+     },
+     {
+      "seed": "2BRGI767",
+      "ante_ranks": {
+       "2": 19.0,
+       "3": 18.0,
+       "4": 7.0,
+       "5": 11.0,
+       "6": 7.0,
+       "7": 7.0,
+       "8": 3.0
+      },
+      "n_antes_present": 7,
+      "mean_rank_frac": 0.2995391705069124
+     },
+     {
+      "seed": "2CP4KSXZ",
+      "ante_ranks": {
+       "2": 7.0,
+       "3": 7.0,
+       "4": 11.0,
+       "5": 20.0,
+       "6": 23.0,
+       "7": 22.0,
+       "8": 20.0
+      },
+      "n_antes_present": 7,
+      "mean_rank_frac": 0.47465437788018433
+     },
+     {
+      "seed": "2GHBLJD9",
+      "ante_ranks": {
+       "2": 15.0,
+       "3": 13.0,
+       "4": 12.0,
+       "5": 9.0,
+       "6": 13.0,
+       "7": 8.0,
+       "8": 14.0
+      },
+      "n_antes_present": 7,
+      "mean_rank_frac": 0.3548387096774194
+     },
+     {
+      "seed": "2H9N3ISZ",
+      "ante_ranks": {
+       "2": 20.0,
+       "3": 3.0,
+       "4": 7.0,
+       "5": 3.0,
+       "6": 7.0,
+       "7": 8.0,
+       "8": 7.0
+      },
+      "n_antes_present": 7,
+      "mean_rank_frac": 0.22119815668202764
+     },
+     {
+      "seed": "2K9H9HN",
+      "ante_ranks": {
+       "2": 3.0,
+       "3": 8.0,
+       "4": 11.0,
+       "5": 7.0,
+       "6": 9.0,
+       "7": 7.0,
+       "8": 7.0
+      },
+      "n_antes_present": 7,
+      "mean_rank_frac": 0.20737327188940094
+     },
+     {
+      "seed": "34JCNMPA",
+      "ante_ranks": {
+       "2": 3.0,
+       "3": 20.0,
+       "4": 13.0,
+       "5": 6.0,
+       "6": 6.0,
+       "7": 10.0,
+       "8": 7.0
+      },
+      "n_antes_present": 7,
+      "mean_rank_frac": 0.2672811059907834
+     },
+     {
+      "seed": "3SZ71111",
+      "ante_ranks": {
+       "2": 21.0,
+       "3": 10.0,
+       "4": 20.0,
+       "5": 12.0,
+       "6": 9.0,
+       "7": 8.0,
+       "8": 9.0
+      },
+      "n_antes_present": 7,
+      "mean_rank_frac": 0.3778801843317972
+     }
+    ],
+    "summary": {
+     "mean_rank_frac": {
+      "point": 0.3377016129032258,
+      "lo": 0.28456221198156684,
+      "hi": 0.39703341013824883,
+      "n": 16
+     }
+    }
+   }
+  }
+ ],
+ "cross_cell_spread": {
+  "win_rate": {
+   "n_paired_seeds": 146,
+   "per_cell_mean": [
+    0.2796803652968037,
+    0.29668949771689496,
+    0.4346379647749511
+   ],
+   "point_range": 0.1549575994781474,
+   "point_variance": 0.004814549753931306,
+   "range_ci": {
+    "lo": 0.1079582517938682,
+    "hi": 0.2219015003261578
+   },
+   "variance_ci": {
+    "lo": 0.0022669489562121077,
+    "hi": 0.009263786983764821
+   }
+  },
+  "rank_frac": {
+   "n_paired_seeds": 16,
+   "per_cell_mean": [
+    0.3332373271889401,
+    0.294786866359447,
+    0.3377016129032258
+   ],
+   "point_range": 0.0429147465437788,
+   "point_variance": 0.000371115917317326,
+   "range_ci": {
+    "lo": 0.013248847926267293,
+    "hi": 0.11290322580645162
+   },
+   "variance_ci": {
+    "lo": 3.423260563330422e-05,
+    "hi": 0.0022443279687872383
+   }
+  }
+ }
+}

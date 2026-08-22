@@ -1428,9 +1428,13 @@ class BalatroGame:
             cost = max(0, self.reroll_cost - self.reroll_discount)
             if self.free_rerolls_remaining > 0 or can_afford(self, cost):
                 actions.append({"type": "reroll"})
-            # Use consumable
+            # Use consumable -- NO card targets in the shop: the real game has no hand
+            # here (cards are in the deck), and `self.hand` still holds the previous
+            # blind's cards.  Offering targets against it produced legal actions whose
+            # result was bit-identical to the pre-action state (P4-W2: an MCTS agent
+            # looped on one for 20,000 steps).  Phase 4 close, lead.
             for ci, key in enumerate(self.consumable_hand):
-                actions.extend(self._consumable_target_actions(ci, key, len(self.hand)))
+                actions.extend(self._consumable_target_actions(ci, key, 0))
             return actions
 
         if s == State.BOOSTER_OPEN:

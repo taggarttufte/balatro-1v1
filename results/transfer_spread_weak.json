@@ -1,0 +1,5414 @@
+{
+ "player": "scripted:hand=weak",
+ "mode": "both",
+ "decks": [
+  "b_red",
+  "b_checkered",
+  "b_plasma"
+ ],
+ "stake": 1,
+ "n_solo_seeds": 150,
+ "n_tournament_seeds": 16,
+ "n_agents": 32,
+ "max_antes": 8,
+ "target_fn": "vanilla_boss",
+ "wall_clock_s": 389.7212438583374,
+ "cells": [
+  {
+   "deck": "b_red",
+   "solo": {
+    "deck": "b_red",
+    "player": "scripted:hand=weak",
+    "target_fn": "vanilla_boss_target_fn(deck_key=None, stake=None)",
+    "n_seeds": 150,
+    "lives": 4,
+    "max_antes": 8,
+    "wall_clock_s": 0.5659053325653076,
+    "per_seed": [
+     {
+      "seed": "11111111",
+      "furthest_ante": 2,
+      "lives_lost": 4,
+      "final_lives": 0,
+      "n_nemesis": 0,
+      "win_rate": NaN,
+      "margins": [],
+      "ended_early_engine_gap": false
+     },
+     {
+      "seed": "1558AXDL",
+      "furthest_ante": 2,
+      "lives_lost": 4,
+      "final_lives": 0,
+      "n_nemesis": 0,
+      "win_rate": NaN,
+      "margins": [],
+      "ended_early_engine_gap": false
+     },
+     {
+      "seed": "15H9Z3IY",
+      "furthest_ante": 2,
+      "lives_lost": 4,
+      "final_lives": 0,
+      "n_nemesis": 0,
+      "win_rate": NaN,
+      "margins": [],
+      "ended_early_engine_gap": false
+     },
+     {
+      "seed": "1KV4W6YS",
+      "furthest_ante": 2,
+      "lives_lost": 4,
+      "final_lives": 0,
+      "n_nemesis": 0,
+      "win_rate": NaN,
+      "margins": [],
+      "ended_early_engine_gap": false
+     },
+     {
+      "seed": "1MD1YZ9T",
+      "furthest_ante": 2,
+      "lives_lost": 4,
+      "final_lives": 0,
+      "n_nemesis": 0,
+      "win_rate": NaN,
+      "margins": [],
+      "ended_early_engine_gap": false
+     },
+     {
+      "seed": "28V7DD4H",
+      "furthest_ante": 2,
+      "lives_lost": 4,
+      "final_lives": 0,
+      "n_nemesis": 0,
+      "win_rate": NaN,
+      "margins": [],
+      "ended_early_engine_gap": false
+     },
+     {
+      "seed": "29DAQVG1",
+      "furthest_ante": 2,
+      "lives_lost": 4,
+      "final_lives": 0,
+      "n_nemesis": 0,
+      "win_rate": NaN,
+      "margins": [],
+      "ended_early_engine_gap": false
+     },
+     {
+      "seed": "29Y3L4S9",
+      "furthest_ante": 2,
+      "lives_lost": 4,
+      "final_lives": 0,
+      "n_nemesis": 0,
+      "win_rate": NaN,
+      "margins": [],
+      "ended_early_engine_gap": false
+     },
+     {
+      "seed": "29ZSW8MY",
+      "furthest_ante": 2,
+      "lives_lost": 4,
+      "final_lives": 0,
+      "n_nemesis": 0,
+      "win_rate": NaN,
+      "margins": [],
+      "ended_early_engine_gap": false
+     },
+     {
+      "seed": "2BRGI767",
+      "furthest_ante": 2,
+      "lives_lost": 4,
+      "final_lives": 0,
+      "n_nemesis": 0,
+      "win_rate": NaN,
+      "margins": [],
+      "ended_early_engine_gap": false
+     },
+     {
+      "seed": "2CP4KSXZ",
+      "furthest_ante": 2,
+      "lives_lost": 4,
+      "final_lives": 0,
+      "n_nemesis": 0,
+      "win_rate": NaN,
+      "margins": [],
+      "ended_early_engine_gap": false
+     },
+     {
+      "seed": "2GHBLJD9",
+      "furthest_ante": 2,
+      "lives_lost": 4,
+      "final_lives": 0,
+      "n_nemesis": 0,
+      "win_rate": NaN,
+      "margins": [],
+      "ended_early_engine_gap": false
+     },
+     {
+      "seed": "2H9N3ISZ",
+      "furthest_ante": 2,
+      "lives_lost": 4,
+      "final_lives": 0,
+      "n_nemesis": 0,
+      "win_rate": NaN,
+      "margins": [],
+      "ended_early_engine_gap": false
+     },
+     {
+      "seed": "2K9H9HN",
+      "furthest_ante": 2,
+      "lives_lost": 4,
+      "final_lives": 0,
+      "n_nemesis": 0,
+      "win_rate": NaN,
+      "margins": [],
+      "ended_early_engine_gap": false
+     },
+     {
+      "seed": "34JCNMPA",
+      "furthest_ante": 2,
+      "lives_lost": 4,
+      "final_lives": 0,
+      "n_nemesis": 0,
+      "win_rate": NaN,
+      "margins": [],
+      "ended_early_engine_gap": false
+     },
+     {
+      "seed": "3SZ71111",
+      "furthest_ante": 2,
+      "lives_lost": 4,
+      "final_lives": 0,
+      "n_nemesis": 0,
+      "win_rate": NaN,
+      "margins": [],
+      "ended_early_engine_gap": false
+     },
+     {
+      "seed": "41Y71M6E",
+      "furthest_ante": 2,
+      "lives_lost": 4,
+      "final_lives": 0,
+      "n_nemesis": 0,
+      "win_rate": NaN,
+      "margins": [],
+      "ended_early_engine_gap": false
+     },
+     {
+      "seed": "46Y8UZEG",
+      "furthest_ante": 2,
+      "lives_lost": 4,
+      "final_lives": 0,
+      "n_nemesis": 0,
+      "win_rate": NaN,
+      "margins": [],
+      "ended_early_engine_gap": false
+     },
+     {
+      "seed": "4H2L46CE",
+      "furthest_ante": 2,
+      "lives_lost": 4,
+      "final_lives": 0,
+      "n_nemesis": 0,
+      "win_rate": NaN,
+      "margins": [],
+      "ended_early_engine_gap": false
+     },
+     {
+      "seed": "4K8A9QER",
+      "furthest_ante": 2,
+      "lives_lost": 4,
+      "final_lives": 0,
+      "n_nemesis": 0,
+      "win_rate": NaN,
+      "margins": [],
+      "ended_early_engine_gap": false
+     },
+     {
+      "seed": "4R219TNX",
+      "furthest_ante": 2,
+      "lives_lost": 4,
+      "final_lives": 0,
+      "n_nemesis": 0,
+      "win_rate": NaN,
+      "margins": [],
+      "ended_early_engine_gap": false
+     },
+     {
+      "seed": "4T1SZKLF",
+      "furthest_ante": 2,
+      "lives_lost": 4,
+      "final_lives": 0,
+      "n_nemesis": 0,
+      "win_rate": NaN,
+      "margins": [],
+      "ended_early_engine_gap": false
+     },
+     {
+      "seed": "4UEGRRRA",
+      "furthest_ante": 2,
+      "lives_lost": 4,
+      "final_lives": 0,
+      "n_nemesis": 0,
+      "win_rate": NaN,
+      "margins": [],
+      "ended_early_engine_gap": false
+     },
+     {
+      "seed": "51F2NVWK",
+      "furthest_ante": 2,
+      "lives_lost": 4,
+      "final_lives": 0,
+      "n_nemesis": 0,
+      "win_rate": NaN,
+      "margins": [],
+      "ended_early_engine_gap": false
+     },
+     {
+      "seed": "56QZEVDV",
+      "furthest_ante": 2,
+      "lives_lost": 4,
+      "final_lives": 0,
+      "n_nemesis": 0,
+      "win_rate": NaN,
+      "margins": [],
+      "ended_early_engine_gap": false
+     },
+     {
+      "seed": "5AWWF1M1",
+      "furthest_ante": 2,
+      "lives_lost": 4,
+      "final_lives": 0,
+      "n_nemesis": 0,
+      "win_rate": NaN,
+      "margins": [],
+      "ended_early_engine_gap": false
+     },
+     {
+      "seed": "5UIUKHCI",
+      "furthest_ante": 2,
+      "lives_lost": 4,
+      "final_lives": 0,
+      "n_nemesis": 0,
+      "win_rate": NaN,
+      "margins": [],
+      "ended_early_engine_gap": false
+     },
+     {
+      "seed": "5YVHAEP",
+      "furthest_ante": 2,
+      "lives_lost": 4,
+      "final_lives": 0,
+      "n_nemesis": 0,
+      "win_rate": NaN,
+      "margins": [],
+      "ended_early_engine_gap": false
+     },
+     {
+      "seed": "6H6WNQM2",
+      "furthest_ante": 2,
+      "lives_lost": 4,
+      "final_lives": 0,
+      "n_nemesis": 0,
+      "win_rate": NaN,
+      "margins": [],
+      "ended_early_engine_gap": false
+     },
+     {
+      "seed": "7I4M53DL",
+      "furthest_ante": 2,
+      "lives_lost": 4,
+      "final_lives": 0,
+      "n_nemesis": 0,
+      "win_rate": NaN,
+      "margins": [],
+      "ended_early_engine_gap": false
+     },
+     {
+      "seed": "7LB2WVPK",
+      "furthest_ante": 2,
+      "lives_lost": 4,
+      "final_lives": 0,
+      "n_nemesis": 0,
+      "win_rate": NaN,
+      "margins": [],
+      "ended_early_engine_gap": false
+     },
+     {
+      "seed": "7ODNKXP",
+      "furthest_ante": 2,
+      "lives_lost": 4,
+      "final_lives": 0,
+      "n_nemesis": 0,
+      "win_rate": NaN,
+      "margins": [],
+      "ended_early_engine_gap": false
+     },
+     {
+      "seed": "7PEE6NA5",
+      "furthest_ante": 2,
+      "lives_lost": 4,
+      "final_lives": 0,
+      "n_nemesis": 0,
+      "win_rate": NaN,
+      "margins": [],
+      "ended_early_engine_gap": false
+     },
+     {
+      "seed": "7UNQV1C9",
+      "furthest_ante": 2,
+      "lives_lost": 4,
+      "final_lives": 0,
+      "n_nemesis": 0,
+      "win_rate": NaN,
+      "margins": [],
+      "ended_early_engine_gap": false
+     },
+     {
+      "seed": "7YTVQERM",
+      "furthest_ante": 2,
+      "lives_lost": 4,
+      "final_lives": 0,
+      "n_nemesis": 0,
+      "win_rate": NaN,
+      "margins": [],
+      "ended_early_engine_gap": false
+     },
+     {
+      "seed": "8I5QXNGE",
+      "furthest_ante": 2,
+      "lives_lost": 4,
+      "final_lives": 0,
+      "n_nemesis": 0,
+      "win_rate": NaN,
+      "margins": [],
+      "ended_early_engine_gap": false
+     },
+     {
+      "seed": "8IZ7HHE4",
+      "furthest_ante": 2,
+      "lives_lost": 4,
+      "final_lives": 0,
+      "n_nemesis": 0,
+      "win_rate": NaN,
+      "margins": [],
+      "ended_early_engine_gap": false
+     },
+     {
+      "seed": "8Q47WV6K",
+      "furthest_ante": 2,
+      "lives_lost": 4,
+      "final_lives": 0,
+      "n_nemesis": 0,
+      "win_rate": NaN,
+      "margins": [],
+      "ended_early_engine_gap": false
+     },
+     {
+      "seed": "8QBRTPD",
+      "furthest_ante": 2,
+      "lives_lost": 4,
+      "final_lives": 0,
+      "n_nemesis": 0,
+      "win_rate": NaN,
+      "margins": [],
+      "ended_early_engine_gap": false
+     },
+     {
+      "seed": "8SIYIK9C",
+      "furthest_ante": 2,
+      "lives_lost": 4,
+      "final_lives": 0,
+      "n_nemesis": 0,
+      "win_rate": NaN,
+      "margins": [],
+      "ended_early_engine_gap": false
+     },
+     {
+      "seed": "8UU564MF",
+      "furthest_ante": 2,
+      "lives_lost": 4,
+      "final_lives": 0,
+      "n_nemesis": 0,
+      "win_rate": NaN,
+      "margins": [],
+      "ended_early_engine_gap": false
+     },
+     {
+      "seed": "8Y7ABZ7C",
+      "furthest_ante": 2,
+      "lives_lost": 4,
+      "final_lives": 0,
+      "n_nemesis": 0,
+      "win_rate": NaN,
+      "margins": [],
+      "ended_early_engine_gap": false
+     },
+     {
+      "seed": "93W4UHC4",
+      "furthest_ante": 2,
+      "lives_lost": 4,
+      "final_lives": 0,
+      "n_nemesis": 0,
+      "win_rate": NaN,
+      "margins": [],
+      "ended_early_engine_gap": false
+     },
+     {
+      "seed": "967889YL",
+      "furthest_ante": 2,
+      "lives_lost": 4,
+      "final_lives": 0,
+      "n_nemesis": 0,
+      "win_rate": NaN,
+      "margins": [],
+      "ended_early_engine_gap": false
+     },
+     {
+      "seed": "9Q9HQXZG",
+      "furthest_ante": 2,
+      "lives_lost": 4,
+      "final_lives": 0,
+      "n_nemesis": 0,
+      "win_rate": NaN,
+      "margins": [],
+      "ended_early_engine_gap": false
+     },
+     {
+      "seed": "9QV2ZT9X",
+      "furthest_ante": 2,
+      "lives_lost": 4,
+      "final_lives": 0,
+      "n_nemesis": 0,
+      "win_rate": NaN,
+      "margins": [],
+      "ended_early_engine_gap": false
+     },
+     {
+      "seed": "9VIGPRT6",
+      "furthest_ante": 2,
+      "lives_lost": 4,
+      "final_lives": 0,
+      "n_nemesis": 0,
+      "win_rate": NaN,
+      "margins": [],
+      "ended_early_engine_gap": false
+     },
+     {
+      "seed": "9ZXMM1M",
+      "furthest_ante": 2,
+      "lives_lost": 4,
+      "final_lives": 0,
+      "n_nemesis": 0,
+      "win_rate": NaN,
+      "margins": [],
+      "ended_early_engine_gap": false
+     },
+     {
+      "seed": "A",
+      "furthest_ante": 2,
+      "lives_lost": 4,
+      "final_lives": 0,
+      "n_nemesis": 0,
+      "win_rate": NaN,
+      "margins": [],
+      "ended_early_engine_gap": false
+     },
+     {
+      "seed": "A1UAS1G5",
+      "furthest_ante": 2,
+      "lives_lost": 4,
+      "final_lives": 0,
+      "n_nemesis": 0,
+      "win_rate": NaN,
+      "margins": [],
+      "ended_early_engine_gap": false
+     },
+     {
+      "seed": "AE1K7DG1",
+      "furthest_ante": 2,
+      "lives_lost": 4,
+      "final_lives": 0,
+      "n_nemesis": 0,
+      "win_rate": NaN,
+      "margins": [],
+      "ended_early_engine_gap": false
+     },
+     {
+      "seed": "ALEEB",
+      "furthest_ante": 2,
+      "lives_lost": 4,
+      "final_lives": 0,
+      "n_nemesis": 0,
+      "win_rate": NaN,
+      "margins": [],
+      "ended_early_engine_gap": false
+     },
+     {
+      "seed": "AMPYZUIU",
+      "furthest_ante": 2,
+      "lives_lost": 4,
+      "final_lives": 0,
+      "n_nemesis": 0,
+      "win_rate": NaN,
+      "margins": [],
+      "ended_early_engine_gap": false
+     },
+     {
+      "seed": "APH9LX2Y",
+      "furthest_ante": 2,
+      "lives_lost": 4,
+      "final_lives": 0,
+      "n_nemesis": 0,
+      "win_rate": NaN,
+      "margins": [],
+      "ended_early_engine_gap": false
+     },
+     {
+      "seed": "BA1D48RK",
+      "furthest_ante": 2,
+      "lives_lost": 4,
+      "final_lives": 0,
+      "n_nemesis": 0,
+      "win_rate": NaN,
+      "margins": [],
+      "ended_early_engine_gap": false
+     },
+     {
+      "seed": "BQ6A2D42",
+      "furthest_ante": 2,
+      "lives_lost": 4,
+      "final_lives": 0,
+      "n_nemesis": 0,
+      "win_rate": NaN,
+      "margins": [],
+      "ended_early_engine_gap": false
+     },
+     {
+      "seed": "C19P8BQ4",
+      "furthest_ante": 2,
+      "lives_lost": 4,
+      "final_lives": 0,
+      "n_nemesis": 0,
+      "win_rate": NaN,
+      "margins": [],
+      "ended_early_engine_gap": false
+     },
+     {
+      "seed": "C1ZLPKAA",
+      "furthest_ante": 2,
+      "lives_lost": 4,
+      "final_lives": 0,
+      "n_nemesis": 0,
+      "win_rate": NaN,
+      "margins": [],
+      "ended_early_engine_gap": false
+     },
+     {
+      "seed": "C93K3YWJ",
+      "furthest_ante": 2,
+      "lives_lost": 4,
+      "final_lives": 0,
+      "n_nemesis": 0,
+      "win_rate": NaN,
+      "margins": [],
+      "ended_early_engine_gap": false
+     },
+     {
+      "seed": "CCBWC6CR",
+      "furthest_ante": 2,
+      "lives_lost": 4,
+      "final_lives": 0,
+      "n_nemesis": 0,
+      "win_rate": NaN,
+      "margins": [],
+      "ended_early_engine_gap": false
+     },
+     {
+      "seed": "CHPB293X",
+      "furthest_ante": 2,
+      "lives_lost": 4,
+      "final_lives": 0,
+      "n_nemesis": 0,
+      "win_rate": NaN,
+      "margins": [],
+      "ended_early_engine_gap": false
+     },
+     {
+      "seed": "CIGHYTAU",
+      "furthest_ante": 2,
+      "lives_lost": 4,
+      "final_lives": 0,
+      "n_nemesis": 0,
+      "win_rate": NaN,
+      "margins": [],
+      "ended_early_engine_gap": false
+     },
+     {
+      "seed": "CMEEXU8I",
+      "furthest_ante": 2,
+      "lives_lost": 4,
+      "final_lives": 0,
+      "n_nemesis": 0,
+      "win_rate": NaN,
+      "margins": [],
+      "ended_early_engine_gap": false
+     },
+     {
+      "seed": "D4TDD2B6",
+      "furthest_ante": 2,
+      "lives_lost": 4,
+      "final_lives": 0,
+      "n_nemesis": 0,
+      "win_rate": NaN,
+      "margins": [],
+      "ended_early_engine_gap": false
+     },
+     {
+      "seed": "D7Y5419A",
+      "furthest_ante": 2,
+      "lives_lost": 4,
+      "final_lives": 0,
+      "n_nemesis": 0,
+      "win_rate": NaN,
+      "margins": [],
+      "ended_early_engine_gap": false
+     },
+     {
+      "seed": "ECG8NVDZ",
+      "furthest_ante": 2,
+      "lives_lost": 4,
+      "final_lives": 0,
+      "n_nemesis": 0,
+      "win_rate": NaN,
+      "margins": [],
+      "ended_early_engine_gap": false
+     },
+     {
+      "seed": "EGE5ZY77",
+      "furthest_ante": 2,
+      "lives_lost": 4,
+      "final_lives": 0,
+      "n_nemesis": 0,
+      "win_rate": NaN,
+      "margins": [],
+      "ended_early_engine_gap": false
+     },
+     {
+      "seed": "EVB8882H",
+      "furthest_ante": 2,
+      "lives_lost": 4,
+      "final_lives": 0,
+      "n_nemesis": 0,
+      "win_rate": NaN,
+      "margins": [],
+      "ended_early_engine_gap": false
+     },
+     {
+      "seed": "FSXYRB3J",
+      "furthest_ante": 2,
+      "lives_lost": 4,
+      "final_lives": 0,
+      "n_nemesis": 0,
+      "win_rate": NaN,
+      "margins": [],
+      "ended_early_engine_gap": false
+     },
+     {
+      "seed": "GVQL737K",
+      "furthest_ante": 2,
+      "lives_lost": 4,
+      "final_lives": 0,
+      "n_nemesis": 0,
+      "win_rate": NaN,
+      "margins": [],
+      "ended_early_engine_gap": false
+     },
+     {
+      "seed": "GVYT2DGJ",
+      "furthest_ante": 2,
+      "lives_lost": 4,
+      "final_lives": 0,
+      "n_nemesis": 0,
+      "win_rate": NaN,
+      "margins": [],
+      "ended_early_engine_gap": false
+     },
+     {
+      "seed": "H1EWXLNE",
+      "furthest_ante": 2,
+      "lives_lost": 4,
+      "final_lives": 0,
+      "n_nemesis": 0,
+      "win_rate": NaN,
+      "margins": [],
+      "ended_early_engine_gap": false
+     },
+     {
+      "seed": "HPR8Q7K",
+      "furthest_ante": 2,
+      "lives_lost": 4,
+      "final_lives": 0,
+      "n_nemesis": 0,
+      "win_rate": NaN,
+      "margins": [],
+      "ended_early_engine_gap": false
+     },
+     {
+      "seed": "HS8LL7TC",
+      "furthest_ante": 2,
+      "lives_lost": 4,
+      "final_lives": 0,
+      "n_nemesis": 0,
+      "win_rate": NaN,
+      "margins": [],
+      "ended_early_engine_gap": false
+     },
+     {
+      "seed": "HSC1L2DX",
+      "furthest_ante": 2,
+      "lives_lost": 4,
+      "final_lives": 0,
+      "n_nemesis": 0,
+      "win_rate": NaN,
+      "margins": [],
+      "ended_early_engine_gap": false
+     },
+     {
+      "seed": "I68YASXJ",
+      "furthest_ante": 2,
+      "lives_lost": 4,
+      "final_lives": 0,
+      "n_nemesis": 0,
+      "win_rate": NaN,
+      "margins": [],
+      "ended_early_engine_gap": false
+     },
+     {
+      "seed": "ICUESE5D",
+      "furthest_ante": 2,
+      "lives_lost": 4,
+      "final_lives": 0,
+      "n_nemesis": 0,
+      "win_rate": NaN,
+      "margins": [],
+      "ended_early_engine_gap": false
+     },
+     {
+      "seed": "IMMOLATE",
+      "furthest_ante": 2,
+      "lives_lost": 4,
+      "final_lives": 0,
+      "n_nemesis": 0,
+      "win_rate": NaN,
+      "margins": [],
+      "ended_early_engine_gap": false
+     },
+     {
+      "seed": "J3GHQHJM",
+      "furthest_ante": 2,
+      "lives_lost": 4,
+      "final_lives": 0,
+      "n_nemesis": 0,
+      "win_rate": NaN,
+      "margins": [],
+      "ended_early_engine_gap": false
+     },
+     {
+      "seed": "JQB4BN6F",
+      "furthest_ante": 2,
+      "lives_lost": 4,
+      "final_lives": 0,
+      "n_nemesis": 0,
+      "win_rate": NaN,
+      "margins": [],
+      "ended_early_engine_gap": false
+     },
+     {
+      "seed": "K84ZCS3Q",
+      "furthest_ante": 2,
+      "lives_lost": 4,
+      "final_lives": 0,
+      "n_nemesis": 0,
+      "win_rate": NaN,
+      "margins": [],
+      "ended_early_engine_gap": false
+     },
+     {
+      "seed": "K8PU119J",
+      "furthest_ante": 2,
+      "lives_lost": 4,
+      "final_lives": 0,
+      "n_nemesis": 0,
+      "win_rate": NaN,
+      "margins": [],
+      "ended_early_engine_gap": false
+     },
+     {
+      "seed": "K94TS4B8",
+      "furthest_ante": 2,
+      "lives_lost": 4,
+      "final_lives": 0,
+      "n_nemesis": 0,
+      "win_rate": NaN,
+      "margins": [],
+      "ended_early_engine_gap": false
+     },
+     {
+      "seed": "KPGY6GCH",
+      "furthest_ante": 2,
+      "lives_lost": 4,
+      "final_lives": 0,
+      "n_nemesis": 0,
+      "win_rate": NaN,
+      "margins": [],
+      "ended_early_engine_gap": false
+     },
+     {
+      "seed": "LHZYIWR6",
+      "furthest_ante": 2,
+      "lives_lost": 4,
+      "final_lives": 0,
+      "n_nemesis": 0,
+      "win_rate": NaN,
+      "margins": [],
+      "ended_early_engine_gap": false
+     },
+     {
+      "seed": "LMGJPMKP",
+      "furthest_ante": 2,
+      "lives_lost": 4,
+      "final_lives": 0,
+      "n_nemesis": 0,
+      "win_rate": NaN,
+      "margins": [],
+      "ended_early_engine_gap": false
+     },
+     {
+      "seed": "M2LAET6A",
+      "furthest_ante": 2,
+      "lives_lost": 4,
+      "final_lives": 0,
+      "n_nemesis": 0,
+      "win_rate": NaN,
+      "margins": [],
+      "ended_early_engine_gap": false
+     },
+     {
+      "seed": "M4LV5E89",
+      "furthest_ante": 2,
+      "lives_lost": 4,
+      "final_lives": 0,
+      "n_nemesis": 0,
+      "win_rate": NaN,
+      "margins": [],
+      "ended_early_engine_gap": false
+     },
+     {
+      "seed": "M6XD1INZ",
+      "furthest_ante": 2,
+      "lives_lost": 4,
+      "final_lives": 0,
+      "n_nemesis": 0,
+      "win_rate": NaN,
+      "margins": [],
+      "ended_early_engine_gap": false
+     },
+     {
+      "seed": "MIM66QT9",
+      "furthest_ante": 2,
+      "lives_lost": 4,
+      "final_lives": 0,
+      "n_nemesis": 0,
+      "win_rate": NaN,
+      "margins": [],
+      "ended_early_engine_gap": false
+     },
+     {
+      "seed": "MM1H85E3",
+      "furthest_ante": 2,
+      "lives_lost": 4,
+      "final_lives": 0,
+      "n_nemesis": 0,
+      "win_rate": NaN,
+      "margins": [],
+      "ended_early_engine_gap": false
+     },
+     {
+      "seed": "MRBF7L15",
+      "furthest_ante": 2,
+      "lives_lost": 4,
+      "final_lives": 0,
+      "n_nemesis": 0,
+      "win_rate": NaN,
+      "margins": [],
+      "ended_early_engine_gap": false
+     },
+     {
+      "seed": "MSQZGPMX",
+      "furthest_ante": 2,
+      "lives_lost": 4,
+      "final_lives": 0,
+      "n_nemesis": 0,
+      "win_rate": NaN,
+      "margins": [],
+      "ended_early_engine_gap": false
+     },
+     {
+      "seed": "OG4YQPSI",
+      "furthest_ante": 2,
+      "lives_lost": 4,
+      "final_lives": 0,
+      "n_nemesis": 0,
+      "win_rate": NaN,
+      "margins": [],
+      "ended_early_engine_gap": false
+     },
+     {
+      "seed": "PI1J5YAG",
+      "furthest_ante": 2,
+      "lives_lost": 4,
+      "final_lives": 0,
+      "n_nemesis": 0,
+      "win_rate": NaN,
+      "margins": [],
+      "ended_early_engine_gap": false
+     },
+     {
+      "seed": "PJ5TB88W",
+      "furthest_ante": 2,
+      "lives_lost": 4,
+      "final_lives": 0,
+      "n_nemesis": 0,
+      "win_rate": NaN,
+      "margins": [],
+      "ended_early_engine_gap": false
+     },
+     {
+      "seed": "PQNVFI72",
+      "furthest_ante": 2,
+      "lives_lost": 4,
+      "final_lives": 0,
+      "n_nemesis": 0,
+      "win_rate": NaN,
+      "margins": [],
+      "ended_early_engine_gap": false
+     },
+     {
+      "seed": "PT6IF52R",
+      "furthest_ante": 2,
+      "lives_lost": 4,
+      "final_lives": 0,
+      "n_nemesis": 0,
+      "win_rate": NaN,
+      "margins": [],
+      "ended_early_engine_gap": false
+     },
+     {
+      "seed": "PTSBMSMQ",
+      "furthest_ante": 2,
+      "lives_lost": 4,
+      "final_lives": 0,
+      "n_nemesis": 0,
+      "win_rate": NaN,
+      "margins": [],
+      "ended_early_engine_gap": false
+     },
+     {
+      "seed": "QY3TQZJ9",
+      "furthest_ante": 2,
+      "lives_lost": 4,
+      "final_lives": 0,
+      "n_nemesis": 0,
+      "win_rate": NaN,
+      "margins": [],
+      "ended_early_engine_gap": false
+     },
+     {
+      "seed": "R8DFV7RD",
+      "furthest_ante": 2,
+      "lives_lost": 4,
+      "final_lives": 0,
+      "n_nemesis": 0,
+      "win_rate": NaN,
+      "margins": [],
+      "ended_early_engine_gap": false
+     },
+     {
+      "seed": "R8W2CT59",
+      "furthest_ante": 2,
+      "lives_lost": 4,
+      "final_lives": 0,
+      "n_nemesis": 0,
+      "win_rate": NaN,
+      "margins": [],
+      "ended_early_engine_gap": false
+     },
+     {
+      "seed": "RUXS91YF",
+      "furthest_ante": 2,
+      "lives_lost": 4,
+      "final_lives": 0,
+      "n_nemesis": 0,
+      "win_rate": NaN,
+      "margins": [],
+      "ended_early_engine_gap": false
+     },
+     {
+      "seed": "RXI42HZ2",
+      "furthest_ante": 2,
+      "lives_lost": 4,
+      "final_lives": 0,
+      "n_nemesis": 0,
+      "win_rate": NaN,
+      "margins": [],
+      "ended_early_engine_gap": false
+     },
+     {
+      "seed": "S1QJX1CS",
+      "furthest_ante": 2,
+      "lives_lost": 4,
+      "final_lives": 0,
+      "n_nemesis": 0,
+      "win_rate": NaN,
+      "margins": [],
+      "ended_early_engine_gap": false
+     },
+     {
+      "seed": "SF9SZOB1",
+      "furthest_ante": 2,
+      "lives_lost": 4,
+      "final_lives": 0,
+      "n_nemesis": 0,
+      "win_rate": NaN,
+      "margins": [],
+      "ended_early_engine_gap": false
+     },
+     {
+      "seed": "SLRSKCG1",
+      "furthest_ante": 2,
+      "lives_lost": 4,
+      "final_lives": 0,
+      "n_nemesis": 0,
+      "win_rate": NaN,
+      "margins": [],
+      "ended_early_engine_gap": false
+     },
+     {
+      "seed": "SMC7XNT8",
+      "furthest_ante": 2,
+      "lives_lost": 4,
+      "final_lives": 0,
+      "n_nemesis": 0,
+      "win_rate": NaN,
+      "margins": [],
+      "ended_early_engine_gap": false
+     },
+     {
+      "seed": "SQVZX29L",
+      "furthest_ante": 2,
+      "lives_lost": 4,
+      "final_lives": 0,
+      "n_nemesis": 0,
+      "win_rate": NaN,
+      "margins": [],
+      "ended_early_engine_gap": false
+     },
+     {
+      "seed": "T5A1T1DZ",
+      "furthest_ante": 2,
+      "lives_lost": 4,
+      "final_lives": 0,
+      "n_nemesis": 0,
+      "win_rate": NaN,
+      "margins": [],
+      "ended_early_engine_gap": false
+     },
+     {
+      "seed": "U516KUJP",
+      "furthest_ante": 2,
+      "lives_lost": 4,
+      "final_lives": 0,
+      "n_nemesis": 0,
+      "win_rate": NaN,
+      "margins": [],
+      "ended_early_engine_gap": false
+     },
+     {
+      "seed": "U8RJYV6M",
+      "furthest_ante": 2,
+      "lives_lost": 4,
+      "final_lives": 0,
+      "n_nemesis": 0,
+      "win_rate": NaN,
+      "margins": [],
+      "ended_early_engine_gap": false
+     },
+     {
+      "seed": "UCAMJYYK",
+      "furthest_ante": 2,
+      "lives_lost": 4,
+      "final_lives": 0,
+      "n_nemesis": 0,
+      "win_rate": NaN,
+      "margins": [],
+      "ended_early_engine_gap": false
+     },
+     {
+      "seed": "USQF4ZAV",
+      "furthest_ante": 2,
+      "lives_lost": 4,
+      "final_lives": 0,
+      "n_nemesis": 0,
+      "win_rate": NaN,
+      "margins": [],
+      "ended_early_engine_gap": false
+     },
+     {
+      "seed": "V3PUR5L4",
+      "furthest_ante": 2,
+      "lives_lost": 4,
+      "final_lives": 0,
+      "n_nemesis": 0,
+      "win_rate": NaN,
+      "margins": [],
+      "ended_early_engine_gap": false
+     },
+     {
+      "seed": "VNOMH111",
+      "furthest_ante": 2,
+      "lives_lost": 4,
+      "final_lives": 0,
+      "n_nemesis": 0,
+      "win_rate": NaN,
+      "margins": [],
+      "ended_early_engine_gap": false
+     },
+     {
+      "seed": "WBC1DGJQ",
+      "furthest_ante": 2,
+      "lives_lost": 4,
+      "final_lives": 0,
+      "n_nemesis": 0,
+      "win_rate": NaN,
+      "margins": [],
+      "ended_early_engine_gap": false
+     },
+     {
+      "seed": "WIF67A3S",
+      "furthest_ante": 2,
+      "lives_lost": 4,
+      "final_lives": 0,
+      "n_nemesis": 0,
+      "win_rate": NaN,
+      "margins": [],
+      "ended_early_engine_gap": false
+     },
+     {
+      "seed": "WLAVAQ75",
+      "furthest_ante": 2,
+      "lives_lost": 4,
+      "final_lives": 0,
+      "n_nemesis": 0,
+      "win_rate": NaN,
+      "margins": [],
+      "ended_early_engine_gap": false
+     },
+     {
+      "seed": "WVPJKPRD",
+      "furthest_ante": 2,
+      "lives_lost": 4,
+      "final_lives": 0,
+      "n_nemesis": 0,
+      "win_rate": NaN,
+      "margins": [],
+      "ended_early_engine_gap": false
+     },
+     {
+      "seed": "X7FG4FH8",
+      "furthest_ante": 2,
+      "lives_lost": 4,
+      "final_lives": 0,
+      "n_nemesis": 0,
+      "win_rate": NaN,
+      "margins": [],
+      "ended_early_engine_gap": false
+     },
+     {
+      "seed": "XD55DZ57",
+      "furthest_ante": 2,
+      "lives_lost": 4,
+      "final_lives": 0,
+      "n_nemesis": 0,
+      "win_rate": NaN,
+      "margins": [],
+      "ended_early_engine_gap": false
+     },
+     {
+      "seed": "XDW9VBHQ",
+      "furthest_ante": 2,
+      "lives_lost": 4,
+      "final_lives": 0,
+      "n_nemesis": 0,
+      "win_rate": NaN,
+      "margins": [],
+      "ended_early_engine_gap": false
+     },
+     {
+      "seed": "YB54A1EH",
+      "furthest_ante": 2,
+      "lives_lost": 4,
+      "final_lives": 0,
+      "n_nemesis": 0,
+      "win_rate": NaN,
+      "margins": [],
+      "ended_early_engine_gap": false
+     },
+     {
+      "seed": "YD2HMRBR",
+      "furthest_ante": 2,
+      "lives_lost": 4,
+      "final_lives": 0,
+      "n_nemesis": 0,
+      "win_rate": NaN,
+      "margins": [],
+      "ended_early_engine_gap": false
+     },
+     {
+      "seed": "YPB7TZWJ",
+      "furthest_ante": 2,
+      "lives_lost": 4,
+      "final_lives": 0,
+      "n_nemesis": 0,
+      "win_rate": NaN,
+      "margins": [],
+      "ended_early_engine_gap": false
+     },
+     {
+      "seed": "5TITKHCI",
+      "furthest_ante": 2,
+      "lives_lost": 4,
+      "final_lives": 0,
+      "n_nemesis": 0,
+      "win_rate": NaN,
+      "margins": [],
+      "ended_early_engine_gap": false
+     },
+     {
+      "seed": "RMC7WNS8",
+      "furthest_ante": 2,
+      "lives_lost": 4,
+      "final_lives": 0,
+      "n_nemesis": 0,
+      "win_rate": NaN,
+      "margins": [],
+      "ended_early_engine_gap": false
+     },
+     {
+      "seed": "VLAUZAP7",
+      "furthest_ante": 2,
+      "lives_lost": 4,
+      "final_lives": 0,
+      "n_nemesis": 0,
+      "win_rate": NaN,
+      "margins": [],
+      "ended_early_engine_gap": false
+     },
+     {
+      "seed": "54H2L46C",
+      "furthest_ante": 2,
+      "lives_lost": 4,
+      "final_lives": 0,
+      "n_nemesis": 0,
+      "win_rate": NaN,
+      "margins": [],
+      "ended_early_engine_gap": false
+     },
+     {
+      "seed": "EK84YCRZ",
+      "furthest_ante": 2,
+      "lives_lost": 4,
+      "final_lives": 0,
+      "n_nemesis": 0,
+      "win_rate": NaN,
+      "margins": [],
+      "ended_early_engine_gap": false
+     },
+     {
+      "seed": "3PQWI42H",
+      "furthest_ante": 2,
+      "lives_lost": 4,
+      "final_lives": 0,
+      "n_nemesis": 0,
+      "win_rate": NaN,
+      "margins": [],
+      "ended_early_engine_gap": false
+     },
+     {
+      "seed": "Y28I5PWN",
+      "furthest_ante": 2,
+      "lives_lost": 4,
+      "final_lives": 0,
+      "n_nemesis": 0,
+      "win_rate": NaN,
+      "margins": [],
+      "ended_early_engine_gap": false
+     },
+     {
+      "seed": "GEGUXSZ2",
+      "furthest_ante": 2,
+      "lives_lost": 4,
+      "final_lives": 0,
+      "n_nemesis": 0,
+      "win_rate": NaN,
+      "margins": [],
+      "ended_early_engine_gap": false
+     },
+     {
+      "seed": "DGJTCAMJ",
+      "furthest_ante": 2,
+      "lives_lost": 4,
+      "final_lives": 0,
+      "n_nemesis": 0,
+      "win_rate": NaN,
+      "margins": [],
+      "ended_early_engine_gap": false
+     },
+     {
+      "seed": "XXKGUPL7",
+      "furthest_ante": 2,
+      "lives_lost": 4,
+      "final_lives": 0,
+      "n_nemesis": 0,
+      "win_rate": NaN,
+      "margins": [],
+      "ended_early_engine_gap": false
+     },
+     {
+      "seed": "37KVBC1D",
+      "furthest_ante": 2,
+      "lives_lost": 4,
+      "final_lives": 0,
+      "n_nemesis": 0,
+      "win_rate": NaN,
+      "margins": [],
+      "ended_early_engine_gap": false
+     },
+     {
+      "seed": "GJPD7X54",
+      "furthest_ante": 2,
+      "lives_lost": 4,
+      "final_lives": 0,
+      "n_nemesis": 0,
+      "win_rate": NaN,
+      "margins": [],
+      "ended_early_engine_gap": false
+     },
+     {
+      "seed": "19AC19O8",
+      "furthest_ante": 2,
+      "lives_lost": 4,
+      "final_lives": 0,
+      "n_nemesis": 0,
+      "win_rate": NaN,
+      "margins": [],
+      "ended_early_engine_gap": false
+     },
+     {
+      "seed": "BP49PU2Y",
+      "furthest_ante": 2,
+      "lives_lost": 4,
+      "final_lives": 0,
+      "n_nemesis": 0,
+      "win_rate": NaN,
+      "margins": [],
+      "ended_early_engine_gap": false
+     },
+     {
+      "seed": "S9WXD2HM",
+      "furthest_ante": 2,
+      "lives_lost": 4,
+      "final_lives": 0,
+      "n_nemesis": 0,
+      "win_rate": NaN,
+      "margins": [],
+      "ended_early_engine_gap": false
+     },
+     {
+      "seed": "QBQ34JCN",
+      "furthest_ante": 2,
+      "lives_lost": 4,
+      "final_lives": 0,
+      "n_nemesis": 0,
+      "win_rate": NaN,
+      "margins": [],
+      "ended_early_engine_gap": false
+     },
+     {
+      "seed": "MOAT516K",
+      "furthest_ante": 2,
+      "lives_lost": 4,
+      "final_lives": 0,
+      "n_nemesis": 0,
+      "win_rate": NaN,
+      "margins": [],
+      "ended_early_engine_gap": false
+     },
+     {
+      "seed": "TJOA1TAR",
+      "furthest_ante": 2,
+      "lives_lost": 4,
+      "final_lives": 0,
+      "n_nemesis": 0,
+      "win_rate": NaN,
+      "margins": [],
+      "ended_early_engine_gap": false
+     },
+     {
+      "seed": "1G5AOH9L",
+      "furthest_ante": 2,
+      "lives_lost": 4,
+      "final_lives": 0,
+      "n_nemesis": 0,
+      "win_rate": NaN,
+      "margins": [],
+      "ended_early_engine_gap": false
+     },
+     {
+      "seed": "W2XHR8LL",
+      "furthest_ante": 2,
+      "lives_lost": 4,
+      "final_lives": 0,
+      "n_nemesis": 0,
+      "win_rate": NaN,
+      "margins": [],
+      "ended_early_engine_gap": false
+     },
+     {
+      "seed": "7SCVIF67",
+      "furthest_ante": 2,
+      "lives_lost": 4,
+      "final_lives": 0,
+      "n_nemesis": 0,
+      "win_rate": NaN,
+      "margins": [],
+      "ended_early_engine_gap": false
+     },
+     {
+      "seed": "A3RBA1D4",
+      "furthest_ante": 2,
+      "lives_lost": 4,
+      "final_lives": 0,
+      "n_nemesis": 0,
+      "win_rate": NaN,
+      "margins": [],
+      "ended_early_engine_gap": false
+     },
+     {
+      "seed": "8QK15H9Y",
+      "furthest_ante": 2,
+      "lives_lost": 4,
+      "final_lives": 0,
+      "n_nemesis": 0,
+      "win_rate": NaN,
+      "margins": [],
+      "ended_early_engine_gap": false
+     },
+     {
+      "seed": "3IX1MD1X",
+      "furthest_ante": 2,
+      "lives_lost": 4,
+      "final_lives": 0,
+      "n_nemesis": 0,
+      "win_rate": NaN,
+      "margins": [],
+      "ended_early_engine_gap": false
+     }
+    ],
+    "summary": {
+     "furthest_ante": {
+      "point": 2.0,
+      "lo": 2.0,
+      "hi": 2.0,
+      "n": 150
+     },
+     "lives_lost": {
+      "point": 4.0,
+      "lo": 4.0,
+      "hi": 4.0,
+      "n": 150
+     },
+     "win_rate": {
+      "point": NaN,
+      "lo": NaN,
+      "hi": NaN,
+      "n": 0
+     },
+     "n_nemesis_total": 0,
+     "margin_quantiles": {
+      "0.0": null,
+      "0.1": null,
+      "0.25": null,
+      "0.5": null,
+      "0.75": null,
+      "0.9": null,
+      "1.0": null
+     },
+     "engine_gap_seeds": 0
+    }
+   },
+   "tournament": {
+    "deck": "b_red",
+    "player": "scripted:hand=weak",
+    "n_agents": 32,
+    "max_ante": 8,
+    "base_seed": 0,
+    "n_seeds": 16,
+    "wall_clock_s": 142.89930486679077,
+    "per_seed": [
+     {
+      "seed": "11111111",
+      "ante_ranks": {
+       "2": 32.0,
+       "3": 32.0,
+       "4": 32.0,
+       "5": 32.0,
+       "6": 32.0,
+       "7": 32.0,
+       "8": 32.0
+      },
+      "n_antes_present": 7,
+      "mean_rank_frac": 1.0
+     },
+     {
+      "seed": "1558AXDL",
+      "ante_ranks": {
+       "2": 32.0,
+       "3": 32.0,
+       "4": 32.0,
+       "5": 32.0,
+       "6": 28.0,
+       "7": 28.0,
+       "8": 32.0
+      },
+      "n_antes_present": 7,
+      "mean_rank_frac": 0.9631336405529954
+     },
+     {
+      "seed": "15H9Z3IY",
+      "ante_ranks": {
+       "2": 31.0,
+       "3": 32.0,
+       "4": 32.0,
+       "5": 32.0,
+       "6": 32.0,
+       "7": 32.0,
+       "8": 32.0
+      },
+      "n_antes_present": 7,
+      "mean_rank_frac": 0.9953917050691244
+     },
+     {
+      "seed": "1KV4W6YS",
+      "ante_ranks": {
+       "2": 32.0,
+       "3": 32.0,
+       "4": 32.0,
+       "5": 32.0,
+       "6": 32.0,
+       "7": 31.0,
+       "8": 32.0
+      },
+      "n_antes_present": 7,
+      "mean_rank_frac": 0.9953917050691244
+     },
+     {
+      "seed": "1MD1YZ9T",
+      "ante_ranks": {
+       "2": 32.0,
+       "3": 31.0,
+       "4": 31.0,
+       "5": 32.0,
+       "6": 32.0,
+       "7": 32.0,
+       "8": 32.0
+      },
+      "n_antes_present": 7,
+      "mean_rank_frac": 0.9907834101382489
+     },
+     {
+      "seed": "28V7DD4H",
+      "ante_ranks": {
+       "2": 32.0,
+       "3": 32.0,
+       "4": 32.0,
+       "5": 28.0,
+       "6": 32.0,
+       "7": 32.0,
+       "8": 32.0
+      },
+      "n_antes_present": 7,
+      "mean_rank_frac": 0.9815668202764977
+     },
+     {
+      "seed": "29DAQVG1",
+      "ante_ranks": {
+       "2": 32.0,
+       "3": 32.0,
+       "4": 32.0,
+       "5": 32.0,
+       "6": 32.0,
+       "7": 28.0,
+       "8": 32.0
+      },
+      "n_antes_present": 7,
+      "mean_rank_frac": 0.9815668202764977
+     },
+     {
+      "seed": "29Y3L4S9",
+      "ante_ranks": {
+       "2": 32.0,
+       "3": 32.0,
+       "4": 32.0,
+       "5": 32.0,
+       "6": 32.0,
+       "7": 32.0,
+       "8": 32.0
+      },
+      "n_antes_present": 7,
+      "mean_rank_frac": 1.0
+     },
+     {
+      "seed": "29ZSW8MY",
+      "ante_ranks": {
+       "2": 32.0,
+       "3": 32.0,
+       "4": 32.0,
+       "5": 32.0,
+       "6": 32.0,
+       "7": 32.0,
+       "8": 32.0
+      },
+      "n_antes_present": 7,
+      "mean_rank_frac": 1.0
+     },
+     {
+      "seed": "2BRGI767",
+      "ante_ranks": {
+       "2": 32.0,
+       "3": 32.0,
+       "4": 32.0,
+       "5": 32.0,
+       "6": 32.0,
+       "7": 32.0,
+       "8": 31.0
+      },
+      "n_antes_present": 7,
+      "mean_rank_frac": 0.9953917050691244
+     },
+     {
+      "seed": "2CP4KSXZ",
+      "ante_ranks": {
+       "2": 32.0,
+       "3": 32.0,
+       "4": 32.0,
+       "5": 32.0,
+       "6": 32.0,
+       "7": 32.0,
+       "8": 32.0
+      },
+      "n_antes_present": 7,
+      "mean_rank_frac": 1.0
+     },
+     {
+      "seed": "2GHBLJD9",
+      "ante_ranks": {
+       "2": 30.0,
+       "3": 32.0,
+       "4": 32.0,
+       "5": 32.0,
+       "6": 32.0,
+       "7": 32.0,
+       "8": 32.0
+      },
+      "n_antes_present": 7,
+      "mean_rank_frac": 0.9907834101382489
+     },
+     {
+      "seed": "2H9N3ISZ",
+      "ante_ranks": {
+       "2": 32.0,
+       "3": 32.0,
+       "4": 32.0,
+       "5": 32.0,
+       "6": 32.0,
+       "7": 32.0,
+       "8": 32.0
+      },
+      "n_antes_present": 7,
+      "mean_rank_frac": 1.0
+     },
+     {
+      "seed": "2K9H9HN",
+      "ante_ranks": {
+       "2": 32.0,
+       "3": 32.0,
+       "4": 32.0,
+       "5": 32.0,
+       "6": 32.0,
+       "7": 32.0,
+       "8": 32.0
+      },
+      "n_antes_present": 7,
+      "mean_rank_frac": 1.0
+     },
+     {
+      "seed": "34JCNMPA",
+      "ante_ranks": {
+       "2": 32.0,
+       "3": 32.0,
+       "4": 32.0,
+       "5": 32.0,
+       "6": 32.0,
+       "7": 32.0,
+       "8": 32.0
+      },
+      "n_antes_present": 7,
+      "mean_rank_frac": 1.0
+     },
+     {
+      "seed": "3SZ71111",
+      "ante_ranks": {
+       "2": 32.0,
+       "3": 32.0,
+       "4": 32.0,
+       "5": 28.0,
+       "6": 32.0,
+       "7": 28.0,
+       "8": 28.0
+      },
+      "n_antes_present": 7,
+      "mean_rank_frac": 0.9447004608294931
+     }
+    ],
+    "summary": {
+     "mean_rank_frac": {
+      "point": 0.9899193548387097,
+      "lo": 0.9818548387096774,
+      "hi": 0.9965437788018433,
+      "n": 16
+     }
+    }
+   }
+  },
+  {
+   "deck": "b_checkered",
+   "solo": {
+    "deck": "b_checkered",
+    "player": "scripted:hand=weak",
+    "target_fn": "vanilla_boss_target_fn(deck_key=None, stake=None)",
+    "n_seeds": 150,
+    "lives": 4,
+    "max_antes": 8,
+    "wall_clock_s": 0.845757007598877,
+    "per_seed": [
+     {
+      "seed": "11111111",
+      "furthest_ante": 2,
+      "lives_lost": 4,
+      "final_lives": 0,
+      "n_nemesis": 0,
+      "win_rate": NaN,
+      "margins": [],
+      "ended_early_engine_gap": false
+     },
+     {
+      "seed": "1558AXDL",
+      "furthest_ante": 2,
+      "lives_lost": 4,
+      "final_lives": 0,
+      "n_nemesis": 0,
+      "win_rate": NaN,
+      "margins": [],
+      "ended_early_engine_gap": false
+     },
+     {
+      "seed": "15H9Z3IY",
+      "furthest_ante": 2,
+      "lives_lost": 4,
+      "final_lives": 0,
+      "n_nemesis": 0,
+      "win_rate": NaN,
+      "margins": [],
+      "ended_early_engine_gap": false
+     },
+     {
+      "seed": "1KV4W6YS",
+      "furthest_ante": 2,
+      "lives_lost": 4,
+      "final_lives": 0,
+      "n_nemesis": 0,
+      "win_rate": NaN,
+      "margins": [],
+      "ended_early_engine_gap": false
+     },
+     {
+      "seed": "1MD1YZ9T",
+      "furthest_ante": 2,
+      "lives_lost": 4,
+      "final_lives": 0,
+      "n_nemesis": 0,
+      "win_rate": NaN,
+      "margins": [],
+      "ended_early_engine_gap": false
+     },
+     {
+      "seed": "28V7DD4H",
+      "furthest_ante": 2,
+      "lives_lost": 4,
+      "final_lives": 0,
+      "n_nemesis": 0,
+      "win_rate": NaN,
+      "margins": [],
+      "ended_early_engine_gap": false
+     },
+     {
+      "seed": "29DAQVG1",
+      "furthest_ante": 2,
+      "lives_lost": 4,
+      "final_lives": 0,
+      "n_nemesis": 0,
+      "win_rate": NaN,
+      "margins": [],
+      "ended_early_engine_gap": false
+     },
+     {
+      "seed": "29Y3L4S9",
+      "furthest_ante": 2,
+      "lives_lost": 4,
+      "final_lives": 0,
+      "n_nemesis": 0,
+      "win_rate": NaN,
+      "margins": [],
+      "ended_early_engine_gap": false
+     },
+     {
+      "seed": "29ZSW8MY",
+      "furthest_ante": 2,
+      "lives_lost": 4,
+      "final_lives": 0,
+      "n_nemesis": 0,
+      "win_rate": NaN,
+      "margins": [],
+      "ended_early_engine_gap": false
+     },
+     {
+      "seed": "2BRGI767",
+      "furthest_ante": 2,
+      "lives_lost": 4,
+      "final_lives": 0,
+      "n_nemesis": 0,
+      "win_rate": NaN,
+      "margins": [],
+      "ended_early_engine_gap": false
+     },
+     {
+      "seed": "2CP4KSXZ",
+      "furthest_ante": 2,
+      "lives_lost": 4,
+      "final_lives": 0,
+      "n_nemesis": 0,
+      "win_rate": NaN,
+      "margins": [],
+      "ended_early_engine_gap": false
+     },
+     {
+      "seed": "2GHBLJD9",
+      "furthest_ante": 2,
+      "lives_lost": 4,
+      "final_lives": 0,
+      "n_nemesis": 0,
+      "win_rate": NaN,
+      "margins": [],
+      "ended_early_engine_gap": false
+     },
+     {
+      "seed": "2H9N3ISZ",
+      "furthest_ante": 2,
+      "lives_lost": 4,
+      "final_lives": 0,
+      "n_nemesis": 0,
+      "win_rate": NaN,
+      "margins": [],
+      "ended_early_engine_gap": false
+     },
+     {
+      "seed": "2K9H9HN",
+      "furthest_ante": 2,
+      "lives_lost": 4,
+      "final_lives": 0,
+      "n_nemesis": 0,
+      "win_rate": NaN,
+      "margins": [],
+      "ended_early_engine_gap": false
+     },
+     {
+      "seed": "34JCNMPA",
+      "furthest_ante": 2,
+      "lives_lost": 4,
+      "final_lives": 0,
+      "n_nemesis": 0,
+      "win_rate": NaN,
+      "margins": [],
+      "ended_early_engine_gap": false
+     },
+     {
+      "seed": "3SZ71111",
+      "furthest_ante": 2,
+      "lives_lost": 4,
+      "final_lives": 0,
+      "n_nemesis": 0,
+      "win_rate": NaN,
+      "margins": [],
+      "ended_early_engine_gap": false
+     },
+     {
+      "seed": "41Y71M6E",
+      "furthest_ante": 2,
+      "lives_lost": 4,
+      "final_lives": 0,
+      "n_nemesis": 0,
+      "win_rate": NaN,
+      "margins": [],
+      "ended_early_engine_gap": false
+     },
+     {
+      "seed": "46Y8UZEG",
+      "furthest_ante": 2,
+      "lives_lost": 4,
+      "final_lives": 0,
+      "n_nemesis": 0,
+      "win_rate": NaN,
+      "margins": [],
+      "ended_early_engine_gap": false
+     },
+     {
+      "seed": "4H2L46CE",
+      "furthest_ante": 2,
+      "lives_lost": 4,
+      "final_lives": 0,
+      "n_nemesis": 0,
+      "win_rate": NaN,
+      "margins": [],
+      "ended_early_engine_gap": false
+     },
+     {
+      "seed": "4K8A9QER",
+      "furthest_ante": 2,
+      "lives_lost": 4,
+      "final_lives": 0,
+      "n_nemesis": 0,
+      "win_rate": NaN,
+      "margins": [],
+      "ended_early_engine_gap": false
+     },
+     {
+      "seed": "4R219TNX",
+      "furthest_ante": 2,
+      "lives_lost": 4,
+      "final_lives": 0,
+      "n_nemesis": 0,
+      "win_rate": NaN,
+      "margins": [],
+      "ended_early_engine_gap": false
+     },
+     {
+      "seed": "4T1SZKLF",
+      "furthest_ante": 2,
+      "lives_lost": 4,
+      "final_lives": 0,
+      "n_nemesis": 0,
+      "win_rate": NaN,
+      "margins": [],
+      "ended_early_engine_gap": false
+     },
+     {
+      "seed": "4UEGRRRA",
+      "furthest_ante": 2,
+      "lives_lost": 4,
+      "final_lives": 0,
+      "n_nemesis": 0,
+      "win_rate": NaN,
+      "margins": [],
+      "ended_early_engine_gap": false
+     },
+     {
+      "seed": "51F2NVWK",
+      "furthest_ante": 2,
+      "lives_lost": 4,
+      "final_lives": 0,
+      "n_nemesis": 0,
+      "win_rate": NaN,
+      "margins": [],
+      "ended_early_engine_gap": false
+     },
+     {
+      "seed": "56QZEVDV",
+      "furthest_ante": 2,
+      "lives_lost": 4,
+      "final_lives": 0,
+      "n_nemesis": 0,
+      "win_rate": NaN,
+      "margins": [],
+      "ended_early_engine_gap": false
+     },
+     {
+      "seed": "5AWWF1M1",
+      "furthest_ante": 2,
+      "lives_lost": 4,
+      "final_lives": 0,
+      "n_nemesis": 0,
+      "win_rate": NaN,
+      "margins": [],
+      "ended_early_engine_gap": false
+     },
+     {
+      "seed": "5UIUKHCI",
+      "furthest_ante": 2,
+      "lives_lost": 4,
+      "final_lives": 0,
+      "n_nemesis": 0,
+      "win_rate": NaN,
+      "margins": [],
+      "ended_early_engine_gap": false
+     },
+     {
+      "seed": "5YVHAEP",
+      "furthest_ante": 2,
+      "lives_lost": 4,
+      "final_lives": 0,
+      "n_nemesis": 0,
+      "win_rate": NaN,
+      "margins": [],
+      "ended_early_engine_gap": false
+     },
+     {
+      "seed": "6H6WNQM2",
+      "furthest_ante": 2,
+      "lives_lost": 4,
+      "final_lives": 0,
+      "n_nemesis": 0,
+      "win_rate": NaN,
+      "margins": [],
+      "ended_early_engine_gap": false
+     },
+     {
+      "seed": "7I4M53DL",
+      "furthest_ante": 2,
+      "lives_lost": 4,
+      "final_lives": 0,
+      "n_nemesis": 0,
+      "win_rate": NaN,
+      "margins": [],
+      "ended_early_engine_gap": false
+     },
+     {
+      "seed": "7LB2WVPK",
+      "furthest_ante": 2,
+      "lives_lost": 4,
+      "final_lives": 0,
+      "n_nemesis": 0,
+      "win_rate": NaN,
+      "margins": [],
+      "ended_early_engine_gap": false
+     },
+     {
+      "seed": "7ODNKXP",
+      "furthest_ante": 2,
+      "lives_lost": 4,
+      "final_lives": 0,
+      "n_nemesis": 0,
+      "win_rate": NaN,
+      "margins": [],
+      "ended_early_engine_gap": false
+     },
+     {
+      "seed": "7PEE6NA5",
+      "furthest_ante": 2,
+      "lives_lost": 4,
+      "final_lives": 0,
+      "n_nemesis": 0,
+      "win_rate": NaN,
+      "margins": [],
+      "ended_early_engine_gap": false
+     },
+     {
+      "seed": "7UNQV1C9",
+      "furthest_ante": 2,
+      "lives_lost": 4,
+      "final_lives": 0,
+      "n_nemesis": 0,
+      "win_rate": NaN,
+      "margins": [],
+      "ended_early_engine_gap": false
+     },
+     {
+      "seed": "7YTVQERM",
+      "furthest_ante": 2,
+      "lives_lost": 4,
+      "final_lives": 0,
+      "n_nemesis": 0,
+      "win_rate": NaN,
+      "margins": [],
+      "ended_early_engine_gap": false
+     },
+     {
+      "seed": "8I5QXNGE",
+      "furthest_ante": 2,
+      "lives_lost": 4,
+      "final_lives": 0,
+      "n_nemesis": 0,
+      "win_rate": NaN,
+      "margins": [],
+      "ended_early_engine_gap": false
+     },
+     {
+      "seed": "8IZ7HHE4",
+      "furthest_ante": 2,
+      "lives_lost": 4,
+      "final_lives": 0,
+      "n_nemesis": 0,
+      "win_rate": NaN,
+      "margins": [],
+      "ended_early_engine_gap": false
+     },
+     {
+      "seed": "8Q47WV6K",
+      "furthest_ante": 2,
+      "lives_lost": 4,
+      "final_lives": 0,
+      "n_nemesis": 0,
+      "win_rate": NaN,
+      "margins": [],
+      "ended_early_engine_gap": false
+     },
+     {
+      "seed": "8QBRTPD",
+      "furthest_ante": 2,
+      "lives_lost": 4,
+      "final_lives": 0,
+      "n_nemesis": 0,
+      "win_rate": NaN,
+      "margins": [],
+      "ended_early_engine_gap": false
+     },
+     {
+      "seed": "8SIYIK9C",
+      "furthest_ante": 2,
+      "lives_lost": 4,
+      "final_lives": 0,
+      "n_nemesis": 0,
+      "win_rate": NaN,
+      "margins": [],
+      "ended_early_engine_gap": false
+     },
+     {
+      "seed": "8UU564MF",
+      "furthest_ante": 2,
+      "lives_lost": 4,
+      "final_lives": 0,
+      "n_nemesis": 0,
+      "win_rate": NaN,
+      "margins": [],
+      "ended_early_engine_gap": false
+     },
+     {
+      "seed": "8Y7ABZ7C",
+      "furthest_ante": 2,
+      "lives_lost": 4,
+      "final_lives": 0,
+      "n_nemesis": 0,
+      "win_rate": NaN,
+      "margins": [],
+      "ended_early_engine_gap": false
+     },
+     {
+      "seed": "93W4UHC4",
+      "furthest_ante": 2,
+      "lives_lost": 4,
+      "final_lives": 0,
+      "n_nemesis": 0,
+      "win_rate": NaN,
+      "margins": [],
+      "ended_early_engine_gap": false
+     },
+     {
+      "seed": "967889YL",
+      "furthest_ante": 2,
+      "lives_lost": 4,
+      "final_lives": 0,
+      "n_nemesis": 0,
+      "win_rate": NaN,
+      "margins": [],
+      "ended_early_engine_gap": false
+     },
+     {
+      "seed": "9Q9HQXZG",
+      "furthest_ante": 2,
+      "lives_lost": 4,
+      "final_lives": 0,
+      "n_nemesis": 0,
+      "win_rate": NaN,
+      "margins": [],
+      "ended_early_engine_gap": false
+     },
+     {
+      "seed": "9QV2ZT9X",
+      "furthest_ante": 2,
+      "lives_lost": 4,
+      "final_lives": 0,
+      "n_nemesis": 0,
+      "win_rate": NaN,
+      "margins": [],
+      "ended_early_engine_gap": false
+     },
+     {
+      "seed": "9VIGPRT6",
+      "furthest_ante": 2,
+      "lives_lost": 4,
+      "final_lives": 0,
+      "n_nemesis": 0,
+      "win_rate": NaN,
+      "margins": [],
+      "ended_early_engine_gap": false
+     },
+     {
+      "seed": "9ZXMM1M",
+      "furthest_ante": 2,
+      "lives_lost": 4,
+      "final_lives": 0,
+      "n_nemesis": 0,
+      "win_rate": NaN,
+      "margins": [],
+      "ended_early_engine_gap": false
+     },
+     {
+      "seed": "A",
+      "furthest_ante": 2,
+      "lives_lost": 4,
+      "final_lives": 0,
+      "n_nemesis": 0,
+      "win_rate": NaN,
+      "margins": [],
+      "ended_early_engine_gap": false
+     },
+     {
+      "seed": "A1UAS1G5",
+      "furthest_ante": 2,
+      "lives_lost": 4,
+      "final_lives": 0,
+      "n_nemesis": 0,
+      "win_rate": NaN,
+      "margins": [],
+      "ended_early_engine_gap": false
+     },
+     {
+      "seed": "AE1K7DG1",
+      "furthest_ante": 2,
+      "lives_lost": 4,
+      "final_lives": 0,
+      "n_nemesis": 0,
+      "win_rate": NaN,
+      "margins": [],
+      "ended_early_engine_gap": false
+     },
+     {
+      "seed": "ALEEB",
+      "furthest_ante": 2,
+      "lives_lost": 4,
+      "final_lives": 0,
+      "n_nemesis": 0,
+      "win_rate": NaN,
+      "margins": [],
+      "ended_early_engine_gap": false
+     },
+     {
+      "seed": "AMPYZUIU",
+      "furthest_ante": 2,
+      "lives_lost": 4,
+      "final_lives": 0,
+      "n_nemesis": 0,
+      "win_rate": NaN,
+      "margins": [],
+      "ended_early_engine_gap": false
+     },
+     {
+      "seed": "APH9LX2Y",
+      "furthest_ante": 2,
+      "lives_lost": 4,
+      "final_lives": 0,
+      "n_nemesis": 0,
+      "win_rate": NaN,
+      "margins": [],
+      "ended_early_engine_gap": false
+     },
+     {
+      "seed": "BA1D48RK",
+      "furthest_ante": 2,
+      "lives_lost": 4,
+      "final_lives": 0,
+      "n_nemesis": 0,
+      "win_rate": NaN,
+      "margins": [],
+      "ended_early_engine_gap": false
+     },
+     {
+      "seed": "BQ6A2D42",
+      "furthest_ante": 2,
+      "lives_lost": 4,
+      "final_lives": 0,
+      "n_nemesis": 0,
+      "win_rate": NaN,
+      "margins": [],
+      "ended_early_engine_gap": false
+     },
+     {
+      "seed": "C19P8BQ4",
+      "furthest_ante": 2,
+      "lives_lost": 4,
+      "final_lives": 0,
+      "n_nemesis": 0,
+      "win_rate": NaN,
+      "margins": [],
+      "ended_early_engine_gap": false
+     },
+     {
+      "seed": "C1ZLPKAA",
+      "furthest_ante": 2,
+      "lives_lost": 4,
+      "final_lives": 0,
+      "n_nemesis": 0,
+      "win_rate": NaN,
+      "margins": [],
+      "ended_early_engine_gap": false
+     },
+     {
+      "seed": "C93K3YWJ",
+      "furthest_ante": 2,
+      "lives_lost": 4,
+      "final_lives": 0,
+      "n_nemesis": 0,
+      "win_rate": NaN,
+      "margins": [],
+      "ended_early_engine_gap": false
+     },
+     {
+      "seed": "CCBWC6CR",
+      "furthest_ante": 2,
+      "lives_lost": 4,
+      "final_lives": 0,
+      "n_nemesis": 0,
+      "win_rate": NaN,
+      "margins": [],
+      "ended_early_engine_gap": false
+     },
+     {
+      "seed": "CHPB293X",
+      "furthest_ante": 2,
+      "lives_lost": 4,
+      "final_lives": 0,
+      "n_nemesis": 0,
+      "win_rate": NaN,
+      "margins": [],
+      "ended_early_engine_gap": false
+     },
+     {
+      "seed": "CIGHYTAU",
+      "furthest_ante": 2,
+      "lives_lost": 4,
+      "final_lives": 0,
+      "n_nemesis": 0,
+      "win_rate": NaN,
+      "margins": [],
+      "ended_early_engine_gap": false
+     },
+     {
+      "seed": "CMEEXU8I",
+      "furthest_ante": 2,
+      "lives_lost": 4,
+      "final_lives": 0,
+      "n_nemesis": 0,
+      "win_rate": NaN,
+      "margins": [],
+      "ended_early_engine_gap": false
+     },
+     {
+      "seed": "D4TDD2B6",
+      "furthest_ante": 2,
+      "lives_lost": 4,
+      "final_lives": 0,
+      "n_nemesis": 0,
+      "win_rate": NaN,
+      "margins": [],
+      "ended_early_engine_gap": false
+     },
+     {
+      "seed": "D7Y5419A",
+      "furthest_ante": 2,
+      "lives_lost": 4,
+      "final_lives": 0,
+      "n_nemesis": 0,
+      "win_rate": NaN,
+      "margins": [],
+      "ended_early_engine_gap": false
+     },
+     {
+      "seed": "ECG8NVDZ",
+      "furthest_ante": 2,
+      "lives_lost": 4,
+      "final_lives": 0,
+      "n_nemesis": 0,
+      "win_rate": NaN,
+      "margins": [],
+      "ended_early_engine_gap": false
+     },
+     {
+      "seed": "EGE5ZY77",
+      "furthest_ante": 2,
+      "lives_lost": 4,
+      "final_lives": 0,
+      "n_nemesis": 0,
+      "win_rate": NaN,
+      "margins": [],
+      "ended_early_engine_gap": false
+     },
+     {
+      "seed": "EVB8882H",
+      "furthest_ante": 2,
+      "lives_lost": 4,
+      "final_lives": 0,
+      "n_nemesis": 0,
+      "win_rate": NaN,
+      "margins": [],
+      "ended_early_engine_gap": false
+     },
+     {
+      "seed": "FSXYRB3J",
+      "furthest_ante": 2,
+      "lives_lost": 4,
+      "final_lives": 0,
+      "n_nemesis": 0,
+      "win_rate": NaN,
+      "margins": [],
+      "ended_early_engine_gap": false
+     },
+     {
+      "seed": "GVQL737K",
+      "furthest_ante": 2,
+      "lives_lost": 4,
+      "final_lives": 0,
+      "n_nemesis": 0,
+      "win_rate": NaN,
+      "margins": [],
+      "ended_early_engine_gap": false
+     },
+     {
+      "seed": "GVYT2DGJ",
+      "furthest_ante": 2,
+      "lives_lost": 4,
+      "final_lives": 0,
+      "n_nemesis": 0,
+      "win_rate": NaN,
+      "margins": [],
+      "ended_early_engine_gap": false
+     },
+     {
+      "seed": "H1EWXLNE",
+      "furthest_ante": 2,
+      "lives_lost": 4,
+      "final_lives": 0,
+      "n_nemesis": 0,
+      "win_rate": NaN,
+      "margins": [],
+      "ended_early_engine_gap": false
+     },
+     {
+      "seed": "HPR8Q7K",
+      "furthest_ante": 2,
+      "lives_lost": 4,
+      "final_lives": 0,
+      "n_nemesis": 0,
+      "win_rate": NaN,
+      "margins": [],
+      "ended_early_engine_gap": false
+     },
+     {
+      "seed": "HS8LL7TC",
+      "furthest_ante": 2,
+      "lives_lost": 4,
+      "final_lives": 0,
+      "n_nemesis": 0,
+      "win_rate": NaN,
+      "margins": [],
+      "ended_early_engine_gap": false
+     },
+     {
+      "seed": "HSC1L2DX",
+      "furthest_ante": 2,
+      "lives_lost": 4,
+      "final_lives": 0,
+      "n_nemesis": 0,
+      "win_rate": NaN,
+      "margins": [],
+      "ended_early_engine_gap": false
+     },
+     {
+      "seed": "I68YASXJ",
+      "furthest_ante": 2,
+      "lives_lost": 4,
+      "final_lives": 0,
+      "n_nemesis": 0,
+      "win_rate": NaN,
+      "margins": [],
+      "ended_early_engine_gap": false
+     },
+     {
+      "seed": "ICUESE5D",
+      "furthest_ante": 2,
+      "lives_lost": 4,
+      "final_lives": 0,
+      "n_nemesis": 0,
+      "win_rate": NaN,
+      "margins": [],
+      "ended_early_engine_gap": false
+     },
+     {
+      "seed": "IMMOLATE",
+      "furthest_ante": 2,
+      "lives_lost": 4,
+      "final_lives": 0,
+      "n_nemesis": 0,
+      "win_rate": NaN,
+      "margins": [],
+      "ended_early_engine_gap": false
+     },
+     {
+      "seed": "J3GHQHJM",
+      "furthest_ante": 2,
+      "lives_lost": 4,
+      "final_lives": 0,
+      "n_nemesis": 0,
+      "win_rate": NaN,
+      "margins": [],
+      "ended_early_engine_gap": false
+     },
+     {
+      "seed": "JQB4BN6F",
+      "furthest_ante": 2,
+      "lives_lost": 4,
+      "final_lives": 0,
+      "n_nemesis": 0,
+      "win_rate": NaN,
+      "margins": [],
+      "ended_early_engine_gap": false
+     },
+     {
+      "seed": "K84ZCS3Q",
+      "furthest_ante": 2,
+      "lives_lost": 4,
+      "final_lives": 0,
+      "n_nemesis": 0,
+      "win_rate": NaN,
+      "margins": [],
+      "ended_early_engine_gap": false
+     },
+     {
+      "seed": "K8PU119J",
+      "furthest_ante": 2,
+      "lives_lost": 4,
+      "final_lives": 0,
+      "n_nemesis": 0,
+      "win_rate": NaN,
+      "margins": [],
+      "ended_early_engine_gap": false
+     },
+     {
+      "seed": "K94TS4B8",
+      "furthest_ante": 2,
+      "lives_lost": 4,
+      "final_lives": 0,
+      "n_nemesis": 0,
+      "win_rate": NaN,
+      "margins": [],
+      "ended_early_engine_gap": false
+     },
+     {
+      "seed": "KPGY6GCH",
+      "furthest_ante": 2,
+      "lives_lost": 4,
+      "final_lives": 0,
+      "n_nemesis": 0,
+      "win_rate": NaN,
+      "margins": [],
+      "ended_early_engine_gap": false
+     },
+     {
+      "seed": "LHZYIWR6",
+      "furthest_ante": 2,
+      "lives_lost": 4,
+      "final_lives": 0,
+      "n_nemesis": 0,
+      "win_rate": NaN,
+      "margins": [],
+      "ended_early_engine_gap": false
+     },
+     {
+      "seed": "LMGJPMKP",
+      "furthest_ante": 2,
+      "lives_lost": 4,
+      "final_lives": 0,
+      "n_nemesis": 0,
+      "win_rate": NaN,
+      "margins": [],
+      "ended_early_engine_gap": false
+     },
+     {
+      "seed": "M2LAET6A",
+      "furthest_ante": 2,
+      "lives_lost": 4,
+      "final_lives": 0,
+      "n_nemesis": 0,
+      "win_rate": NaN,
+      "margins": [],
+      "ended_early_engine_gap": false
+     },
+     {
+      "seed": "M4LV5E89",
+      "furthest_ante": 2,
+      "lives_lost": 4,
+      "final_lives": 0,
+      "n_nemesis": 0,
+      "win_rate": NaN,
+      "margins": [],
+      "ended_early_engine_gap": false
+     },
+     {
+      "seed": "M6XD1INZ",
+      "furthest_ante": 2,
+      "lives_lost": 4,
+      "final_lives": 0,
+      "n_nemesis": 0,
+      "win_rate": NaN,
+      "margins": [],
+      "ended_early_engine_gap": false
+     },
+     {
+      "seed": "MIM66QT9",
+      "furthest_ante": 2,
+      "lives_lost": 4,
+      "final_lives": 0,
+      "n_nemesis": 0,
+      "win_rate": NaN,
+      "margins": [],
+      "ended_early_engine_gap": false
+     },
+     {
+      "seed": "MM1H85E3",
+      "furthest_ante": 2,
+      "lives_lost": 4,
+      "final_lives": 0,
+      "n_nemesis": 0,
+      "win_rate": NaN,
+      "margins": [],
+      "ended_early_engine_gap": false
+     },
+     {
+      "seed": "MRBF7L15",
+      "furthest_ante": 2,
+      "lives_lost": 4,
+      "final_lives": 0,
+      "n_nemesis": 0,
+      "win_rate": NaN,
+      "margins": [],
+      "ended_early_engine_gap": false
+     },
+     {
+      "seed": "MSQZGPMX",
+      "furthest_ante": 2,
+      "lives_lost": 4,
+      "final_lives": 0,
+      "n_nemesis": 0,
+      "win_rate": NaN,
+      "margins": [],
+      "ended_early_engine_gap": false
+     },
+     {
+      "seed": "OG4YQPSI",
+      "furthest_ante": 2,
+      "lives_lost": 4,
+      "final_lives": 0,
+      "n_nemesis": 0,
+      "win_rate": NaN,
+      "margins": [],
+      "ended_early_engine_gap": false
+     },
+     {
+      "seed": "PI1J5YAG",
+      "furthest_ante": 2,
+      "lives_lost": 4,
+      "final_lives": 0,
+      "n_nemesis": 0,
+      "win_rate": NaN,
+      "margins": [],
+      "ended_early_engine_gap": false
+     },
+     {
+      "seed": "PJ5TB88W",
+      "furthest_ante": 2,
+      "lives_lost": 4,
+      "final_lives": 0,
+      "n_nemesis": 0,
+      "win_rate": NaN,
+      "margins": [],
+      "ended_early_engine_gap": false
+     },
+     {
+      "seed": "PQNVFI72",
+      "furthest_ante": 2,
+      "lives_lost": 4,
+      "final_lives": 0,
+      "n_nemesis": 0,
+      "win_rate": NaN,
+      "margins": [],
+      "ended_early_engine_gap": false
+     },
+     {
+      "seed": "PT6IF52R",
+      "furthest_ante": 2,
+      "lives_lost": 4,
+      "final_lives": 0,
+      "n_nemesis": 0,
+      "win_rate": NaN,
+      "margins": [],
+      "ended_early_engine_gap": false
+     },
+     {
+      "seed": "PTSBMSMQ",
+      "furthest_ante": 2,
+      "lives_lost": 4,
+      "final_lives": 0,
+      "n_nemesis": 0,
+      "win_rate": NaN,
+      "margins": [],
+      "ended_early_engine_gap": false
+     },
+     {
+      "seed": "QY3TQZJ9",
+      "furthest_ante": 2,
+      "lives_lost": 4,
+      "final_lives": 0,
+      "n_nemesis": 0,
+      "win_rate": NaN,
+      "margins": [],
+      "ended_early_engine_gap": false
+     },
+     {
+      "seed": "R8DFV7RD",
+      "furthest_ante": 2,
+      "lives_lost": 4,
+      "final_lives": 0,
+      "n_nemesis": 0,
+      "win_rate": NaN,
+      "margins": [],
+      "ended_early_engine_gap": false
+     },
+     {
+      "seed": "R8W2CT59",
+      "furthest_ante": 2,
+      "lives_lost": 4,
+      "final_lives": 0,
+      "n_nemesis": 0,
+      "win_rate": NaN,
+      "margins": [],
+      "ended_early_engine_gap": false
+     },
+     {
+      "seed": "RUXS91YF",
+      "furthest_ante": 2,
+      "lives_lost": 4,
+      "final_lives": 0,
+      "n_nemesis": 0,
+      "win_rate": NaN,
+      "margins": [],
+      "ended_early_engine_gap": false
+     },
+     {
+      "seed": "RXI42HZ2",
+      "furthest_ante": 2,
+      "lives_lost": 4,
+      "final_lives": 0,
+      "n_nemesis": 0,
+      "win_rate": NaN,
+      "margins": [],
+      "ended_early_engine_gap": false
+     },
+     {
+      "seed": "S1QJX1CS",
+      "furthest_ante": 2,
+      "lives_lost": 4,
+      "final_lives": 0,
+      "n_nemesis": 0,
+      "win_rate": NaN,
+      "margins": [],
+      "ended_early_engine_gap": false
+     },
+     {
+      "seed": "SF9SZOB1",
+      "furthest_ante": 2,
+      "lives_lost": 4,
+      "final_lives": 0,
+      "n_nemesis": 0,
+      "win_rate": NaN,
+      "margins": [],
+      "ended_early_engine_gap": false
+     },
+     {
+      "seed": "SLRSKCG1",
+      "furthest_ante": 2,
+      "lives_lost": 4,
+      "final_lives": 0,
+      "n_nemesis": 0,
+      "win_rate": NaN,
+      "margins": [],
+      "ended_early_engine_gap": false
+     },
+     {
+      "seed": "SMC7XNT8",
+      "furthest_ante": 2,
+      "lives_lost": 4,
+      "final_lives": 0,
+      "n_nemesis": 0,
+      "win_rate": NaN,
+      "margins": [],
+      "ended_early_engine_gap": false
+     },
+     {
+      "seed": "SQVZX29L",
+      "furthest_ante": 2,
+      "lives_lost": 4,
+      "final_lives": 0,
+      "n_nemesis": 0,
+      "win_rate": NaN,
+      "margins": [],
+      "ended_early_engine_gap": false
+     },
+     {
+      "seed": "T5A1T1DZ",
+      "furthest_ante": 2,
+      "lives_lost": 4,
+      "final_lives": 0,
+      "n_nemesis": 0,
+      "win_rate": NaN,
+      "margins": [],
+      "ended_early_engine_gap": false
+     },
+     {
+      "seed": "U516KUJP",
+      "furthest_ante": 2,
+      "lives_lost": 4,
+      "final_lives": 0,
+      "n_nemesis": 0,
+      "win_rate": NaN,
+      "margins": [],
+      "ended_early_engine_gap": false
+     },
+     {
+      "seed": "U8RJYV6M",
+      "furthest_ante": 2,
+      "lives_lost": 4,
+      "final_lives": 0,
+      "n_nemesis": 0,
+      "win_rate": NaN,
+      "margins": [],
+      "ended_early_engine_gap": false
+     },
+     {
+      "seed": "UCAMJYYK",
+      "furthest_ante": 2,
+      "lives_lost": 4,
+      "final_lives": 0,
+      "n_nemesis": 0,
+      "win_rate": NaN,
+      "margins": [],
+      "ended_early_engine_gap": false
+     },
+     {
+      "seed": "USQF4ZAV",
+      "furthest_ante": 2,
+      "lives_lost": 4,
+      "final_lives": 0,
+      "n_nemesis": 0,
+      "win_rate": NaN,
+      "margins": [],
+      "ended_early_engine_gap": false
+     },
+     {
+      "seed": "V3PUR5L4",
+      "furthest_ante": 2,
+      "lives_lost": 4,
+      "final_lives": 0,
+      "n_nemesis": 0,
+      "win_rate": NaN,
+      "margins": [],
+      "ended_early_engine_gap": false
+     },
+     {
+      "seed": "VNOMH111",
+      "furthest_ante": 2,
+      "lives_lost": 4,
+      "final_lives": 0,
+      "n_nemesis": 0,
+      "win_rate": NaN,
+      "margins": [],
+      "ended_early_engine_gap": false
+     },
+     {
+      "seed": "WBC1DGJQ",
+      "furthest_ante": 2,
+      "lives_lost": 4,
+      "final_lives": 0,
+      "n_nemesis": 0,
+      "win_rate": NaN,
+      "margins": [],
+      "ended_early_engine_gap": false
+     },
+     {
+      "seed": "WIF67A3S",
+      "furthest_ante": 2,
+      "lives_lost": 4,
+      "final_lives": 0,
+      "n_nemesis": 0,
+      "win_rate": NaN,
+      "margins": [],
+      "ended_early_engine_gap": false
+     },
+     {
+      "seed": "WLAVAQ75",
+      "furthest_ante": 2,
+      "lives_lost": 4,
+      "final_lives": 0,
+      "n_nemesis": 0,
+      "win_rate": NaN,
+      "margins": [],
+      "ended_early_engine_gap": false
+     },
+     {
+      "seed": "WVPJKPRD",
+      "furthest_ante": 2,
+      "lives_lost": 4,
+      "final_lives": 0,
+      "n_nemesis": 0,
+      "win_rate": NaN,
+      "margins": [],
+      "ended_early_engine_gap": false
+     },
+     {
+      "seed": "X7FG4FH8",
+      "furthest_ante": 2,
+      "lives_lost": 4,
+      "final_lives": 0,
+      "n_nemesis": 0,
+      "win_rate": NaN,
+      "margins": [],
+      "ended_early_engine_gap": false
+     },
+     {
+      "seed": "XD55DZ57",
+      "furthest_ante": 2,
+      "lives_lost": 4,
+      "final_lives": 0,
+      "n_nemesis": 0,
+      "win_rate": NaN,
+      "margins": [],
+      "ended_early_engine_gap": false
+     },
+     {
+      "seed": "XDW9VBHQ",
+      "furthest_ante": 2,
+      "lives_lost": 4,
+      "final_lives": 0,
+      "n_nemesis": 0,
+      "win_rate": NaN,
+      "margins": [],
+      "ended_early_engine_gap": false
+     },
+     {
+      "seed": "YB54A1EH",
+      "furthest_ante": 2,
+      "lives_lost": 4,
+      "final_lives": 0,
+      "n_nemesis": 0,
+      "win_rate": NaN,
+      "margins": [],
+      "ended_early_engine_gap": false
+     },
+     {
+      "seed": "YD2HMRBR",
+      "furthest_ante": 2,
+      "lives_lost": 4,
+      "final_lives": 0,
+      "n_nemesis": 0,
+      "win_rate": NaN,
+      "margins": [],
+      "ended_early_engine_gap": false
+     },
+     {
+      "seed": "YPB7TZWJ",
+      "furthest_ante": 2,
+      "lives_lost": 4,
+      "final_lives": 0,
+      "n_nemesis": 0,
+      "win_rate": NaN,
+      "margins": [],
+      "ended_early_engine_gap": false
+     },
+     {
+      "seed": "5TITKHCI",
+      "furthest_ante": 2,
+      "lives_lost": 4,
+      "final_lives": 0,
+      "n_nemesis": 0,
+      "win_rate": NaN,
+      "margins": [],
+      "ended_early_engine_gap": false
+     },
+     {
+      "seed": "RMC7WNS8",
+      "furthest_ante": 2,
+      "lives_lost": 4,
+      "final_lives": 0,
+      "n_nemesis": 0,
+      "win_rate": NaN,
+      "margins": [],
+      "ended_early_engine_gap": false
+     },
+     {
+      "seed": "VLAUZAP7",
+      "furthest_ante": 2,
+      "lives_lost": 4,
+      "final_lives": 0,
+      "n_nemesis": 0,
+      "win_rate": NaN,
+      "margins": [],
+      "ended_early_engine_gap": false
+     },
+     {
+      "seed": "54H2L46C",
+      "furthest_ante": 2,
+      "lives_lost": 4,
+      "final_lives": 0,
+      "n_nemesis": 0,
+      "win_rate": NaN,
+      "margins": [],
+      "ended_early_engine_gap": false
+     },
+     {
+      "seed": "EK84YCRZ",
+      "furthest_ante": 2,
+      "lives_lost": 4,
+      "final_lives": 0,
+      "n_nemesis": 0,
+      "win_rate": NaN,
+      "margins": [],
+      "ended_early_engine_gap": false
+     },
+     {
+      "seed": "3PQWI42H",
+      "furthest_ante": 2,
+      "lives_lost": 4,
+      "final_lives": 0,
+      "n_nemesis": 0,
+      "win_rate": NaN,
+      "margins": [],
+      "ended_early_engine_gap": false
+     },
+     {
+      "seed": "Y28I5PWN",
+      "furthest_ante": 2,
+      "lives_lost": 4,
+      "final_lives": 0,
+      "n_nemesis": 0,
+      "win_rate": NaN,
+      "margins": [],
+      "ended_early_engine_gap": false
+     },
+     {
+      "seed": "GEGUXSZ2",
+      "furthest_ante": 2,
+      "lives_lost": 4,
+      "final_lives": 0,
+      "n_nemesis": 0,
+      "win_rate": NaN,
+      "margins": [],
+      "ended_early_engine_gap": false
+     },
+     {
+      "seed": "DGJTCAMJ",
+      "furthest_ante": 2,
+      "lives_lost": 4,
+      "final_lives": 0,
+      "n_nemesis": 0,
+      "win_rate": NaN,
+      "margins": [],
+      "ended_early_engine_gap": false
+     },
+     {
+      "seed": "XXKGUPL7",
+      "furthest_ante": 2,
+      "lives_lost": 4,
+      "final_lives": 0,
+      "n_nemesis": 0,
+      "win_rate": NaN,
+      "margins": [],
+      "ended_early_engine_gap": false
+     },
+     {
+      "seed": "37KVBC1D",
+      "furthest_ante": 2,
+      "lives_lost": 4,
+      "final_lives": 0,
+      "n_nemesis": 0,
+      "win_rate": NaN,
+      "margins": [],
+      "ended_early_engine_gap": false
+     },
+     {
+      "seed": "GJPD7X54",
+      "furthest_ante": 2,
+      "lives_lost": 4,
+      "final_lives": 0,
+      "n_nemesis": 0,
+      "win_rate": NaN,
+      "margins": [],
+      "ended_early_engine_gap": false
+     },
+     {
+      "seed": "19AC19O8",
+      "furthest_ante": 2,
+      "lives_lost": 4,
+      "final_lives": 0,
+      "n_nemesis": 0,
+      "win_rate": NaN,
+      "margins": [],
+      "ended_early_engine_gap": false
+     },
+     {
+      "seed": "BP49PU2Y",
+      "furthest_ante": 2,
+      "lives_lost": 4,
+      "final_lives": 0,
+      "n_nemesis": 0,
+      "win_rate": NaN,
+      "margins": [],
+      "ended_early_engine_gap": false
+     },
+     {
+      "seed": "S9WXD2HM",
+      "furthest_ante": 2,
+      "lives_lost": 4,
+      "final_lives": 0,
+      "n_nemesis": 0,
+      "win_rate": NaN,
+      "margins": [],
+      "ended_early_engine_gap": false
+     },
+     {
+      "seed": "QBQ34JCN",
+      "furthest_ante": 2,
+      "lives_lost": 4,
+      "final_lives": 0,
+      "n_nemesis": 0,
+      "win_rate": NaN,
+      "margins": [],
+      "ended_early_engine_gap": false
+     },
+     {
+      "seed": "MOAT516K",
+      "furthest_ante": 2,
+      "lives_lost": 4,
+      "final_lives": 0,
+      "n_nemesis": 0,
+      "win_rate": NaN,
+      "margins": [],
+      "ended_early_engine_gap": false
+     },
+     {
+      "seed": "TJOA1TAR",
+      "furthest_ante": 2,
+      "lives_lost": 4,
+      "final_lives": 0,
+      "n_nemesis": 0,
+      "win_rate": NaN,
+      "margins": [],
+      "ended_early_engine_gap": false
+     },
+     {
+      "seed": "1G5AOH9L",
+      "furthest_ante": 2,
+      "lives_lost": 4,
+      "final_lives": 0,
+      "n_nemesis": 0,
+      "win_rate": NaN,
+      "margins": [],
+      "ended_early_engine_gap": false
+     },
+     {
+      "seed": "W2XHR8LL",
+      "furthest_ante": 2,
+      "lives_lost": 4,
+      "final_lives": 0,
+      "n_nemesis": 0,
+      "win_rate": NaN,
+      "margins": [],
+      "ended_early_engine_gap": false
+     },
+     {
+      "seed": "7SCVIF67",
+      "furthest_ante": 2,
+      "lives_lost": 4,
+      "final_lives": 0,
+      "n_nemesis": 0,
+      "win_rate": NaN,
+      "margins": [],
+      "ended_early_engine_gap": false
+     },
+     {
+      "seed": "A3RBA1D4",
+      "furthest_ante": 2,
+      "lives_lost": 4,
+      "final_lives": 0,
+      "n_nemesis": 0,
+      "win_rate": NaN,
+      "margins": [],
+      "ended_early_engine_gap": false
+     },
+     {
+      "seed": "8QK15H9Y",
+      "furthest_ante": 2,
+      "lives_lost": 4,
+      "final_lives": 0,
+      "n_nemesis": 0,
+      "win_rate": NaN,
+      "margins": [],
+      "ended_early_engine_gap": false
+     },
+     {
+      "seed": "3IX1MD1X",
+      "furthest_ante": 2,
+      "lives_lost": 4,
+      "final_lives": 0,
+      "n_nemesis": 0,
+      "win_rate": NaN,
+      "margins": [],
+      "ended_early_engine_gap": false
+     }
+    ],
+    "summary": {
+     "furthest_ante": {
+      "point": 2.0,
+      "lo": 2.0,
+      "hi": 2.0,
+      "n": 150
+     },
+     "lives_lost": {
+      "point": 4.0,
+      "lo": 4.0,
+      "hi": 4.0,
+      "n": 150
+     },
+     "win_rate": {
+      "point": NaN,
+      "lo": NaN,
+      "hi": NaN,
+      "n": 0
+     },
+     "n_nemesis_total": 0,
+     "margin_quantiles": {
+      "0.0": null,
+      "0.1": null,
+      "0.25": null,
+      "0.5": null,
+      "0.75": null,
+      "0.9": null,
+      "1.0": null
+     },
+     "engine_gap_seeds": 0
+    }
+   },
+   "tournament": {
+    "deck": "b_checkered",
+    "player": "scripted:hand=weak",
+    "n_agents": 32,
+    "max_ante": 8,
+    "base_seed": 0,
+    "n_seeds": 16,
+    "wall_clock_s": 120.56296277046204,
+    "per_seed": [
+     {
+      "seed": "11111111",
+      "ante_ranks": {
+       "2": 32.0,
+       "3": 32.0,
+       "4": 32.0,
+       "5": 32.0,
+       "6": 32.0,
+       "7": 32.0,
+       "8": 32.0
+      },
+      "n_antes_present": 7,
+      "mean_rank_frac": 1.0
+     },
+     {
+      "seed": "1558AXDL",
+      "ante_ranks": {
+       "2": 32.0,
+       "3": 32.0,
+       "4": 32.0,
+       "5": 32.0,
+       "6": 28.0,
+       "7": 28.0,
+       "8": 32.0
+      },
+      "n_antes_present": 7,
+      "mean_rank_frac": 0.9631336405529954
+     },
+     {
+      "seed": "15H9Z3IY",
+      "ante_ranks": {
+       "2": 32.0,
+       "3": 32.0,
+       "4": 32.0,
+       "5": 32.0,
+       "6": 32.0,
+       "7": 32.0,
+       "8": 32.0
+      },
+      "n_antes_present": 7,
+      "mean_rank_frac": 1.0
+     },
+     {
+      "seed": "1KV4W6YS",
+      "ante_ranks": {
+       "2": 32.0,
+       "3": 32.0,
+       "4": 32.0,
+       "5": 32.0,
+       "6": 32.0,
+       "7": 32.0,
+       "8": 32.0
+      },
+      "n_antes_present": 7,
+      "mean_rank_frac": 1.0
+     },
+     {
+      "seed": "1MD1YZ9T",
+      "ante_ranks": {
+       "2": 32.0,
+       "3": 31.0,
+       "4": 32.0,
+       "5": 32.0,
+       "6": 32.0,
+       "7": 32.0,
+       "8": 32.0
+      },
+      "n_antes_present": 7,
+      "mean_rank_frac": 0.9953917050691244
+     },
+     {
+      "seed": "28V7DD4H",
+      "ante_ranks": {
+       "2": 32.0,
+       "3": 32.0,
+       "4": 32.0,
+       "5": 28.0,
+       "6": 32.0,
+       "7": 32.0,
+       "8": 32.0
+      },
+      "n_antes_present": 7,
+      "mean_rank_frac": 0.9815668202764977
+     },
+     {
+      "seed": "29DAQVG1",
+      "ante_ranks": {
+       "2": 32.0,
+       "3": 32.0,
+       "4": 32.0,
+       "5": 32.0,
+       "6": 32.0,
+       "7": 32.0,
+       "8": 32.0
+      },
+      "n_antes_present": 7,
+      "mean_rank_frac": 1.0
+     },
+     {
+      "seed": "29Y3L4S9",
+      "ante_ranks": {
+       "2": 32.0,
+       "3": 32.0,
+       "4": 32.0,
+       "5": 32.0,
+       "6": 32.0,
+       "7": 32.0,
+       "8": 32.0
+      },
+      "n_antes_present": 7,
+      "mean_rank_frac": 1.0
+     },
+     {
+      "seed": "29ZSW8MY",
+      "ante_ranks": {
+       "2": 32.0,
+       "3": 32.0,
+       "4": 32.0,
+       "5": 32.0,
+       "6": 32.0,
+       "7": 32.0,
+       "8": 32.0
+      },
+      "n_antes_present": 7,
+      "mean_rank_frac": 1.0
+     },
+     {
+      "seed": "2BRGI767",
+      "ante_ranks": {
+       "2": 32.0,
+       "3": 32.0,
+       "4": 32.0,
+       "5": 32.0,
+       "6": 32.0,
+       "7": 32.0,
+       "8": 32.0
+      },
+      "n_antes_present": 7,
+      "mean_rank_frac": 1.0
+     },
+     {
+      "seed": "2CP4KSXZ",
+      "ante_ranks": {
+       "2": 32.0,
+       "3": 32.0,
+       "4": 32.0,
+       "5": 32.0,
+       "6": 32.0,
+       "7": 32.0,
+       "8": 32.0
+      },
+      "n_antes_present": 7,
+      "mean_rank_frac": 1.0
+     },
+     {
+      "seed": "2GHBLJD9",
+      "ante_ranks": {
+       "2": 32.0,
+       "3": 32.0,
+       "4": 32.0,
+       "5": 32.0,
+       "6": 32.0,
+       "7": 32.0,
+       "8": 32.0
+      },
+      "n_antes_present": 7,
+      "mean_rank_frac": 1.0
+     },
+     {
+      "seed": "2H9N3ISZ",
+      "ante_ranks": {
+       "2": 32.0,
+       "3": 32.0,
+       "4": 31.0,
+       "5": 32.0,
+       "6": 32.0,
+       "7": 32.0,
+       "8": 32.0
+      },
+      "n_antes_present": 7,
+      "mean_rank_frac": 0.9953917050691244
+     },
+     {
+      "seed": "2K9H9HN",
+      "ante_ranks": {
+       "2": 32.0,
+       "3": 32.0,
+       "4": 32.0,
+       "5": 32.0,
+       "6": 32.0,
+       "7": 32.0,
+       "8": 32.0
+      },
+      "n_antes_present": 7,
+      "mean_rank_frac": 1.0
+     },
+     {
+      "seed": "34JCNMPA",
+      "ante_ranks": {
+       "2": 31.0,
+       "3": 32.0,
+       "4": 32.0,
+       "5": 32.0,
+       "6": 32.0,
+       "7": 32.0,
+       "8": 32.0
+      },
+      "n_antes_present": 7,
+      "mean_rank_frac": 0.9953917050691244
+     },
+     {
+      "seed": "3SZ71111",
+      "ante_ranks": {
+       "2": 32.0,
+       "3": 32.0,
+       "4": 32.0,
+       "5": 28.0,
+       "6": 32.0,
+       "7": 28.0,
+       "8": 28.0
+      },
+      "n_antes_present": 7,
+      "mean_rank_frac": 0.9447004608294931
+     }
+    ],
+    "summary": {
+     "mean_rank_frac": {
+      "point": 0.9922235023041475,
+      "lo": 0.9838709677419355,
+      "hi": 0.9988479262672811,
+      "n": 16
+     }
+    }
+   }
+  },
+  {
+   "deck": "b_plasma",
+   "solo": {
+    "deck": "b_plasma",
+    "player": "scripted:hand=weak",
+    "target_fn": "vanilla_boss_target_fn(deck_key=None, stake=None)",
+    "n_seeds": 150,
+    "lives": 4,
+    "max_antes": 8,
+    "wall_clock_s": 0.9156100749969482,
+    "per_seed": [
+     {
+      "seed": "11111111",
+      "furthest_ante": 2,
+      "lives_lost": 4,
+      "final_lives": 0,
+      "n_nemesis": 0,
+      "win_rate": NaN,
+      "margins": [],
+      "ended_early_engine_gap": false
+     },
+     {
+      "seed": "1558AXDL",
+      "furthest_ante": 2,
+      "lives_lost": 4,
+      "final_lives": 0,
+      "n_nemesis": 0,
+      "win_rate": NaN,
+      "margins": [],
+      "ended_early_engine_gap": false
+     },
+     {
+      "seed": "15H9Z3IY",
+      "furthest_ante": 2,
+      "lives_lost": 4,
+      "final_lives": 0,
+      "n_nemesis": 0,
+      "win_rate": NaN,
+      "margins": [],
+      "ended_early_engine_gap": false
+     },
+     {
+      "seed": "1KV4W6YS",
+      "furthest_ante": 2,
+      "lives_lost": 4,
+      "final_lives": 0,
+      "n_nemesis": 0,
+      "win_rate": NaN,
+      "margins": [],
+      "ended_early_engine_gap": false
+     },
+     {
+      "seed": "1MD1YZ9T",
+      "furthest_ante": 2,
+      "lives_lost": 4,
+      "final_lives": 0,
+      "n_nemesis": 0,
+      "win_rate": NaN,
+      "margins": [],
+      "ended_early_engine_gap": false
+     },
+     {
+      "seed": "28V7DD4H",
+      "furthest_ante": 2,
+      "lives_lost": 4,
+      "final_lives": 0,
+      "n_nemesis": 0,
+      "win_rate": NaN,
+      "margins": [],
+      "ended_early_engine_gap": false
+     },
+     {
+      "seed": "29DAQVG1",
+      "furthest_ante": 2,
+      "lives_lost": 4,
+      "final_lives": 0,
+      "n_nemesis": 0,
+      "win_rate": NaN,
+      "margins": [],
+      "ended_early_engine_gap": false
+     },
+     {
+      "seed": "29Y3L4S9",
+      "furthest_ante": 2,
+      "lives_lost": 4,
+      "final_lives": 0,
+      "n_nemesis": 0,
+      "win_rate": NaN,
+      "margins": [],
+      "ended_early_engine_gap": false
+     },
+     {
+      "seed": "29ZSW8MY",
+      "furthest_ante": 2,
+      "lives_lost": 4,
+      "final_lives": 0,
+      "n_nemesis": 0,
+      "win_rate": NaN,
+      "margins": [],
+      "ended_early_engine_gap": false
+     },
+     {
+      "seed": "2BRGI767",
+      "furthest_ante": 2,
+      "lives_lost": 4,
+      "final_lives": 0,
+      "n_nemesis": 0,
+      "win_rate": NaN,
+      "margins": [],
+      "ended_early_engine_gap": false
+     },
+     {
+      "seed": "2CP4KSXZ",
+      "furthest_ante": 2,
+      "lives_lost": 4,
+      "final_lives": 0,
+      "n_nemesis": 0,
+      "win_rate": NaN,
+      "margins": [],
+      "ended_early_engine_gap": false
+     },
+     {
+      "seed": "2GHBLJD9",
+      "furthest_ante": 2,
+      "lives_lost": 4,
+      "final_lives": 0,
+      "n_nemesis": 0,
+      "win_rate": NaN,
+      "margins": [],
+      "ended_early_engine_gap": false
+     },
+     {
+      "seed": "2H9N3ISZ",
+      "furthest_ante": 2,
+      "lives_lost": 4,
+      "final_lives": 0,
+      "n_nemesis": 0,
+      "win_rate": NaN,
+      "margins": [],
+      "ended_early_engine_gap": false
+     },
+     {
+      "seed": "2K9H9HN",
+      "furthest_ante": 2,
+      "lives_lost": 4,
+      "final_lives": 0,
+      "n_nemesis": 0,
+      "win_rate": NaN,
+      "margins": [],
+      "ended_early_engine_gap": false
+     },
+     {
+      "seed": "34JCNMPA",
+      "furthest_ante": 2,
+      "lives_lost": 4,
+      "final_lives": 0,
+      "n_nemesis": 0,
+      "win_rate": NaN,
+      "margins": [],
+      "ended_early_engine_gap": false
+     },
+     {
+      "seed": "3SZ71111",
+      "furthest_ante": 2,
+      "lives_lost": 4,
+      "final_lives": 0,
+      "n_nemesis": 0,
+      "win_rate": NaN,
+      "margins": [],
+      "ended_early_engine_gap": false
+     },
+     {
+      "seed": "41Y71M6E",
+      "furthest_ante": 2,
+      "lives_lost": 4,
+      "final_lives": 0,
+      "n_nemesis": 0,
+      "win_rate": NaN,
+      "margins": [],
+      "ended_early_engine_gap": false
+     },
+     {
+      "seed": "46Y8UZEG",
+      "furthest_ante": 2,
+      "lives_lost": 4,
+      "final_lives": 0,
+      "n_nemesis": 0,
+      "win_rate": NaN,
+      "margins": [],
+      "ended_early_engine_gap": false
+     },
+     {
+      "seed": "4H2L46CE",
+      "furthest_ante": 2,
+      "lives_lost": 4,
+      "final_lives": 0,
+      "n_nemesis": 0,
+      "win_rate": NaN,
+      "margins": [],
+      "ended_early_engine_gap": false
+     },
+     {
+      "seed": "4K8A9QER",
+      "furthest_ante": 2,
+      "lives_lost": 4,
+      "final_lives": 0,
+      "n_nemesis": 0,
+      "win_rate": NaN,
+      "margins": [],
+      "ended_early_engine_gap": false
+     },
+     {
+      "seed": "4R219TNX",
+      "furthest_ante": 2,
+      "lives_lost": 4,
+      "final_lives": 0,
+      "n_nemesis": 0,
+      "win_rate": NaN,
+      "margins": [],
+      "ended_early_engine_gap": false
+     },
+     {
+      "seed": "4T1SZKLF",
+      "furthest_ante": 2,
+      "lives_lost": 4,
+      "final_lives": 0,
+      "n_nemesis": 0,
+      "win_rate": NaN,
+      "margins": [],
+      "ended_early_engine_gap": false
+     },
+     {
+      "seed": "4UEGRRRA",
+      "furthest_ante": 2,
+      "lives_lost": 4,
+      "final_lives": 0,
+      "n_nemesis": 0,
+      "win_rate": NaN,
+      "margins": [],
+      "ended_early_engine_gap": false
+     },
+     {
+      "seed": "51F2NVWK",
+      "furthest_ante": 2,
+      "lives_lost": 4,
+      "final_lives": 0,
+      "n_nemesis": 0,
+      "win_rate": NaN,
+      "margins": [],
+      "ended_early_engine_gap": false
+     },
+     {
+      "seed": "56QZEVDV",
+      "furthest_ante": 2,
+      "lives_lost": 4,
+      "final_lives": 0,
+      "n_nemesis": 0,
+      "win_rate": NaN,
+      "margins": [],
+      "ended_early_engine_gap": false
+     },
+     {
+      "seed": "5AWWF1M1",
+      "furthest_ante": 2,
+      "lives_lost": 4,
+      "final_lives": 0,
+      "n_nemesis": 0,
+      "win_rate": NaN,
+      "margins": [],
+      "ended_early_engine_gap": false
+     },
+     {
+      "seed": "5UIUKHCI",
+      "furthest_ante": 2,
+      "lives_lost": 4,
+      "final_lives": 0,
+      "n_nemesis": 0,
+      "win_rate": NaN,
+      "margins": [],
+      "ended_early_engine_gap": false
+     },
+     {
+      "seed": "5YVHAEP",
+      "furthest_ante": 2,
+      "lives_lost": 4,
+      "final_lives": 0,
+      "n_nemesis": 0,
+      "win_rate": NaN,
+      "margins": [],
+      "ended_early_engine_gap": false
+     },
+     {
+      "seed": "6H6WNQM2",
+      "furthest_ante": 2,
+      "lives_lost": 4,
+      "final_lives": 0,
+      "n_nemesis": 0,
+      "win_rate": NaN,
+      "margins": [],
+      "ended_early_engine_gap": false
+     },
+     {
+      "seed": "7I4M53DL",
+      "furthest_ante": 2,
+      "lives_lost": 4,
+      "final_lives": 0,
+      "n_nemesis": 0,
+      "win_rate": NaN,
+      "margins": [],
+      "ended_early_engine_gap": false
+     },
+     {
+      "seed": "7LB2WVPK",
+      "furthest_ante": 2,
+      "lives_lost": 4,
+      "final_lives": 0,
+      "n_nemesis": 0,
+      "win_rate": NaN,
+      "margins": [],
+      "ended_early_engine_gap": false
+     },
+     {
+      "seed": "7ODNKXP",
+      "furthest_ante": 2,
+      "lives_lost": 4,
+      "final_lives": 0,
+      "n_nemesis": 0,
+      "win_rate": NaN,
+      "margins": [],
+      "ended_early_engine_gap": false
+     },
+     {
+      "seed": "7PEE6NA5",
+      "furthest_ante": 2,
+      "lives_lost": 4,
+      "final_lives": 0,
+      "n_nemesis": 0,
+      "win_rate": NaN,
+      "margins": [],
+      "ended_early_engine_gap": false
+     },
+     {
+      "seed": "7UNQV1C9",
+      "furthest_ante": 2,
+      "lives_lost": 4,
+      "final_lives": 0,
+      "n_nemesis": 0,
+      "win_rate": NaN,
+      "margins": [],
+      "ended_early_engine_gap": false
+     },
+     {
+      "seed": "7YTVQERM",
+      "furthest_ante": 2,
+      "lives_lost": 4,
+      "final_lives": 0,
+      "n_nemesis": 0,
+      "win_rate": NaN,
+      "margins": [],
+      "ended_early_engine_gap": false
+     },
+     {
+      "seed": "8I5QXNGE",
+      "furthest_ante": 2,
+      "lives_lost": 4,
+      "final_lives": 0,
+      "n_nemesis": 0,
+      "win_rate": NaN,
+      "margins": [],
+      "ended_early_engine_gap": false
+     },
+     {
+      "seed": "8IZ7HHE4",
+      "furthest_ante": 2,
+      "lives_lost": 4,
+      "final_lives": 0,
+      "n_nemesis": 0,
+      "win_rate": NaN,
+      "margins": [],
+      "ended_early_engine_gap": false
+     },
+     {
+      "seed": "8Q47WV6K",
+      "furthest_ante": 2,
+      "lives_lost": 4,
+      "final_lives": 0,
+      "n_nemesis": 0,
+      "win_rate": NaN,
+      "margins": [],
+      "ended_early_engine_gap": false
+     },
+     {
+      "seed": "8QBRTPD",
+      "furthest_ante": 2,
+      "lives_lost": 4,
+      "final_lives": 0,
+      "n_nemesis": 0,
+      "win_rate": NaN,
+      "margins": [],
+      "ended_early_engine_gap": false
+     },
+     {
+      "seed": "8SIYIK9C",
+      "furthest_ante": 2,
+      "lives_lost": 4,
+      "final_lives": 0,
+      "n_nemesis": 0,
+      "win_rate": NaN,
+      "margins": [],
+      "ended_early_engine_gap": false
+     },
+     {
+      "seed": "8UU564MF",
+      "furthest_ante": 2,
+      "lives_lost": 4,
+      "final_lives": 0,
+      "n_nemesis": 0,
+      "win_rate": NaN,
+      "margins": [],
+      "ended_early_engine_gap": false
+     },
+     {
+      "seed": "8Y7ABZ7C",
+      "furthest_ante": 2,
+      "lives_lost": 4,
+      "final_lives": 0,
+      "n_nemesis": 0,
+      "win_rate": NaN,
+      "margins": [],
+      "ended_early_engine_gap": false
+     },
+     {
+      "seed": "93W4UHC4",
+      "furthest_ante": 2,
+      "lives_lost": 4,
+      "final_lives": 0,
+      "n_nemesis": 0,
+      "win_rate": NaN,
+      "margins": [],
+      "ended_early_engine_gap": false
+     },
+     {
+      "seed": "967889YL",
+      "furthest_ante": 2,
+      "lives_lost": 4,
+      "final_lives": 0,
+      "n_nemesis": 0,
+      "win_rate": NaN,
+      "margins": [],
+      "ended_early_engine_gap": false
+     },
+     {
+      "seed": "9Q9HQXZG",
+      "furthest_ante": 2,
+      "lives_lost": 4,
+      "final_lives": 0,
+      "n_nemesis": 0,
+      "win_rate": NaN,
+      "margins": [],
+      "ended_early_engine_gap": false
+     },
+     {
+      "seed": "9QV2ZT9X",
+      "furthest_ante": 2,
+      "lives_lost": 4,
+      "final_lives": 0,
+      "n_nemesis": 0,
+      "win_rate": NaN,
+      "margins": [],
+      "ended_early_engine_gap": false
+     },
+     {
+      "seed": "9VIGPRT6",
+      "furthest_ante": 2,
+      "lives_lost": 4,
+      "final_lives": 0,
+      "n_nemesis": 0,
+      "win_rate": NaN,
+      "margins": [],
+      "ended_early_engine_gap": false
+     },
+     {
+      "seed": "9ZXMM1M",
+      "furthest_ante": 2,
+      "lives_lost": 4,
+      "final_lives": 0,
+      "n_nemesis": 0,
+      "win_rate": NaN,
+      "margins": [],
+      "ended_early_engine_gap": false
+     },
+     {
+      "seed": "A",
+      "furthest_ante": 2,
+      "lives_lost": 4,
+      "final_lives": 0,
+      "n_nemesis": 0,
+      "win_rate": NaN,
+      "margins": [],
+      "ended_early_engine_gap": false
+     },
+     {
+      "seed": "A1UAS1G5",
+      "furthest_ante": 2,
+      "lives_lost": 4,
+      "final_lives": 0,
+      "n_nemesis": 0,
+      "win_rate": NaN,
+      "margins": [],
+      "ended_early_engine_gap": false
+     },
+     {
+      "seed": "AE1K7DG1",
+      "furthest_ante": 2,
+      "lives_lost": 4,
+      "final_lives": 0,
+      "n_nemesis": 0,
+      "win_rate": NaN,
+      "margins": [],
+      "ended_early_engine_gap": false
+     },
+     {
+      "seed": "ALEEB",
+      "furthest_ante": 2,
+      "lives_lost": 4,
+      "final_lives": 0,
+      "n_nemesis": 0,
+      "win_rate": NaN,
+      "margins": [],
+      "ended_early_engine_gap": false
+     },
+     {
+      "seed": "AMPYZUIU",
+      "furthest_ante": 2,
+      "lives_lost": 4,
+      "final_lives": 0,
+      "n_nemesis": 0,
+      "win_rate": NaN,
+      "margins": [],
+      "ended_early_engine_gap": false
+     },
+     {
+      "seed": "APH9LX2Y",
+      "furthest_ante": 2,
+      "lives_lost": 4,
+      "final_lives": 0,
+      "n_nemesis": 0,
+      "win_rate": NaN,
+      "margins": [],
+      "ended_early_engine_gap": false
+     },
+     {
+      "seed": "BA1D48RK",
+      "furthest_ante": 2,
+      "lives_lost": 4,
+      "final_lives": 0,
+      "n_nemesis": 0,
+      "win_rate": NaN,
+      "margins": [],
+      "ended_early_engine_gap": false
+     },
+     {
+      "seed": "BQ6A2D42",
+      "furthest_ante": 2,
+      "lives_lost": 4,
+      "final_lives": 0,
+      "n_nemesis": 0,
+      "win_rate": NaN,
+      "margins": [],
+      "ended_early_engine_gap": false
+     },
+     {
+      "seed": "C19P8BQ4",
+      "furthest_ante": 2,
+      "lives_lost": 4,
+      "final_lives": 0,
+      "n_nemesis": 0,
+      "win_rate": NaN,
+      "margins": [],
+      "ended_early_engine_gap": false
+     },
+     {
+      "seed": "C1ZLPKAA",
+      "furthest_ante": 2,
+      "lives_lost": 4,
+      "final_lives": 0,
+      "n_nemesis": 0,
+      "win_rate": NaN,
+      "margins": [],
+      "ended_early_engine_gap": false
+     },
+     {
+      "seed": "C93K3YWJ",
+      "furthest_ante": 2,
+      "lives_lost": 4,
+      "final_lives": 0,
+      "n_nemesis": 0,
+      "win_rate": NaN,
+      "margins": [],
+      "ended_early_engine_gap": false
+     },
+     {
+      "seed": "CCBWC6CR",
+      "furthest_ante": 2,
+      "lives_lost": 4,
+      "final_lives": 0,
+      "n_nemesis": 0,
+      "win_rate": NaN,
+      "margins": [],
+      "ended_early_engine_gap": false
+     },
+     {
+      "seed": "CHPB293X",
+      "furthest_ante": 2,
+      "lives_lost": 4,
+      "final_lives": 0,
+      "n_nemesis": 0,
+      "win_rate": NaN,
+      "margins": [],
+      "ended_early_engine_gap": false
+     },
+     {
+      "seed": "CIGHYTAU",
+      "furthest_ante": 2,
+      "lives_lost": 4,
+      "final_lives": 0,
+      "n_nemesis": 0,
+      "win_rate": NaN,
+      "margins": [],
+      "ended_early_engine_gap": false
+     },
+     {
+      "seed": "CMEEXU8I",
+      "furthest_ante": 2,
+      "lives_lost": 4,
+      "final_lives": 0,
+      "n_nemesis": 0,
+      "win_rate": NaN,
+      "margins": [],
+      "ended_early_engine_gap": false
+     },
+     {
+      "seed": "D4TDD2B6",
+      "furthest_ante": 2,
+      "lives_lost": 4,
+      "final_lives": 0,
+      "n_nemesis": 0,
+      "win_rate": NaN,
+      "margins": [],
+      "ended_early_engine_gap": false
+     },
+     {
+      "seed": "D7Y5419A",
+      "furthest_ante": 2,
+      "lives_lost": 4,
+      "final_lives": 0,
+      "n_nemesis": 0,
+      "win_rate": NaN,
+      "margins": [],
+      "ended_early_engine_gap": false
+     },
+     {
+      "seed": "ECG8NVDZ",
+      "furthest_ante": 2,
+      "lives_lost": 4,
+      "final_lives": 0,
+      "n_nemesis": 0,
+      "win_rate": NaN,
+      "margins": [],
+      "ended_early_engine_gap": false
+     },
+     {
+      "seed": "EGE5ZY77",
+      "furthest_ante": 2,
+      "lives_lost": 4,
+      "final_lives": 0,
+      "n_nemesis": 0,
+      "win_rate": NaN,
+      "margins": [],
+      "ended_early_engine_gap": false
+     },
+     {
+      "seed": "EVB8882H",
+      "furthest_ante": 2,
+      "lives_lost": 4,
+      "final_lives": 0,
+      "n_nemesis": 0,
+      "win_rate": NaN,
+      "margins": [],
+      "ended_early_engine_gap": false
+     },
+     {
+      "seed": "FSXYRB3J",
+      "furthest_ante": 2,
+      "lives_lost": 4,
+      "final_lives": 0,
+      "n_nemesis": 0,
+      "win_rate": NaN,
+      "margins": [],
+      "ended_early_engine_gap": false
+     },
+     {
+      "seed": "GVQL737K",
+      "furthest_ante": 2,
+      "lives_lost": 4,
+      "final_lives": 0,
+      "n_nemesis": 0,
+      "win_rate": NaN,
+      "margins": [],
+      "ended_early_engine_gap": false
+     },
+     {
+      "seed": "GVYT2DGJ",
+      "furthest_ante": 2,
+      "lives_lost": 4,
+      "final_lives": 0,
+      "n_nemesis": 0,
+      "win_rate": NaN,
+      "margins": [],
+      "ended_early_engine_gap": false
+     },
+     {
+      "seed": "H1EWXLNE",
+      "furthest_ante": 2,
+      "lives_lost": 4,
+      "final_lives": 0,
+      "n_nemesis": 0,
+      "win_rate": NaN,
+      "margins": [],
+      "ended_early_engine_gap": false
+     },
+     {
+      "seed": "HPR8Q7K",
+      "furthest_ante": 2,
+      "lives_lost": 4,
+      "final_lives": 0,
+      "n_nemesis": 0,
+      "win_rate": NaN,
+      "margins": [],
+      "ended_early_engine_gap": false
+     },
+     {
+      "seed": "HS8LL7TC",
+      "furthest_ante": 2,
+      "lives_lost": 4,
+      "final_lives": 0,
+      "n_nemesis": 0,
+      "win_rate": NaN,
+      "margins": [],
+      "ended_early_engine_gap": false
+     },
+     {
+      "seed": "HSC1L2DX",
+      "furthest_ante": 2,
+      "lives_lost": 4,
+      "final_lives": 0,
+      "n_nemesis": 0,
+      "win_rate": NaN,
+      "margins": [],
+      "ended_early_engine_gap": false
+     },
+     {
+      "seed": "I68YASXJ",
+      "furthest_ante": 2,
+      "lives_lost": 4,
+      "final_lives": 0,
+      "n_nemesis": 0,
+      "win_rate": NaN,
+      "margins": [],
+      "ended_early_engine_gap": false
+     },
+     {
+      "seed": "ICUESE5D",
+      "furthest_ante": 2,
+      "lives_lost": 4,
+      "final_lives": 0,
+      "n_nemesis": 0,
+      "win_rate": NaN,
+      "margins": [],
+      "ended_early_engine_gap": false
+     },
+     {
+      "seed": "IMMOLATE",
+      "furthest_ante": 2,
+      "lives_lost": 4,
+      "final_lives": 0,
+      "n_nemesis": 0,
+      "win_rate": NaN,
+      "margins": [],
+      "ended_early_engine_gap": false
+     },
+     {
+      "seed": "J3GHQHJM",
+      "furthest_ante": 2,
+      "lives_lost": 4,
+      "final_lives": 0,
+      "n_nemesis": 0,
+      "win_rate": NaN,
+      "margins": [],
+      "ended_early_engine_gap": false
+     },
+     {
+      "seed": "JQB4BN6F",
+      "furthest_ante": 2,
+      "lives_lost": 4,
+      "final_lives": 0,
+      "n_nemesis": 0,
+      "win_rate": NaN,
+      "margins": [],
+      "ended_early_engine_gap": false
+     },
+     {
+      "seed": "K84ZCS3Q",
+      "furthest_ante": 2,
+      "lives_lost": 4,
+      "final_lives": 0,
+      "n_nemesis": 0,
+      "win_rate": NaN,
+      "margins": [],
+      "ended_early_engine_gap": false
+     },
+     {
+      "seed": "K8PU119J",
+      "furthest_ante": 2,
+      "lives_lost": 4,
+      "final_lives": 0,
+      "n_nemesis": 0,
+      "win_rate": NaN,
+      "margins": [],
+      "ended_early_engine_gap": false
+     },
+     {
+      "seed": "K94TS4B8",
+      "furthest_ante": 2,
+      "lives_lost": 4,
+      "final_lives": 0,
+      "n_nemesis": 0,
+      "win_rate": NaN,
+      "margins": [],
+      "ended_early_engine_gap": false
+     },
+     {
+      "seed": "KPGY6GCH",
+      "furthest_ante": 2,
+      "lives_lost": 4,
+      "final_lives": 0,
+      "n_nemesis": 0,
+      "win_rate": NaN,
+      "margins": [],
+      "ended_early_engine_gap": false
+     },
+     {
+      "seed": "LHZYIWR6",
+      "furthest_ante": 2,
+      "lives_lost": 4,
+      "final_lives": 0,
+      "n_nemesis": 0,
+      "win_rate": NaN,
+      "margins": [],
+      "ended_early_engine_gap": false
+     },
+     {
+      "seed": "LMGJPMKP",
+      "furthest_ante": 2,
+      "lives_lost": 4,
+      "final_lives": 0,
+      "n_nemesis": 0,
+      "win_rate": NaN,
+      "margins": [],
+      "ended_early_engine_gap": false
+     },
+     {
+      "seed": "M2LAET6A",
+      "furthest_ante": 2,
+      "lives_lost": 4,
+      "final_lives": 0,
+      "n_nemesis": 0,
+      "win_rate": NaN,
+      "margins": [],
+      "ended_early_engine_gap": false
+     },
+     {
+      "seed": "M4LV5E89",
+      "furthest_ante": 2,
+      "lives_lost": 4,
+      "final_lives": 0,
+      "n_nemesis": 0,
+      "win_rate": NaN,
+      "margins": [],
+      "ended_early_engine_gap": false
+     },
+     {
+      "seed": "M6XD1INZ",
+      "furthest_ante": 2,
+      "lives_lost": 4,
+      "final_lives": 0,
+      "n_nemesis": 0,
+      "win_rate": NaN,
+      "margins": [],
+      "ended_early_engine_gap": false
+     },
+     {
+      "seed": "MIM66QT9",
+      "furthest_ante": 2,
+      "lives_lost": 4,
+      "final_lives": 0,
+      "n_nemesis": 0,
+      "win_rate": NaN,
+      "margins": [],
+      "ended_early_engine_gap": false
+     },
+     {
+      "seed": "MM1H85E3",
+      "furthest_ante": 2,
+      "lives_lost": 4,
+      "final_lives": 0,
+      "n_nemesis": 0,
+      "win_rate": NaN,
+      "margins": [],
+      "ended_early_engine_gap": false
+     },
+     {
+      "seed": "MRBF7L15",
+      "furthest_ante": 2,
+      "lives_lost": 4,
+      "final_lives": 0,
+      "n_nemesis": 0,
+      "win_rate": NaN,
+      "margins": [],
+      "ended_early_engine_gap": false
+     },
+     {
+      "seed": "MSQZGPMX",
+      "furthest_ante": 2,
+      "lives_lost": 4,
+      "final_lives": 0,
+      "n_nemesis": 0,
+      "win_rate": NaN,
+      "margins": [],
+      "ended_early_engine_gap": false
+     },
+     {
+      "seed": "OG4YQPSI",
+      "furthest_ante": 2,
+      "lives_lost": 4,
+      "final_lives": 0,
+      "n_nemesis": 0,
+      "win_rate": NaN,
+      "margins": [],
+      "ended_early_engine_gap": false
+     },
+     {
+      "seed": "PI1J5YAG",
+      "furthest_ante": 2,
+      "lives_lost": 4,
+      "final_lives": 0,
+      "n_nemesis": 0,
+      "win_rate": NaN,
+      "margins": [],
+      "ended_early_engine_gap": false
+     },
+     {
+      "seed": "PJ5TB88W",
+      "furthest_ante": 2,
+      "lives_lost": 4,
+      "final_lives": 0,
+      "n_nemesis": 0,
+      "win_rate": NaN,
+      "margins": [],
+      "ended_early_engine_gap": false
+     },
+     {
+      "seed": "PQNVFI72",
+      "furthest_ante": 2,
+      "lives_lost": 4,
+      "final_lives": 0,
+      "n_nemesis": 0,
+      "win_rate": NaN,
+      "margins": [],
+      "ended_early_engine_gap": false
+     },
+     {
+      "seed": "PT6IF52R",
+      "furthest_ante": 2,
+      "lives_lost": 4,
+      "final_lives": 0,
+      "n_nemesis": 0,
+      "win_rate": NaN,
+      "margins": [],
+      "ended_early_engine_gap": false
+     },
+     {
+      "seed": "PTSBMSMQ",
+      "furthest_ante": 2,
+      "lives_lost": 4,
+      "final_lives": 0,
+      "n_nemesis": 0,
+      "win_rate": NaN,
+      "margins": [],
+      "ended_early_engine_gap": false
+     },
+     {
+      "seed": "QY3TQZJ9",
+      "furthest_ante": 2,
+      "lives_lost": 4,
+      "final_lives": 0,
+      "n_nemesis": 0,
+      "win_rate": NaN,
+      "margins": [],
+      "ended_early_engine_gap": false
+     },
+     {
+      "seed": "R8DFV7RD",
+      "furthest_ante": 2,
+      "lives_lost": 4,
+      "final_lives": 0,
+      "n_nemesis": 0,
+      "win_rate": NaN,
+      "margins": [],
+      "ended_early_engine_gap": false
+     },
+     {
+      "seed": "R8W2CT59",
+      "furthest_ante": 2,
+      "lives_lost": 4,
+      "final_lives": 0,
+      "n_nemesis": 0,
+      "win_rate": NaN,
+      "margins": [],
+      "ended_early_engine_gap": false
+     },
+     {
+      "seed": "RUXS91YF",
+      "furthest_ante": 2,
+      "lives_lost": 4,
+      "final_lives": 0,
+      "n_nemesis": 0,
+      "win_rate": NaN,
+      "margins": [],
+      "ended_early_engine_gap": false
+     },
+     {
+      "seed": "RXI42HZ2",
+      "furthest_ante": 2,
+      "lives_lost": 4,
+      "final_lives": 0,
+      "n_nemesis": 0,
+      "win_rate": NaN,
+      "margins": [],
+      "ended_early_engine_gap": false
+     },
+     {
+      "seed": "S1QJX1CS",
+      "furthest_ante": 2,
+      "lives_lost": 4,
+      "final_lives": 0,
+      "n_nemesis": 0,
+      "win_rate": NaN,
+      "margins": [],
+      "ended_early_engine_gap": false
+     },
+     {
+      "seed": "SF9SZOB1",
+      "furthest_ante": 2,
+      "lives_lost": 4,
+      "final_lives": 0,
+      "n_nemesis": 0,
+      "win_rate": NaN,
+      "margins": [],
+      "ended_early_engine_gap": false
+     },
+     {
+      "seed": "SLRSKCG1",
+      "furthest_ante": 2,
+      "lives_lost": 4,
+      "final_lives": 0,
+      "n_nemesis": 0,
+      "win_rate": NaN,
+      "margins": [],
+      "ended_early_engine_gap": false
+     },
+     {
+      "seed": "SMC7XNT8",
+      "furthest_ante": 2,
+      "lives_lost": 4,
+      "final_lives": 0,
+      "n_nemesis": 0,
+      "win_rate": NaN,
+      "margins": [],
+      "ended_early_engine_gap": false
+     },
+     {
+      "seed": "SQVZX29L",
+      "furthest_ante": 2,
+      "lives_lost": 4,
+      "final_lives": 0,
+      "n_nemesis": 0,
+      "win_rate": NaN,
+      "margins": [],
+      "ended_early_engine_gap": false
+     },
+     {
+      "seed": "T5A1T1DZ",
+      "furthest_ante": 2,
+      "lives_lost": 4,
+      "final_lives": 0,
+      "n_nemesis": 0,
+      "win_rate": NaN,
+      "margins": [],
+      "ended_early_engine_gap": false
+     },
+     {
+      "seed": "U516KUJP",
+      "furthest_ante": 2,
+      "lives_lost": 4,
+      "final_lives": 0,
+      "n_nemesis": 0,
+      "win_rate": NaN,
+      "margins": [],
+      "ended_early_engine_gap": false
+     },
+     {
+      "seed": "U8RJYV6M",
+      "furthest_ante": 2,
+      "lives_lost": 4,
+      "final_lives": 0,
+      "n_nemesis": 0,
+      "win_rate": NaN,
+      "margins": [],
+      "ended_early_engine_gap": false
+     },
+     {
+      "seed": "UCAMJYYK",
+      "furthest_ante": 2,
+      "lives_lost": 4,
+      "final_lives": 0,
+      "n_nemesis": 0,
+      "win_rate": NaN,
+      "margins": [],
+      "ended_early_engine_gap": false
+     },
+     {
+      "seed": "USQF4ZAV",
+      "furthest_ante": 2,
+      "lives_lost": 4,
+      "final_lives": 0,
+      "n_nemesis": 0,
+      "win_rate": NaN,
+      "margins": [],
+      "ended_early_engine_gap": false
+     },
+     {
+      "seed": "V3PUR5L4",
+      "furthest_ante": 2,
+      "lives_lost": 4,
+      "final_lives": 0,
+      "n_nemesis": 0,
+      "win_rate": NaN,
+      "margins": [],
+      "ended_early_engine_gap": false
+     },
+     {
+      "seed": "VNOMH111",
+      "furthest_ante": 2,
+      "lives_lost": 4,
+      "final_lives": 0,
+      "n_nemesis": 0,
+      "win_rate": NaN,
+      "margins": [],
+      "ended_early_engine_gap": false
+     },
+     {
+      "seed": "WBC1DGJQ",
+      "furthest_ante": 2,
+      "lives_lost": 4,
+      "final_lives": 0,
+      "n_nemesis": 0,
+      "win_rate": NaN,
+      "margins": [],
+      "ended_early_engine_gap": false
+     },
+     {
+      "seed": "WIF67A3S",
+      "furthest_ante": 2,
+      "lives_lost": 4,
+      "final_lives": 0,
+      "n_nemesis": 0,
+      "win_rate": NaN,
+      "margins": [],
+      "ended_early_engine_gap": false
+     },
+     {
+      "seed": "WLAVAQ75",
+      "furthest_ante": 2,
+      "lives_lost": 4,
+      "final_lives": 0,
+      "n_nemesis": 0,
+      "win_rate": NaN,
+      "margins": [],
+      "ended_early_engine_gap": false
+     },
+     {
+      "seed": "WVPJKPRD",
+      "furthest_ante": 2,
+      "lives_lost": 4,
+      "final_lives": 0,
+      "n_nemesis": 0,
+      "win_rate": NaN,
+      "margins": [],
+      "ended_early_engine_gap": false
+     },
+     {
+      "seed": "X7FG4FH8",
+      "furthest_ante": 2,
+      "lives_lost": 4,
+      "final_lives": 0,
+      "n_nemesis": 0,
+      "win_rate": NaN,
+      "margins": [],
+      "ended_early_engine_gap": false
+     },
+     {
+      "seed": "XD55DZ57",
+      "furthest_ante": 2,
+      "lives_lost": 4,
+      "final_lives": 0,
+      "n_nemesis": 0,
+      "win_rate": NaN,
+      "margins": [],
+      "ended_early_engine_gap": false
+     },
+     {
+      "seed": "XDW9VBHQ",
+      "furthest_ante": 2,
+      "lives_lost": 4,
+      "final_lives": 0,
+      "n_nemesis": 0,
+      "win_rate": NaN,
+      "margins": [],
+      "ended_early_engine_gap": false
+     },
+     {
+      "seed": "YB54A1EH",
+      "furthest_ante": 2,
+      "lives_lost": 4,
+      "final_lives": 0,
+      "n_nemesis": 0,
+      "win_rate": NaN,
+      "margins": [],
+      "ended_early_engine_gap": false
+     },
+     {
+      "seed": "YD2HMRBR",
+      "furthest_ante": 2,
+      "lives_lost": 4,
+      "final_lives": 0,
+      "n_nemesis": 0,
+      "win_rate": NaN,
+      "margins": [],
+      "ended_early_engine_gap": false
+     },
+     {
+      "seed": "YPB7TZWJ",
+      "furthest_ante": 2,
+      "lives_lost": 4,
+      "final_lives": 0,
+      "n_nemesis": 0,
+      "win_rate": NaN,
+      "margins": [],
+      "ended_early_engine_gap": false
+     },
+     {
+      "seed": "5TITKHCI",
+      "furthest_ante": 2,
+      "lives_lost": 4,
+      "final_lives": 0,
+      "n_nemesis": 0,
+      "win_rate": NaN,
+      "margins": [],
+      "ended_early_engine_gap": false
+     },
+     {
+      "seed": "RMC7WNS8",
+      "furthest_ante": 2,
+      "lives_lost": 4,
+      "final_lives": 0,
+      "n_nemesis": 0,
+      "win_rate": NaN,
+      "margins": [],
+      "ended_early_engine_gap": false
+     },
+     {
+      "seed": "VLAUZAP7",
+      "furthest_ante": 2,
+      "lives_lost": 4,
+      "final_lives": 0,
+      "n_nemesis": 0,
+      "win_rate": NaN,
+      "margins": [],
+      "ended_early_engine_gap": false
+     },
+     {
+      "seed": "54H2L46C",
+      "furthest_ante": 2,
+      "lives_lost": 4,
+      "final_lives": 0,
+      "n_nemesis": 0,
+      "win_rate": NaN,
+      "margins": [],
+      "ended_early_engine_gap": false
+     },
+     {
+      "seed": "EK84YCRZ",
+      "furthest_ante": 2,
+      "lives_lost": 4,
+      "final_lives": 0,
+      "n_nemesis": 0,
+      "win_rate": NaN,
+      "margins": [],
+      "ended_early_engine_gap": false
+     },
+     {
+      "seed": "3PQWI42H",
+      "furthest_ante": 2,
+      "lives_lost": 4,
+      "final_lives": 0,
+      "n_nemesis": 0,
+      "win_rate": NaN,
+      "margins": [],
+      "ended_early_engine_gap": false
+     },
+     {
+      "seed": "Y28I5PWN",
+      "furthest_ante": 2,
+      "lives_lost": 4,
+      "final_lives": 0,
+      "n_nemesis": 0,
+      "win_rate": NaN,
+      "margins": [],
+      "ended_early_engine_gap": false
+     },
+     {
+      "seed": "GEGUXSZ2",
+      "furthest_ante": 2,
+      "lives_lost": 4,
+      "final_lives": 0,
+      "n_nemesis": 0,
+      "win_rate": NaN,
+      "margins": [],
+      "ended_early_engine_gap": false
+     },
+     {
+      "seed": "DGJTCAMJ",
+      "furthest_ante": 2,
+      "lives_lost": 4,
+      "final_lives": 0,
+      "n_nemesis": 0,
+      "win_rate": NaN,
+      "margins": [],
+      "ended_early_engine_gap": false
+     },
+     {
+      "seed": "XXKGUPL7",
+      "furthest_ante": 2,
+      "lives_lost": 4,
+      "final_lives": 0,
+      "n_nemesis": 0,
+      "win_rate": NaN,
+      "margins": [],
+      "ended_early_engine_gap": false
+     },
+     {
+      "seed": "37KVBC1D",
+      "furthest_ante": 2,
+      "lives_lost": 4,
+      "final_lives": 0,
+      "n_nemesis": 0,
+      "win_rate": NaN,
+      "margins": [],
+      "ended_early_engine_gap": false
+     },
+     {
+      "seed": "GJPD7X54",
+      "furthest_ante": 2,
+      "lives_lost": 4,
+      "final_lives": 0,
+      "n_nemesis": 0,
+      "win_rate": NaN,
+      "margins": [],
+      "ended_early_engine_gap": false
+     },
+     {
+      "seed": "19AC19O8",
+      "furthest_ante": 2,
+      "lives_lost": 4,
+      "final_lives": 0,
+      "n_nemesis": 0,
+      "win_rate": NaN,
+      "margins": [],
+      "ended_early_engine_gap": false
+     },
+     {
+      "seed": "BP49PU2Y",
+      "furthest_ante": 2,
+      "lives_lost": 4,
+      "final_lives": 0,
+      "n_nemesis": 0,
+      "win_rate": NaN,
+      "margins": [],
+      "ended_early_engine_gap": false
+     },
+     {
+      "seed": "S9WXD2HM",
+      "furthest_ante": 2,
+      "lives_lost": 4,
+      "final_lives": 0,
+      "n_nemesis": 0,
+      "win_rate": NaN,
+      "margins": [],
+      "ended_early_engine_gap": false
+     },
+     {
+      "seed": "QBQ34JCN",
+      "furthest_ante": 2,
+      "lives_lost": 4,
+      "final_lives": 0,
+      "n_nemesis": 0,
+      "win_rate": NaN,
+      "margins": [],
+      "ended_early_engine_gap": false
+     },
+     {
+      "seed": "MOAT516K",
+      "furthest_ante": 2,
+      "lives_lost": 4,
+      "final_lives": 0,
+      "n_nemesis": 0,
+      "win_rate": NaN,
+      "margins": [],
+      "ended_early_engine_gap": false
+     },
+     {
+      "seed": "TJOA1TAR",
+      "furthest_ante": 2,
+      "lives_lost": 4,
+      "final_lives": 0,
+      "n_nemesis": 0,
+      "win_rate": NaN,
+      "margins": [],
+      "ended_early_engine_gap": false
+     },
+     {
+      "seed": "1G5AOH9L",
+      "furthest_ante": 2,
+      "lives_lost": 4,
+      "final_lives": 0,
+      "n_nemesis": 0,
+      "win_rate": NaN,
+      "margins": [],
+      "ended_early_engine_gap": false
+     },
+     {
+      "seed": "W2XHR8LL",
+      "furthest_ante": 2,
+      "lives_lost": 4,
+      "final_lives": 0,
+      "n_nemesis": 0,
+      "win_rate": NaN,
+      "margins": [],
+      "ended_early_engine_gap": false
+     },
+     {
+      "seed": "7SCVIF67",
+      "furthest_ante": 2,
+      "lives_lost": 4,
+      "final_lives": 0,
+      "n_nemesis": 0,
+      "win_rate": NaN,
+      "margins": [],
+      "ended_early_engine_gap": false
+     },
+     {
+      "seed": "A3RBA1D4",
+      "furthest_ante": 2,
+      "lives_lost": 4,
+      "final_lives": 0,
+      "n_nemesis": 0,
+      "win_rate": NaN,
+      "margins": [],
+      "ended_early_engine_gap": false
+     },
+     {
+      "seed": "8QK15H9Y",
+      "furthest_ante": 2,
+      "lives_lost": 4,
+      "final_lives": 0,
+      "n_nemesis": 0,
+      "win_rate": NaN,
+      "margins": [],
+      "ended_early_engine_gap": false
+     },
+     {
+      "seed": "3IX1MD1X",
+      "furthest_ante": 2,
+      "lives_lost": 4,
+      "final_lives": 0,
+      "n_nemesis": 0,
+      "win_rate": NaN,
+      "margins": [],
+      "ended_early_engine_gap": false
+     }
+    ],
+    "summary": {
+     "furthest_ante": {
+      "point": 2.0,
+      "lo": 2.0,
+      "hi": 2.0,
+      "n": 150
+     },
+     "lives_lost": {
+      "point": 4.0,
+      "lo": 4.0,
+      "hi": 4.0,
+      "n": 150
+     },
+     "win_rate": {
+      "point": NaN,
+      "lo": NaN,
+      "hi": NaN,
+      "n": 0
+     },
+     "n_nemesis_total": 0,
+     "margin_quantiles": {
+      "0.0": null,
+      "0.1": null,
+      "0.25": null,
+      "0.5": null,
+      "0.75": null,
+      "0.9": null,
+      "1.0": null
+     },
+     "engine_gap_seeds": 0
+    }
+   },
+   "tournament": {
+    "deck": "b_plasma",
+    "player": "scripted:hand=weak",
+    "n_agents": 32,
+    "max_ante": 8,
+    "base_seed": 0,
+    "n_seeds": 16,
+    "wall_clock_s": 123.47976875305176,
+    "per_seed": [
+     {
+      "seed": "11111111",
+      "ante_ranks": {
+       "2": 32.0,
+       "3": 32.0,
+       "4": 32.0,
+       "5": 32.0,
+       "6": 32.0,
+       "7": 31.5,
+       "8": 32.0
+      },
+      "n_antes_present": 7,
+      "mean_rank_frac": 0.9976958525345623
+     },
+     {
+      "seed": "1558AXDL",
+      "ante_ranks": {
+       "2": 32.0,
+       "3": 32.0,
+       "4": 32.0,
+       "5": 32.0,
+       "6": 28.0,
+       "7": 28.0,
+       "8": 32.0
+      },
+      "n_antes_present": 7,
+      "mean_rank_frac": 0.9631336405529954
+     },
+     {
+      "seed": "15H9Z3IY",
+      "ante_ranks": {
+       "2": 32.0,
+       "3": 32.0,
+       "4": 32.0,
+       "5": 32.0,
+       "6": 32.0,
+       "7": 32.0,
+       "8": 32.0
+      },
+      "n_antes_present": 7,
+      "mean_rank_frac": 1.0
+     },
+     {
+      "seed": "1KV4W6YS",
+      "ante_ranks": {
+       "2": 32.0,
+       "3": 32.0,
+       "4": 32.0,
+       "5": 32.0,
+       "6": 32.0,
+       "7": 32.0,
+       "8": 32.0
+      },
+      "n_antes_present": 7,
+      "mean_rank_frac": 1.0
+     },
+     {
+      "seed": "1MD1YZ9T",
+      "ante_ranks": {
+       "2": 32.0,
+       "3": 31.0,
+       "4": 32.0,
+       "5": 32.0,
+       "6": 32.0,
+       "7": 32.0,
+       "8": 32.0
+      },
+      "n_antes_present": 7,
+      "mean_rank_frac": 0.9953917050691244
+     },
+     {
+      "seed": "28V7DD4H",
+      "ante_ranks": {
+       "2": 32.0,
+       "3": 32.0,
+       "4": 32.0,
+       "5": 28.0,
+       "6": 32.0,
+       "7": 32.0,
+       "8": 32.0
+      },
+      "n_antes_present": 7,
+      "mean_rank_frac": 0.9815668202764977
+     },
+     {
+      "seed": "29DAQVG1",
+      "ante_ranks": {
+       "2": 32.0,
+       "3": 32.0,
+       "4": 32.0,
+       "5": 32.0,
+       "6": 32.0,
+       "7": 28.0,
+       "8": 32.0
+      },
+      "n_antes_present": 7,
+      "mean_rank_frac": 0.9815668202764977
+     },
+     {
+      "seed": "29Y3L4S9",
+      "ante_ranks": {
+       "2": 32.0,
+       "3": 32.0,
+       "4": 32.0,
+       "5": 32.0,
+       "6": 32.0,
+       "7": 32.0,
+       "8": 32.0
+      },
+      "n_antes_present": 7,
+      "mean_rank_frac": 1.0
+     },
+     {
+      "seed": "29ZSW8MY",
+      "ante_ranks": {
+       "2": 32.0,
+       "3": 32.0,
+       "4": 32.0,
+       "5": 32.0,
+       "6": 32.0,
+       "7": 32.0,
+       "8": 32.0
+      },
+      "n_antes_present": 7,
+      "mean_rank_frac": 1.0
+     },
+     {
+      "seed": "2BRGI767",
+      "ante_ranks": {
+       "2": 32.0,
+       "3": 32.0,
+       "4": 32.0,
+       "5": 32.0,
+       "6": 32.0,
+       "7": 32.0,
+       "8": 32.0
+      },
+      "n_antes_present": 7,
+      "mean_rank_frac": 1.0
+     },
+     {
+      "seed": "2CP4KSXZ",
+      "ante_ranks": {
+       "2": 32.0,
+       "3": 32.0,
+       "4": 32.0,
+       "5": 32.0,
+       "6": 32.0,
+       "7": 32.0,
+       "8": 32.0
+      },
+      "n_antes_present": 7,
+      "mean_rank_frac": 1.0
+     },
+     {
+      "seed": "2GHBLJD9",
+      "ante_ranks": {
+       "2": 31.5,
+       "3": 32.0,
+       "4": 32.0,
+       "5": 32.0,
+       "6": 32.0,
+       "7": 32.0,
+       "8": 32.0
+      },
+      "n_antes_present": 7,
+      "mean_rank_frac": 0.9976958525345623
+     },
+     {
+      "seed": "2H9N3ISZ",
+      "ante_ranks": {
+       "2": 32.0,
+       "3": 32.0,
+       "4": 31.5,
+       "5": 32.0,
+       "6": 32.0,
+       "7": 32.0,
+       "8": 32.0
+      },
+      "n_antes_present": 7,
+      "mean_rank_frac": 0.9976958525345623
+     },
+     {
+      "seed": "2K9H9HN",
+      "ante_ranks": {
+       "2": 32.0,
+       "3": 32.0,
+       "4": 32.0,
+       "5": 32.0,
+       "6": 30.0,
+       "7": 32.0,
+       "8": 28.0
+      },
+      "n_antes_present": 7,
+      "mean_rank_frac": 0.9723502304147466
+     },
+     {
+      "seed": "34JCNMPA",
+      "ante_ranks": {
+       "2": 32.0,
+       "3": 32.0,
+       "4": 32.0,
+       "5": 32.0,
+       "6": 32.0,
+       "7": 32.0,
+       "8": 32.0
+      },
+      "n_antes_present": 7,
+      "mean_rank_frac": 1.0
+     },
+     {
+      "seed": "3SZ71111",
+      "ante_ranks": {
+       "2": 32.0,
+       "3": 32.0,
+       "4": 32.0,
+       "5": 28.0,
+       "6": 32.0,
+       "7": 28.0,
+       "8": 28.0
+      },
+      "n_antes_present": 7,
+      "mean_rank_frac": 0.9447004608294931
+     }
+    ],
+    "summary": {
+     "mean_rank_frac": {
+      "point": 0.9894873271889401,
+      "lo": 0.981278801843318,
+      "hi": 0.996831797235023,
+      "n": 16
+     }
+    }
+   }
+  }
+ ],
+ "cross_cell_spread": {
+  "win_rate": {
+   "n_paired_seeds": 0,
+   "per_cell_mean": [
+    null,
+    null,
+    null
+   ],
+   "point_range": NaN,
+   "point_variance": NaN,
+   "range_ci": null,
+   "variance_ci": null
+  },
+  "rank_frac": {
+   "n_paired_seeds": 16,
+   "per_cell_mean": [
+    0.9899193548387097,
+    0.9922235023041475,
+    0.9894873271889401
+   ],
+   "point_range": 0.0027361751152074065,
+   "point_variance": 1.4424886326365402e-06,
+   "range_ci": {
+    "lo": 0.000864055299539146,
+    "hi": 0.007200460829493105
+   },
+   "variance_ci": {
+    "lo": 1.2904051665757488e-07,
+    "hi": 9.387697586839212e-06
+   }
+  }
+ }
+}

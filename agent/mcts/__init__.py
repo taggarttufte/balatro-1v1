@@ -7,27 +7,38 @@ from .outcome import (
 )
 from .encoder import (
     OBS_DIM, MLB_OBS_DIM, encode_obs, encode_obs_mlb,
-    ObsEncoder, V7Encoder, MLBEncoder, get_encoder,
+    ObsEncoder, V7Encoder, MLBEncoder, get_encoder, is_set_encoder,
 )
+# Phase 4 W1 — the set-based encoder / features / net. Imported here so `from mcts import
+# SetEncoder` works; nothing in the flat path depends on them.
+from .encoder_set import SetEncoder, ItemCaps, SCALAR_DIM, KEY_VOCAB_SIZE
+from .action_features_set import featurize_actions_set, ACT_NUM_DIM
+from .model_set import SetPolicyValueNet, StateEmbedding
 from .action_features import ACTION_FEATURE_DIM, featurize_action, featurize_actions
-from .policy import PolicyValueFn, PolicyValueBase, UniformPolicy, NNPolicy
+from .policy import PolicyValueFn, PolicyValueBase, UniformPolicy, NNPolicy, make_policy
+from .policy_set import SetNNPolicy, BatchedSetNNPolicy
 from .model import PolicyValueNet
 from .search import MCTS, MCTSConfig
 from .batched import (
     BatchedNNPolicy, BatchedSearch, SearchRequest, SearchResult, BatchStats,
 )
 from .reuse import ReuseConfig, ReuseStats, TreeCache, count_nodes
-from .player import MCTSPlayer, BatchedMCTSPlayerGroup, load_policy, make_player
+from .player import (
+    MCTSPlayer, Decision, BatchedMCTSPlayerGroup, build_net, load_policy, make_player,
+)
 
 __all__ = [
     "action_key", "action_from_key", "ActionKey", "Node",
     "OutcomeFn", "VanillaOutcome", "MLBOutcome", "ExternalOutcome",
     "default_outcome_for", "margin_to_value", "is_stuck_state",
     "OBS_DIM", "MLB_OBS_DIM", "encode_obs", "encode_obs_mlb",
-    "ObsEncoder", "V7Encoder", "MLBEncoder", "get_encoder",
+    "ObsEncoder", "V7Encoder", "MLBEncoder", "get_encoder", "is_set_encoder",
+    "SetEncoder", "ItemCaps", "SCALAR_DIM", "KEY_VOCAB_SIZE",
+    "featurize_actions_set", "ACT_NUM_DIM", "SetPolicyValueNet", "StateEmbedding",
+    "SetNNPolicy", "BatchedSetNNPolicy", "make_policy", "build_net",
     "ACTION_FEATURE_DIM", "featurize_action", "featurize_actions",
     "PolicyValueFn", "PolicyValueBase", "UniformPolicy", "NNPolicy",
-    "PolicyValueNet", "MCTS", "MCTSConfig", "MCTSPlayer",
+    "PolicyValueNet", "MCTS", "MCTSConfig", "MCTSPlayer", "Decision",
     "BatchedNNPolicy", "BatchedSearch", "SearchRequest", "SearchResult", "BatchStats",
     "ReuseConfig", "ReuseStats", "TreeCache", "count_nodes",
     "BatchedMCTSPlayerGroup", "load_policy", "make_player",

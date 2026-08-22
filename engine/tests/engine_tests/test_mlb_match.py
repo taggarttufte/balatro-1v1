@@ -880,3 +880,28 @@ class TestBossRejectionRespectsMLB:
         g.lives = 1
         self._reject_until_exhausted(g, "bl_eye")
         assert g.state == State.GAME_OVER and g.lives == 0
+
+
+# ── Phase 4 close: no card-target consumable actions in the SHOP ─────────────────
+# P4-W2 found `legal_actions()` in SHOP enumerating `use_consumable` against the
+# previous blind's hand; `_use_consumable` no-ops on them -> a legal action that
+# changes nothing (an MCTS agent looped on one for 20k steps).
+
+class TestShopConsumableActionsHaveNoCardTargets:
+    def test_shop_offers_only_target_free_consumable_use(self):
+        g = BalatroGame(seed=SEED)
+        g.step({"type": "play_blind"}); g.debug_win_blind(); g.step({"type": "advance"})
+        assert g.state == State.SHOP
+        assert len(g.hand) > 0, "precondition: previous blind's hand is still held"
+        g.consumable_hand = ["c_strength", "c_talisman", "pl_mercury"]   # enhancement tarot, spectral, planet
+        uses = [a for a in g.legal_actions() if a["type"] == "use_consumable"]
+        assert uses, "consumables should still be usable in the shop"
+        assert all(a["target_cards"] == [] for a in uses)
+        assert len(uses) == 3
+
+    def test_selecting_hand_still_offers_card_targets(self):
+        g = BalatroGame(seed=SEED)
+        g.step({"type": "play_blind"})
+        g.consumable_hand = ["c_strength"]
+        uses = [a for a in g.legal_actions() if a["type"] == "use_consumable"]
+        assert any(a["target_cards"] for a in uses)

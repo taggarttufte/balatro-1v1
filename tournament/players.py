@@ -11,8 +11,9 @@ Adapters here wrap ``mp/scripts/mlb_match_demo.py``'s ``ScriptedPlayer`` / ``mak
 (imported, never copied, per the brief) and add a uniformly-random-legal player.  Both are
 dataclasses/objects so a heterogeneous population is just "many differently-parameterized
 instances" (design doc §6: the population must be heterogeneous or the N x N matrix
-degenerates).  ``MCTSPlayer`` is a clearly-marked placeholder — W1/W3 plug in there; this
-module never imports ``mp.agent``.
+degenerates).  ``MCTSPlayer`` is the agent-layer search player (``mp/agent/mcts``), wired in
+by Phase 4 W2 per BATCH_NOTES.md §7.2; it is a FACTORY whose ``mcts`` import is function-local,
+so this module still imports with no torch installed.
 """
 from __future__ import annotations
 
@@ -108,23 +109,27 @@ class RandomLegalPlayer:
         return f"RandomLegalPlayer(seed={self.seed})"
 
 
-class MCTSPlayer:
-    """Placeholder.  W1 (agent fork, ``mp/agent/mcts``) and W3 (batched inference / tree
-    reuse) are concurrent workstreams building the search agent; this module deliberately
-    does NOT import ``mp.agent`` (owned by them, still in flight).  Wire this up once that
-    package hands off: ``act(game)`` should run search from ``game`` (a live ``BalatroGame``,
-    ``ruleset='mlb'``, possibly mid-Nemesis with ``pvp_opponent_score`` unset — see
-    TOURNAMENT_NOTES.md "how the MCTS player will plug in") and return one of
-    ``game.legal_actions()``."""
+def MCTSPlayer(checkpoint=None, sims=100, device="cpu", seed=0, strategy="gumbel",
+               reuse=True, leaf_batch=16, **kwargs):
+    """The agent-layer MCTS player (``mp/agent/mcts/player.py``).  ``checkpoint=None`` gives
+    cold-start weights.  Returns a ``Player``: ``act(game) -> dict`` (never None -- it returns
+    ``{"type": "advance"}`` on a no-action state, like the other adapters here) + ``reset()``.
 
-    def __init__(self, *args, **kwargs):
-        raise NotImplementedError("W1/W3 plug in here")
-
-    def act(self, game) -> dict:
-        raise NotImplementedError("W1/W3 plug in here")
-
-    def reset(self) -> None:
-        raise NotImplementedError("W1/W3 plug in here")
+    A factory, not a class, so this module still imports without torch installed: the
+    ``mcts`` import is function-local and ``mp/agent`` goes on ``sys.path`` the same way
+    ``bootstrap.py`` already does it for ``mp/engine``.  Defaults are BATCH_NOTES.md §7.1's
+    recommendation for a runner that drives ONE agent at a time (``leaf_batch=16``,
+    ``reuse=True``); a heterogeneous population is just several of these with different
+    ``checkpoint`` / ``sims`` / ``seed``, exactly like the ``ScriptedPlayer`` specs above.
+    """
+    import sys
+    from pathlib import Path
+    agent_root = str(Path(__file__).resolve().parents[1] / "agent")
+    if agent_root not in sys.path:
+        sys.path.insert(0, agent_root)
+    from mcts import make_player                    # noqa: E402  (lazy: needs torch)
+    return make_player(checkpoint=checkpoint, sims=sims, device=device, seed=seed,
+                       strategy=strategy, reuse=reuse, leaf_batch=leaf_batch, **kwargs)
 
 
 def make_scripted(**kwargs) -> ScriptedPlayerAdapter:

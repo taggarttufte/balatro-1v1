@@ -102,7 +102,19 @@ def build_parser() -> argparse.ArgumentParser:
     ap.add_argument("--log-every", type=int, default=10,
                     help="stdout summary every N episodes")
     ap.add_argument("--device", default="cpu")
-    ap.add_argument("--encoder", choices=["v7", "mlb"], default="v7")
+    ap.add_argument("--encoder", choices=["v7", "mlb", "set"], default="v7",
+                    help="v7 (447 flat) | mlb (453 flat) | set (Phase 4 set encoder)")
+    ap.add_argument("--k-unvisited", type=int, default=8,
+                    help="Sample v2: random zero-visit actions kept per sample "
+                         "(every VISITED action is always kept)")
+    ap.add_argument("--no-subsample", action="store_true",
+                    help="keep every legal action in each Sample (the Phase 3 shape; "
+                         "~20x bigger samples)")
+    ap.add_argument("--set-res-blocks", type=int, default=2,
+                    help="trunk depth of SetPolicyValueNet (--encoder set)")
+    ap.add_argument("--value-activation", choices=["sigmoid", "clamp", "linear"],
+                    default="sigmoid",
+                    help="bound the value head to the OutcomeFn's [0, 1] range")
     ap.add_argument("--ruleset", choices=["vanilla", "mlb"], default="vanilla")
     ap.add_argument("--deck", default="b_red")
     ap.add_argument("--stake", type=int, default=1)
@@ -138,6 +150,8 @@ def config_from_args(args) -> TrainConfig:
         stake=args.stake, max_antes=args.max_antes, max_decisions=args.max_decisions,
         checkpoint_buffer=not args.no_checkpoint_buffer,
         buffer_checkpoint_cap=args.buffer_checkpoint_cap,
+        subsample=not args.no_subsample, k_unvisited=args.k_unvisited,
+        set_res_blocks=args.set_res_blocks, value_activation=args.value_activation,
     )
 
 
@@ -167,9 +181,26 @@ def prune_checkpoints(ckpt_dir: Path, keep: int) -> None:
             pass
 
 
+MLB_REFUSAL = (
+    "train_cold.py --ruleset mlb is the degenerate free-Nemesis objective: with "
+    "pvp_solo=True the engine resolves the Nemesis at hand exhaustion at no cost, so the "
+    "agent learns to skip every blind and coast (CAMPAIGN_LOG 2026-08-22 07:35 -- 2,072 "
+    "episodes, value-target sd collapsed to 0.07). Use: python mp/agent/scripts/train_mlb.py "
+    "--objective external   (or --objective tournament), which makes the Nemesis cost a "
+    "life. train_cold.py is for --ruleset vanilla."
+)
+
+
 def main():
     args = build_parser().parse_args()
     run_root = Path(args.run_dir)
+
+    # The overnight shakedown proved this objective is degenerate; refuse rather than let
+    # someone spend a day of GPU on it. Nothing else changes: --ruleset vanilla is
+    # untouched, and `ColdTrainer(ruleset="mlb")` stays available to W2's MLBTrainer and to
+    # the tests, which drive it through a non-degenerate outcome.
+    if getattr(args, "ruleset", "vanilla") == "mlb":
+        raise SystemExit(MLB_REFUSAL)
 
     # ── Setup / resume ──────────────────────────────────────────────────────
     if args.resume:
@@ -195,6 +226,11 @@ def main():
         ckpt = None
 
     cfg = trainer.cfg
+    # `--resume` takes the ruleset from the checkpoint, so the CLI check above cannot see
+    # it: catch an MLB run here too rather than let an old degenerate run be continued.
+    if cfg.ruleset == "mlb":
+        raise SystemExit(MLB_REFUSAL)
+
     run_dir = run_root / run_name
     run_dir.mkdir(parents=True, exist_ok=True)
     log_path = run_dir / f"{run_name}.jsonl"
@@ -256,9 +292,17 @@ def main():
               f"{latest.stat().st_size/1e6:.1f} MB with buffer, {tag})", flush=True)
         return latest
 
+    paused = False
+    pause_path = run_dir / "PAUSE"
     try:
         while time.time() < deadline:
             if args.episodes is not None and (trainer.counters.episodes - ep_offset) >= args.episodes:
+                break
+            if pause_path.exists():          # same contract as train_mlb: touch <run-dir>/PAUSE
+                paused = True
+                print("")
+                print("[PAUSE file found: " + str(pause_path) + "] checkpointing and exiting; "
+                      "--resume removes it", flush=True)
                 break
             rec = trainer.run_episode()
             ep = trainer.counters.episodes
@@ -288,7 +332,12 @@ def main():
         print("\n[interrupted]")
 
     elapsed = time.time() - start
-    final = write_checkpoint("interrupt" if interrupted else "exit")
+    final = write_checkpoint("interrupt" if interrupted else ("exit:PAUSE" if paused else "exit"))
+    if paused:
+        try:
+            pause_path.unlink()
+        except OSError:
+            pass
 
     log_file.write(json.dumps({
         "kind": "summary",

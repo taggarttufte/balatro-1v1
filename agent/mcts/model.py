@@ -23,6 +23,32 @@ from .encoder import OBS_DIM
 from .action_features import ACTION_FEATURE_DIM
 
 
+VALUE_ACTIVATIONS = ("sigmoid", "clamp", "linear")
+
+
+def _check_value_activation(name: str) -> str:
+    if name not in VALUE_ACTIVATIONS:
+        raise ValueError(f"unknown value_activation {name!r}; want one of {VALUE_ACTIVATIONS}")
+    return name
+
+
+def apply_value_activation(x: torch.Tensor, name: str) -> torch.Tensor:
+    """Bound the value head to the OutcomeFn's range.
+
+    Every outcome in `mcts/outcome.py` returns a value in [0, 1] -- and so does W2's
+    population rank -- but the head was a bare `Linear`, so a cold-init net emits ~2 against
+    a [0, 1] target and the MSE spends its first steps walking the head back into range.
+    `sigmoid` is the default; `clamp` is available but kills the gradient outside the
+    interval; `linear` is the pre-2026-08-22 behaviour, kept so an older checkpoint is
+    rebuilt with the semantics it was trained under.
+    """
+    if name == "sigmoid":
+        return torch.sigmoid(x)
+    if name == "clamp":
+        return x.clamp(0.0, 1.0)
+    return x
+
+
 class ResidualBlock(nn.Module):
     def __init__(self, width: int):
         super().__init__()
@@ -46,6 +72,7 @@ class PolicyValueNet(nn.Module):
         hidden: int = 512,
         n_res_blocks: int = 4,
         policy_hidden: int = 128,
+        value_activation: str = "sigmoid",
     ):
         super().__init__()
         H = hidden
@@ -54,6 +81,7 @@ class PolicyValueNet(nn.Module):
         self.hidden = hidden
         self.n_res_blocks = n_res_blocks
         self.policy_hidden = policy_hidden
+        self.value_activation = _check_value_activation(value_activation)
 
         self.embed = nn.Sequential(nn.Linear(obs_dim, H), nn.ReLU())
         self.res_blocks = nn.Sequential(*[ResidualBlock(H) for _ in range(n_res_blocks)])
@@ -86,10 +114,15 @@ class PolicyValueNet(nn.Module):
             "hidden": self.hidden,
             "n_res_blocks": self.n_res_blocks,
             "policy_hidden": self.policy_hidden,
+            "value_activation": self.value_activation,
         }
 
     @classmethod
     def from_description(cls, desc: dict) -> "PolicyValueNet":
+        # A checkpoint written before the bounded head has no `value_activation`; it was
+        # trained with an unbounded one, so rebuild it that way rather than silently
+        # reinterpreting its weights.
+        desc = {"value_activation": "linear", **desc}
         return cls(**desc)
 
     # ── Forward ──────────────────────────────────────────────────────────────
@@ -99,8 +132,9 @@ class PolicyValueNet(nn.Module):
         return self.res_blocks(self.embed(obs))
 
     def value(self, trunk: torch.Tensor) -> torch.Tensor:
-        """trunk: (B, H) -> (B,) scalar"""
-        return self.value_head(trunk).squeeze(-1)
+        """trunk: (B, H) -> (B,) scalar in the OutcomeFn's range (see `value_activation`)"""
+        return apply_value_activation(self.value_head(trunk).squeeze(-1),
+                                      self.value_activation)
 
     def score_actions(self, trunk: torch.Tensor, action_feats: torch.Tensor) -> torch.Tensor:
         """
@@ -143,6 +177,6 @@ class PolicyValueNet(nn.Module):
         returns:      (logits (N,), value scalar)
         """
         trunk = self.get_trunk(obs)
-        v = self.value_head(trunk).squeeze(-1)
+        v = self.value(trunk)
         logits = self.score_actions(trunk, action_feats)
         return logits, v

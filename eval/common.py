@@ -141,14 +141,21 @@ def parse_player_spec(spec: str):
     if kind == "scripted":
         return spec, parse_scripted_spec(body, name=spec)
     if kind == "checkpoint":
-        raise NotImplementedError(
-            "checkpoint players are not implemented in mp/eval -- W1 (mp/agent) owns the "
-            "checkpoint loader. Expected interface: an object implementing "
-            "`mp.eval.common.Player` (a `.act(game) -> action` method, `game` = the live "
-            "`balatro_sim.game.BalatroGame`); once W1 provides `load_checkpoint(path) -> "
-            "Player`, wire it into `parse_player_spec` here. Meanwhile wrap any such object "
-            "with `adapt_player(player)` to get a policy usable by every driver in this module "
-            f"and by `MLBMatch.play_out`. Got spec: {spec!r}")
+        # Phase 4 close (lead): `mp/agent` now provides `make_player(checkpoint, ...)` which
+        # returns an object with `.act(game) -> dict` + `.reset()` -- exactly `Player`.
+        # Body is "<path>[,sims=N,device=cpu,...]"; the import is lazy (needs torch).
+        import sys
+        from pathlib import Path
+        agent_root = str(Path(__file__).resolve().parents[1] / "agent")
+        if agent_root not in sys.path:
+            sys.path.insert(0, agent_root)
+        from mcts import make_player                      # noqa: E402
+        path, *opts = [x.strip() for x in body.split(",")]
+        kw = {}
+        for o in opts:
+            k, _, v = o.partition("=")
+            kw[k.strip()] = int(v) if v.strip().lstrip("-").isdigit() else v.strip()
+        return spec, make_player(checkpoint=(path or None), **kw)
     raise ValueError(f"unknown player spec kind {kind!r} in {spec!r} (want 'scripted:' or 'checkpoint:')")
 
 

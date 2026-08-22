@@ -75,6 +75,7 @@ class SelfPlayAgent:
         max_antes: Optional[int] = None,
         pvp_target_fn: Optional[Callable[[BalatroGame], tuple[int, int]]] = None,
         shortcut_singletons: bool = True,
+        sample_builder: Optional[Callable] = None,
     ):
         self.policy = policy
         self.cfg = mcts_config or MCTSConfig()
@@ -85,6 +86,10 @@ class SelfPlayAgent:
         self.encoder: ObsEncoder = encoder or getattr(policy, "encoder", None) or V7Encoder()
         self.pvp_target_fn = pvp_target_fn
         self.shortcut_singletons = shortcut_singletons
+        # Phase 4 W1. None -> the Phase 3 path, byte-identical (full action set, flat
+        # obs, `train.trajectory.Sample`). A `train.sample.SampleBuilder` -> `Sample` v2
+        # with the action set subsampled and whichever encoder the builder holds.
+        self.sample_builder = sample_builder
         self.mcts = MCTS(policy, self.cfg, rng=self.rng, outcome=outcome)
 
     # ── Episode ──────────────────────────────────────────────────────────────
@@ -136,9 +141,8 @@ class SelfPlayAgent:
                 stop_reason = "no_actions"
                 break
 
-            obs = self.encoder(game)
-            action_feats = featurize_actions(legal)
             legal_keys = [action_key(a) for a in legal]
+            visits: dict = {}
 
             if self.shortcut_singletons and len(legal) == 1:
                 chosen = legal_keys[0]
@@ -158,12 +162,16 @@ class SelfPlayAgent:
                         len(legal_keys), 1.0 / len(legal_keys), dtype=np.float32
                     )
 
-            samples.append(Sample(
-                obs=obs,
-                action_features=action_feats,
-                target_policy=target_policy,
-                z=0.0,  # placeholder, set below
-            ))
+            if self.sample_builder is not None:
+                samples.append(self.sample_builder(game, legal, legal_keys, visits,
+                                                   None, 0.0))
+            else:
+                samples.append(Sample(
+                    obs=self.encoder(game),
+                    action_features=featurize_actions(legal),
+                    target_policy=target_policy,
+                    z=0.0,  # placeholder, set below
+                ))
             decisions += 1
             game.step(action_from_key(chosen))
 

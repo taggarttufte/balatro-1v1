@@ -22,7 +22,7 @@ import pytest
 import torch
 
 from train import (
-    CHECKPOINT_KIND, ColdTrainer, TrainConfig, latest_checkpoint,
+    CHECKPOINT_KIND, CHECKPOINT_VERSION, ColdTrainer, TrainConfig, latest_checkpoint,
     load_checkpoint, save_checkpoint,
 )
 
@@ -126,13 +126,17 @@ def test_checkpoint_carries_everything_the_brief_asks_for(tmp_path: Path):
     t = ColdTrainer(cfg())
     t.run_episode()
     sd = t.state_dict()
-    for key in ("config", "model", "trainer", "counters", "rng", "buffer", "net_desc"):
+    for key in ("config", "model", "trainer", "counters", "rng", "buffer", "net_desc",
+                "net_kind", "encoder_caps"):
         assert key in sd, key
+    # Phase 4 W1: a flat-encoder run records `net_kind="flat"` and no caps.
+    assert sd["net_kind"] == "flat" and sd["encoder_caps"] is None
     assert {"numpy", "torch", "python"} <= set(sd["rng"])
     assert sd["trainer"]["optimizer"]["param_groups"]
     p = save_checkpoint(tmp_path / "c.pt", sd)
     ck = load_checkpoint(p)
-    assert ck["kind"] == CHECKPOINT_KIND and ck["version"] == 1 and ck["saved_at"]
+    assert ck["kind"] == CHECKPOINT_KIND and ck["saved_at"]
+    assert ck["version"] == CHECKPOINT_VERSION
 
 
 def test_load_rejects_a_foreign_file(tmp_path: Path):

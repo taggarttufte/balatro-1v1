@@ -924,3 +924,335 @@ heterogeneous N×N from real checkpoints. **Overnight 2026-08-22: disposable col
   viewing. Viewing tiers for Phase 4: JSON/text replay; resurrect `viz/` via an exporter; investigate writing the MP
   mod's ghost-replay log format (`$MOD/lib/replay_log.lua`, `ghost_replay.lua`, `log_parser.lua`) so Tagg could play
   the agent's ghost in the real game.
+
+### 2026-08-22 07:35 — OVERNIGHT SHAKEDOWN RESULT (lead read-out)
+
+Run `mp/agent/runs/overnight_2026-08-22/` (`train_cold --ruleset mlb --encoder mlb --sims 30 --max-antes 8
+--max-decisions 1500`, cuda, 6 h): **2,072 episodes, 0 errors, 42 checkpoints, 5.8 ep/min steady-state.**
+
+| episodes | ante | len | z | z sd | policy loss | value loss |
+|---|---|---|---|---|---|---|
+| 1–50 | 6.70 | 210 | 0.409 | 0.180 | 3.41 | 2.21 |
+| 51–200 | 8.93 | 168 | 0.763 | 0.122 | 3.36 | 0.023 |
+| 501–1000 | 8.90 | 223 | 0.828 | 0.079 | 3.11 | 0.004 |
+| 1501–2072 | 8.87 | 254 | 0.832 | 0.078 | 3.12 | 0.004 |
+
+Stops: 1,985 `max_antes` / 47 `max_decisions` / 40 `game_over`.
+
+**What happened (verified by replaying `ckpt_002072.pt` on 3 seeds):** the agent **skips 15/16 regular blinds**
+(free under MLB: tag, no life) and coasts through the solo Nemesis, which `pvp_solo=True` auto-resolves with no
+life lost. Net: one life lost at the ante-1 Boss, ante 9 reached with 0–4 jokers, z ≈ 0.83 every time. The engine
+charges lives correctly (verified: fail-every-blind → 4→3→2→1→0). **The solo-MLB objective is degenerate, not the
+engine** — and the pipeline found the exploit in ~100 episodes, which is the positive signal: MCTS + net + outcome
++ checkpoints all learn end to end.
+
+**Consequences for Phase 4/5:**
+1. **Never train on solo MLB with a free Nemesis.** The value head collapses (z sd 0.07) for a new reason: the
+   policy reliably attains the objective's max, not "0 wins". Any useful signal must make the Nemesis cost
+   something: (a) the tournament (real N×N outcomes — the Phase 5 design), or (b) interim solo training with an
+   external Nemesis target (W4's `external_vanilla_big_blind_target` or a fixed per-ante table) so skipping both
+   blinds and building nothing loses a life at the Nemesis.
+2. The "skip straight to PvP" behaviour the campaign plan attributes to strong MLB players at high antes is
+   something the agent will rediscover on its own as soon as skipping is ever free — encode nothing for it.
+3. Checkpoints are disposable regardless (set-based encoder decision).
+
+---
+
+## Phase 4 — Make training real — KICKED OFF 2026-08-22 (morning)
+
+**Lead brief: `docs/PHASE4_BRIEF_2026-08.md`.** W1 set-based encoder + subsampled Sample (strong); W2
+tournament-driven training loop + MCTS plug-in + interim external-target objective (strong); W3 trajectory
+logging/replay/tags/viz export (sonnet); W4 transfer-spread harness + `targets.py` + cleanups (sonnet). Engine/rng
+frozen. Exit = first real training run launched by lead. Log entries follow.
+
+### 2026-08-22 — P4-W3 trajectory log + replay — DONE ✅
+
+**Agent W3.** `mp/replay/**` (new package: `log.py`, `replay.py`, `tags.py`, `export_viz.py`,
+`cli.py`, `_bootstrap.py`, `_util.py`, `conftest.py`, `tests/` — 82 tests). Engine-only (no
+`mp/agent` torch import, no `mp/tournament` import); `mp/engine/**`/`mp/rng/**`/`mp/agent/**`/
+`mp/tournament/**`/`mp/eval/**` read-only. Full spec, hook contract, tag definitions, viz-export
+coverage and the ghost-replay investigation are in `mp/replay/REPLAY_NOTES.md`.
+
+- **`TrajectoryLogger`/`MatchLogger`**: `begin()`/`step()`/`end()`, exactly 3 call sites per
+  loop. JSONL, one line/episode: `seed, deck_key, stake, ruleset, lives_start, actions[],
+  steps[] (10-field summary), signatures{} (sig_every=10 default + start/final, blake2b-16 of
+  state_signature()), outcome{}, final_state{} (read off the live game — jokers/lives/ante/
+  money — so tags need no caller cooperation), tags`. Match lines carry a SINGLE interleaved
+  `ops` list (player, action) in the exact order `match.step()` was called, since `sync()`'s
+  side effects depend on that interleaving.
+- **`replay()`/`replay_match()`**: re-run the action/op list through the same engine entry
+  point, assert every logged signature, raise `ReplayMismatch` at the first divergent step.
+  20-seed x {vanilla, MLB solo} + MLBMatch round trip all clean; a deliberately corrupted
+  `skip_blind`→`play_blind` swap is caught at the first checkpoint at/after the corrupted step.
+- **`narrate()`**: readable per-step story (blind/hand-type/chips/shop/lives/Nemesis scores),
+  both episode and match lines; **`tags.py`**: win/reached_ante_{k}/skip_heavy/no_build/
+  comeback/lives_lost_{n}/archetype_novel (corpus-wide, `tag_file()` only)/interest_score;
+  **`export_viz.py`**: best-effort `viz/trajectory.json` shape (confirmed against the shipped
+  file+`main.js`), documents exactly what doesn't map (`value_estimate`/`top_probs`/per-step
+  `reward` — no agent-inference data in an engine-only log).
+- **Measured**: bytes/episode 9.3-36.8 KB (mean 16.1 KB, MLB, ≤800 steps); logging bookkeeping
+  overhead < 2% excluding signature capture; `state_signature()` capture itself is NOT cheap
+  (comparable to a step()'s own cost) — `sig_every=10` default costs ~25-35% wall clock,
+  `sig_every=100` ~5%; documented as a real tradeoff (finer divergence localization vs
+  throughput), not a bug, with the tuning knob already exposed.
+- **Ghost-replay investigation** (`$MOD/lib/replay_log.lua`/`ghost_replay.lua`/`log_parser.lua`,
+  read-only, never copied): a ghost replay is NOT a full-run recreation — the live PvP
+  resolver only ever reads, per Nemesis ante, a `hands: [{score, hands_left, side}]` sequence
+  (an `MP.INSANE_INT`-encoded score string, which is just a plain decimal string for any chip
+  value in our range). Everything else in the replay JSON is display-only. **Feasibility:
+  HIGH for the score-ticker mechanism** (mechanically derivable from fields `log.step()`
+  already records), **MEDIUM overall** (a small converter is the only remaining work; not
+  built here per the brief — investigation only). Full field list + a worked JSON skeleton in
+  REPLAY_NOTES.md §6.
+- Gates: `mp/replay/tests` 82/82; `mp/engine/tests` 1614/10/3/0 unchanged; `mp/tests`
+  1073/2/0 unchanged. No engine bug found; no engine change requested.
+
+### 2026-08-22 — P4-W4 transfer spread + targets — DONE ✅
+
+**Agent W4.** New: `mp/eval/targets.py` (per-ante external Nemesis targets, engine-only deps — no torch, no
+`mp.eval`'s heavy `mlb_match_demo`/oracle/rng chain, so `mp/agent` can import it directly), `mp/eval/
+transfer_spread.py` (the Red/Checkered/Plasma decision-gate harness), `mp/eval/tests/test_targets.py` (57) +
+`test_transfer_spread.py` (19). `mp/results/transfer_spread_{greedy,greedy_reroll1_buy1,weak}.{json,md}` — 3
+real scripted-player runs. `mp/engine/**`, `mp/rng/**`, `mp/agent/**`, `mp/tournament/**`, `mp/replay/**` only
+read, never edited. Gates: `pytest mp/eval/tests` **125/0** (49 Phase-3 + 76 new); `pytest mp/engine/tests`
+**1614/10/3/0** and `pytest mp/tests` **1073/2/0**, both unchanged.
+
+`targets.py`: `vanilla_boss_target(ante, deck_key, stake)`, `vanilla_boss_target_fn()` (the one to register as
+the Nemesis `chips_target` via `set_pvp_info` — the interim fix for the 07:35 overnight finding: a solo agent
+that skips both blinds and builds nothing now loses a life at the Nemesis), `scaled_own_big_blind(k)`,
+`table_target(path, quantile)` (reads a tournament run's `summary.jsonl`), `get_target(name, **kw)` registry.
+W2 integration point: `mp.agent.mcts.outcome.ExternalOutcome.from_margin` is already built for exactly this hook
+("the W2 / W4 hook", its own docstring).
+
+`transfer_spread.py`: SP-MLB-solo (mode a, vs `vanilla_boss_target`) + tournament population rank (mode b,
+`Tournament(n=32, life_rule="none")`), paired by seed across Red/Checkered/Plasma at White, cross-cell spread
+with a bootstrap CI (resamples the paired seed set, recomputes each cell's mean + the range/variance per
+replicate). Real numbers, 3 scripted specs (White stake, max_ante 8, 150 solo seeds / 16 tournament seeds):
+
+| player | b_red win rate | b_checkered win rate | b_plasma win rate | rank_frac range [CI] |
+|---|---|---|---|---|
+| `hand=greedy` (no economy) | 0.000 [.000,.000] | 0.023 [.007,.043] | 0.300 [.257,.340] | 0.100 [.070,.132] |
+| `hand=greedy,reroll=1,buy=1` | 0.280 [.220,.341] | 0.289 [.244,.334] | 0.430 [.391,.468] | 0.043 [.013,.113] |
+| `hand=weak` (floor) | n/a — 0 Nemeses reached, any deck | | | 0.003 [.001,.007] |
+
+**Reading:** for these fixed scripted baselines, **Red is the hardest cell against `vanilla_boss_target`, not
+Plasma** — the reverse of the assessment's naive layer-1 prior. Mechanism: Plasma's `ante_scaling=2` makes the
+external target 2x harder in absolute chips, but its `final_scoring_step` chips/mult BALANCE formula inflates a
+jokerless/low-mult hand by MORE than 2x (a lone Ace scores 64 under Plasma vs 16 vanilla per `DECKS_NOTES.md`
+S2) — exactly what a no/light-economy scripted policy plays — so the fixed target under-estimates true Plasma
+difficulty for these policies. Checkered (also "LOW transfer" in the prior) doesn't collapse either — it's
+consistently a little easier than Red (26S+26H makes an unforced flush more likely). The weakest policy
+(`hand=weak`) hits a genuine floor (exhausts all 4 lives on regular blinds before any Nemesis, every seed, every
+deck) and shows near-zero cross-deck spread, as expected. Methodological finding: tournament-mode `rank_frac`
+spread (0.043-0.100) is much smaller than solo-mode win-rate spread (0.155-0.295) for the same two live
+policies, because tournament mode normalizes away the target-formula/scoring-formula interaction that drives
+the solo result — every population member faces the same Plasma-inflated scoring. **Caveat stated plainly in
+EVAL_NOTES.md S13**: this is a naive-scripted-policy measurement, not the trained-policy measurement the
+assessment's prior was actually about — a trained agent optimizing Plasma's real incentive structure could
+still show the predicted collapse. Full tables + per-cell furthest-ante/lives-lost + CIs: `EVAL_NOTES.md` S13.
+
+`env_v7` reward-reachability audit (notes only): `env_v7._finish_step`'s `R_BLIND_BASE*(9-ante)` reward
+(`env_v7.py:120,455,479`) is unreachable from every path `mp/agent` drives — the sole `BalatroV7Env(` in that
+tree (`agent/tests/test_nn_policy.py:96`) only calls `.reset()`, and `mcts/encoder.py:44,59` steals only the
+unbound `_encode_obs` method via a `.game`-only shim, never constructing a real instance; `mp/agent`'s outcome
+signal is exclusively `mcts.outcome.OutcomeFn`. It IS live, for real, through a DIFFERENT path:
+`mp/engine/balatro_sim/env_mp.py`'s `MultiplayerBalatroEnv`/`_PlayerEnvProxy` (`:80-81,145-147`, pre-Phase-3,
+built on `MLBMatch` directly) — already flagged in `MLB_NOTES.md` S5 and `agent/AGENT_NOTES.md` S8 — but that
+module is exercised only by engine-layer tests within `mp/`, never by any `mp/agent` training path. No code
+change needed for Phase 4.
+
+Sanity/design details, `table_target` reader format, tournament-mode seed-count trade, and the "random" player
+substitution: `EVAL_NOTES.md` S11-16.
+
+### 2026-08-22 — P4-W1 set encoder + Sample v2 — DONE ✅
+
+**Delivered** (`mp/agent/`, notes in `agent/SETENC_NOTES.md`): `mcts/encoder_set.py`,
+`mcts/action_features_set.py`, `mcts/model_set.py`, `mcts/policy_set.py`,
+`train/sample.py`, `--encoder set` wired through `policy.py` / `player.py` / `loop.py` /
+`checkpoint.py` / `train_cold.py`, `scripts/eval_checkpoint.py`,
+`benchmarks/bench_sample_size.py`, **53 new tests**. `mp/engine/**`, `mp/rng/**`,
+`mp/tournament/**`, `mp/eval/**` untouched; `search.py` / `batched.py` / `model.py` /
+`action_features.py` untouched, so the flat serial path is byte-identical.
+
+**Gates:** `mp/agent/tests` **253**, `mp/engine/tests` **1614 / 10 skip / 3 xfail / 0**,
+`mp/tests` **1073 / 2 xfail / 0**, `mp/tournament/tests + mp/eval/tests` **181** — all green.
+
+**The observation is now five masked sets + one scalar vector** (hand 16, jokers 12,
+consumables 6, shelf 8, packs 8; `scalars` 196) with a shared 251-key game-key embedding.
+Caps are transport, not model structure: the net is permutation-invariant to within 1.4e-6
+(value) / 1.9e-8 (logits) over all 200 fixture states, and garbage written into padded rows
+changes nothing. Every `env_v7._encode_obs` feature is present (three consumable-slot
+duplicates deduplicated, nothing dropped) plus: hand slots 9-16 and joker slots 6-12 — the
+blindness AGENT_NOTES §8 flagged — joker key embedding instead of an alphabetical scalar,
+stickers, pack contents, tags, deck/stake identity, and the full `env_mp` MLB block.
+**Actions are pointer-style over the same item slots** (row-normalised `act_sel` over hand,
+`act_tgt` over [jokers|consumables|shelf|packs]) so "buy Blueprint" is the Blueprint
+embedding wherever it sits. `SetPolicyValueNet` = shared item encoders → one masked
+4-head attention block over the 50-slot union → per-set mean+max pooling → 512-wide trunk,
+**1 793 268 params** vs the flat net's 2 411 266.
+
+**`Sample` v2 (`train/sample.py`)** keeps every visited action + `k_unvisited=8` random
+zero-visit ones, renormalised EXACTLY (kept support = full support). Encoder-agnostic, and
+callable with W2's `SampleCollector(sample_fn=...)` signature verbatim — `train_mlb
+--encoder set --objective external` needed no W2 edit. Buffer/trainer/checkpoint carry v1
+and v2 side by side; a Phase 3 version-1 checkpoint still resumes (test).
+
+**Sizes (measured, `bench_sample_size.py` + a real 12-episode buffer):** mean bytes/sample
+**45 810 → 6 497 (7.1×)** over 200 states; **94 628 → 8 236 (11.5×)** at a 436-action
+`SELECTING_HAND` leaf; 28 597 → 6 563 on a real self-play buffer. **Not the ~20× the brief
+projected** — subsampling alone gives 11.3× / 17×, and the set observation is a fixed
+~5.2 KB dict that makes small-action states bigger. Still: a 200k buffer is **1.30 GB
+instead of 9.16 GB**, weights-only checkpoints **21.6 MB vs 28.9 MB**, and `latest.pt` goes
+from Phase 3's 137.8 MB to ~24 MB at the same buffer cap. Checkpoint round-trip **bit-exact
+on CPU** for the set encoder (`CHECKPOINT_VERSION` 2, reads 1 and 2; records `net_kind` +
+`encoder_caps` and refuses a resume across either).
+
+**Paired 10-min comparison** (`train_mlb --objective external --device cuda --sims 40`,
+`--encoder v7` vs `--encoder set`, seed 0; then 60 seeds SP-MLB solo each, paired through
+the frozen `eval_harness --compare`): **every CI straddles zero** — furthest ante +0.05
+[−0.22, +0.32], lives lost +0.10 [−0.17, +0.38], final money +0.92 [−1.08, +3.15].
+No claim, and none is warranted: 10 minutes buys **one generation** (v7: 16 episodes /
+271 train steps; set: 11 / 137), both nets die around ante 2, and the box was shared with
+W2's gate run. Reports in `mp/results/w1_cmp_{v7,set,set_vs_v7}.json`.
+
+**Throughput finding — the set net is launch-bound.** 436-action leaf, 200 sims,
+`leaf_batch=16`: flat **449** CPU / **327** CUDA sims/s; set **259** CPU / **118** CUDA. At a
+fixed 16-leaf batch the two are within 8%, so this is per-CALL kernel overhead (~60 launches
+vs ~15), not arithmetic. Half of it I DID fix: batching an observation naively meant 25 small
+host→device copies per forward — measured **20 such copies = 5.35 ms against 0.027 ms for one
+packed copy**, more than the forward pass itself — so `policy_set` now packs key-major into
+one float32 + one int16 buffer per transfer (pad+xfer 5.66 → 1.62 ms, CUDA search 69 → 118
+sims/s). The other half needs the 5 card-field embeddings merged into one offset-indexed
+table; that changes the param count, so it must land BEFORE a long run. **And both nets are
+faster on CPU than on CUDA at this scale** — `--device cuda` is not automatically the right
+choice for a self-play-bound run.
+
+**Also found, not fixed** (details in `SETENC_NOTES.md` §7.3): `train_cold --ruleset mlb`
+still trains against the degenerate free-Nemesis objective (the non-degenerate one lives only
+in W2's `train_mlb`) — it should be removed or made to refuse; `mp/eval/common.py::
+parse_player_spec` still raises `NotImplementedError` for `checkpoint:` although
+`mcts.player.load_policy` / `make_player` now satisfy exactly the interface its docstring
+asks for (three lines in a file frozen for W1 — `scripts/eval_checkpoint.py` is the
+workaround); the set net's value head is unbounded like the flat net's (outputs ~2.1 at init
+against a [0,1] target) — a sigmoid is an obvious cheap win before the first real run.
+**Needs engine change: none.**
+
+**Follow-up 2026-08-22 (lead-requested, before the first long run) — DONE ✅** — `SETENC_NOTES.md` §8,
+`agent/tests/test_followups.py` (**18 tests**), `mp/agent/tests` **270 passed / 1 failed (not W1's, below)**.
+(1) **Embedding tables merged**: eleven `nn.Embedding`s → **three** offset-indexed tables (card block; an
+"aux" table for edition/rarity/shelf-kind/pack-set; the game-key table gathered ONCE for all four sets and
+split) — **~25 embedding kernels per forward → 7**; params 1,793,268 → **1,793,536**. The merge is
+equivalent, not approximate: every (field, value) pair keeps its own row and a test pins the merged gather
+equal to per-field gathers on shared weights. Old set checkpoints won't load (table shapes changed) — which
+is why this landed now. **sims/s re-measurement PENDING — machine in use**; one command re-runs all four
+cells and prints the `--device` recommendation: `python mp/agent/benchmarks/bench_set_vs_flat.py` (new).
+Pre-merge baseline to beat: flat 449 CPU / 327 CUDA, set 259 CPU / 118 CUDA.
+(2) **Both value heads bounded**: `value_activation` (default `sigmoid`, also `clamp`/`linear`) on
+`PolicyValueNet` and `SetPolicyValueNet` + `TrainConfig`, pinned by `_check_config`. Targets are in [0,1]
+for every OutcomeFn and W2's population rank; both heads now sit at exactly 0.5 at init instead of ~1-2.
+**`CHECKPOINT_VERSION` stays 2** — no state_dict shape change. Pre-follow-up checkpoints rebuild as
+`linear` (`describe`/`from_description`/`from_checkpoint` all default that way) so their weights keep the
+semantics they were trained under rather than being reinterpreted. **Bit-exact CPU round-trip still green**
+for both nets.
+(3) **`train_cold.py --ruleset mlb` now refuses** with a message naming `train_mlb.py --objective external`
+(the overnight degeneracy, 07:35 entry). Two guards — on the parsed args and on `trainer.cfg.ruleset` after
+a `--resume`, since resume takes the ruleset from the checkpoint. **CLI-only**: `ColdTrainer(ruleset="mlb")`
+is untouched and still drives W2's `MLBTrainer` and the MLB tests. `--ruleset vanilla` unchanged.
+**Not W1's, flagged not fixed:** `agent/tests/test_train_mlb.py::test_logged_tournament_trajectories_replay_exactly`
+fails in `mp/replay/replay.py:87` — `ReplayMismatch at step 40 (action={'indices': [2], 'type': 'pick_booster'})`.
+**Reproduced with the value-head change reverted**, so the follow-ups did not cause it. `replay.apply_op` is a
+straight `game.step(action)` compared against a `state_signature()` digest, so the recorded action list is not
+sufficient to reproduce the live state across a `pick_booster` (something mutating the game outside the logged
+ops, or logged indices being pre-pick while the engine shrinks `booster_choices` between picks). W3 owns
+`mp/replay/**`, W2 owns the logging hook.
+
+### 2026-08-22 — P4-W2 tournament training loop — DONE ✅
+
+Phase 4 exit-gate item 2 (+ the command for item 6). New: `mp/agent/train/{selfplay.py,
+population.py}`, `mp/agent/scripts/{train_mlb.py, smoke_3way.sh, smoke_3way_report.py}`,
+`mp/agent/TRAIN_NOTES.md`, `mp/agent/tests/test_train_mlb.py` (69). Edited:
+`mp/agent/mcts/player.py` (additive `record_hook` / `Decision` / `legal_filter` /
+`batch_leaf_eval`), `mp/tournament/players.py` (BATCH_NOTES §7.2 applied) and
+`runner.py` (Phase 3 workaround deleted, no-progress guard, W3 replay hooks) + 4 new
+tournament test files (25). **`mp/engine/**`, `mp/rng/**`, `mp/eval/**` untouched.**
+Gates: `mp/agent/tests` + `mp/tournament/tests` **328**, `mp/engine/tests`
+**1614 / 10 skip / 3 xfail / 0**, `mp/tests` + `mp/eval/tests` **1198 / 2 xfail**,
+`mp/replay/tests` **82**.
+
+**The objective is fixed and it is measurably alive.** A generation runs `s` tournaments of
+N agents on one seed; at every Nemesis the N×N matrix gives each current-net agent a value
+target of *population rank at the next Nemesis* (0.7) blended with *final standing* (0.3),
+and the policy target is the search's visit distribution. Two 30-minute CUDA gate runs, 0
+errors, `PAUSE` + `--resume` clean in both: **value-target sd 0.20-0.29 every generation**
+against the overnight run's collapsed 0.07 and an alarm at 0.15; tie fraction 0.009-0.087.
+Samples are collected through an additive `record_hook` on `MCTSPlayer` (free when unset,
+pinned by a test that a hooked player plays the identical game), so the tournament runner
+still owns the play loop. An eliminated agent scores 0.0, not NaN — otherwise losing your
+last life is free, which is the degeneracy this exists to remove.
+
+**What the gate runs actually proved, including the part that is not good news.** The
+*target* is right: with scripted anchors in the population the current net's mean rank sits
+at 0.27-0.55 against the anchors' 0.87-0.91, so the value head is told every ante that this
+policy is losing. The *policy* still converges on skipping 90-99% of Small/Big blinds — and
+at `--max-ante 4` it is correct to: a cold net cannot clear an ante-3 Big blind, so playing
+one costs a life while skipping costs a tag's worth of tempo. Everything else improves while
+it skips (mean jokers 1.2→3.6, mean ante 3.5→4.5, runs losing all 4 lives 21/32→10/32,
+distinct joker sets 12→28). It is learning "skip and build" *before* learning to play a hand,
+which is a curriculum problem, not an objective problem. Ten minutes of vanilla warm-up
+(`--init`, weights only) already holds the skip rate at 65-77% flat where the cold baseline
+goes to 99%; a `--max-skips-per-ante 1` mask holds it at 32-44% but costs mean ante
+(2.7 vs 4.5). `TRAIN_NOTES.md` §7-8 has the tables and the two-stage first-real-run recipe;
+`smoke_3way.sh` runs the unfinished (b)/(c) comparison in ~40 min.
+
+**Needs engine change (frozen, worked around).** `game.py:1433` + `:1854`: the SHOP branch
+of `legal_actions()` offers card-targeting `use_consumable` actions against `self.hand`,
+which in the shop still holds the *previous blind's* cards, and `_use_consumable` silently
+no-ops when the application fails — a legal action whose result is bit-identical to the state
+it was taken from, i.e. an infinite loop. One MCTS agent burned all 20 000 steps of
+`max_steps_per_drive` in a single shop; under another noise seed the same thing ate 55 s of a
+60 s generation and produced 14 338 samples. Scripted/random players never hit it, which is
+why Phase 3's 100-agent smoke did not. Worked around with a no-progress guard in
+`_drive_to_next_nemesis` (signature before/after each step, force progress after 8 no-ops,
+`noop_budget=0` disables) — invisible to any agent that ever changes the state, pinned by a
+test.
+
+**Also fixed / found:** `mcts.make_player` passed `leaf_batch` only into `MCTSConfig` and not
+into the `MCTSPlayer` field that overrides it, so **every** tournament player built by
+BATCH_NOTES §7.2's factory was silently running at L=1; and `MCTS._drive` answers leaf
+requests one at a time by design, so `leaf_batch>1` never batched a forward pass at all.
+Both addressed — and at 40 sims/decision it turns out not to matter (`leaf_batch` 1/4/16 =
+238/217/218 sims/s on CUDA, interleaved), so the loop uses `--leaf-batch 1`, the exact search.
+W3's replay caught a bug of ours the same way: the guard's diagnostic counter was stored on
+the game object, and `state_signature()` sweeps up every scalar attribute, so every
+trajectory it touched stopped replaying. Counter moved to `TournamentResult.forced_progress`;
+a test now asserts the driver adds no attribute to the game.
+
+**Wired:** W1's `SampleBuilder` as the sample seam (subsampled `Sample` v2, ~6 KB vs ~97 KB;
+`--encoder set` runs end to end, measured **2.7× slower** than the flat encoder — 136-157
+vs 354-469 sims/s at ante 8); W3's `TrajectoryLogger` through three new `Tournament` hooks
+(`on_fanout` / `on_step` / `on_agent_done`) including the synthetic `__lose_life__` op, with
+logged tournament trajectories replaying bit-exactly; W4's `targets.py` via `get_target` for
+the interim `--objective external`. That interim objective needed a floor on the mirror
+target (`--target-floor`): a self-referential target is 0 whenever the agent skips its Big
+blind, which makes the Nemesis free again.
+
+**NEXT (lead):** run `smoke_3way.sh`, then launch the two-stage first real run from
+`TRAIN_NOTES.md` §8 — `train_cold --ruleset vanilla` for 4-6 h, then `train_mlb --init` for
+24-48 h — with the skip-rate / blind-clear-rate watchdog in §8's table.
+
+### 2026-08-22 — Lead close-out edits (machine in use by Tagg — code only, no compute)
+
+- **Engine fix (freeze lifted for one change):** `game.py` SHOP branch now enumerates `use_consumable` with NO
+  card targets (real game has no hand in the shop; `self.hand` still held the previous blind's cards and the
+  targeted uses silently no-op'd → a legal action that changes nothing; P4-W2 saw an MCTS agent loop on it for
+  20k steps). `TestShopConsumableActionsHaveNoCardTargets`. Residual (Phase 5 engine item): target-requiring
+  tarots used with `[]` in SELECTING_HAND still return True and consume with no effect (enhancement/suit) or
+  no-op (others); W2's driver-level no-progress guard covers the wedge.
+- `replay/_util.py`: `__set_pvp_info__` synthetic op (W2's diff) so solo external-target trajectories verify.
+- `eval/common.py::parse_player_spec`: `checkpoint:<path>[,sims=N,device=..]` → `mp/agent` `make_player` (lazy
+  import). Verified live: the overnight checkpoint's first act on ALEEB is `skip_blind`.
+- Deleted disposable run dirs (`p4w2_*`, `w1_cmp_*`, `cuda_smoke`, ~1.1 GB); kept `overnight_2026-08-22/`.
+- Stray repo-root `C/overhead_*.jsonl` (W3 benchmark, bad Windows path) deleted; nothing outside `mp/` remains.
+
+**Pending the machine:** `bench_set_vs_flat.py`, `smoke_3way.sh` (~40 min), full gate re-run, Phase 4 commit,
+first real run launch (TRAIN_NOTES §8 two-stage command).

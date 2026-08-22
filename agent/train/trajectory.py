@@ -33,10 +33,18 @@ class Sample:
     action_features: np.ndarray
     target_policy: np.ndarray
     z: float = 0.0
+    version: int = 1
+
+
+#: Phase 4 W1 alias. `train.sample.Sample` is the v2 record (subsampled action set, and
+#: an obs that may be the set encoder's dict). The buffer holds either; `version` says
+#: which and `Trainer.step` dispatches on it. The v1 record and its training path are
+#: unchanged and byte-identical to Phase 3.
+SampleV1 = Sample
 
 
 class ReplayBuffer:
-    """Bounded FIFO buffer of Samples. sample(k) draws k items with replacement."""
+    """Bounded FIFO buffer of Samples (v1 or v2). sample(k) draws k with replacement."""
 
     def __init__(self, capacity: int = 100_000):
         self.capacity = capacity
@@ -74,14 +82,30 @@ class ReplayBuffer:
             "capacity": self.capacity,
             "truncated": truncated,
             "n_total": len(self._buf),
+            # v1 stays a 4-tuple so a Phase 3 checkpoint still loads; v2 is a 6-tuple
+            # tagged with its version (see `train.sample.to_state`).
             "samples": [
-                (s.obs, s.action_features, s.target_policy, float(s.z)) for s in items
+                _sample_to_state(s) for s in items
             ],
         }
 
     def load_state_dict(self, sd: dict) -> None:
         self.capacity = sd.get("capacity", self.capacity)
         self._buf = deque(maxlen=self.capacity)
-        for obs, feats, target, z in sd["samples"]:
-            self._buf.append(Sample(obs=obs, action_features=feats,
-                                    target_policy=target, z=float(z)))
+        for t in sd["samples"]:
+            self._buf.append(_sample_from_state(t))
+
+
+def _sample_to_state(s):
+    if getattr(s, "version", 1) >= 2:
+        from .sample import to_state
+        return to_state(s)
+    return (s.obs, s.action_features, s.target_policy, float(s.z))
+
+
+def _sample_from_state(t):
+    if len(t) == 4:
+        obs, feats, target, z = t
+        return Sample(obs=obs, action_features=feats, target_policy=target, z=float(z))
+    from .sample import from_state
+    return from_state(t)

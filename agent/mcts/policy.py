@@ -128,7 +128,30 @@ class NNPolicy(PolicyValueBase):
         return self.priors_from_logits(legal, probs.detach().cpu().numpy()), float(value.item())
 
 
+# ── Encoder-aware factory (Phase 4 W1) ──────────────────────────────────────────
+
+def make_policy(net, device: str | torch.device = "cpu", encoder: ObsEncoder | None = None,
+                batched: bool = True, **kwargs):
+    """The one place that turns `(net, encoder)` into a `PolicyValueFn`.
+
+    Flat encoder (`v7` / `mlb`) -> `BatchedNNPolicy` / `NNPolicy` (unchanged).
+    Set encoder (`--encoder set`) -> `policy_set.BatchedSetNNPolicy` / `SetNNPolicy`.
+
+    Both satisfy the SAME `PolicyValueFn` protocol, so `MCTS`, `BatchedSearch`,
+    `MCTSPlayer` and `TreeCache` are encoder-blind and were not touched. Imports are
+    function-local so `policy.py` keeps no import edge onto the set modules (and so a
+    caller that only wants the 447-dim path never loads torch modules it does not use).
+    """
+    if encoder is not None and getattr(encoder, "is_set", False):
+        from .policy_set import BatchedSetNNPolicy, SetNNPolicy
+        cls = BatchedSetNNPolicy if batched else SetNNPolicy
+        return cls(net, device=device, encoder=encoder, **kwargs)
+    from .batched import BatchedNNPolicy
+    cls = BatchedNNPolicy if batched else NNPolicy
+    return cls(net, device=device, encoder=encoder, **kwargs)
+
+
 __all__ = [
     "Evaluation", "PolicyValueFn", "PolicyValueBase", "UniformPolicy", "NNPolicy",
-    "encode_obs",
+    "make_policy", "encode_obs",
 ]

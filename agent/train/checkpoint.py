@@ -32,7 +32,12 @@ from typing import Any, Optional
 import numpy as np
 import torch
 
-CHECKPOINT_VERSION = 1
+CHECKPOINT_VERSION = 2
+#: Phase 4 W1 bumped the version because the payload gained `net_kind` and
+#: `encoder_caps` (the set encoder's padding widths). Version 1 files are still LOADABLE
+#: — they are necessarily flat-encoder checkpoints, and the two new keys read as absent —
+#: so the Phase 3 runs under `agent/runs/` remain usable.
+SUPPORTED_CHECKPOINT_VERSIONS = (1, 2)
 CHECKPOINT_KIND = "mp/agent train_cold"
 
 
@@ -101,9 +106,10 @@ def load_checkpoint(path: str | Path, map_location: str | torch.device = "cpu") 
     if not isinstance(ckpt, dict) or ckpt.get("kind") != CHECKPOINT_KIND:
         raise ValueError(f"{path} is not an {CHECKPOINT_KIND} checkpoint")
     version = ckpt.get("version")
-    if version != CHECKPOINT_VERSION:
+    if version not in SUPPORTED_CHECKPOINT_VERSIONS:
         raise ValueError(
-            f"{path} is checkpoint version {version}, this code writes {CHECKPOINT_VERSION}"
+            f"{path} is checkpoint version {version}, this code reads "
+            f"{SUPPORTED_CHECKPOINT_VERSIONS} and writes {CHECKPOINT_VERSION}"
         )
     return ckpt
 
