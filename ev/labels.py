@@ -39,6 +39,7 @@ Feature detection (Stage 1 was built before W1/W2/W3 landed):
 from __future__ import annotations
 
 import math
+import os
 import random
 import sys
 import time
@@ -123,40 +124,57 @@ def _scripted_policy(seed: int, epsilon: float) -> Callable:
     return pol
 
 
-def _ev_policy(seed: int, epsilon: float, budget: str, value_fn=None, stats=None) -> Callable:
-    import player as P                 # mp/ev/player.py (W3)
-    kw = {"budget": budget, "seed": seed, "epsilon": epsilon}
-    if stats is not None:
-        kw["stats"] = stats
-    try:
-        obj = P.EVPlayer(value_fn, **kw)
-    except TypeError:                  # older signature without epsilon / stats
-        kw.pop("epsilon", None)
-        kw.pop("stats", None)
-        obj = P.EVPlayer(value_fn, **kw)
-        if epsilon > 0:
-            rng = random.Random(seed)
-            inner = obj
+def _with_epsilon(obj, seed: int, epsilon: float) -> Callable:
+    """Wrap a ``Player`` (``act(game)``) into the match-policy signature with W5's OWN
+    epsilon-random stream (sequential ``random.Random(seed)``, not keyed on the state).
 
-            def pol(match, p, acts, _inner=inner, _rng=rng):
-                if acts and _rng.random() < epsilon:
-                    return _rng.choice(acts)
-                return _inner.act(match.games[p])
-            pol.reset = getattr(inner, "reset", lambda: None)   # type: ignore[attr-defined]
-            return pol
+    Why not ``EVPlayer(epsilon=...)``: W3 keys its exploration RNG on the observable state
+    (player.py:196-199 via sampling.world_rng, whose key omits shop/consumable contents),
+    so a random pick that turns out to be a legal-but-no-op action (e.g. ``use_consumable``
+    Wheel of Fortune with no eligible joker) is re-drawn identically forever — the shop
+    wedge seen 2026-08-23 (39,952 consecutive shop steps).  A sequential stream cannot
+    repeat that way, and ``_Guard`` catches any remaining no-op loop."""
+    rng = random.Random(seed)
 
-    def pol(match, p, acts, _obj=obj):
+    def pol(match, p, acts, _obj=obj, _rng=rng):
+        if epsilon > 0 and acts and _rng.random() < epsilon:
+            return dict(_rng.choice(acts))
         return _obj.act(match.games[p])
     pol.reset = getattr(obj, "reset", lambda: None)             # type: ignore[attr-defined]
+    pol.player = obj                                            # type: ignore[attr-defined]
     return pol
 
 
+def _ev_policy(seed: int, epsilon: float, budget: str, value_fn=None, stats=None) -> Callable:
+    import player as P                 # mp/ev/player.py (W3)
+    kw = {"budget": budget, "seed": seed, "epsilon": 0.0}
+    if stats is not None:
+        kw["stats"] = stats
+    return _with_epsilon(P.EVPlayer(value_fn, **kw), seed, epsilon)
+
+
+def load_stats_module():
+    """W4's ``mp/stats/decide`` (has ``decision_table(game)``), importable as ``stats=`` for
+    ``EVPlayer``.  mp/stats is a flat package with its own bootstrap, so it goes on sys.path."""
+    stats_dir = os.path.join(str(MP_ROOT), "stats")
+    if stats_dir not in sys.path:
+        sys.path.insert(0, stats_dir)
+    import decide  # noqa: WPS433
+    return decide
+
+
 def make_policy_factory(policy: str = "auto", *, budget: str = "fast", epsilon: float = 0.02,
-                        value_fn=None, stats=None) -> Callable:
+                        value_fn=None, stats=None, shop_tier: str = "rules") -> Callable:
     """``factory(seed, player) -> policy(match, p, acts) -> action``.  ``policy``: ``"ev"``
-    (W3's EVPlayer), ``"scripted"`` (greedy fallback), ``"auto"`` (ev if importable)."""
+    (W3's EVPlayer), ``"scripted"`` (greedy fallback), ``"auto"`` (ev if importable).
+
+    ``shop_tier``: ``"rules"`` (W3's built-in shop/pack rules — THE label definition, chosen
+    2026-08-23: stronger, mean final ante 6.1 vs 3.9 in self-play on 10 seeds) or ``"stats"``
+    (W4's ``decision_table``; 4x cheaper, weaker).  An explicit ``stats`` object wins."""
     if policy == "auto":
         policy = "ev" if has_ev_player() else "scripted"
+    if stats is None and shop_tier == "stats":
+        stats = load_stats_module()
     if policy == "ev":
         return lambda seed, player: _ev_policy(int(seed), epsilon, budget, value_fn, stats)
     if policy == "scripted":
@@ -222,6 +240,7 @@ class RolloutResult:
     antes: tuple
     lives: tuple
     n_nemeses: int
+    forced: int = 0               # no-progress guard interventions
 
 
 def _determinize(match, seed: int):
@@ -242,25 +261,71 @@ def _race_p0(m, max_ante: int, cfg: _race.RaceConfig) -> float:
     return _race.p_win(c0, c1, m.games[0].lives, m.games[1].lives, ante, cfg=cfg)
 
 
+_PROGRESS_PREF = ("leave_shop", "skip_booster", "advance", "play_blind", "select_blind")
+NO_PROGRESS_LIMIT = 3
+
+
+class _Guard:
+    """Detects a no-op loop (the match signature unchanged after a step) and, after
+    ``NO_PROGRESS_LIMIT`` consecutive no-ops, forces a progress action (``leave_shop`` /
+    ``skip_booster`` / ``advance`` / the first legal action that differs from the stuck one).
+    Counts how often it fired (``forced``) so the label meta can record it."""
+    __slots__ = ("last_sig", "repeats", "forced", "stuck")
+
+    def __init__(self):
+        self.last_sig = None
+        self.repeats = 0
+        self.forced = 0
+        self.stuck = None
+
+    def choose(self, m, p, acts, action: dict) -> dict:
+        if self.repeats < NO_PROGRESS_LIMIT:
+            return action
+        self.forced += 1
+        for t in _PROGRESS_PREF:
+            for a in acts:
+                if a["type"] == t and a != self.stuck:
+                    return dict(a)
+        for a in acts:
+            if a != self.stuck:
+                return dict(a)
+        return action
+
+    def after(self, m, action: dict) -> None:
+        sig = m.signature()
+        if sig == self.last_sig:
+            self.repeats += 1
+            self.stuck = action
+        else:
+            self.repeats = 0
+            self.stuck = None
+        self.last_sig = sig
+
+
 def rollout(match, *, seed: int, policy_factory: Callable, max_ante: int = DEFAULT_MAX_ANTE,
             max_steps: int = DEFAULT_MAX_STEPS, race_cfg: _race.RaceConfig = _race.DEFAULT,
             determinize: bool = True) -> RolloutResult:
     """One determinized play-out of ``match`` (not modified) with fresh policies on both sides."""
     t0 = time.perf_counter()
     m, det = _determinize(match, seed) if determinize else (match.clone(), False)
+    if det:
+        for g in m.games:                       # belt and braces on W2's contract
+            assert getattr(g, "determinized", True), "clone_determinized returned an undetermined game"
     pols = [policy_factory(seed * 2 + p, p) for p in (0, 1)]
     steps = 0
     decisions = 0
     pol_s = 0.0
+    guard = _Guard()
     while not m.done and steps < max_steps and not _truncated(m, max_ante):
         p = m.current_player()
         if p is None:
             raise RuntimeError(f"rollout wedged: nobody can act ({m.state()})")
         acts = m.legal_actions(p)
         t1 = time.perf_counter()
-        a = pols[p](m, p, acts)
+        a = guard.choose(m, p, acts, pols[p](m, p, acts))
         pol_s += time.perf_counter() - t1
         m.step(p, a)
+        guard.after(m, a)
         steps += 1
         decisions += 1
     if m.done:
@@ -272,7 +337,8 @@ def rollout(match, *, seed: int, policy_factory: Callable, max_ante: int = DEFAU
     return RolloutResult(p0_win=float(p0), winner=m.winner, truncated=trunc, determinized=det,
                          steps=steps, decisions=decisions, seconds=time.perf_counter() - t0,
                          policy_seconds=pol_s, antes=tuple(g.ante for g in m.games),
-                         lives=tuple(g.lives for g in m.games), n_nemeses=len(m.pvp_log))
+                         lives=tuple(g.lives for g in m.games), n_nemeses=len(m.pvp_log),
+                         forced=guard.forced)
 
 
 # ── labels ────────────────────────────────────────────────────────────────────────
@@ -297,6 +363,7 @@ class LabelResult:
     seconds: float = 0.0
     decisions: int = 0
     policy_seconds: float = 0.0
+    forced: int = 0
 
     def as_tuple(self) -> tuple:
         return self.y, self.ci
@@ -306,7 +373,8 @@ class LabelResult:
         return LabelResult(y=1.0 - self.y, ci=self.ci, n=self.n,
                            outcomes=[1.0 - o for o in self.outcomes], trunc_frac=self.trunc_frac,
                            determinized=self.determinized, seconds=self.seconds,
-                           decisions=self.decisions, policy_seconds=self.policy_seconds)
+                           decisions=self.decisions, policy_seconds=self.policy_seconds,
+                           forced=self.forced)
 
 
 def _ci_of(outcomes: Sequence[float]) -> float:
@@ -328,7 +396,7 @@ def label_both(match, *, n_rollouts: int = 8, seed: int = 0, policy_factory: Opt
     if policy_factory is None:
         policy_factory = make_policy_factory()
     t0 = time.perf_counter()
-    outs, trunc, det, dec, pol_s = [], 0, True, 0, 0.0
+    outs, trunc, det, dec, pol_s, forced = [], 0, True, 0, 0.0, 0
     for i in range(int(n_rollouts)):
         r = rollout(match, seed=seed * 1_000_003 + i, policy_factory=policy_factory, max_ante=max_ante,
                     max_steps=max_steps, race_cfg=race_cfg, determinize=determinize)
@@ -337,10 +405,11 @@ def label_both(match, *, n_rollouts: int = 8, seed: int = 0, policy_factory: Opt
         det = det and r.determinized
         dec += r.decisions
         pol_s += r.policy_seconds
+        forced += r.forced
     n = len(outs)
     res0 = LabelResult(y=sum(outs) / n, ci=_ci_of(outs), n=n, outcomes=outs, trunc_frac=trunc / n,
                        determinized=det, seconds=time.perf_counter() - t0, decisions=dec,
-                       policy_seconds=pol_s)
+                       policy_seconds=pol_s, forced=forced)
     return res0, res0.flipped()
 
 
@@ -383,6 +452,7 @@ def _drive_selfplay(seed: str, *, policy_factory: Callable, policy_seed: int, de
                     lives: int, max_ante: int, max_steps: int, on_decision: Optional[Callable] = None):
     m = MLBMatch(seed=seed, deck_key=deck_key, stake=stake, lives=lives)
     pols = [policy_factory(policy_seed * 2 + p, p) for p in (0, 1)]
+    guard = _Guard()
     while not m.done and m.steps < max_steps and not _truncated(m, max_ante):
         p = m.current_player()
         if p is None:
@@ -390,7 +460,10 @@ def _drive_selfplay(seed: str, *, policy_factory: Callable, policy_seed: int, de
         acts = m.legal_actions(p)
         if on_decision is not None and on_decision(m, p) is False:
             break
-        m.step(p, pols[p](m, p, acts))
+        a = guard.choose(m, p, acts, pols[p](m, p, acts))
+        m.step(p, a)
+        guard.after(m, a)
+    m._w5_forced = guard.forced
     return m
 
 
@@ -435,7 +508,7 @@ def sample_states(seed: str, *, n_states: int = 12, per_kind: Optional[dict] = N
     sp = _selfplay_config(policy, budget, epsilon, policy_seed, deck_key, stake, lives, max_ante)
     sp.update({"winner": m.winner, "final_antes": [g.ante for g in m.games],
                "final_lives": [g.lives for g in m.games], "steps": m.steps,
-               "decisions_seen": dict(seen)})
+               "forced": getattr(m, "_w5_forced", 0), "decisions_seen": dict(seen)})
     out = []
     for k in kinds:
         for (step, p, kind, ante), clone in reservoirs[k]:
@@ -498,12 +571,13 @@ def label_job(payload: dict) -> dict:
     stake = payload.get("stake", 1)
     lives = int(payload.get("lives", 4))
     allow_clair = bool(payload.get("allow_clairvoyant", False))
+    shop_tier = payload.get("shop_tier", "rules")
     if not allow_clair and not has_determinize():
         raise RuntimeError("MLBMatch.clone_determinized (W2) is missing: rollouts would be "
                            "clairvoyant; pass allow_clairvoyant=True for plumbing tests only")
     encode = make_encoder(payload.get("encoder", "auto"))
-    sp_factory = make_policy_factory(policy, budget=budget, epsilon=eps_sp)
-    ro_factory = make_policy_factory(policy, budget=budget, epsilon=eps_ro)
+    sp_factory = make_policy_factory(policy, budget=budget, epsilon=eps_sp, shop_tier=shop_tier)
+    ro_factory = make_policy_factory(policy, budget=budget, epsilon=eps_ro, shop_tier=shop_tier)
 
     t0 = time.perf_counter()
     snaps = sample_states(seed, n_states=n_states, policy_factory=sp_factory, policy=policy, budget=budget,
@@ -535,7 +609,8 @@ def label_job(payload: dict) -> dict:
                     "outcomes": [round(o, 4) for o in r.outcomes],
                     "selfplay": {k: v for k, v in s.selfplay.items() if k != "decisions_seen"},
                     "n_rollouts_cfg": n_rollouts, "epsilon_rollout": eps_ro,
-                    "independent": independent}
+                    "independent": independent, "forced": r.forced, "shop_tier": shop_tier,
+                    "budget": budget}
             rows.append({"obs": encode(s.match, p), "y": r.y, "meta": meta})
     return {
         "rows": rows,

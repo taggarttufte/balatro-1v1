@@ -1,0 +1,54 @@
+{
+ "name": "v_s2_smoke",
+ "checkpoint": "C:\\Users\\Taggart\\projects\\balatro-rl\\mp\\ev\\runs\\v_s2\\latest.pt",
+ "timestamp": "2026-08-23T16:33:19",
+ "n_seeds": 6,
+ "n_matches": 12,
+ "v_wins": 0,
+ "v_win_rate": 0.0,
+ "wilson95": [
+  0.0,
+  0.2425007574992425
+ ],
+ "by_seat": {
+  "0": {
+   "n": 6,
+   "wins": 0
+  },
+  "1": {
+   "n": 6,
+   "wins": 0
+  }
+ },
+ "pairs_v_swept": 0,
+ "pairs_v_lost_both": 6,
+ "mean_v_lives_margin": -3.9166666666666665,
+ "mean_final_ante": 3.8333333333333335,
+ "v_calls": 641695,
+ "v_errors": 0,
+ "mean_match_s": 178.9401698166645,
+ "elapsed_s": 2117.217553900002,
+ "pool": {
+  "submitted": 6,
+  "done": 6,
+  "failed": 0,
+  "skipped": 0,
+  "elapsed_s": 2117.2165642000036,
+  "job_seconds": 2149.3818689000036,
+  "paused": false,
+  "interrupted": false,
+  "exhausted": true,
+  "failed_ids": [],
+  "n_workers": 4,
+  "jobs_per_min": 0.17003456617865023,
+  "mean_job_s": 358.23031148333394
+ },
+ "seeds": [
+  "11111111",
+  "1558AXDL",
+  "15H9Z3IY",
+  "1KV4W6YS",
+  "1MD1YZ9T",
+  "28V7DD4H"
+ ]
+}

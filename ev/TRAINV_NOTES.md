@@ -139,10 +139,103 @@ given flags override the checkpoint's config).
 
 ---
 
-## 5. Stage 2 (gate 4) — to be filled in after the lead's go
+## 5. Stage 2 — reduced scale (2026-08-23, box shared with Tagg: 4 workers / 4 threads / 60-min caps)
 
-- [ ] EV-player rollout cost (ms/rollout, decisions/rollout, policy vs engine share)
-- [ ] ≥ 50k labels campaign: `labels_<name>.json` (mean/sd by kind & ante, CI widths, symmetry)
-- [ ] V training: held-out BCE/Brier/AUC vs constant, reliability curve, PAUSE/resume verified
-- [ ] end-to-end tournament `EVPlayer(value_fn=V)` vs `EVPlayer(value_fn=None)`, ≥ 30 seeds paired
-- [ ] the exact launch command for the long campaign
+The ≥ 50k campaign and the 30-seed tournament are DEFERRED to an idle box; §6 has the exact
+commands.  Everything below ran at reduced scale — the V numbers are a PIPELINE PROOF on
+tiny data (1,152 labels), not a result.
+
+### 5.1 Rollout policy (frozen for the label definition) + cost
+
+`EVPlayer(budget="fast", epsilon=0.02, seed=<per-rollout>)`, **W3 built-in shop rules**
+(`shop_tier="rules"`).  W4's `stats=` tier measured 4x cheaper but much weaker (self-play
+mean final ante 3.9 vs 6.1 on 10 seeds, both sides same tier) — selectable via
+`shop_tier="stats"` but NOT the label definition.  Self-play ε = 0.1 for snapshot diversity.
+
+Measured in the real campaign (4 workers): **2.51 s/rollout**, 180 decisions/rollout,
+**policy = 94 %** of rollout time (engine step+clone ≈ 1 ms/decision; the fast player's
+matches end at ante 5–6 on lives, so no ante-12 truncations occurred).  Hotspot (cProfile,
+one rollout = 5.7 s): W3's shop/pack rule tier — `player.py:380 _rank_shop_rules` /
+`:487 _rank_booster_rules` call `player.py:140 build_proxy` per candidate → `hand.py:210
+board_ratio` → `hand.py:613 BlindModel.__init__` → `hand.py:843 _score_plays` (1,837 model
+builds = 58 % of the rollout; shop 9 ms/dec, pack 27 ms/dec, hand 3 ms/dec).  A per-shop-visit
+model cache in W3 would roughly double label throughput.
+
+**Two W3 issues worked around on W5's side** (W3's files untouched):
+1. ε-exploration wedge: `player.py:196-199` seeds its ε-RNG from `sampling.world_rng`
+   (`sampling.py:45-53`), whose key omits shop/consumable contents — the same "random" pick
+   repeats while the state key is unchanged, so a legal-but-no-op pick (`use_consumable`
+   Wheel of Fortune with no editionless joker: `consumables.py:171-184` returns False →
+   `game.py:1927` no-op) loops forever (observed: 39,952 consecutive shop steps).  W5 builds
+   `EVPlayer(epsilon=0)` and applies ε from its own sequential `random.Random(seed)`
+   (`labels._with_epsilon`).
+2. Belt and braces: `labels._Guard` forces a progress action after 3 consecutive
+   signature-unchanged steps (`forced` counted in every label's meta; 0 across the whole
+   campaign after fix 1).  Also `player.py:360-363 _v` swallows value_fn exceptions →
+   `MatchAwareEVPlayer` counts and re-raises them instead (`n_errors`).
+
+Clairvoyance guard note (W2 gotcha): the guard never reads `game.determinized`/`det_seed`
+(which do not survive a later plain `.clone()`) — `rollout()` calls `clone_determinized`
+itself and flags from that call, plus an assert on the fresh clones.
+
+### 5.2 The small label set (`mp/results/labels_s2_small.json`)
+
+`gen_labels.py`, seeds `default+random:400`, 4 workers, 58-min cap → **1,152 labels** (48
+seeds x 12 snapshots x 2 perspectives, n_rollouts 8) at **20.1 labels/min** incl. 12.5 %
+symmetry overhead (steady ≈ 22.6/min at 4 workers).  The driver process was killed right at
+the cap before its exit summary — the crash-safe design held (ids recorded only after shard
+writes; 6 shards + 48 done.ids intact, ~4 in-flight jobs lost); summary regenerated with
+`--max-jobs 0`.
+
+Labels: mean 0.498, sd 0.317; per-kind means all 0.495–0.501 (blind_select/hand/nemesis/
+shop/pack/other n = 172–204 each); sd RISES with ante (0.21 @1 → 0.39 @5 — later states are
+more decided); mean CI half-width 0.238 (8 rollouts); truncation fraction 0.000.
+Sum-to-one with INDEPENDENT rollout sets: **mean(y0+y1) = 0.965 ± 0.025** (72 pairs).
+Held-out at the 0.1 hash rule: 5 seeds / 120 rows.
+
+### 5.3 V training (pipeline proof — 1k rows, ~600 epochs, overfits by design)
+
+`train_v.py`, CUDA, batch 256, lr 3e-4 cosine: **~60 ms/step** after a one-off ~7-min
+first-250-steps warmup (first CUDA run only; resumes did not repeat it).  Held-out (120
+rows): best **BCE 0.674 vs constant 0.693**, **Brier 0.083 vs 0.103** (noise floor 0.015),
+**AUC 0.80**, acc@0.5 0.63 vs 0.44, ECE 0.11–0.12, reliability roughly monotone across 9
+occupied bins.  Verified on this run: PAUSE file → clean stop mid-run at step 4532
+(`stop_reason PAUSE`, checkpoint written, no `.DONE`); resume 1000→3000 continued the
+schedule; 5M checkpoint round trip **bit-exact** (weights + Adam moments + layout
+fingerprint) — and pinned by `test_train_v.py` for the continuation.
+
+### 5.4 End-to-end match play
+
+`mp/ev/match_player.py::MatchAwareEVPlayer(net, encoder, ...)` — binds a mutable
+`opponent_view(match, player)` into the `value_fn(game)` closure and refreshes it from the
+live match before every `act` (all clones evaluated during one decision share that view).
+`.policy()` gives the `(match, p, acts)` form for `play_out`/`play_1v1`; single-state V
+latency 4.2 ms CPU (2 threads) / 13.7 ms CUDA (launch-bound).
+`mp/ev/scripts/tournament_v.py`: paired by seed, both seat orders per seed, pool-parallel,
+resumable, Wilson 95% CI → `mp/results/tournament_v_<name>.json`.  Both policies are wrapped
+in the same `_Guard` — the first smoke hit a V-tier shop loop (W3's `_rank_with_value` has no
+anti-cycling): seed 1KV4W6YS burned 40k steps / 637k V calls / 35 min before the step cap;
+with the guard the same seed finishes in 5 s with ONE intervention (`guard_forced` is in
+every match record).
+
+### 5.5 Smoke tournament (6 seeds x 2 seats, `mp/results/tournament_v_v_s2_smoke.json`)
+
+`EVPlayer(value_fn=V @ step 4532)` vs `EVPlayer(value_fn=None)`: **V won 0/12** (Wilson 95%
+[0%, 24%]), 0 V errors, ~600–1,000 V calls per match.  NO CLAIM intended or possible: a
+1,152-label overfit V REPLACES the hand-tuned shop/blind rule tier wholesale (that is how
+W3's tiering works), so losing to the rules is the expected outcome of the pipeline proof.
+The full-scale question is (iii) in §6.
+
+## 6. The deferred full-scale commands (lead launches on an idle box)
+
+```bash
+# (i) ≥ 50k labels, 16 workers, ~9 h (measured 22.6 labels/min at 4 workers -> ~90/min at 16;
+#     2,126 seeds x 24 labels = ~51k; resumable: same command; pause: touch <run-dir>/PAUSE)
+python mp/ev/scripts/gen_labels.py --run-dir mp/ev/runs/labels_full     --seeds default+random:2000 --workers 16 --policy ev --budget fast --shop-tier rules     --encoder v2 --n-states 12 --n-rollouts 8 --flush-jobs 32 --symmetry-jobs 24 --name full
+
+# (ii) V on the full set (~50k rows, ~100 epochs; ~25 min GPU after the one-off warmup)
+python mp/ev/train_v.py --shards mp/ev/runs/labels_full/shards --run-dir mp/ev/runs/v_full     --model set_value_net --max-steps 20000 --batch-size 256 --lr 3e-4 --warmup-steps 500     --eval-every 500 --checkpoint-every 2000 --device cuda --holdout-frac 0.1 --torch-threads 8
+
+# (iii) the 30-seed paired tournament (60 matches; ~10 min at 16 workers, ~35 min at 4)
+python mp/ev/scripts/tournament_v.py --checkpoint mp/ev/runs/v_full/latest.pt     --seeds default:30 --workers 16 --threads 1 --name v_full
+```

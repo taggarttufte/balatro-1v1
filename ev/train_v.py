@@ -86,6 +86,7 @@ class TrainVConfig:
     device: str = "cuda" if torch.cuda.is_available() else "cpu"
     seed: int = 0
     label_clip: float = 0.0             # clip y into [c, 1-c] (0 = off)
+    torch_threads: int = 4              # CPU threads (Tagg shares the box)
 
     def as_dict(self) -> dict:
         return asdict(self)
@@ -238,6 +239,8 @@ class VTrainer:
         self.cfg = cfg
         self.device = torch.device(cfg.device)
         self.log = log
+        if cfg.torch_threads and cfg.torch_threads > 0:
+            torch.set_num_threads(int(cfg.torch_threads))
         self.step = 0
         self.epoch = 0
         self.cursor = 0                    # batches consumed in the current epoch
@@ -608,6 +611,7 @@ def build_parser() -> argparse.ArgumentParser:
     ap.add_argument("--device", default=None)
     ap.add_argument("--seed", type=int, default=None)
     ap.add_argument("--label-clip", type=float, default=None)
+    ap.add_argument("--torch-threads", type=int, default=None)
     return ap
 
 

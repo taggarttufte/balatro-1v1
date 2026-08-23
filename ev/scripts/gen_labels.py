@@ -86,6 +86,7 @@ def build_parser() -> argparse.ArgumentParser:
     ap.add_argument("--n-rollouts", type=int, default=8)
     ap.add_argument("--policy", default="auto", choices=["auto", "ev", "scripted"])
     ap.add_argument("--budget", default="fast")
+    ap.add_argument("--shop-tier", default="rules", choices=["rules", "stats"])
     ap.add_argument("--epsilon-selfplay", type=float, default=0.1)
     ap.add_argument("--epsilon-rollout", type=float, default=0.02)
     ap.add_argument("--encoder", default="auto", choices=["auto", "v2", "dummy"])
@@ -125,7 +126,7 @@ def main(argv=None) -> int:
             "epsilon_rollout": args.epsilon_rollout, "encoder": args.encoder, "max_ante": args.max_ante,
             "deck_key": args.deck, "stake": args.stake, "lives": args.lives,
             "policy_seed": args.policy_seed, "rollout_seed": args.rollout_seed,
-            "allow_clairvoyant": args.allow_clairvoyant}
+            "allow_clairvoyant": args.allow_clairvoyant, "shop_tier": args.shop_tier}
 
     def jobs():
         for i, s in enumerate(seeds):

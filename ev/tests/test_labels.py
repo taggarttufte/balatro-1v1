@@ -13,6 +13,7 @@ from _bootstrap import MLBMatch
 import dataset as DS
 import labels as L
 import race as R
+from labels import _Guard
 
 SEED = "7I4M53DL"
 
@@ -197,13 +198,81 @@ def test_determinized_rollouts_differ_across_seeds(snaps):
     assert len(outs) >= 2            # different worlds -> different futures
 
 
+# ── the no-progress guard + W5's own epsilon ──
+
+def test_guard_breaks_a_noop_loop():
+    m = MLBMatch(seed=SEED)
+    g = _Guard()
+    acts = [{"type": "noop"}, {"type": "leave_shop"}]
+    stuck = {"type": "noop"}
+    g.after(m, stuck)                        # arrival: initialises the signature
+    for _ in range(L.NO_PROGRESS_LIMIT):
+        assert g.choose(m, 0, acts, stuck) == stuck
+        g.after(m, stuck)                    # signature unchanged -> a no-op
+    forced = g.choose(m, 0, acts, stuck)
+    assert forced == {"type": "leave_shop"} and g.forced == 1
+    m.step(0, m.legal_actions(0)[0])
+    g.after(m, forced)
+    assert g.repeats == 0
+
+
+def test_with_epsilon_uses_a_sequential_stream():
+    class Fixed:
+        def act(self, game):
+            return {"type": "fixed"}
+    pol = L._with_epsilon(Fixed(), seed=3, epsilon=1.0)
+    m = MLBMatch(seed=SEED)
+    acts = [{"type": "a"}, {"type": "b"}, {"type": "c"}]
+    picks = {pol(m, 0, acts)["type"] for _ in range(30)}
+    assert picks <= {"a", "b", "c"} and len(picks) >= 2          # not the same pick forever
+    pol0 = L._with_epsilon(Fixed(), seed=3, epsilon=0.0)
+    assert pol0(m, 0, acts) == {"type": "fixed"}
+
+
 # ── the real rollout policy (W3) ──
 
 @pytest.mark.skipif(not L.has_ev_player(), reason="W3 EVPlayer not landed")
 def test_ev_policy_factory_drives_a_rollout(snaps):
     pf = L.make_policy_factory("ev", budget="fast", epsilon=0.02)
     r = L.rollout(snaps[0].match, seed=7, policy_factory=pf, max_ante=2)
-    assert r.decisions > 0 and 0.0 <= r.p0_win <= 1.0
+    assert r.decisions > 0 and 0.0 <= r.p0_win <= 1.0 and r.determinized
+    # the EV self-play that wedged on 2026-08-23 (shop no-op loop) now finishes
+    sp = L.sample_states(SEED, n_states=4, policy_factory=L.make_policy_factory("ev", epsilon=0.1),
+                         policy="ev", epsilon=0.1, max_ante=3)
+    assert sp and sp[0].selfplay["steps"] < 5000
+
+
+@pytest.mark.skipif(not L.has_ev_player(), reason="W3 EVPlayer not landed")
+def test_stats_shop_tier_is_selectable():
+    pf = L.make_policy_factory("ev", budget="fast", epsilon=0.0, shop_tier="stats")
+    pol = pf(1, 0)
+    assert pol.player.stats is not None and hasattr(pol.player.stats, "decision_table")
+    m = MLBMatch(seed=SEED)
+    a = pol(m, 0, m.legal_actions(0))
+    assert a in m.legal_actions(0)
+
+
+@pytest.mark.skipif(not (L.has_ev_player() and L.has_encoder_v2()), reason="W1/W3 not landed")
+def test_match_aware_player_refreshes_opponent_view(tmp_path):
+    import torch
+    torch.set_num_threads(2)
+    import match_player as MPL
+    from mcts.encoder_v2 import SetEncoderV2, opponent_view
+    from mcts.value_net import SetValueNet, save_checkpoint
+    small = {"d_item": 32, "trunk_width": 64, "n_res_blocks": 1, "scalar_hidden": 32, "key_emb": 8}
+    save_checkpoint(tmp_path / "v.pt", SetValueNet(small), SetEncoderV2(), extra={})
+    net, enc = MPL.load_value(tmp_path / "v.pt")
+    mp = MPL.MatchAwareEVPlayer(net, enc, device="cpu", budget="fast", seed=0)
+    m = MLBMatch(seed=SEED)
+    pol = mp.policy()
+    while m.steps < 40 and not m.done:
+        p = m.current_player()
+        a = pol(m, p, m.legal_actions(p))
+        assert a in m.legal_actions(p)
+        assert mp.player == p and mp._opp == opponent_view(m, p)
+        m.step(p, a)
+    assert mp.n_calls > 0 and mp.n_errors == 0
+    assert 0.0 <= mp.value_fn(m.games[0]) <= 1.0
 
 
 @pytest.mark.skipif(not L.has_encoder_v2(), reason="W1 encoder_v2 not landed")
