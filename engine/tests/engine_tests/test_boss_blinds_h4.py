@@ -290,3 +290,35 @@ class TestEveryPooledBossIsPlayable:
         g._play_hand(list(range(min(5, len(g.hand)))))
         g._undo_boss_debuffs(boss_key)
         assert all(not c.debuffed for c in g.full_deck)
+
+
+class TestTheHookPoolsUnplayedCardsOnly:
+    """state_events.lua:478-488 moves every played card to G.play BEFORE
+    Blind:press_play(), so The Hook's two 'hook' draws (blind.lua:470-484) are over the
+    UNPLAYED cards only: the played hand always scores in full.  Phase 5 lead fix."""
+
+    def test_played_cards_always_score(self):
+        for seed in range(40):
+            g = _boss_game("bl_hook", seed=seed)
+            g.hand[0] = Card(rank=14, suit="Spades")
+            g.hand[1] = Card(rank=14, suit="Hearts")
+            g.hand[2] = Card(rank=14, suit="Clubs")
+            g.hand[3] = Card(rank=14, suit="Diamonds")
+            g.hand[4] = Card(rank=13, suit="Spades")
+            played = [g.hand[i] for i in range(5)]
+            g._play_hand([0, 1, 2, 3, 4])
+            # Four of a Kind: 60 chips + 4 aces (11 each) = 104, mult 7 — the King kicker
+            # does not score; a Hook that ate a played ace would drop this to a Trips/Pair.
+            assert g.chips_scored == 104 * 7, (seed, g.chips_scored)
+            assert all(c in g.discard_pile for c in played)
+
+    def test_two_unplayed_cards_leave_the_hand(self):
+        g = _boss_game("bl_hook")
+        n = len(g.hand)
+        assert n >= 4
+        unplayed_before = set(id(c) for c in g.hand[1:])
+        g._play_hand([0])
+        # 1 played + 2 hooked leave; draw-to-full refills, so count what is gone instead
+        gone = [c for c in g.discard_pile]
+        hooked = [c for c in gone if id(c) in unplayed_before]
+        assert len(hooked) == 2

@@ -1598,21 +1598,23 @@ class BalatroGame:
             fire_hook(self, "on_boss_ability_triggered")
             return
 
-        # Boss: hook — 2 random cards of the hand are discarded after the play
-        # (blind.lua:470-484: two 'hook' draws over a sort_id-ordered copy of
+        # Boss: hook — 2 random cards of the REMAINING hand are discarded after the
+        # play (blind.lua:470-484: two 'hook' draws over a sort_id-ordered copy of
         # G.hand.cards, the first pick removed before the second; triggered = true).
-        # The engine resolves the picks before scoring; picked cards leave both
-        # the selection (if played) and the hand.
+        # state_events.lua:478-488: every played card is `draw_card(G.hand, G.play, ...)`'d
+        # BEFORE `Blind:press_play()` is called, so the played cards are NOT in
+        # G.hand.cards when the Hook picks — the play always scores in full and the
+        # two discards come from the unplayed cards only.  (Phase 5 lead fix, found by
+        # W3: the previous version pooled the whole hand incl. the selection, which
+        # both mis-discarded played cards and desynced the 'hook' stream from the game.)
         if boss_key == "bl_hook":
-            pool = sort_id_order(self.hand)
+            pool = [c for c in sort_id_order(self.hand) if c not in selected]
             boss_triggered = True
             for _ in range(2):
                 if not pool:
                     break
                 pick, idx = prng.pseudorandom_element(pool, "hook")
                 pool.pop(idx)
-                if pick in selected:
-                    selected.remove(pick)
                 if pick in self.hand:
                     self.hand.remove(pick)
                     self.discard_pile.append(pick)
