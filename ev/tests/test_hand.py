@@ -221,15 +221,18 @@ def test_unused_hands_are_worth_money_not_risk():
     assert ev > 1.0                      # cleared + unused hands bonus
 
 
-def test_hook_expectation():
+def test_hook_leaves_play_scores_intact():
+    """Engine 8d3f0d8: The Hook discards from the UNPLAYED hand only, so a play's score
+    is the same as without the boss (only the kept cards are perturbed)."""
     g = _in_blind(to_boss=True)
+    base = H.HandAnalysis(g, legal=g.legal_actions())
     g.current_blind.boss_key = "bl_hook"
-    an = H.HandAnalysis(g, legal=g.legal_actions())
-    n = an.n
-    j = max(range(n), key=lambda i: an.chips[i])
-    single = an._cheap_of((j,))
-    # a lone card survives the two picks with probability C(n-1,2)/C(n,2)
-    assert an._hook_cheap((j,)) == pytest.approx(single * comb(n - 1, 2) / comb(n, 2))
+    g.current_blind.is_boss = True
+    hook = H.HandAnalysis(g, legal=g.legal_actions())
+    base_scores = {t: sc for t, ht, sc, c in base.plays}
+    for t, ht, sc, c in hook.plays:
+        if t in base_scores:
+            assert sc == pytest.approx(base_scores[t])
 
 
 def test_eye_boss_forbids_a_repeated_hand_type():
@@ -317,3 +320,26 @@ def test_play_out_blind_ends_the_blind():
     w = S.sample_world(g, random.Random(0))
     H.play_out_blind(w)
     assert w.state != State.SELECTING_HAND or (w.ante, w.blind_idx) != (g.ante, g.blind_idx)
+
+
+def test_full_budget_value_fn_exception_propagates():
+    g = _in_blind()
+
+    def bad(world):
+        raise RuntimeError("broken V")
+    with pytest.raises(RuntimeError, match="broken V"):
+        H.rank_hand_actions(g, budget="full", value_fn=bad, n_worlds=2, top_k=2)
+
+
+def test_board_ratio_is_cached_by_board_signature():
+    g = _in_blind()
+    g.debug_add_joker("j_joker")
+    H._RATIO_CACHE.clear()
+    r1 = H.board_ratio(g)
+    assert len(H._RATIO_CACHE) == 1
+    r2 = H.board_ratio(g)
+    assert r2 == r1 and len(H._RATIO_CACHE) == 1
+    # a changed board (another joker) is a different entry
+    g.debug_add_joker("j_greedy_joker")
+    H.board_ratio(g)
+    assert len(H._RATIO_CACHE) == 2

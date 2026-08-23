@@ -6,7 +6,8 @@ command), tests `mp/ev/tests/test_hand.py` / `test_player.py` / `test_sampling.p
 results `mp/results/ev_player_gate_2026-08-23.{md,json}`.  Nothing outside `mp/ev/` and
 `mp/results/` was touched; `mp/engine/**`, `mp/eval/**`, `mp/agent/**` are read only.
 
-## 0. Headline (12-seed subset, 4 processes — the lead runs the 126)
+## 0. Headline (12-seed subset, 4 processes — the lead runs the 126; §8b fix-pass
+numbers supersede the timing columns: fast hand 3.2 ms mean / 9.0 p95, shop 5 ms under load)
 
 | | ante-1 clear | mean final ante | blinds cleared | $ at ante 3 | hands unused / cleared blind | hand ms mean / p95 |
 |---|---|---|---|---|---|---|
@@ -52,9 +53,10 @@ and full-deck effects, on a private RNG clone.  Skipped entirely on a plain boar
 jokers, no Plasma, plain cards: provably equal, W0's test).  `ratio` = median exact/cheap
 over the top refined plays is the **board multiplier** used to price everything that cannot
 be dry-run (draw targets, the tail).  Boss post-processing: Flint halves, Eye / Mouth make a
-forbidden type worth 0, **The Hook** (this engine removes 2 random cards of the WHOLE hand,
-played ones included, before scoring) replaces `cheap` by its exact expectation over the
-C(n,2) pick pairs and scales the board ratio by the survival of a 3-card play.
+forbidden type worth 0.  The Hook (since engine `8d3f0d8`, prompted by W3's finding)
+discards 2 random UNPLAYED cards after a play, so the play scores in full; the
+perturbation of the kept cards is not modelled (second order; the freshness mixture
+absorbs most of it).
 
 **Draw targets** (`targets(keep, m)`).  For a kept set `K` and `m` fresh cards from the draw
 pile's real composition `D` (counts by rank and suit, wilds in every suit, stones in
@@ -198,21 +200,21 @@ runs and at Nemesis states of an `MLBMatch`.  `HandAnalysis` reads `game.deck` o
 permutes `game.deck` at 72 states per budget (6 per seed; 126 seeds → 756) and got the
 identical decision every time.
 
-## 6. Benchmarks (this box, Tagg active; 4 worker processes)
+## 6. Benchmarks (this box, Tagg active; AFTER the fix pass)
+
+Sequential (4 seeds to ante 6):
 
 | decision | mean | p50 | p95 | max |
 |---|---|---|---|---|
-| fast hand (no model build) | 1.5–3.3 ms | | | |
-| fast hand (all) | 4.4 ms | 3.0 | 12.3 | 50 |
-| full hand (K=5, 3 worlds) | 74 ms | 58 | 181 | 416 |
-| shop / pack (rules) | 22 ms | 19 | 47 | 206 |
-| blind model build | ~6 ms | | | |
-| `HandAnalysis` in a rollout (lite, ratio hint) | ~1.2 ms | | | |
+| fast hand | 2.9 ms | 2.0 | 7.7 | 19 |
+| shop (rules) | 3.9 ms | 1.8 | 15.9 | 20 |
+| pack (rules) | 6.1 ms | 1.0 | 34.6 | 38 |
+| blind model build (hand cfg / proxy cfg) | ~6 / ~1.5 ms | | | |
 
-The p95 of the fast budget is the first decision of a blind whose deck changed (model
-rebuild) or a state with consumables (each use is a clone + full analysis).  Shop cost is
-dominated by one proxy (model + 4 dry-run hands) per candidate purchase; `proxy_cfg` uses a
-96-sample model for those.
+12-seed gate under 4 parallel processes: fast hand 3.2 mean / 9.0 p95; full hand 58 mean /
+146 p95 (K=5, 3 worlds); shop 5–6 ms.  An `MLBMatch` EV-vs-EV now finishes in ~2 s (was
+7 s).  The p95s are first-visit cache misses: a pick that changes the deck or the levels
+rebuilds the (lighter) proxy blind model; a new joker set recomputes the board ratio.
 
 ## 7. The curve of attempts (12 seeds, hand player only, greedy's no-buy shop → then the player)
 
@@ -224,15 +226,15 @@ dominated by one proxy (model + 4 dry-run hands) per candidate purchase; `proxy_
 | + EVPlayer shop rules (joker Δproxy) | 67% | two Big-blind losses: a made straight held for a flush draw; 1-card "high card" plays tied with the straight |
 | + freshness mixture in the position value | 92–100% | generalised to three other slices (92%) |
 | + Hook expectation, PvP ratio fix, skip from ante 2 | 92–100% | remaining failures are Hook bosses with no scoring joker |
+| fix pass (engine Hook fixed upstream; caches; lighter proxies) | 83–100% (slices 0-11 / 36-47 / 60-71: 100 / 83 / 100) | the two 36-47 failures are the scalar-ratio flaw (§8.2), not Hook |
 
 ## 8. Open issues / the next lever
 
-1. **The Hook in this engine** picks its two cards from the hand *including the played
-   cards* (`game.py` `_play_hand`, "picked cards leave both the selection (if played) and
-   the hand").  If the real `Blind:press_play` runs after the played cards have left
-   `G.hand`, the engine over-punishes 5-card plays ~9× and the analytic player inherits it.
-   Engine is frozen — the lead should check blind.lua:470-484 against
-   button_callbacks.lua's order.  Every remaining ante-1 failure on the subsets is a Hook.
+1. ~~The Hook~~ RESOLVED: the lead confirmed against state_events.lua:478-488 and fixed
+   the engine (`8d3f0d8`); the pick-pair expectation was removed from `_score_plays` in the
+   fix pass.  The remaining ante-1 failures on the dev slices are now issue 2 below (a
+   face-mult board — Photograph + Smiley — inflates the scalar ratio, so the tail thinks
+   EVERY fresh hand scores 6×; seeds 8QBRTPD / 9Q9HQXZG).
 2. The tail is per deck, not per build: type-specific jokers are a scalar.  Next lever = a
    per-TYPE ratio (exact/cheap of the best play of each type from the dry runs, applied to
    the simulator's per-type scores before compression) — a 30-line change in `_FreshHandSim`
@@ -246,6 +248,37 @@ dominated by one proxy (model + 4 dry-run hands) per candidate purchase; `proxy_
 5. PvP: the opponent is level-0 (symmetric).  The early-end cut is not exploited.
 6. Nemesis-blind hand decisions evaluate 6 needs per candidate (3 atoms × tie/win): ~2× a
    regular decision.
+
+## 8b. Fix pass (lead-directed, 2026-08-23, after all workstreams landed)
+
+Four defects W5/W6 surfaced, fixed at the source:
+
+1. **Shop/pack proxy hotspot** (58% of a W5 rollout): `board_ratio` is now cached by a
+   board signature (jokers + scaling state, Plasma, hand size, deck-modifier counts —
+   deliberately NOT planet levels or the exact composition: the exact/cheap ratio is
+   level-invariant to first order), so the state a purchase produces hits the candidate's
+   entry from the previous `act()`; the shop/pack proxies use a lighter `proxy_cfg`
+   (48-sample simulator, 4 atoms, 1.20 grid) and a 3-hand ratio.  Shop 22 → 3.9 ms, pack
+   27 → 6.1 ms, MLB match 7 → 2 s.
+2. **ε-wedge**: ε draws now come from a private sequential `random.Random("ev-eps:<seed>")`
+   advanced once per `act()` and re-seeded by `reset()` — an ε-pick that no-ops (Wheel of
+   Fortune whiff) no longer freezes the stream on an unchanged observable state (W5 saw
+   39,952 identical shop steps).  With ε > 0 the player is deterministic given `(seed, call
+   history)`, not `(seed, state)`; ε = 0 unchanged.
+3. **`value_fn` exceptions propagate** from `EVPlayer._v` and `hand.end_of_blind_value`
+   (they silently degraded to the analytic proxy, hiding V bugs).  A broken W4 `stats`
+   object still falls through to the rules — that one is the documented contract.
+4. **Anti-cycling guard**: `act()` counts identical `state_signature()`s per SHOP /
+   BOOSTER visit (`Counter`, reset by `reset()`); the 3rd sight of an unchanged signature
+   forces the rules tier (which verifies consumable uses on a clone and cannot no-op), the
+   6th forces leave_shop / skip_booster.  Breaks W5's 40k-step V-preferred-no-op loop in
+   ≤ ~8 steps; a normal visit never reaches 3.
+
+Regression tests: `test_player.py` (fix-pass block: ε non-repetition + replay-on-reset, V
+exception from `act`, the Wheel-whiff V loop broken ≤ 12 steps, guard-inertness on a normal
+visit), `test_hand.py` (`test_full_budget_value_fn_exception_propagates`,
+`test_board_ratio_is_cached_by_board_signature`, `test_hook_leaves_play_scores_intact`).
+Suite: 122 passed (mine + W5/W6's untouched).
 
 ## 9. Wiring for the lead
 

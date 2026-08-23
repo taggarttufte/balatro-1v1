@@ -269,3 +269,65 @@ def test_pvp_decision_is_legal_and_side_effect_free():
             a = players[p].act(g)
         m.step(p, a)
     assert checked == 5
+
+
+# ─────────────────────────────────────────────────────── fix pass (2026-08-23)
+
+def test_epsilon_does_not_wedge_on_an_unchanged_state():
+    """Fix 2: epsilon draws come from a sequential stream, so repeated visits to the SAME
+    observable state (a no-op pick) get fresh draws instead of the same action forever."""
+    g = _shop()
+    pl = EVPlayer(seed=1, epsilon=1.0)
+    picks = {_key(pl.act(g)) for _ in range(30)}
+    assert len(picks) > 1
+    # and reset() replays the same sequence (determinism given (seed, call history))
+    a = EVPlayer(seed=5, epsilon=1.0)
+    seq1 = [_key(a.act(g)) for _ in range(10)]
+    a.reset()
+    seq2 = [_key(a.act(g)) for _ in range(10)]
+    assert seq1 == seq2
+
+
+def test_value_fn_exception_propagates_from_act():
+    """Fix 3: a broken value_fn raises instead of silently degrading to the proxy."""
+    g = _shop()
+
+    def bad(world):
+        raise ValueError("V is broken")
+    with pytest.raises(ValueError, match="V is broken"):
+        EVPlayer(value_fn=bad).act(g)
+
+
+def test_anti_cycling_guard_breaks_a_value_fn_no_op_loop():
+    """Fix 4: a value_fn that prefers standing still (W5's 40k-step shop loop) is broken
+    by the signature guard: fall back to the rules after 3 identical visits, force
+    leave_shop after 6, so the shop always ends within a handful of steps."""
+    g = _shop()
+    # Wheel of Fortune with no editionless joker: apply_tarot returns False -> the engine
+    # silently no-ops and the consumable stays (W5's observed wedge action)
+    assert not g.jokers
+    g.consumable_hand.append("c_wheel_of_fortune")
+    d0, n0 = g.dollars, len(g.consumable_hand)
+
+    def stay(world):
+        good = (world.state == State.SHOP and world.dollars == d0
+                and len(world.consumable_hand) == n0)
+        return 1.0 if good else 0.0
+    pl = EVPlayer(value_fn=stay)
+    first = pl.act(g)
+    assert first["type"] == "use_consumable", "the no-op must be V's favourite for this test"
+    steps = 0
+    while g.state == State.SHOP and steps < 12:
+        g.step(pl.act(g))
+        steps += 1
+    assert g.state != State.SHOP, "the guard must break the loop within 12 steps"
+
+
+def test_anti_cycling_guard_does_not_disturb_a_normal_shop_visit():
+    g = _shop()
+    pl = EVPlayer()
+    sig0 = g.state_signature()
+    a1 = pl.act(g)
+    a2 = EVPlayer().act(g)
+    assert _key(a1) == _key(a2)            # one visit: same decision as a fresh player
+    assert g.state_signature() == sig0

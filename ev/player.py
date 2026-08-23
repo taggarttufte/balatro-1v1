@@ -41,6 +41,8 @@ Side-effect freedom: ``act`` only reads the live game; every evaluation is on a 
 from __future__ import annotations
 
 import math
+import random
+from collections import Counter
 from dataclasses import dataclass, replace
 from typing import Callable, Optional
 
@@ -146,7 +148,7 @@ def build_proxy(game, cfg: PlayerConfig = DEFAULT_PLAYER_CONFIG,
         g = game.clone()
         _auto_use_planets(g)
     model = blind_model_for(g, hcfg)
-    ratio = board_ratio(g, cfg=hcfg)
+    ratio = board_ratio(g, 3, hcfg)
     target = _next_blind_target(g)
     hands = int(g.base_hands) + (3 if any(j.key == "j_burglar" for j in g.jokers) else 0)
     discards = int(g.base_discards)
@@ -178,27 +180,56 @@ class EVPlayer:
         self.cfg = cfg
         self.hand_cfg = hand_cfg
         # the shop / pack proxies rebuild the blind model per candidate (a pick changes the
-        # deck or the levels): a lighter simulation is plenty for a purchase comparison
-        self.proxy_cfg = replace(hand_cfg, model_samples=min(hand_cfg.model_samples, 96))
+        # deck or the levels): a lighter simulation + coarser grid is plenty for a purchase
+        # comparison (fix pass: the 96-sample full-grid proxies were 58% of a W5 rollout)
+        self.proxy_cfg = replace(hand_cfg, model_samples=min(hand_cfg.model_samples, 48),
+                                 model_atoms=min(hand_cfg.model_atoms, 4),
+                                 grid_ratio=max(hand_cfg.grid_ratio, 1.20))
         self.n_worlds = n_worlds
         self.top_k = top_k
         self.name = name
         self._last_explain: list = []
+        # epsilon gets its OWN sequential stream, advanced once per act() and re-seeded by
+        # reset(): seeding it from the observable state wedged W5's rollouts (a no-op
+        # epsilon pick left the state unchanged, so the same pick was redrawn forever).
+        self._eps_rng = random.Random(f"ev-eps:{self.seed}")
+        # anti-cycling guard: how often act() has seen an unchanged SHOP/BOOSTER signature
+        self._sig_seen: Counter = Counter()
 
     # ── protocol ────────────────────────────────────────────────────────────
 
     def reset(self) -> None:
         self._last_explain = []
+        self._eps_rng = random.Random(f"ev-eps:{self.seed}")
+        self._sig_seen = Counter()
+
+    #: an unchanged shop/booster signature seen this often falls back to the rules tier
+    STUCK_AFTER = 3
+    #: ... and seen this often forces leave_shop / skip_booster
+    FORCE_LEAVE_AFTER = 6
 
     def act(self, game) -> dict:
         legal = game.legal_actions()
         if not legal:
             return dict(self.no_action)
-        if self.epsilon > 0.0:
-            rng = world_rng(self.seed, game, salt=0xE95)
-            if rng.random() < self.epsilon:
-                return dict(legal[rng.randrange(len(legal))])
-        ranked = self._rank(game, legal, explain=False)
+        if self.epsilon > 0.0 and self._eps_rng.random() < self.epsilon:
+            return dict(legal[self._eps_rng.randrange(len(legal))])
+        force_rules = False
+        if game.state in (State.SHOP, State.BOOSTER_OPEN):
+            # a repeated identical signature means the previous pick was a no-op (an
+            # engine silent-no-op consumable, a V that prefers standing still): stop
+            # repeating it (fix pass: W5 saw 40k-step shop loops under a value_fn)
+            if len(self._sig_seen) > 512:
+                self._sig_seen.clear()
+            sig = game.state_signature()
+            self._sig_seen[sig] += 1
+            stuck = self._sig_seen[sig]
+            force_rules = stuck >= self.STUCK_AFTER
+            if stuck >= self.FORCE_LEAVE_AFTER:
+                out = {"type": "leave_shop"} if game.state == State.SHOP else {"type": "skip_booster"}
+                keys = {_hand._action_sort_key(a) for a in legal}
+                return out if _hand._action_sort_key(out) in keys else dict(legal[0])
+        ranked = self._rank(game, legal, explain=False, force_rules=force_rules)
         if ranked:
             return dict(ranked[0][0])
         return dict(legal[0])
@@ -212,7 +243,7 @@ class EVPlayer:
 
     # ── dispatch ────────────────────────────────────────────────────────────
 
-    def _rank(self, game, legal: list, explain: bool = True) -> list:
+    def _rank(self, game, legal: list, explain: bool = True, force_rules: bool = False) -> list:
         s = game.state
         if s == State.SELECTING_HAND:
             return self._rank_hand(game, legal, explain=explain)
@@ -221,12 +252,13 @@ class EVPlayer:
         if s == State.BLIND_SELECT:
             return self._rank_blind_select(game, legal)
         if s in (State.SHOP, State.BOOSTER_OPEN):
-            if self.stats is not None:
-                r = self._rank_with_stats(game, legal)
-                if r:
-                    return r
-            if self.value_fn is not None:
-                return self._rank_with_value(game, legal)
+            if not force_rules:
+                if self.stats is not None:
+                    r = self._rank_with_stats(game, legal)
+                    if r:
+                        return r
+                if self.value_fn is not None:
+                    return self._rank_with_value(game, legal)
             if s == State.SHOP:
                 return self._rank_shop_rules(game, legal)
             return self._rank_booster_rules(game, legal)
@@ -358,10 +390,8 @@ class EVPlayer:
         return out
 
     def _v(self, clone) -> float:
-        try:
-            return float(self.value_fn(clone))
-        except Exception:           # noqa: BLE001
-            return 0.0
+        # a broken value_fn propagates (fix pass: silent degradation hid V bugs from W5)
+        return float(self.value_fn(clone))
 
     def _shop_candidates(self, game, legal: list) -> list:
         """Legal actions worth evaluating (caps the enumeration)."""

@@ -207,13 +207,39 @@ def _resource_caps(game) -> tuple:
     return max(1, h), max(0, d)
 
 
+_RATIO_CACHE: dict = {}
+_RATIO_CACHE_MAX = 256
+
+
+def _board_sig(game) -> tuple:
+    """What ``board_ratio`` may depend on, to cache it: the jokers (with their scaling
+    state), Plasma, hand size, planet levels, and coarse deck-modification counts.  The
+    exact deck COMPOSITION is deliberately not in the key -- adding one card moves the
+    ratio negligibly, and keying on it would recompute for every standard-pack pick."""
+    return (tuple((j.key, j.edition, repr(sorted(j.state.items(), key=lambda kv: str(kv[0]))))
+                  for j in game.jokers),
+            bool(getattr(game, "plasma", False)), int(game.hand_size),
+            # planet levels are NOT here: exact and cheap use the same level tables, so
+            # the exact/cheap ratio is level-invariant to first order (a planet pick must
+            # not force a ratio recompute -- it was 40% of a pack decision)
+            sum(1 for c in game.full_deck if c.enhancement != "None"),
+            sum(1 for c in game.full_deck if c.edition != "None"),
+            sum(1 for c in game.full_deck if c.seal != "None"))
+
+
 def board_ratio(game, n_hands: int = 4, cfg: HandConfig = DEFAULT_HAND_CONFIG) -> float:
     """Median exact/cheap multiplier of the board (jokers, editions, enhancements) over
     ``n_hands`` deterministic sample hands of the full deck -- the factor that turns the
-    cheap-unit blind model into this board's scores.  Read-only (private clone)."""
+    cheap-unit blind model into this board's scores.  Read-only (private clone); cached by
+    ``_board_sig`` (the shop / pack rule tier calls this once per candidate per act(), and
+    the state a purchase produces hits the candidate's cache entry -- fix pass 2026-08-23)."""
     if not game.jokers and not getattr(game, "plasma", False) and all(
             c.enhancement == "None" and c.edition == "None" and c.seal == "None" for c in game.full_deck):
         return 1.0
+    sig = (_board_sig(game), n_hands)
+    hit = _RATIO_CACHE.get(sig)
+    if hit is not None:
+        return hit
     import hashlib
     clone = game.clone()
     pool = sorted(clone.full_deck, key=canonical_card_key)
@@ -232,7 +258,11 @@ def board_ratio(game, n_hands: int = 4, cfg: HandConfig = DEFAULT_HAND_CONFIG) -
         an = HandAnalysis(clone, cfg, lite=True, build_model=False)
         ratios.append(an.ratio)
     ratios.sort()
-    return float(ratios[len(ratios) // 2])
+    out = float(ratios[len(ratios) // 2])
+    if len(_RATIO_CACHE) >= _RATIO_CACHE_MAX:
+        _RATIO_CACHE.pop(next(iter(_RATIO_CACHE)))
+    _RATIO_CACHE[sig] = out
+    return out
 
 
 _MODEL_CACHE: dict = {}
@@ -861,16 +891,9 @@ class HandAnalysis:
                 s = 0.0
             evald.append((cards, ht, scoring))
             cheap.append(s)
-        # The Hook (this engine: 2 random cards of the WHOLE hand, played ones included,
-        # leave before scoring): replace cheap by its expectation over the pick pairs.
-        hook_factor = [1.0] * len(cheap)
-        if self.boss == "bl_hook" and self.n >= 1:
-            for i, t in enumerate(self.play_cands):
-                if cheap[i] <= 0.0:
-                    continue
-                e = self._hook_cheap(t)
-                hook_factor[i] = e / cheap[i]
-                cheap[i] = e
+        # The Hook discards 2 random UNPLAYED cards after a play (engine fix 8d3f0d8, was
+        # the whole hand): the play scores in full, only the kept cards are perturbed --
+        # modelled as nothing here (second order; the freshness mixture absorbs most of it).
         exact = list(cheap)
         plain = self._cheap_is_exact()
         n_exact = 0
@@ -903,7 +926,6 @@ class HandAnalysis:
                     continue
                 if self.boss == "bl_flint":
                     v = float(int(v) // 2)
-                v *= hook_factor[i]
                 exact[i] = v
                 if cheap[i] > 0:
                     ratios.append(v / cheap[i])
@@ -915,12 +937,6 @@ class HandAnalysis:
                 self.ratio = rr[len(rr) // 2]
         elif self.boss == "bl_flint":
             exact = [float(int(v) // 2) for v in exact]
-        if self.boss == "bl_hook":
-            # draw targets and the tail are hook-blind: a 5-card hand survives the two
-            # picks with probability C(n-5,2)/C(n,2) (3/28 at 8 cards); use the mean
-            # retention of a 3-card play as the board factor
-            n = max(self.n, 3)
-            self.ratio *= max(0.15, comb(n - 3, 2) / comb(n, 2)) if n >= 5 else 0.3
         # non-refined candidates are scaled by the board ratio so the two tiers share a scale
         if self.ratio != 1.0:
             for i in range(len(exact)):
@@ -946,25 +962,6 @@ class HandAnalysis:
             return 0.0
         bc, bm = self._base(ht)
         return (bc + sum(self.chips[j] for j in t if self.hand[j] in scoring)) * bm
-
-    def _hook_cheap(self, t: tuple) -> float:
-        """E[cheap score of play ``t``] under The Hook: two uniformly random cards of the
-        hand (played ones included) are removed before scoring; none left = 0."""
-        n = self.n
-        if n == 1:
-            return 0.0
-        cache: dict = {}
-        acc = 0.0
-        cnt = 0
-        for i in range(n):
-            for j in range(i + 1, n):
-                rem = tuple(x for x in t if x != i and x != j)
-                v = cache.get(rem)
-                if v is None:
-                    v = cache[rem] = self._cheap_of(rem)
-                acc += v
-                cnt += 1
-        return acc / cnt if cnt else 0.0
 
     def _cheap_is_exact(self) -> bool:
         g = self.game
@@ -1513,10 +1510,9 @@ def end_of_blind_value(world, origin, cfg: HandConfig = DEFAULT_HAND_CONFIG,
     if value_fn is not None:
         if world.state == State.ROUND_EVAL:
             world.step({"type": "advance"})
-        try:
-            return float(value_fn(world))
-        except Exception:                  # noqa: BLE001 - a V failure must not crash play
-            pass
+        # a broken value_fn propagates -- silently degrading to the proxy hid real V bugs
+        # from W5's pipeline (lead fix pass, 2026-08-23)
+        return float(value_fn(world))
     if blind.is_pvp:
         s = float(world.chips_scored)
         atoms = opponent_final_atoms(origin, model, ratio)

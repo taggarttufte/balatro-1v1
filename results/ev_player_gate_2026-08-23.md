@@ -2,7 +2,7 @@
 
 `python mp/ev/gate_ev_player.py --seeds 12 --procs 4`
 
-Seeds: 12 of 126 ground-truth seeds (offset 0); vanilla ruleset, Red deck, White stake; 4 processes; wall 30 s.
+Seeds: 12 of 126 ground-truth seeds (offset 0); vanilla ruleset, Red deck, White stake; 4 processes; wall 16 s.
 
 ## Outcomes (bootstrap 95% CI)
 
@@ -10,27 +10,27 @@ Seeds: 12 of 126 ground-truth seeds (offset 0); vanilla ruleset, Red deck, White
 |---|---|---|---|
 | ante1_clear | 100.0% [100.0, 100.0] | 100.0% [100.0, 100.0] | 50.0% [25.0, 75.0] |
 | ante2_clear | 83.3% [58.3, 100.0] | 83.3% [58.3, 100.0] | 0.0% [0.0, 0.0] |
-| ante3_clear | 83.3% [58.3, 100.0] | 83.3% [58.3, 100.0] | 0.0% [0.0, 0.0] |
-| ante4_clear | 75.0% [50.0, 100.0] | 75.0% [50.0, 100.0] | 0.0% [0.0, 0.0] |
-| won | 8.3% [0.0, 25.0] | 0.0% [0.0, 0.0] | 0.0% [0.0, 0.0] |
-| mean_final_ante | 5.33 [4.25, 6.42] | 5.25 [4.25, 6.17] | 1.50 [1.25, 1.75] |
-| mean_blinds_cleared | 11.00 [8.75, 13.08] | 10.75 [8.58, 12.83] | 2.33 [1.75, 2.83] |
-| money_at_ante3 | 23.90 [19.30, 28.60] | 24.40 [20.90, 28.60] | nan [nan, nan] |
-| hands unused / cleared blind | 2.17 | 2.30 | 1.36 |
+| ante3_clear | 66.7% [41.7, 91.7] | 75.0% [50.0, 100.0] | 0.0% [0.0, 0.0] |
+| ante4_clear | 66.7% [41.7, 91.7] | 66.7% [41.7, 91.7] | 0.0% [0.0, 0.0] |
+| won | 0.0% [0.0, 0.0] | 0.0% [0.0, 0.0] | 0.0% [0.0, 0.0] |
+| mean_final_ante | 4.67 [3.75, 5.67] | 4.83 [3.92, 5.83] | 1.50 [1.25, 1.75] |
+| mean_blinds_cleared | 9.58 [7.83, 11.42] | 10.17 [8.33, 11.83] | 2.33 [1.75, 2.83] |
+| money_at_ante3 | 22.20 [19.10, 26.20] | 25.50 [21.50, 30.10] | nan [nan, nan] |
+| hands unused / cleared blind | 2.13 | 2.20 | 1.39 |
 | $ at ante 3: n reaching | 10 | 10 | 0 |
 
 ## Paired-by-seed deltas vs greedy (mean difference, bootstrap 95% CI)
 
-- **fast − greedy** (n=12): ante-1 clear 50.0% [25.0, 75.0]; final ante 3.83 [2.75, 5.00]; blinds cleared 8.67 [6.50, 10.75]; final $ 5.42 [0.92, 9.92]
-- **full − greedy** (n=12): ante-1 clear 50.0% [25.0, 75.0]; final ante 3.75 [2.75, 4.75]; blinds cleared 8.42 [6.25, 10.42]; final $ 3.25 [-1.00, 7.92]
+- **fast − greedy** (n=12): ante-1 clear 50.0% [25.0, 75.0]; final ante 3.17 [2.08, 4.33]; blinds cleared 7.25 [5.17, 9.25]; final $ 2.67 [-4.92, 10.42]
+- **full − greedy** (n=12): ante-1 clear 50.0% [25.0, 75.0]; final ante 3.33 [2.33, 4.42]; blinds cleared 7.83 [5.92, 9.67]; final $ 4.00 [-1.75, 9.92]
 
 ## Wall-clock per decision (ms)
 
 | player | hand mean | hand p50 | hand p95 | hand max | n | shop mean | shop p95 | n |
 |---|---|---|---|---|---|---|---|---|
-| fast | 4.43 | 3.01 | 12.25 | 50.1 | 564 | 22.1 | 46.8 | 665 |
-| full | 73.58 | 58.08 | 180.65 | 415.8 | 531 | 22.5 | 47.4 | 653 |
-| greedy | 2.02 | 2.03 | 2.72 | 2.9 | 168 | 0.1 | 0.1 | 28 |
+| fast | 3.18 | 2.16 | 8.97 | 32.9 | 516 | 5.1 | 17.7 | 564 |
+| full | 57.98 | 47.89 | 146.27 | 385.8 | 542 | 6.0 | 22.1 | 596 |
+| greedy | 2.10 | 2.44 | 2.65 | 3.2 | 167 | 0.1 | 0.1 | 28 |
 
 Budgets: fast ≤ 5 ms mean, full ≤ 100 ms mean per SELECTING_HAND decision.
 
@@ -41,21 +41,21 @@ Budgets: fast ≤ 5 ms mean, full ≤ 100 ms mean per SELECTING_HAND decision.
 
 ## MLB match (EVPlayer fast vs EVPlayer fast, full MLBMatch)
 
-- seed 11111111: done=True winner=1 final antes [7, 7] lives [0, 1] steps 504 in 6.7 s; Nemeses (ante, loser, s0, s1): [(2, 0, 6288, 6672), (3, 1, 17967, 13088), (4, 0, 26495, 30054), (5, 1, 24356, 22279), (6, 0, 22495, 25956)]
+- seed 11111111: done=True winner=0 final antes [7, 7] lives [1, 0] steps 610 in 1.9 s; Nemeses (ante, loser, s0, s1): [(2, None, 7224, 7224), (3, 0, 12927, 18243), (4, 0, 7618, 11462), (5, 1, 23722, 20450), (6, 1, 47874, 33608), (7, 1, 53364, 50040)]
 
 ## Per-seed (furthest ante/blind, $)
 
 | seed | fast | full | greedy |
 |---|---|---|---|
-| 11111111 | 6 Boss $25 | 5 Boss $20 | 2 Boss $21 |
-| 1558AXDL | 6 Boss $26 | 6 Boss $27 | 2 Boss $22 |
-| 15H9Z3IY | 2 Boss $12 | 2 Boss $11 | 1 Big $8 |
-| 1KV4W6YS | 6 Boss $27 | 6 Boss $27 | 2 Boss $25 |
-| 1MD1YZ9T | 6 Boss $38 | 6 Boss $26 | 2 Boss $33 |
-| 28V7DD4H | 7 Boss $27 | 7 Boss $25 | 1 Big $9 |
-| 29DAQVG1 | 5 Boss $27 | 5 Boss $25 | 1 Big $9 |
-| 29Y3L4S9 | 6 Boss $27 | 6 Boss $24 | 2 Boss $24 |
+| 11111111 | 6 Boss $26 | 6 Boss $26 | 2 Boss $21 |
+| 1558AXDL | 6 Boss $28 | 6 Boss $24 | 2 Boss $22 |
+| 15H9Z3IY | 3 Boss $18 | 2 Boss $11 | 1 Big $8 |
+| 1KV4W6YS | 5 Boss $27 | 4 Boss $20 | 2 Boss $25 |
+| 1MD1YZ9T | 2 Boss $6 | 3 Boss $17 | 2 Boss $33 |
+| 28V7DD4H | 7 Boss $25 | 7 Boss $27 | 1 Big $9 |
+| 29DAQVG1 | 5 Boss $32 | 5 Boss $28 | 1 Big $9 |
+| 29Y3L4S9 | 3 Boss $17 | 5 Boss $26 | 2 Boss $25 |
 | 29ZSW8MY | 2 Boss $13 | 2 Boss $14 | 2 Boss $26 |
-| 2BRGI767 | 5 Boss $26 | 6 Boss $25 | 1 Boss $15 |
-| 2CP4KSXZ | 9 Boss $15 | 8 Boss $15 | 1 Boss $15 |
-| 2GHBLJD9 | 4 Boss $24 | 4 Boss $22 | 1 Boss $15 |
+| 2BRGI767 | 5 Boss $28 | 5 Boss $25 | 1 Boss $15 |
+| 2CP4KSXZ | 7 Boss $28 | 7 Boss $26 | 1 Boss $15 |
+| 2GHBLJD9 | 5 Boss $7 | 6 Boss $27 | 1 Boss $15 |
