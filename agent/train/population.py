@@ -49,7 +49,7 @@ from __future__ import annotations
 import sys
 from dataclasses import dataclass, field
 from pathlib import Path
-from typing import Optional, Sequence
+from typing import Callable, Optional, Sequence
 
 import numpy as np
 
@@ -263,12 +263,29 @@ def instantiate(members: Sequence[PopulationMember], live_policy, *,
                 device: str = "cpu", encoder: str = "mlb", leaf_batch: int = 16,
                 reuse: bool = True, strategy: str = "gumbel", outcome=None,
                 max_skips_per_ante: Optional[int] = None,
-                policy_cache: Optional[dict] = None) -> list:
+                policy_cache: Optional[dict] = None,
+                heuristic_prior: float = 0.0, max_hand_candidates: int = 0,
+                heuristic_tau: float = 0.5, heuristic_exact_top: int = 8,
+                heuristic_discard_bias: float = 1.0,
+                policy_for: Optional[Callable] = None) -> list:
     """Turn members into `mcts.MCTSPlayer`s, loading each distinct checkpoint at most once.
+
+    W0 (2026-08-22): `heuristic_prior` / `max_hand_candidates` give every NET-driven
+    seat (current and past-checkpoint alike) the same hand prior and candidate mask the
+    vanilla warm-up trained under. Both sides of the population must run it: a past
+    checkpoint searching without the prior is a different agent from the one whose
+    weights were trained with it, and the rank target would be measuring the prior, not
+    the net. Scripted anchors are unaffected (they never search).
 
     `live_policy` is the CURRENT net's `PolicyValueFn` — passed in rather than loaded from
     disk so the population always plays the net that is actually being trained (and so a
     generation costs one net in memory, not `m_current` copies of it).
+
+    W1 (Phase 5, 2026-08-23): `policy_for(member) -> PolicyValueFn` overrides BOTH branches
+    of that choice for the net-driven seats. It exists for the multi-process path, where a
+    worker holds no net at all and every seat's policy is a `parallel.remote.RemotePolicy`
+    pointed at the shared evaluator; `live_policy` is then unused and may be `None`.
+    Scripted anchors never reach it. Default `None` = the behaviour above, unchanged.
 
     Import is function-local: `mp/agent/train` must stay importable without dragging the
     whole search stack in at module scope (`train` is imported by `mcts.load_policy`).
@@ -284,7 +301,9 @@ def instantiate(members: Sequence[PopulationMember], live_policy, *,
                 make_scripted = tournament_module().players.make_scripted
             players.append(make_scripted(**dict(m.spec or ())))
             continue
-        if m.checkpoint is None:
+        if policy_for is not None:
+            policy = policy_for(m)
+        elif m.checkpoint is None:
             policy = live_policy
         else:
             if m.checkpoint not in cache:
@@ -295,7 +314,12 @@ def instantiate(members: Sequence[PopulationMember], live_policy, *,
             legal_filter=(SkipCap(max_skips_per_ante)
                           if (max_skips_per_ante is not None and m.is_current) else None),
             policy=policy,
-            config=MCTSConfig(num_simulations=m.sims, leaf_batch=leaf_batch),
+            config=MCTSConfig(num_simulations=m.sims, leaf_batch=leaf_batch,
+                              heuristic_prior_weight=heuristic_prior,
+                              heuristic_tau=heuristic_tau,
+                              heuristic_exact_top=heuristic_exact_top,
+                              heuristic_discard_bias=heuristic_discard_bias,
+                              max_hand_candidates=max_hand_candidates),
             outcome=outcome,
             rng=np.random.default_rng(m.seed),
             strategy=strategy,

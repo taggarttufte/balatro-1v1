@@ -114,6 +114,11 @@ class MCTSPlayer:
     # `--max-skips-per-ante`; `None` (default) costs nothing. NOT an engine rule — real MLB
     # lets you skip both blinds, and the constraint is annealed away before the run ends.
     legal_filter: Optional[Callable] = None
+    # W0 (2026-08-22): the heuristic hand prior's weight for THIS player. `None` = use
+    # `config.heuristic_prior_weight`. Set it (or call `set_heuristic_prior`) when the
+    # weight is annealed per generation and the `MCTSConfig` is shared with other
+    # players — mutating the shared config would move everyone's lambda at once.
+    heuristic_prior: Optional[float] = None
 
     def __post_init__(self):
         self.config = self.config or MCTSConfig()
@@ -122,7 +127,8 @@ class MCTSPlayer:
             self.config = replace(self.config, leaf_batch=self.leaf_batch)
         self.leaf_batch = self.config.leaf_batch
         self.rng = self.rng if self.rng is not None else np.random.default_rng()
-        self.mcts = MCTS(self.policy, self.config, rng=self.rng, outcome=self.outcome)
+        self.mcts = MCTS(self.policy, self.config, rng=self.rng, outcome=self.outcome,
+                         heuristic_lambda=self.heuristic_prior)
         self.cache = TreeCache(_reuse_config(self.reuse))
         self._batched = (
             BatchedSearch(self.policy, self.config, outcome=self.outcome,
@@ -135,6 +141,17 @@ class MCTSPlayer:
     @property
     def reuse_stats(self):
         return self.cache.stats
+
+    def set_heuristic_prior(self, lam: Optional[float]) -> None:
+        """Move this player's heuristic-prior weight (the anneal seam). `None` hands the
+        decision back to the `MCTSConfig`."""
+        self.heuristic_prior = lam
+        self.mcts.heuristic_lambda = lam
+
+    @property
+    def heuristic_weight(self) -> float:
+        """The lambda this player's search actually runs at."""
+        return self.mcts.heuristic_weight
 
     # ── Player protocol ──────────────────────────────────────────────────────
 
@@ -286,17 +303,29 @@ def make_player(checkpoint: Optional[str] = None, sims: int = 100, device: str =
                 seed: int = 0, strategy: str = "gumbel", reuse: object = True,
                 leaf_batch: int = 1, temperature: float = 0.0,
                 no_action: Optional[dict] = None, encoder: Optional[str] = None,
+                heuristic_prior: float = 0.0, max_hand_candidates: int = 0,
+                heuristic_tau: float = 0.5, heuristic_exact_top: int = 8,
+                heuristic_discard_bias: float = 1.0,
                 **kwargs) -> "MCTSPlayer":
     """One line from "a checkpoint path" to "a `Player` the tournament can call".
 
     Defaults are the tournament's: tree reuse on, Gumbel selection, argmax at the end,
     and `no_action={"type": "advance"}` so `game.step(player.act(game))` is always safe
     (`mp/tournament/runner.py::_drive_to_next_nemesis` steps unconditionally).
+
+    `heuristic_prior` / `max_hand_candidates` are W0's hand prior and candidate mask
+    (`mcts/heuristic.py`); both default to OFF so this factory's behaviour is unchanged
+    for every existing caller (`mp/eval`'s `checkpoint:` spec, `mp/tournament`).
     """
     policy = load_policy(checkpoint, device=device, batched=True, encoder=encoder)
     return MCTSPlayer(
         policy=policy,
-        config=MCTSConfig(num_simulations=sims, leaf_batch=leaf_batch),
+        config=MCTSConfig(num_simulations=sims, leaf_batch=leaf_batch,
+                          heuristic_prior_weight=heuristic_prior,
+                          heuristic_tau=heuristic_tau,
+                          heuristic_exact_top=heuristic_exact_top,
+                          heuristic_discard_bias=heuristic_discard_bias,
+                          max_hand_candidates=max_hand_candidates),
         # BOTH, deliberately: `__post_init__` lets the FIELD win over the config, so passing
         # only the config silently ran every tournament player at L=1 (W2, Phase 4).
         leaf_batch=leaf_batch,

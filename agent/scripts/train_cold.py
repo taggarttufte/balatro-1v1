@@ -76,7 +76,9 @@ def print_status(ep: int, window: list[dict], elapsed: float, remaining: float,
         f"elapsed {fmt_secs(elapsed)} / remain {fmt_secs(remaining)} "
         f"({ep_per_min:.1f} ep/min) "
         f"buf {buf_size:6d} "
-        f"recent: ante {stats['ante']:.2f} len {stats['len']:.1f} z={stats['z']:.3f} "
+        f"recent: ante {stats['ante']:.2f} blinds {stats['blinds']:.2f} "
+        f"clear% {stats['clear_pct']:.1f} len {stats['len']:.1f} z={stats['z']:.3f} "
+        f"lam {stats['h_lambda']:.2f} "
         f"win% {stats['win_pct']:.2f} (total {total_wins}) "
         f"loss p={stats['policy_loss']:.3f} v={stats['value_loss']:.4f}",
         flush=True,
@@ -135,6 +137,30 @@ def build_parser() -> argparse.ArgumentParser:
                          "resume is no longer bit-exact)")
     ap.add_argument("--buffer-checkpoint-cap", type=int, default=5_000,
                     help="store at most this many (most recent) samples per checkpoint")
+    # ── W0: the heuristic hand prior + candidate mask (mcts/heuristic.py) ──
+    ap.add_argument("--heuristic-prior", type=float, default=0.0,
+                    help="lambda in prior = (1-lambda)*net + lambda*heuristic over the "
+                         "play/discard actions of SELECTING_HAND. 0 = off (the pre-W0 "
+                         "search); 0.8 is the recommended vanilla warm-up")
+    ap.add_argument("--heuristic-prior-floor", type=float, default=0.1,
+                    help="lambda never anneals below this")
+    ap.add_argument("--heuristic-prior-anneal", default="",
+                    help="'' = constant | '<N>' or 'ep:<N>' = linear to the floor over N "
+                         "episodes | 'clear:<r>' = decay as the rolling blind-clear rate "
+                         "approaches r (same criterion as --skip-cap-anneal-clear-rate)")
+    ap.add_argument("--heuristic-tau", type=float, default=0.5,
+                    help="softmax temperature on log1p(score): 1.0 = prior ~ score, "
+                         "0.5 = prior ~ score^2, ->0 = argmax")
+    ap.add_argument("--heuristic-exact-top", type=int, default=8,
+                    help="play subsets per leaf refined with the exact side-effect-free "
+                         "score_hand dry run (0 = the cheap tier only). Skipped "
+                         "automatically when the board is plain, where the two agree")
+    ap.add_argument("--heuristic-discard-bias", type=float, default=1.0,
+                    help="multiplier on every discard potential (>1 discards more)")
+    ap.add_argument("--max-hand-candidates", type=int, default=32,
+                    help="expand only the top-K play + top-K discard subsets per leaf "
+                         "(0 = every legal action, the pre-W0 tree). Search-side only: "
+                         "pruned actions stay legal in the engine")
     ap.add_argument("--resume", default=None,
                     help="path to a checkpoint, a run directory, or 'latest'")
     return ap
@@ -152,6 +178,13 @@ def config_from_args(args) -> TrainConfig:
         buffer_checkpoint_cap=args.buffer_checkpoint_cap,
         subsample=not args.no_subsample, k_unvisited=args.k_unvisited,
         set_res_blocks=args.set_res_blocks, value_activation=args.value_activation,
+        heuristic_prior=args.heuristic_prior,
+        heuristic_prior_floor=args.heuristic_prior_floor,
+        heuristic_prior_anneal=args.heuristic_prior_anneal,
+        heuristic_tau=args.heuristic_tau,
+        heuristic_exact_top=args.heuristic_exact_top,
+        heuristic_discard_bias=args.heuristic_discard_bias,
+        max_hand_candidates=args.max_hand_candidates,
     )
 
 
@@ -211,6 +244,16 @@ def main():
             "checkpoint_buffer": not args.no_checkpoint_buffer,
             "buffer_checkpoint_cap": args.buffer_checkpoint_cap,
         }
+        # W0: the heuristic knobs are run-shaping (not pinned by `_check_config`), so a
+        # resume may change them -- that is how you turn the prior off, or hand-anneal it.
+        # The ANNEALED lambda itself comes from the checkpoint and is only overridden when
+        # the flag was passed explicitly.
+        for name in ("heuristic_prior", "heuristic_prior_floor", "heuristic_prior_anneal",
+                     "heuristic_tau", "heuristic_exact_top", "heuristic_discard_bias",
+                     "max_hand_candidates"):
+            flag = "--" + name.replace("_", "-")
+            if flag in sys.argv:
+                overrides[name] = getattr(args, name)
         trainer = ColdTrainer.from_checkpoint(ckpt, overrides=overrides)
         run_name = args.run_name or ckpt_path.parent.name
         print(f"=== Resumed from {ckpt_path} "
@@ -253,6 +296,12 @@ def main():
     print(f"  device: {cfg.device}, sims={cfg.sims}, m_init={cfg.max_considered}, "
           f"batch={cfg.batch_size}, lr={cfg.lr}, ruleset={cfg.ruleset}, "
           f"encoder={cfg.encoder}")
+    print(f"  heuristic prior: lambda={trainer.heuristic_lambda:.2f} "
+          f"(start {cfg.heuristic_prior}, floor {cfg.heuristic_prior_floor}, anneal "
+          f"{cfg.heuristic_prior_anneal or 'none'}), tau={cfg.heuristic_tau}, "
+          f"exact_top={cfg.heuristic_exact_top}, discard_bias="
+          f"{cfg.heuristic_discard_bias}, max_hand_candidates="
+          f"{cfg.max_hand_candidates or 'all'}")
     print(f"  net params: {sum(p.numel() for p in trainer.net.parameters()):,}")
     print(f"  checkpoint: every {args.checkpoint_every} ep -> {run_dir}/latest.pt "
           f"(buffer: {'yes' if cfg.checkpoint_buffer else 'NO'})")

@@ -91,6 +91,22 @@ class MCTSConfig:
     # Player.act one agent at a time); cross-tree batching is strictly better when
     # several trees are available. See BATCH_NOTES.md §3.
     leaf_batch: int = 1
+    # W0 (2026-08-22) — the heuristic hand prior (`mcts/heuristic.py`). All four are
+    # inert at their defaults: `_apply_expansion` returns the net's priors unchanged
+    # when the weight is 0 AND the candidate cap is 0, so a default-configured search is
+    # byte-identical to the pre-W0 one (pinned by
+    # `tests/test_heuristic_prior.py::test_lambda_zero_reproduces_the_search`).
+    #: lambda in prior = (1 - lambda) * net + lambda * heuristic, over play/discard only.
+    heuristic_prior_weight: float = 0.0
+    #: softmax temperature on log1p(score). 1.0 = prior ~ score, 0.5 = prior ~ score^2.
+    heuristic_tau: float = 0.5
+    #: how many play subsets per leaf get the exact `HypotheticalScorer` dry run.
+    heuristic_exact_top: int = 8
+    #: multiplier on every discard potential (>1 discards more, <1 less).
+    heuristic_discard_bias: float = 1.0
+    #: search-side candidate mask: expand only the top-K play + top-K discard subsets.
+    #: 0 = no pruning. Pruned actions stay legal in the engine; only the tree shrinks.
+    max_hand_candidates: int = 0
 
 
 class MCTS:
@@ -100,11 +116,16 @@ class MCTS:
         config: MCTSConfig | None = None,
         rng: np.random.Generator | None = None,
         outcome: OutcomeFn | None = None,
+        heuristic_lambda: float | None = None,
     ):
         self.policy_value_fn = policy_value_fn
         self.cfg = config or MCTSConfig()
         self.rng = rng if rng is not None else np.random.default_rng()
         self.outcome = outcome        # None -> resolved per root game
+        # W0: a per-search override of `cfg.heuristic_prior_weight`, so an annealing
+        # trainer can move lambda without mutating a MCTSConfig other players share.
+        self.heuristic_lambda = heuristic_lambda
+        self._heuristic_cfg = None
 
     # ── Outcome resolution ───────────────────────────────────────────────────
 
@@ -536,6 +557,7 @@ class MCTS:
         which would throw away the statistics the first one's children accumulated."""
         if node.is_expanded:
             return node.terminal_value if node.is_terminal else value
+        priors = self._shape_priors(game, priors)
         if not priors:
             # Defensive: a state we did not classify as stopping, but with nothing to do.
             node.is_expanded = True
@@ -544,6 +566,35 @@ class MCTS:
             node.add_child(k, prior=p)
         node.is_expanded = True
         return value
+
+    # ── The heuristic hand prior (W0) ────────────────────────────────────────
+
+    @property
+    def heuristic_weight(self) -> float:
+        """Effective lambda: the per-search override if set, else the config's."""
+        lam = (self.cfg.heuristic_prior_weight if self.heuristic_lambda is None
+               else self.heuristic_lambda)
+        return min(1.0, max(0.0, float(lam)))
+
+    def _shape_priors(self, game: BalatroGame, priors: dict) -> dict:
+        """Mix in `mcts/heuristic.py`'s hand prior and apply the candidate mask.
+
+        The single call site is `_apply_expansion`, which every expansion — serial,
+        virtual-loss-batched and cross-tree-batched — goes through. Returns `priors`
+        itself when both knobs are off, so the default search is unchanged.
+        """
+        lam = self.heuristic_weight
+        k = max(0, int(self.cfg.max_hand_candidates))
+        if (lam <= 0.0 and k <= 0) or not priors:
+            return priors
+        from .heuristic import HeuristicConfig, shape_priors
+        want = (self.cfg.heuristic_tau, self.cfg.heuristic_exact_top,
+                self.cfg.heuristic_discard_bias, k)
+        if self._heuristic_cfg is None or self._heuristic_cfg[0] != want:
+            self._heuristic_cfg = (want, HeuristicConfig(
+                tau=want[0], exact_top=want[1], discard_bias=want[2], max_candidates=k))
+        return shape_priors(game, priors, lam=lam, max_candidates=k,
+                            cfg=self._heuristic_cfg[1])
 
     # ── PUCT selection ───────────────────────────────────────────────────────
 

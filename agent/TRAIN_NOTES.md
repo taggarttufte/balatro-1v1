@@ -612,3 +612,25 @@ and verify exactly** — the runner never relays.
   "resume is NOT bit-exact" at every resume. §8's command raises it to the full buffer
   capacity; a v2 sample is ~6 KB, so 20 000 of them is ~120 MB of `latest.pt`.
 
+
+
+---
+
+## Running it on all the cores (Phase 5 W1, 2026-08-23)
+
+`train_mlb.py --workers N --evaluator-device {cpu,cuda,local}` plays the tournament in N
+worker processes feeding ONE shared batched evaluator. `--workers 0` (the default) is this
+document's single-process path, unchanged. The **checkpoint format is identical and the
+worker count is not in it**, so a run can be paused and resumed across the seam in either
+direction:
+
+    touch <run dir>/PAUSE
+    python mp/agent/scripts/train_mlb.py --resume <run dir>/latest.pt --minutes <N>         --device cpu --workers 12 --evaluator-device cpu
+
+Everything else -- encoder, sims, budgets, skip cap and its anneal, W0's lambda and its
+clear-rate EMA, the opponent history, the buffer, the optimizer moments, the generation
+counter -- comes back out of the checkpoint; only pass the flags you want to change.
+`--log-trajectories` still works (each worker writes a part file, merged per generation).
+
+The architecture, the transport with its measurements, the determinism contract, the
+throughput benchmark and what is found-not-fixed are all in **`PARALLEL_NOTES.md`**.

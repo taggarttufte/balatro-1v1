@@ -19,6 +19,13 @@ from .policy import PolicyValueFn, PolicyValueBase, UniformPolicy, NNPolicy, mak
 from .policy_set import SetNNPolicy, BatchedSetNNPolicy
 from .model import PolicyValueNet
 from .search import MCTS, MCTSConfig
+# W0 (2026-08-22) — the heuristic hand prior / candidate mask. Imported here so
+# `from mcts import shape_priors` works; nothing in the search depends on it unless
+# `MCTSConfig.heuristic_prior_weight` or `.max_hand_candidates` is set.
+from .heuristic import (
+    HeuristicConfig, HandHeuristic, hand_action_scores, heuristic_distribution,
+    shape_priors,
+)
 from .batched import (
     BatchedNNPolicy, BatchedSearch, SearchRequest, SearchResult, BatchStats,
 )
@@ -39,6 +46,8 @@ __all__ = [
     "ACTION_FEATURE_DIM", "featurize_action", "featurize_actions",
     "PolicyValueFn", "PolicyValueBase", "UniformPolicy", "NNPolicy",
     "PolicyValueNet", "MCTS", "MCTSConfig", "MCTSPlayer", "Decision",
+    "HeuristicConfig", "HandHeuristic", "hand_action_scores",
+    "heuristic_distribution", "shape_priors",
     "BatchedNNPolicy", "BatchedSearch", "SearchRequest", "SearchResult", "BatchStats",
     "ReuseConfig", "ReuseStats", "TreeCache", "count_nodes",
     "BatchedMCTSPlayerGroup", "load_policy", "make_player",

@@ -1256,3 +1256,258 @@ blind, which makes the Nemesis free again.
 
 **Pending the machine:** `bench_set_vs_flat.py`, `smoke_3way.sh` (~40 min), full gate re-run, Phase 4 commit,
 first real run launch (TRAIN_NOTES §8 two-stage command).
+
+---
+
+## ✅ PHASE 4 COMPLETE — 2026-08-22 — committed `ff6884e` on `mp/campaign`; FIRST REAL RUN LAUNCHED
+
+**Gates (lead, clean):** engine **1616/10/3/0**, mp/tests **1073/2**, agent **271**, tournament **57**, eval **125**,
+replay **82**; engine_parity + parity_check **126/126**. Lead additions at close: SHOP consumable-target fix +
+tests, `__set_pvp_info__` replay op, `checkpoint:` player spec, PAUSE-file support in `train_cold` (Stage A) —
+verified: PAUSE at ep 6 → checkpoint → `--resume` → ep 110.
+
+**Bench (`bench_set_vs_flat.py`, 200 sims, leaf_batch 16):** flat CPU 430 / CUDA 369; **set CPU 302 / CUDA 168**
+sims/s. → real run is `--encoder set --device cpu` (Tagg's architecture decision; 1.4× slower than flat).
+
+**3-way smoke (10-min stages, set/CPU):** (a) warm-up only → skip 82%, clear 0%; (b) cap only → skip 46%, clear
+4%; **(c) warm-up + cap → skip 48%, clear up to 25%, most jokers (2.6), best rank vs anchors.** Recipe = (c).
+
+**FIRST REAL RUN `mp/agent/runs/real1.sh`** (launched ~17:00 CDT 2026-08-22, console `runs/real1.console.log`,
+sentinel `runs/real1.DONE`): Stage A `real1_stageA/` vanilla warm-up 300 min (45 ep/min at start, ~13k episodes)
+→ Stage B `real1/` MLB tournament 2880 min (N=16, m=8, anchors 0.25, p-history 4, skip cap 1 annealed at
+clear-rate 0.5, value blend 0.7, sims 40, trajectories logged). **PAUSE:** `touch <run dir>/PAUSE`.
+Watch per generation: value-target sd (> 0.15), **blind_clear_rate rising**, skip rate, joker sets / mean jokers,
+rank vs anchors. Abort rule (TRAIN_NOTES §8): skip > 0.8 and rising after 10 generations → stop and rethink.
+Stage A gate: if mean ante is still 1.0 after Stage A, do NOT start B — raise `--sims`.
+
+### 2026-08-22 19:30 — FIRST REAL RUN PAUSED AT STAGE A (lead) — cold MCTS cannot clear ante 1
+
+Stage A after 1 h 05 m: **4,350 episodes, 46 cleared ante 1 (1%), mean ante 1.00, value loss 0.0008** — the
+May-2026 cold-MCTS failure reproduced (constant value target). Paused via PAUSE file (chain stopped, Stage B not
+started; `real1_stageA/latest.pt` kept). Diagnostic: **200 sims → 0/53 cleared** ⇒ not a budget problem. The
+scripted greedy player clears ante 1 on only 15/40 vanilla seeds; ante 1 needs a built flush/straight/two-pair
+line, which a uniform prior over ~436 subsets never finds.
+
+**Action:** P5-W0 (Opus) building a heuristic hand-quality prior (dry-run score → softmax, mixed with the net
+prior, annealed) + top-K candidate pruning — "encode as prior, not constraint". Gate: 10-min vanilla smoke must
+clear ante 1 at a real rate before Stage A restarts.
+
+**Also raised by Tagg — multi-process self-play:** the CPU does engine clone/step (~60%) + per-leaf Python (~13%)
+single-threaded; the GPU only wins on batched leaves (K≈32). Real lever = N worker processes on the 16-core
+7950X feeding one GPU evaluator (AlphaZero shape), est. 8–10×. Phase 5 infra item #1.
+
+
+### 2026-08-22 — W0 heuristic hand prior + candidate pruning — DONE (unblocks Stage A)
+
+The urgent Phase-4/5 unblocker. Stage A of the first real run cleared ante 1 in **46 of
+4 350 episodes (1.0%)** with **value loss 0.0008** — a constant target, nothing learning —
+and a 200-sim diagnostic cleared **0/53**, so it was never the budget. New:
+`mp/agent/mcts/heuristic.py`, `mp/agent/PRIOR_NOTES.md`,
+`mp/agent/tests/test_heuristic_prior.py` (**38**), `scripts/w0_smoke_report.py`,
+`runs/w0_smoke.sh` + `w0_smoke2.sh`. Edited: `mcts/{search,player,__init__}.py`,
+`train/{loop,population,selfplay}.py`, `scripts/{train_cold,train_mlb}.py`.
+**`mp/engine/**`, `mp/rng/**`, `mp/tournament/**`, `mp/eval/**`, `mp/replay/**`
+untouched; no engine change needed.**
+Gates: `mp/agent/tests` **309** (271 + 38), `mp/tournament` + `mp/eval` + `mp/replay`
+**264 (57/125/82), unchanged**.
+
+**The prior, in one line each.** `play(S)` = the engine's own dry run — `evaluate_hand`
+for the type, `(base_chips + scoring-card chips) * base_mult` at the run's planet level,
+refined for the top 8 by the side-effect-free `HypotheticalScorer` (skipped when the
+board is plain, where the two are provably equal and a test says so).
+`discard(D)` = `max(floor, draw)`: `floor` is the best play still available from the kept
+cards (exact max-over-submasks DP), `draw` is `value(T) * P(Binom(|D|, p_T) >= m_T)` over
+Flush / Straight / n-of-a-kind targets read off the actual remaining deck. Both are the
+same units, so ONE softmax over play + discard is meaningful. Prior
+= `(1-λ)·net + λ·h` where `h` redistributes only the mass the net already gave to hand
+actions — **λ never moves mass between playing a card and using a Tarot**, and a
+non-`SELECTING_HAND` state comes back untouched (the same dict object). Softmax is on
+`log1p(score)/τ`, so τ is scale-free. λ anneals (`ep:<N>` or `clear:<r>`) to a 0.1 floor
+and **is carried in the checkpoint** with its clear-rate EMA.
+
+**Measured (10-min vanilla arms, `--encoder set --sims 40`, CPU, 9 arms over 2 rounds —
+PRIOR_NOTES §4 has the full table):**
+
+| arm | clear% (reached ante 2) | mean ante | mean len | value loss |
+|---|---|---|---|---|
+| cold baseline (no prior, no mask) | **0.0%** (0/499) | 1.00 | 9.3 | 0.0023 |
+| **mask only** (λ 0, K 32) | **0.4%** | 1.00 | 8.9 | 0.0072 |
+| λ 0.8, K 32, τ 0.5 | 14.1% | 1.16 | 17.3 | 0.0266 |
+| **λ 0.8, K 32, τ 0.35** | **15.7%** | **1.18** | 19.1 | **0.0251** |
+| λ 1.0, K 32, τ 0.5 | 9.8% | 1.10 | 16.5 | 0.0180 |
+| λ 0.8, K 32, **τ 1.0** | 5.9% | 1.06 | 12.7 | 0.0139 |
+| λ 0.8, K 32, **80 sims** | 6.9% | 1.07 | 17.9 | 0.0196 |
+| λ 0.8, K 32, **discard bias 1.5** | 9.1% | 1.09 | 16.6 | 0.0191 |
+| λ 0.9, **K 16**, τ 0.35 | 14.6% | 1.15 | 20.8 | 0.0229 |
+
+**The brief's 20% bar was not hit** (14-16%, se ~3 points at n≈130); what was hit is what
+the bar stood for — **the value target is no longer constant** (0.0251 vs 0.0008/0.0023),
+so Stage A has something to learn from.
+
+**Three findings worth carrying forward.** (1) **The mask alone does nothing** — pruning
+to the 64 best-by-heuristic actions while keeping the net's near-uniform prior over them
+scores 0.4%, i.e. the baseline. The prior is the mechanism; K is only a tree-size lever.
+(2) **τ matters more than λ**: 5.9% / 14.1% / 15.7% at τ = 1.0 / 0.5 / 0.35, and below
+0.35 is untried. λ = 1.0 is *worse* than 0.8 — keep a fifth of the net's spread.
+(3) **More sims still does not help** (80 sims: 6.9%), which confirms the lead's
+diagnostic from the other direction.
+
+**Throughput, stated straight:** the heuristic costs **~1.9 ms per SELECTING_HAND leaf**
+and the search runs **351 -> 184 sims/s** (set encoder, CPU, 40 sims). The mask pays back
+part of it (168 -> 184 sims/s) but **pruning does NOT make the search faster overall** —
+it is applied at `_apply_expansion`, after the policy has already featurised all 436
+actions, so it saves the tree and not `featurize_actions_set`. Making it save the
+featurisation means pushing the allowed set into `NNPolicy.encode_leaf`, a W1-owned
+`PolicyValueFn` contract change; that is the biggest remaining per-leaf lever and it is
+NOT done. Episodes/min falls further (44 -> 13) because a good episode is twice as long,
+which is the point.
+
+**Stage A (relaunch):** add
+`--heuristic-prior 0.8 --heuristic-tau 0.35 --max-hand-candidates 32
+--heuristic-prior-anneal clear:0.6 --heuristic-prior-floor 0.1` to TRAIN_NOTES §8's Stage
+A command. **Stage B:** add
+`--heuristic-prior 0.4 --heuristic-tau 0.35 --max-hand-candidates 32
+--heuristic-prior-anneal clear:0.5 --heuristic-prior-floor 0.1` — 0.4 not 0.8 because a
+large shared λ makes every tournament seat play the same hands and pushes `tie_fraction`
+up. `population.instantiate` gives the prior to **every net seat, current and past-self
+alike** (a past checkpoint searching without it is a different agent from the one whose
+weights were trained with it), anchors are unaffected, and `MLBTrainer.anneal_heuristic()`
+runs off the SAME `clear_rate_ema` as the skip cap so both crutches come off together
+(`h_lambda` is logged next to `skip_cap`). **New watchdog line: `v=` (value loss) must
+stay above ~0.01** — a collapse back toward 0.001 is the old failure returning.
+
+**Found, not fixed** (PRIOR_NOTES §6): the featurisation lever above; the prior has no
+notion of *finishing* a blind (the obvious next term if a real Stage A plateaus under
+~40%); the draw potential ignores Shortcut/Smeared and uses a binomial rather than a
+hypergeometric tail (both understate a draw); `evaluate_hand` over 218 subsets is 70% of
+the heuristic's cost and a vectorised rewrite was deliberately NOT done (a second hand
+evaluator that can drift from the engine's is the bug class this project spent two phases
+removing). Also: the `blinds` column in the smoke report counts the blind INDEX, which a
+SKIP advances — judge arms on `clear%`, not on it.
+
+### 2026-08-22 ~20:00 — FIRST REAL RUN RELAUNCHED with the W0 heuristic prior (lead)
+
+W0 delivered (`mp/agent/mcts/heuristic.py`, `PRIOR_NOTES.md`, 309 agent tests): dry-run hand-quality prior mixed
+into the MCTS prior on play/discard (λ, τ), top-K candidate mask, anneal on the blind-clear EMA. 10-min smoke:
+cold **0.0%** ante-1 clears → **λ0.8/τ0.35/K32: 15.7%**, value loss 0.0023 → 0.025 (target alive). Mask alone
+does nothing (0.4%); τ matters more than λ; more sims still doesn't help. Throughput 351 → 184 sims/s.
+
+Relaunched `real1.sh` at ~20:00 CDT with Stage A `--heuristic-prior 0.8 --heuristic-tau 0.35
+--max-hand-candidates 32 --heuristic-prior-anneal clear:0.6 --heuristic-prior-floor 0.1` and Stage B
+`--heuristic-prior 0.4 … clear:0.5`. First 50 episodes: clear% ~20%, mean ante 1.2, v loss 0.025, 16 ep/min.
+Quirk (left as is): the anneal is λ = λ0·(1 − clear_EMA/r) with the EMA seeded from episode 1 (100% clear) → λ
+started at the 0.1 floor and climbs back as the EMA settles (0.29 by ep 50). Expected steady state λ≈0.5 at a
+20% clear rate. Old attempt's console kept as `runs/real1.console.attempt1.log`.
+**Stage A gate for the morning:** clear% rising past ~20% and mean ante climbing; `v=` must stay > 0.01.
+
+---
+
+## Phase 5 — KICKED OFF 2026-08-23 ~03:30 (while `real1` Stage B runs)
+
+**Tagg's two questions set the first two workstreams:**
+1. **Parallelism (P5-W1, Opus):** the run is single-process, one core, GPU idle (~230 sims/s). Build N worker
+   processes + one batched evaluator (AlphaZero shape), lockstep tournament, same checkpoint format so `real1`
+   resumes on all cores. Est. 8–10× on the 7950X. Swap procedure: PAUSE → `--resume … --workers N`.
+2. **🔴 CLAIRVOYANCE (P5-W2, Opus) — the search cheats.** `search.py`'s docstring ("each simulation sees different
+   RNG outcomes") was true only on the old engine's global `random.Random`. On the Phase-1 engine the keyed RNG +
+   draw-pile order are cloned, so every simulation sees THE TRUE FUTURE: exact draws after a discard, exact
+   reroll, pack contents, every probability roll. **All Stage A/B numbers so far are perfect-information.** Fix =
+   determinization at the root of every simulation (keep observed state; reshuffle the draw pile; fresh seed
+   for every future stream). W2 adds `BalatroGame.determinize()` + measures the clairvoyant-vs-determinized
+   gap on the latest Stage B checkpoint; the lead wires it into search/batched after W1 hands off.
+
+### 2026-08-23 — P5-W1 multi-process self-play + shared batched evaluator — DONE ✅
+
+**Agent W1.** Phase 5 infra item #1, built while `runs/real1` (Stage B) was live — its run dir untouched, and
+`mp/engine/**`, `mp/rng/**`, `mp/eval/**`, `mp/replay/**` read only. New: `mp/tournament/parallel.py`,
+`mp/agent/parallel/` (10 modules), `mp/agent/train/parallel.py`, `mp/agent/benchmarks/bench_parallel.py`,
+`mp/agent/PARALLEL_NOTES.md`, `mp/agent/tests/test_parallel.py` (**28**),
+`mp/tournament/tests/test_parallel_runner.py` (**17**). Edited additively: `train/population.py`
+(`instantiate(..., policy_for=)`), `scripts/train_mlb.py` (`--workers`, `--evaluator-device`, …).
+Gates: `mp/agent/tests` **337** (309 + 28), `mp/tournament/tests` **74** (57 + 17), `mp/eval` + `mp/replay`
+**207 unchanged**.
+
+**Architecture (AlphaZero shape).** N worker processes each own a SUBSET of the tournament's seats — games,
+MCTS trees and caches, per-agent RNGs, W0's heuristic prior, the skip cap, the sample collectors, the trajectory
+loggers — and **no net**. A worker drives its seats in lockstep (`drive_many` + `LockstepDecider`), so their
+leaves batch; `RemotePolicy` ships them to ONE evaluator, a daemon thread in the main process, which groups by
+net (live + past selves), runs one forward per group and replies. Every cross-agent decision (N×N matrix, life
+rule, elimination, the ante barrier) stays in the main process in `Tournament.run`'s order — `Tournament` itself
+is **not edited**; `ParallelTournament` subclasses it and talks to a `TournamentDriver`. `--workers 0` is the old
+path, byte for byte.
+
+**Transport = shared memory, and here is why.** A 436-action set-encoder leaf is **126 612 bytes** (obs 21
+arrays / 3 660 B + action block 4 arrays / 122 952 B); the reply is 1 748 B. 16 workers at ~184 sims/s is
+**~370 MB/s of requests**. So: one shared-memory arena per worker for the payload (the worker writes the arrays
+where the evaluator will read them; the evaluator's only copy is the `np.stack`/pad `BatchedSetNNPolicy` already
+does), and a `Queue` carrying just `(n_actions, offset)` per leaf plus a `Pipe` carrying the round id. Batching
+policy: the evaluator blocks for the FIRST submission then drains — it never waits for a named worker, so a slow
+tree can't stall the batch, and the queue refills during the forward pass, which self-balances.
+Measured: `--evaluator-max-wait-ms 2` raises the mean batch 1.64 → 2.44 and cuts forward time 14.6 → 9.8 s but
+LOSES on wall clock (531 → 482 sims/s) — on CPU, leave it at 0; it is a CUDA lever.
+
+**Checkpoints: identical format, both directions, verified live.** `ParallelMLBTrainer` subclasses `MLBTrainer`
+and overrides exactly one method (`_play_tournament`), so `state_dict`/`load_state_dict`/`from_checkpoint` are
+the inherited ones and the worker count is NOT in the payload. A parallel checkpoint resumed single-process
+(gen 1 → 2 ✅) and a single-process checkpoint resumed into the parallel trainer (test ✅). PAUSE mid-generation
+with workers: stopped after the tournament in flight, trained, drained the pool, checkpointed, exit 0 ✅.
+Worker crash: its agents are marked `crashed` (handled exactly like a death), the matrix is built from the
+survivors, the run continues; `respawn_dead()` brings the process back next generation.
+
+**Determinism.** Structural determinism is guaranteed and tested (seed string resolved once in main; per-agent
+`default_rng(member.seed)`; samples re-ordered by `(seed, agent, decision)`); numerical agreement is contracted
+at BATCH_NOTES §3's ~1e-7 and **measured exact** — 1 vs 4 workers with a real net gave identical matrices,
+lives, value targets and sample counts. `ParallelTournament` + `LocalDriver` == `Tournament` byte for byte for
+all three life rules, both fan-outs, odd N, the degenerate identical population, and the trajectory hooks.
+**One deliberate difference:** `SampleBuilder`'s subsampling RNG is per-agent (`cfg.seed`, generation, idx)
+instead of the trainer's shared generator — it has to be, and it makes the subsampling independent of the worker
+count. So a parallel generation is a *continuation*, not a bit-exact replay, of the serial one.
+
+**Throughput — smoke only so far** (N=8, sims 40, max_ante 4, 1 seed, set/CPU, **with `real1` still holding a
+core**): serial **229 sims/s** → 1 worker **268 (1.17×)** → **4 workers 531 sims/s (2.32×)**. Even one worker
+beats serial, because the serial runner drives one agent at a time and never has two leaves to batch (mean batch
+3.24 at 1 worker). 4 workers is sub-linear: the ante is a barrier, 26% of worker time was spent waiting on the
+evaluator, and with 2 seats per worker there is little to batch inside a worker (mean batch falls to 1.64).
+CUDA was sanity-checked only (runs; 9.9 s of a 17 s wall inside the forward at batch 1.3 — launch overhead,
+as BATCH_NOTES §6 predicted).
+
+**FOR THE LEAD — one command, machine free:**
+```
+python mp/agent/benchmarks/bench_parallel.py            # workers {1,4,8,12,16} x {cpu,cuda} + serial
+python mp/agent/benchmarks/bench_parallel.py --include-local   # + the "each worker holds its own net" arm
+```
+**FOR THE LEAD — the swap for `real1`:** `touch mp/agent/runs/real1/PAUSE`, wait for `=== Stopped (PAUSE)`, then
+```
+python mp/agent/scripts/train_mlb.py --resume mp/agent/runs/real1/latest.pt \
+    --minutes 2880 --device cpu --workers 12 --evaluator-device cpu --run-dir mp/agent/runs
+```
+(add `--log-trajectories --sig-every 50` to keep trajectory logging; pick `--workers` / `--evaluator-device`
+from the benchmark — 12/cpu is the conservative pre-benchmark choice on a 16C/32T box.)
+
+**Found, not fixed** (PARALLEL_NOTES §9): the evaluator is ONE thread and may become the bottleneck at 16
+workers (diagnose with `eval_forward_s` / `worker_wait_s_mean` in the generation log; fixes are its own process
+or two threads split by `policy_id`); `p_history=4` distinct checkpoints fragment the batch into four
+one-leaf forwards per round; **the 436-actions-per-leaf cost is now also the transport cost** — pushing W0's
+candidate mask into `encode_leaf` would cut per-leaf Python, arena traffic and the padded forward at once, and
+is still the biggest single lever (PRIOR_NOTES §6, BATCH_NOTES §6); a crashed worker's agents are lost for the
+generation, not just the tournament; `partition_agents` balances by `sims`, which is a proxy for cost;
+`--objective external` is deliberately not parallelised.
+3. **Decision statistics (P5-W3, Opus) — Tagg's ask:** `mp/stats/` — for packs/rerolls/vouchers at any state: hit
+   valuation by dry-run gain on a clone, P(≥1 hit) exact (hypergeometric) + Monte Carlo through the real generator
+   on determinized clones, true cost incl. interest loss ($1/$5, cap $25 held), urgency from the chip gap to the
+   next target, net EV table; CLI + a 126-seed sweep for antes 1–3. = the curated-shortlist / layer-1 instrument;
+   later fed to the MCTS prior as features.
+
+### 2026-08-23 ~04:10 — PHASE 5 PAUSED at Tagg's request (strategic question pending)
+
+All three Phase 5 agents stopped. W2 (determinization) and W3 (decision stats) had not written anything. W1
+(parallel self-play) left PARTIAL, uncommitted, default-off work on disk: `mp/agent/parallel/`,
+`mp/agent/train/parallel.py`, `mp/tournament/parallel.py`, `tests/test_parallel.py`, `benchmarks/bench_parallel.py`,
+`PARALLEL_NOTES.md`, plus additive `--workers`-style flags in `train_mlb.py`/`selfplay.py`. Tree is green
+(agent 309, tournament 74 with `test_parallel.py` excluded). **Do not trust the parallel path until finished.**
+The `real1` Stage B run continues untouched (gen 19 at 04:00).
+
+**Tagg's open question for the morning:** *if Balatro is fundamentally an EV calculation, MCTS may not be the
+right search method.* Decide before resuming Phase 5 (parallelism, determinization, decision stats all
+presuppose a search agent). Keep in view: the search is currently clairvoyant (W2 finding), so no number from
+`real1` is evidence either way about MCTS's fitness.

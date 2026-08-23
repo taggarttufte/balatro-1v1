@@ -33,7 +33,7 @@ import torch
 
 from balatro_sim.game import BalatroGame
 from mcts import MCTSConfig, MCTSPlayer, PolicyValueNet, get_encoder  # noqa: F401
-from mcts.outcome import MLBOutcome, OutcomeFn, VanillaOutcome
+from mcts.outcome import MLBOutcome, OutcomeFn, VanillaOutcome, blinds_completed
 from mcts.policy import make_policy
 
 from .agent import SelfPlayAgent
@@ -78,6 +78,21 @@ class TrainConfig:
     subsample: bool = True
     k_unvisited: int = 8
     set_res_blocks: int = 2      # trunk depth of SetPolicyValueNet (encoder == "set")
+    # W0 (2026-08-22) -- the heuristic hand prior (`mcts/heuristic.py`). All OFF by
+    # default: a TrainConfig() built the old way produces the old search exactly.
+    #: starting lambda in prior = (1 - lambda) * net + lambda * heuristic
+    heuristic_prior: float = 0.0
+    #: lambda never anneals below this (0.1 keeps a floor of hand knowledge forever)
+    heuristic_prior_floor: float = 0.1
+    #: ""  / "none"         constant lambda
+    #: "<N>" / "ep:<N>"     linear lambda0 -> floor over N episodes
+    #: "clear:<r>"          lambda0 * (1 - clear_rate_ema / r), floored
+    heuristic_prior_anneal: str = ""
+    heuristic_tau: float = 0.5
+    heuristic_exact_top: int = 8
+    heuristic_discard_bias: float = 1.0
+    #: search-side candidate mask: expand only the top-K play + top-K discard subsets
+    max_hand_candidates: int = 0
     # Game
     ruleset: str = "vanilla"     # "vanilla" | "mlb"
     deck_key: str = "b_red"
@@ -138,6 +153,14 @@ class ColdTrainer:
         self.mcts_cfg = MCTSConfig(
             num_simulations=cfg.sims,
             gumbel_max_considered=cfg.max_considered,
+            # W0: the config carries the SHAPE of the heuristic (tau / exact_top /
+            # discard bias / candidate cap); the WEIGHT lives on the MCTS object
+            # (`heuristic_lambda`) because it is annealed per episode.
+            heuristic_prior_weight=cfg.heuristic_prior,
+            heuristic_tau=cfg.heuristic_tau,
+            heuristic_exact_top=cfg.heuristic_exact_top,
+            heuristic_discard_bias=cfg.heuristic_discard_bias,
+            max_hand_candidates=cfg.max_hand_candidates,
         )
         self.sample_builder = (
             SampleBuilder(self.encoder, k_unvisited=cfg.k_unvisited,
@@ -154,8 +177,64 @@ class ColdTrainer:
         self.trainer = Trainer(self.net, lr=cfg.lr, device=cfg.device,
                                weight_decay=cfg.weight_decay)
         self.counters = Counters()
+        # W0: annealed heuristic weight + the rolling blind-clear rate that drives it.
+        # Both are checkpointed (`state_dict`), or a resume would silently restart the
+        # anneal at lambda0 and undo however many hours of decay the run had spent.
+        self.heuristic_lambda = float(cfg.heuristic_prior)
+        self.clear_rate_ema: Optional[float] = None
+        self._apply_heuristic_lambda()
 
     # ── Pieces ───────────────────────────────────────────────────────────────
+
+    #: EMA weight on the per-episode "did it clear ante 1" indicator (W0). 0.05 is a
+    #: ~20-episode window: fast enough for a 10-minute smoke, smooth enough for 5 hours.
+    CLEAR_EMA_ALPHA = 0.05
+
+    def _apply_heuristic_lambda(self) -> None:
+        """Push the current lambda onto the search the self-play agent actually uses."""
+        self.agent.mcts.heuristic_lambda = self.heuristic_lambda
+
+    def annealed_lambda(self) -> float:
+        """`cfg.heuristic_prior_anneal` evaluated at the current episode / clear rate.
+
+        `""` / `"none"`      constant
+        `"<N>"` / `"ep:<N>"` linear from `heuristic_prior` to `heuristic_prior_floor`
+                             over N episodes
+        `"clear:<r>"`        `lambda0 * (1 - clear_rate_ema / r)`, floored -- the same
+                             criterion `--skip-cap-anneal-clear-rate` uses, so the two
+                             training-time crutches come off together
+        """
+        cfg = self.cfg
+        lam0 = float(cfg.heuristic_prior)
+        floor = min(lam0, float(cfg.heuristic_prior_floor))
+        spec = (cfg.heuristic_prior_anneal or "").strip().lower()
+        if lam0 <= 0.0 or spec in ("", "none", "0"):
+            return lam0
+        kind, _, raw = spec.partition(":")
+        if not raw:
+            kind, raw = "ep", kind
+        try:
+            value = float(raw)
+        except ValueError:
+            return lam0
+        if kind in ("ep", "episodes", "episode"):
+            if value <= 0:
+                return lam0
+            frac = min(1.0, self.counters.episodes / value)
+        elif kind in ("clear", "clear_rate", "clearrate"):
+            rate = self.clear_rate_ema
+            if rate is None or value <= 0:
+                return lam0
+            frac = min(1.0, max(0.0, rate / value))
+        else:
+            return lam0
+        return floor + (lam0 - floor) * (1.0 - frac)
+
+    def _update_clear_rate(self, cleared: bool) -> None:
+        a = self.CLEAR_EMA_ALPHA
+        x = 1.0 if cleared else 0.0
+        prev = self.clear_rate_ema
+        self.clear_rate_ema = x if prev is None else (1.0 - a) * prev + a * x
 
     def make_outcome(self) -> OutcomeFn:
         if self.cfg.ruleset == "mlb":
@@ -191,6 +270,13 @@ class ColdTrainer:
             }
 
         t_play = time.perf_counter() - t_ep
+        # W0: "cleared ante 1" == reached ante 2. `blinds` is the finer signal (0-24)
+        # and is what a watchdog should read before the mean ante moves at all.
+        blinds = blinds_completed(game)
+        cleared = bool(result.final_ante >= 2)
+        self._update_clear_rate(cleared)
+        self.heuristic_lambda = self.annealed_lambda()
+        self._apply_heuristic_lambda()
         self.buffer.extend(result.samples)
         self.counters.samples += len(result.samples)
         if result.won:
@@ -211,6 +297,10 @@ class ColdTrainer:
             "ep": ep,
             "seed": episode_seed,
             "ante": result.final_ante,
+            "blinds": blinds,
+            "cleared": cleared,
+            "clear_rate": self.clear_rate_ema,
+            "h_lambda": self.heuristic_lambda,
             "won": result.won,
             "shaped_z": result.z,
             "stop": result.stop_reason,
@@ -241,6 +331,10 @@ class ColdTrainer:
             },
             "buffer": (self.buffer.state_dict(max_items=self.cfg.buffer_checkpoint_cap)
                        if include_buffer else None),
+            # W0: the annealed weight and the rate that drives it. A resume that dropped
+            # these would restart the anneal at lambda0.
+            "heuristic": {"lambda": self.heuristic_lambda,
+                          "clear_rate_ema": self.clear_rate_ema},
         }
 
     def load_state_dict(self, ckpt: dict, *, strict_config: bool = True) -> None:
@@ -255,6 +349,11 @@ class ColdTrainer:
         load_global_rng_state(rng)
         if ckpt.get("buffer"):
             self.buffer.load_state_dict(ckpt["buffer"])
+        h = ckpt.get("heuristic") or {}
+        if h.get("lambda") is not None:
+            self.heuristic_lambda = float(h["lambda"])
+        self.clear_rate_ema = h.get("clear_rate_ema", self.clear_rate_ema)
+        self._apply_heuristic_lambda()
 
     def _check_config(self, ckpt: dict) -> None:
         """A resume that quietly changes the observation, the net shape or the game is a
@@ -310,6 +409,9 @@ def rolling_summary(records: list[dict]) -> dict:
         "len": float(np.mean([r["len"] for r in eps])),
         "z": float(np.mean([r["shaped_z"] for r in eps])),
         "win_pct": 100.0 * float(np.mean([bool(r["won"]) for r in eps])),
+        "clear_pct": 100.0 * float(np.mean([bool(r.get("cleared")) for r in eps])),
+        "blinds": float(np.mean([r.get("blinds", 0) for r in eps])),
+        "h_lambda": float(np.mean([r.get("h_lambda") or 0.0 for r in eps])),
         "policy_loss": float(np.mean([m["policy_loss"] for m in metrics])) if metrics else float("nan"),
         "value_loss": float(np.mean([m["value_loss"] for m in metrics])) if metrics else float("nan"),
     }
