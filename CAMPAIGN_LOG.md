@@ -1574,3 +1574,44 @@ Lead's design calls made at launch (not in the brief):
 - W1 gets a single engine exception: additive fields on `MLBMatch.pvp_log`/`PlayerView` if the opponent block
   needs "hands used" per Nemesis. W2 owns `game.py`'s determinize API only.
 - `opp_econ` 4 (STATE_SPEC open item 2) is IN.
+
+### 2026-08-23 ~17:30 — PHASE 5 (rev 2) BUILD COMPLETE: all six workstreams landed + lead fix pass
+
+Commits (all `mp/campaign`): `a6a4a0a` rev-1 W1-parallel baseline · `4525cb1` ev/stats scaffolding ·
+`2dd8ba5` W1+W2+W4+W5s1 · `4652e8e` W3 · `8d3f0d8` **engine: The Hook pools UNPLAYED cards only**
+(W3 found it, Lua state_events.lua:478-488 confirmed; parity 126/126 held) · `82a273a` W5s2+W6 ·
+`b8a4e2e` W3 fix pass. Tree clean.
+
+Headline numbers (details in VALUE/DETERMINIZE/EV/STATS/TRAINV/ADVISOR NOTES):
+- W1: encoder v2 = STATE_SPEC v1 exactly (355 scalars, vocab 439, fingerprint `5167cdc1…`), SetValueNet
+  **4,996,789 params**, encode 0.12 ms/state, CUDA B=256 fwd 3.4 ms. `MLBMatch` additive: `pvp_detail`,
+  per-player econ, `player_view()`.
+- W2: `clone_determinized` 1.25–1.37× clone; DeterminizedMCTSPlayer (per-sim PIMC default); 33+24 tests.
+- W3 (+fix pass): EVPlayer fast 3.2 ms/hand decision (target 5), full 58 ms (target 100), shop 3.9 ms,
+  pack 6.1 ms; **12-seed dev gate: ante-1 clear 100% fast AND full (greedy 50%)**; ε private stream;
+  anti-cycling guard; value_fn errors propagate. Remaining known flaw: scalar board ratio (EV_NOTES §8).
+- W4: decision_table 1.29 ms mean / 2.5 p95 (gate 50); analytic P(hit) within CI 30/30 vs determinized
+  empirical; interest loss geometrically discounted (0.85).
+- W5: **full label→V pipeline proven**: 1,152 labels @ 20.1/min on 4 workers (proj ~90/min @ 16 pre-fix-pass,
+  likely ~2× that now), independent-rollout sum-to-one 0.965±0.025, sd(label) rises 0.21→0.39 ante 1→5,
+  truncation rate 0.000; V on 1k labels: held-out BCE 0.674 (const 0.693), Brier 0.083 (0.103), AUC 0.80 —
+  pipeline proof only; PAUSE live-verified, resume continues schedule, 5M ckpt bit-exact; MatchAwareEVPlayer
+  binds `opponent_view` into value_fn; smoke tournament V 0/12 (overfit-1k V vs tuned rules — expected).
+  Shop tier for labels FROZEN = W3 rules (stats tier 4× cheaper but ante 3.9 vs 6.1).
+- W6: advisor CLI (`python mp/ev/cli.py advise fixture:bloodstone_vs_invisible --player 0 --rollouts 32`)
+  prints rollout/race/V P(win) side by side + ranked actions + stats tables. Tagg's acceptance state:
+  P0 rollout 0.906±0.105 vs race 0.215 (documented: race fits pre-edit history — real gap, not a bug).
+  Engine caveat: Blueprint-on-Invisible is a scoring NO-OP (sell-triggers not forwarded) — future engine item.
+  h2h driver: ev:fast beat real1:det 4/4 (2-seed, sims 16 smoke).
+
+## IDLE-BOX RUNBOOK (Tagg was using the machine — nothing heavy has run yet)
+Phase A (~1–1.5 h, any order, all ≤ 16–30 procs):
+  A1 `python mp/agent/scripts/measure_clairvoyance.py --checkpoint mp/agent/runs/real1/latest.pt --n-seeds 30 --sims 40 --processes 30 --determinize-mode per_sim --determinize-seed-base 0 --max-steps 20000 --n-boot 2000 --out-json mp/results/clairvoyance_2026-08-23.json --out-md mp/results/clairvoyance_2026-08-23.md`  (~25–40 min)
+  A2 `python mp/ev/gate_ev_player.py --procs 16`  (126-seed EV gate, ~4 min)
+  A3 `python mp/stats/sweep.py --out mp/results/stats_sweep_2026-08-23.json --processes 16`  (~minutes)
+  A4 three 30-seed h2h runs — exact commands ADVISOR_NOTES §4 (~25–35 min total)
+Phase B (overnight): TRAINV_NOTES §6 —
+  B1 50k-label campaign (16 workers; ~9.5 h pre-fix-pass projection, plausibly ~5 h now; resumable; PAUSE file)
+  B2 `train_v` full (~25 min GPU) → B3 `tournament_v` 30 seeds (~10 min).
+Run Phase A before B1 (A2 sanity-checks the player the labels come from). B's numbers are the first REAL
+Phase-5 results: V-vs-rules tournament + clairvoyance table are what Tagg reads next session.
