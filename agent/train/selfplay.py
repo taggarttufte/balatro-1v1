@@ -1071,8 +1071,32 @@ class MLBTrainer:
                               encoder=self.cfg.encoder, leaf_batch=self.mlb.leaf_batch,
                               reuse=self.mlb.reuse, strategy=self.mlb.strategy,
                               outcome=self.outcome, policy_cache=self._policy_cache,
-                              max_skips_per_ante=self.effective_skip_cap())
+                              max_skips_per_ante=self.effective_skip_cap(),
+                              **self.heuristic_kwargs())
         return members, players
+
+    def heuristic_kwargs(self) -> dict:
+        """W0's hand prior, as the population factory wants it. The WEIGHT is the
+        trainer's annealed lambda (`ColdTrainer.heuristic_lambda`); the shape comes from
+        the `TrainConfig`. Stage B must run this or it is evaluating a different agent
+        from the one Stage A trained."""
+        cfg = self.cfg
+        return {
+            "heuristic_prior": self.cold.heuristic_lambda,
+            "max_hand_candidates": cfg.max_hand_candidates,
+            "heuristic_tau": cfg.heuristic_tau,
+            "heuristic_exact_top": cfg.heuristic_exact_top,
+            "heuristic_discard_bias": cfg.heuristic_discard_bias,
+        }
+
+    def anneal_heuristic(self) -> float:
+        """Move lambda for the NEXT generation. The clear-rate EMA that drives the skip
+        cap drives this too, so `--heuristic-prior-anneal clear:0.5` and
+        `--skip-cap-anneal-clear-rate 0.5` come off together."""
+        self.cold.clear_rate_ema = self.clear_rate_ema
+        self.cold.heuristic_lambda = self.cold.annealed_lambda()
+        self.cold._apply_heuristic_lambda()
+        return self.cold.heuristic_lambda
 
     def effective_skip_cap(self) -> Optional[int]:
         """The cap this generation actually runs under, after annealing: None once the net
@@ -1123,6 +1147,7 @@ class MLBTrainer:
         self.extra_metrics = {k: v for k, v in raw.items() if k not in fields}
         self.extra_metrics["skip_cap"] = self.effective_skip_cap()
         self.extra_metrics["clear_rate_ema"] = self.clear_rate_ema
+        self.extra_metrics["h_lambda"] = self.anneal_heuristic()
         self.generation += 1
         return m
 
@@ -1148,7 +1173,12 @@ class MLBTrainer:
         player = MCTSPlayer(
             policy=self.policy,
             config=MCTSConfig(num_simulations=self.cfg.sims,
-                              leaf_batch=self.mlb.leaf_batch),
+                              leaf_batch=self.mlb.leaf_batch,
+                              heuristic_prior_weight=self.cold.heuristic_lambda,
+                              heuristic_tau=self.cfg.heuristic_tau,
+                              heuristic_exact_top=self.cfg.heuristic_exact_top,
+                              heuristic_discard_bias=self.cfg.heuristic_discard_bias,
+                              max_hand_candidates=self.cfg.max_hand_candidates),
             outcome=self.outcome, rng=self.rng, strategy=self.mlb.strategy,
             add_noise=self.mlb.noise_current, reuse=self.mlb.reuse,
             leaf_batch=self.mlb.leaf_batch, name="cur")

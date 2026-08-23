@@ -284,6 +284,48 @@ def build_parser() -> argparse.ArgumentParser:
                          "warm up on vanilla with train_cold.py, then train the "
                          "tournament objective from those weights. Not --resume, which "
                          "continues the same run")
+    # ── W0: the heuristic hand prior + candidate mask (mcts/heuristic.py) ──
+    ap.add_argument("--heuristic-prior", type=float, default=0.0,
+                    help="lambda in prior = (1-lambda)*net + lambda*heuristic over the "
+                         "play/discard actions of SELECTING_HAND. 0 = off (the pre-W0 "
+                         "search); 0.8 is the recommended vanilla warm-up")
+    ap.add_argument("--heuristic-prior-floor", type=float, default=0.1,
+                    help="lambda never anneals below this")
+    ap.add_argument("--heuristic-prior-anneal", default="",
+                    help="'' = constant | '<N>' or 'ep:<N>' = linear to the floor over N "
+                         "episodes | 'clear:<r>' = decay as the rolling blind-clear rate "
+                         "approaches r (same criterion as --skip-cap-anneal-clear-rate)")
+    ap.add_argument("--heuristic-tau", type=float, default=0.5,
+                    help="softmax temperature on log1p(score): 1.0 = prior ~ score, "
+                         "0.5 = prior ~ score^2, ->0 = argmax")
+    ap.add_argument("--heuristic-exact-top", type=int, default=8,
+                    help="play subsets per leaf refined with the exact side-effect-free "
+                         "score_hand dry run (0 = the cheap tier only). Skipped "
+                         "automatically when the board is plain, where the two agree")
+    ap.add_argument("--heuristic-discard-bias", type=float, default=1.0,
+                    help="multiplier on every discard potential (>1 discards more)")
+    ap.add_argument("--max-hand-candidates", type=int, default=32,
+                    help="expand only the top-K play + top-K discard subsets per leaf "
+                         "(0 = every legal action, the pre-W0 tree). Search-side only: "
+                         "pruned actions stay legal in the engine")
+    ap.add_argument("--workers", type=int, default=0,
+                    help="0 = the single-process path (unchanged). N > 0 = N self-play "
+                         "worker processes feeding ONE shared batched evaluator; see "
+                         "PARALLEL_NOTES.md. The worker count is NOT recorded in the "
+                         "checkpoint, so --resume works in both directions.")
+    ap.add_argument("--evaluator-device", choices=["cpu", "cuda", "local"], default="cpu",
+                    help="where the shared evaluator runs the net. 'local' is the control "
+                         "arm: no shared evaluator at all, every worker loads the "
+                         "generation's weights and runs the net on its own core.")
+    ap.add_argument("--evaluator-max-wait-ms", type=float, default=0.0,
+                    help="extra time the evaluator keeps draining after the first arrival, "
+                         "to grow the batch. 0 = pure opportunistic drain (self-balancing "
+                         "under load); it never waits for a NAMED worker either way.")
+    ap.add_argument("--worker-arena-mb", type=int, default=16,
+                    help="shared-memory request arena per worker (a 436-action set-encoder "
+                         "leaf is ~127 KB)")
+    ap.add_argument("--worker-threads", type=int, default=1,
+                    help="torch threads inside each worker; 1 unless you know why")
     ap.add_argument("--resume", default=None,
                     help="path to a checkpoint, a run directory, or 'latest'")
     return ap
@@ -303,6 +345,13 @@ def configs_from_args(args) -> tuple:
         subsample=not args.no_subsample, k_unvisited=args.k_unvisited,
         checkpoint_buffer=not args.no_checkpoint_buffer,
         buffer_checkpoint_cap=args.buffer_checkpoint_cap,
+        heuristic_prior=args.heuristic_prior,
+        heuristic_prior_floor=args.heuristic_prior_floor,
+        heuristic_prior_anneal=args.heuristic_prior_anneal,
+        heuristic_tau=args.heuristic_tau,
+        heuristic_exact_top=args.heuristic_exact_top,
+        heuristic_discard_bias=args.heuristic_discard_bias,
+        max_hand_candidates=args.max_hand_candidates,
     )
     mlb = MLBTrainConfig(
         objective=args.objective, n_agents=args.n_agents, m_current=m_current,
@@ -324,16 +373,36 @@ def configs_from_args(args) -> tuple:
     return cfg, mlb
 
 
+def _parallel_setup(args):
+    """`(trainer class, PoolConfig | None)`.
+
+    `--workers 0` (the default) returns `(MLBTrainer, None)` and this script behaves
+    exactly as it did before Phase 5 — same class, same code path, same checkpoint.
+    """
+    if not args.workers:
+        return MLBTrainer, None
+    from parallel.pool import PoolConfig
+    from train.parallel import ParallelMLBTrainer
+    cfg = PoolConfig(n_workers=int(args.workers),
+                     evaluator_device=args.evaluator_device,
+                     torch_threads=int(args.worker_threads),
+                     max_wait_ms=float(args.evaluator_max_wait_ms),
+                     request_mb=int(args.worker_arena_mb))
+    return ParallelMLBTrainer, cfg
+
+
 # ══════════════════════════════════════════════════════════════════════ main
 
 def main() -> int:
     args = build_parser().parse_args()
     run_root = Path(args.run_dir)
 
+    trainer_cls, pool_cfg = _parallel_setup(args)
+
     if args.resume:
         ckpt_path = resolve_resume(args.resume, run_root)
         ckpt = load_checkpoint(ckpt_path, map_location=args.device)
-        trainer = MLBTrainer.from_checkpoint(
+        trainer = trainer_cls.from_checkpoint(
             ckpt,
             overrides={"device": args.device,
                        "checkpoint_buffer": not args.no_checkpoint_buffer,
@@ -348,7 +417,7 @@ def main() -> int:
             resumed_note += "\n  ! replay buffer was truncated at save time - NOT bit-exact"
     else:
         cfg, mlb = configs_from_args(args)
-        trainer = MLBTrainer(cfg, mlb)
+        trainer = trainer_cls(cfg, mlb)
         run_name = args.run_name or f"train_mlb_{datetime.now().strftime('%Y%m%d_%H%M%S')}"
         resumed_note = init_weights(trainer, args.init, args.device) if args.init else None
 
@@ -363,6 +432,14 @@ def main() -> int:
 
     traj_factory, traj_note = make_trajectory_logger(run_dir, args.log_trajectories,
                                                      sig_every=args.sig_every)
+    if pool_cfg is not None:
+        # A worker cannot be handed a logger FACTORY (it is a closure); it gets the two
+        # values it needs to build its own, and writes `trajectories.w<id>.jsonl` which the
+        # generation end folds into `trajectories.jsonl`.
+        trainer.pool_cfg = pool_cfg
+        trainer.work_dir = run_dir
+        trainer.traj_config = ({"path": str(run_dir / "trajectories.jsonl"),
+                                "sig_every": args.sig_every} if traj_factory else None)
 
     def emit(rec: dict) -> None:
         log_file.write(json.dumps(rec, default=str) + "\n")
@@ -400,6 +477,11 @@ def main() -> int:
               f"lifted at clear rate > {mlb.skip_cap_anneal_clear_rate}"
               + (f" or generation {mlb.skip_cap_anneal_generations}"
                  if mlb.skip_cap_anneal_generations else ""))
+    if pool_cfg is not None:
+        print(f"  workers:   {pool_cfg.n_workers} processes, evaluator on "
+              f"{pool_cfg.evaluator_device}"
+              + (f", max_wait {pool_cfg.max_wait_ms:g} ms" if pool_cfg.max_wait_ms else "")
+              + f", {pool_cfg.request_mb} MB arena each")
     print(f"  trajectories: {traj_note}")
     print(f"  pause with: touch {pause_path}")
     print()
@@ -499,6 +581,13 @@ def main() -> int:
                 write_checkpoint("periodic")
     except KeyboardInterrupt:               # a second Ctrl+C, or one that beat the handler
         why = "KeyboardInterrupt"
+    finally:
+        # Drain the workers BEFORE the final checkpoint: they hold no trainer state, but
+        # they do hold open trajectory files, and a checkpoint written while 16 processes
+        # are still alive competes with them for the disk.
+        close = getattr(trainer, "close", None)
+        if close is not None:
+            close()
 
     why = why or stop_reason() or "deadline"
     final = write_checkpoint(f"exit:{why}")
