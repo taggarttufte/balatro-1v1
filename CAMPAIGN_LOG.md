@@ -1511,3 +1511,42 @@ The `real1` Stage B run continues untouched (gen 19 at 04:00).
 right search method.* Decide before resuming Phase 5 (parallelism, determinization, decision stats all
 presuppose a search agent). Keep in view: the search is currently clairvoyant (W2 finding), so no number from
 `real1` is evidence either way about MCTS's fitness.
+
+---
+
+## Phase 5 (rev 2) — THE EV PLAYER — KICKED OFF 2026-08-23 ~13:30
+
+`real1` stopped at gen 106 (baseline, 107 ckpts). **Pivot (Tagg + lead): V(state)=P(win MLB match) is the only
+learned object; decisions = argmax EV under V; hand play by exact expectimax over the real draw distribution;
+shop by the decision-statistics module; labels from determinized Monte-Carlo rollouts of the analytic policy.
+No policy net → only V's input/target are frozen.** V ≈ 5M params. Brief: `docs/PHASE5_BRIEF_2026-08.md`;
+state spec draft for Tagg: `docs/STATE_SPEC_v1.md`.
+
+| Agent | Workstream | Model |
+|---|---|---|
+| W1 | State spec → encoder v2 + `SetValueNet` 5M | strong |
+| W2 | Determinization + clairvoyance measurement | sonnet |
+| W3 | Analytic hand player (expectimax over draws) + `EVPlayer` | strong |
+| W4 | Decision statistics (packs/rerolls/vouchers) + sweep | sonnet |
+| W5 | Labels (rollouts, race calc) + V trainer + 16-core workers | strong |
+| W6 | Advisor CLI + head-to-heads (after W3/4/5) | sonnet |
+
+### 2026-08-23 ~14:00 — PHASE 5 (rev 2) BUILD DEFERRED TO A NEW SESSION (Tagg's request)
+
+W2 (determinization) and W3 (analytic hand player) were launched and stopped within minutes — **nothing written,
+tree clean** (`git status`: only the earlier W1-parallel partial files + `train_mlb.py`/`selfplay.py` mixed edits).
+W1/W4/W5/W6 were never launched. Tagg reviewed `docs/STATE_SPEC_v1.md` ("looks good") and asked about the
+game-theory component → note added to the spec (v1 V = self-play value; opponent enters via the observed block;
+style diversity in labels / belief / CFR are non-restart refinements).
+
+**HAND-OFF FOR THE NEXT SESSION — start here:**
+1. `docs/PHASE5_BRIEF_2026-08.md` (the EV-player design, 6 workstreams, interfaces, gates) and
+   `docs/STATE_SPEC_v1.md` (V's input — the irreversible part; Tagg approved with the game-theory note).
+2. Decisions locked: V = P(win MLB match), MLB-only; V ≈ 5M params; symmetric opponent for labels first; Red/White
+   first with conditioning fields; no policy net; acceptance test = advisor on Bloodstone-vs-Invisible(+Blueprint).
+3. Model split: W1/W3/W5 strong, W2/W4/W6 Sonnet. W6 after W3/W4/W5.
+4. Baseline to beat / compare: `mp/agent/runs/real1/latest.pt` (clairvoyant MCTS, 106 gens) — evaluate it
+   determinized (W2) before citing any number from it.
+5. Clean-up for the new session's lead: decide whether to keep or delete the W1-parallel partial files
+   (`mp/agent/parallel/`, `train/parallel.py`, `tournament/parallel.py`, their tests/bench/notes) and the mixed
+   uncommitted edits in `train_mlb.py`/`selfplay.py` (W0 prior flags + W1 `--workers` flags, default-off, tests green).
