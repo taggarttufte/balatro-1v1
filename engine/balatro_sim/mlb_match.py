@@ -38,13 +38,15 @@ is idempotent and may also be called after a game was stepped directly (env_mp d
 ``clone()`` composes with ``BalatroGame.clone()`` (MCTS snapshot machinery).
 """
 from __future__ import annotations
+import secrets
 from dataclasses import dataclass
 from typing import Optional
 
 from .constants import MLB_STARTING_LIVES, MLB_PVP_START_ROUND, MLB_COMEBACK_PER_LIFE
 from .game import BalatroGame, State
 
-__all__ = ["MLBMatch", "MLBMatchState", "PlayerView", "DEFAULT_LIVES", "COMEBACK_MONEY_PER_LIFE"]
+__all__ = ["MLBMatch", "MLBMatchState", "PlayerView", "PlayerEcon", "DEFAULT_LIVES",
+           "COMEBACK_MONEY_PER_LIFE"]
 
 DEFAULT_LIVES = MLB_STARTING_LIVES
 COMEBACK_MONEY_PER_LIFE = MLB_COMEBACK_PER_LIFE
@@ -65,6 +67,31 @@ class PlayerView:
     pvp_exhausted: bool
     comeback_bonus: int
     comeback_pending: int      # $ owed at the next Cash Out (0 when nothing is pending)
+    # Phase 5 W1 (2026-08-23, additive, defaults keep positional construction working):
+    # the rest of what the mod's ``enemyInfo`` / lobby HUD broadcasts about a player.
+    hands_played: int = 0      # hands played this round (MP.GAME.enemy.hands is hands LEFT)
+    sells_per_ante: int = 0    # MP.GAME.enemy.sells_per_ante — jokers sold this ante
+    spent_in_shop: int = 0     # MP.GAME.enemy.spent_in_shop — $ spent on buys/rerolls this ante
+    sells_total: int = 0       # run totals of the two above
+    spent_total: int = 0
+    last_life_loss_ante: Optional[int] = None   # ante of the most recent life lost (any blind)
+
+
+@dataclass
+class PlayerEcon:
+    """Per-player public shop economics (Phase 5 W1).  The mod broadcasts
+    ``sells_per_ante`` / ``spent_in_shop`` with every ``playerInfo``; the match tracks them
+    from the actions it steps (``MLBMatch.step``), so a game stepped directly (env_mp) keeps
+    zeros.  ``ante`` is the ante the per-ante counters belong to; they reset when it moves."""
+    ante: int = 1
+    sells_per_ante: int = 0
+    spent_in_shop: int = 0
+    sells_total: int = 0
+    spent_total: int = 0
+
+    def copy(self) -> "PlayerEcon":
+        return PlayerEcon(self.ante, self.sells_per_ante, self.spent_in_shop,
+                          self.sells_total, self.spent_total)
 
 
 @dataclass
@@ -102,6 +129,14 @@ class MLBMatch:
         self.steps = 0
         self._turn = 0                     # alternation pointer for current_player()
         self.pvp_log: list = []            # (ante, loser|None, score0, score1) per resolved Nemesis
+        # Phase 5 W1 (additive): the SAME Nemeses with the rest of the public record —
+        # (ante, loser|None, score0, score1, hands_played0, hands_played1, early_end).
+        # `pvp_log`'s 4-tuple is unpacked as exactly four by frozen readers
+        # (mp/replay/replay.py, mp/eval/common.py), so it is left untouched.
+        self.pvp_detail: list = []
+        self.econ: list = [PlayerEcon(), PlayerEcon()]   # public shop economics per player
+        self._lives_seen: list = [lives, lives]          # for last_life_loss_ante (sync)
+        self.last_life_loss_ante: list = [None, None]    # per player; a failed Small/Big counts too
         self.sync()
 
     # ── queries ──────────────────────────────────────────────────────────────
@@ -144,17 +179,29 @@ class MLBMatch:
                 return p
         return None
 
+    def player_view(self, player: int) -> PlayerView:
+        """The PUBLIC view of one player (what ``enemyInfo`` / the lobby HUD reveal).  This
+        is the only engine-side reader the opponent-modelling features are allowed to use
+        (Phase 5 W1, `mcts/encoder_v2.opponent_view`): nothing here touches the player's
+        hand, jokers, consumables, deck or shop."""
+        g = self.games[player]
+        e = self.econ[player]
+        return PlayerView(
+            ante=g.ante, blind_idx=g.blind_idx, state=g.state.name, lives=g.lives,
+            skips=g.skips, dollars=g.dollars, chips_scored=g.chips_scored,
+            hands_left=g.hands_left, pvp_ready=g.pvp_ready,
+            pvp_exhausted=(g.state == State.PVP_WAIT),
+            comeback_bonus=g.comeback_bonus,
+            comeback_pending=(0 if g.comeback_bonus_given else COMEBACK_MONEY_PER_LIFE * g.comeback_bonus),
+            hands_played=g._hands_played_round,
+            sells_per_ante=(e.sells_per_ante if e.ante == g.ante else 0),
+            spent_in_shop=(e.spent_in_shop if e.ante == g.ante else 0),
+            sells_total=e.sells_total, spent_total=e.spent_total,
+            last_life_loss_ante=self.last_life_loss_ante[player],
+        )
+
     def state(self) -> MLBMatchState:
-        views = []
-        for g in self.games:
-            views.append(PlayerView(
-                ante=g.ante, blind_idx=g.blind_idx, state=g.state.name, lives=g.lives,
-                skips=g.skips, dollars=g.dollars, chips_scored=g.chips_scored,
-                hands_left=g.hands_left, pvp_ready=g.pvp_ready,
-                pvp_exhausted=(g.state == State.PVP_WAIT),
-                comeback_bonus=g.comeback_bonus,
-                comeback_pending=(0 if g.comeback_bonus_given else COMEBACK_MONEY_PER_LIFE * g.comeback_bonus),
-            ))
+        views = [self.player_view(0), self.player_view(1)]
         return MLBMatchState(seed=self.seed_str, players=(views[0], views[1]),
                              pvp_active=self.pvp_active, pvp_ante=self.pvp_ante, done=self.done,
                              winner=self.winner, current_player=self.current_player(), steps=self.steps)
@@ -175,11 +222,29 @@ class MLBMatch:
             return self.state()
         g = self.games[player]
         if g.state not in (State.PVP_WAIT, State.GAME_OVER):
+            dollars_before = g.dollars
             g.step(action)
+            self._track_econ(player, action, dollars_before - g.dollars)
         self.steps += 1
         self._turn = self._other(player)
         self.sync()
         return self.state()
+
+    def _track_econ(self, player: int, action, spent: int) -> None:
+        """Public shop economics (Phase 5 W1): a sold joker bumps ``sells_per_ante``; $ that
+        left the wallet on a ``buy`` / ``reroll`` goes to ``spent_in_shop``.  The per-ante
+        counters belong to the game's current ante and reset when it moves."""
+        e = self.econ[player]
+        ante = self.games[player].ante
+        if e.ante != ante:
+            e.ante, e.sells_per_ante, e.spent_in_shop = ante, 0, 0
+        kind = action.get("type") if isinstance(action, dict) else None
+        if kind == "sell_joker":
+            e.sells_per_ante += 1
+            e.sells_total += 1
+        elif kind in ("buy", "reroll") and spent > 0:
+            e.spent_in_shop += spent
+            e.spent_total += spent
 
     def sync(self) -> None:
         """Server-side rules, idempotent: startBlind when both are ready, enemyInfo relay,
@@ -205,6 +270,16 @@ class MLBMatch:
             self.pvp_active = False
         # 4. 0 lives anywhere -> the match is over (failRound / playHand handlers)
         self._check_game_over()
+        self._track_lives()
+
+    def _track_lives(self) -> None:
+        """Phase 5 W1 (additive): remember the ante at which each player last lost a life
+        (a failed Small / Big costs one too, not only a Nemesis) — public, it is the lives
+        counter on the HUD moving."""
+        for p, g in enumerate(self.games):
+            if g.lives < self._lives_seen[p]:
+                self.last_life_loss_ante[p] = g.ante
+            self._lives_seen[p] = g.lives
 
     def _resolve_pvp(self) -> None:
         """``playHandAction`` (actionHandlers.ts:221-345), evaluated on the live state: the
@@ -222,6 +297,9 @@ class MLBMatch:
             loser = 0 if s0 < s1 else 1
             self.games[loser].lose_life()          # Client.loseLife -> playerInfo (comeback bump)
         self.pvp_log.append((self.pvp_ante, loser, s0, s1))
+        self.pvp_detail.append((self.pvp_ante, loser, s0, s1,
+                                g0._hands_played_round, g1._hands_played_round,
+                                not (ex0 and ex1)))        # early_end: a hand was forfeited
         for g in self.games:
             g.end_pvp()                            # endPvP -> Cash Out (or GAME_OVER at 0 lives)
         self.pvp_active = False
@@ -252,6 +330,43 @@ class MLBMatch:
         new.steps = self.steps
         new._turn = self._turn
         new.pvp_log = list(self.pvp_log)
+        new.pvp_detail = list(self.pvp_detail)
+        new.econ = [e.copy() for e in self.econ]
+        new._lives_seen = list(self._lives_seen)
+        new.last_life_loss_ante = list(self.last_life_loss_ante)
+        return new
+
+    def clone_determinized(self, seed=None) -> "MLBMatch":
+        """Phase 5 W2 (DETERMINIZE_NOTES.md): both games determinized with the SAME fresh
+        seed — real-game behaviour is one seed shared by both players (``different_seeds =
+        false``, see ``__init__``/module docstring), and that correlation must survive
+        determinization: the sampled WORLD is "what if the run had actually started on
+        this other seed", not two independent worlds. `seed` is resolved to a concrete
+        value ONCE (``secrets``-random when ``None``) and handed to both
+        ``BalatroGame.clone_determinized`` calls, so both draw-pile reshuffles and both
+        future keyed-RNG streams derive from the identical fresh seed string — exactly
+        `MLBMatch.__init__`'s own ``g1 = BalatroGame(seed=g0.seed_str, ...)`` pattern, just
+        with a resampled seed instead of the true one. Never touches ``self`` or
+        ``self.games`` (same independence contract as ``clone()``); ``pvp_log`` is copied,
+        never mutated."""
+        if seed is None:
+            seed = secrets.randbelow(1 << 40)
+        new = MLBMatch.__new__(MLBMatch)
+        new.seed_str = self.seed_str
+        new.games = [g.clone_determinized(seed) for g in self.games]
+        new.starting_lives = self.starting_lives
+        new.pvp_start_round = self.pvp_start_round
+        new.pvp_active = self.pvp_active
+        new.pvp_ante = self.pvp_ante
+        new.done = self.done
+        new.winner = self.winner
+        new.steps = self.steps
+        new._turn = self._turn
+        new.pvp_log = list(self.pvp_log)
+        new.pvp_detail = list(self.pvp_detail)
+        new.econ = [e.copy() for e in self.econ]
+        new._lives_seen = list(self._lives_seen)
+        new.last_life_loss_ante = list(self.last_life_loss_ante)
         return new
 
     # ── convenience driver ───────────────────────────────────────────────────

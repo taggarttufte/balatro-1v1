@@ -1,0 +1,547 @@
+{
+ "meta": {
+  "checkpoint": "C:\\Users\\Taggart\\projects\\balatro-rl\\mp\\agent\\runs\\real1\\latest.pt",
+  "n_seeds": 2,
+  "seeds": [
+   "11111111",
+   "1558AXDL"
+  ],
+  "sims": 8,
+  "determinize_mode": "per_sim",
+  "determinize_seed_base": 0,
+  "processes": 2,
+  "wall_s": 157.24408674240112,
+  "real1_flags": {
+   "encoder": "set",
+   "strategy": "gumbel",
+   "heuristic_prior": 0.4,
+   "heuristic_tau": 0.35,
+   "max_hand_candidates": 32,
+   "heuristic_exact_top": 8,
+   "heuristic_discard_bias": 1.0
+  }
+ },
+ "aggregate": {
+  "outcome": {
+   "clairvoyant": {
+    "final_ante": {
+     "point": 1.5,
+     "lo": 1.0,
+     "hi": 2.0,
+     "n": 2
+    },
+    "blinds_cleared": {
+     "point": 3.5,
+     "lo": 2.0,
+     "hi": 5.0,
+     "n": 2
+    },
+    "final_money": {
+     "point": 4.5,
+     "lo": 1.0,
+     "hi": 8.0,
+     "n": 2
+    },
+    "mean_decision_s": {
+     "point": 0.04539751321291468,
+     "lo": 0.04266519642572218,
+     "hi": 0.04812983000010718,
+     "n": 2
+    },
+    "ante1_clear": {
+     "point": 0.5,
+     "lo": 0.0,
+     "hi": 1.0,
+     "n": 2
+    },
+    "ante2_clear": {
+     "point": 0.0,
+     "lo": 0.0,
+     "hi": 0.0,
+     "n": 2
+    },
+    "ante3_clear": {
+     "point": 0.0,
+     "lo": 0.0,
+     "hi": 0.0,
+     "n": 2
+    }
+   },
+   "determinized": {
+    "final_ante": {
+     "point": 1.0,
+     "lo": 1.0,
+     "hi": 1.0,
+     "n": 2
+    },
+    "blinds_cleared": {
+     "point": 2.0,
+     "lo": 2.0,
+     "hi": 2.0,
+     "n": 2
+    },
+    "final_money": {
+     "point": 8.0,
+     "lo": 8.0,
+     "hi": 8.0,
+     "n": 2
+    },
+    "mean_decision_s": {
+     "point": 0.0704879799988703,
+     "lo": 0.06572353999654297,
+     "hi": 0.07525242000119761,
+     "n": 2
+    },
+    "ante1_clear": {
+     "point": 0.0,
+     "lo": 0.0,
+     "hi": 0.0,
+     "n": 2
+    },
+    "ante2_clear": {
+     "point": 0.0,
+     "lo": 0.0,
+     "hi": 0.0,
+     "n": 2
+    },
+    "ante3_clear": {
+     "point": 0.0,
+     "lo": 0.0,
+     "hi": 0.0,
+     "n": 2
+    }
+   }
+  },
+  "disagreement": {
+   "n_probes": 38,
+   "overall_agree_rate": {
+    "point": 0.34210526315789475,
+    "lo": 0.21052631578947367,
+    "hi": 0.5,
+    "n": 38
+   },
+   "by_type": {
+    "play": {
+     "n": 12,
+     "agree_rate": {
+      "point": 0.0,
+      "lo": 0.0,
+      "hi": 0.0,
+      "n": 12
+     }
+    },
+    "discard": {
+     "n": 11,
+     "agree_rate": {
+      "point": 0.0,
+      "lo": 0.0,
+      "hi": 0.0,
+      "n": 11
+     }
+    },
+    "skip_blind": {
+     "n": 6,
+     "agree_rate": {
+      "point": 1.0,
+      "lo": 1.0,
+      "hi": 1.0,
+      "n": 6
+     }
+    },
+    "buy": {
+     "n": 4,
+     "agree_rate": {
+      "point": 0.75,
+      "lo": 0.25,
+      "hi": 1.0,
+      "n": 4
+     }
+    },
+    "reroll": {
+     "n": 1,
+     "agree_rate": {
+      "point": 1.0,
+      "lo": 1.0,
+      "hi": 1.0,
+      "n": 1
+     }
+    },
+    "leave_shop": {
+     "n": 1,
+     "agree_rate": {
+      "point": 1.0,
+      "lo": 1.0,
+      "hi": 1.0,
+      "n": 1
+     }
+    },
+    "sell": {
+     "n": 1,
+     "agree_rate": {
+      "point": 0.0,
+      "lo": 0.0,
+      "hi": 0.0,
+      "n": 1
+     }
+    },
+    "other": {
+     "n": 2,
+     "agree_rate": {
+      "point": 1.0,
+      "lo": 1.0,
+      "hi": 1.0,
+      "n": 2
+     }
+    }
+   },
+   "mean_t_clair_s": 0.04304311842133757,
+   "mean_t_det_s": 0.06163642894688038
+  },
+  "outcome_diff_clairvoyant_minus_determinized": {
+   "final_ante": {
+    "point": 0.5,
+    "lo": 0.0,
+    "hi": 1.0,
+    "n": 2
+   },
+   "blinds_cleared": {
+    "point": 1.5,
+    "lo": 0.0,
+    "hi": 3.0,
+    "n": 2
+   },
+   "final_money": {
+    "point": -3.5,
+    "lo": -7.0,
+    "hi": 0.0,
+    "n": 2
+   },
+   "mean_decision_s": {
+    "point": -0.025090466785955612,
+    "lo": -0.027122590001090435,
+    "hi": -0.02305834357082079,
+    "n": 2
+   },
+   "ante1_clear": {
+    "point": 0.5,
+    "lo": 0.0,
+    "hi": 1.0,
+    "n": 2
+   },
+   "ante2_clear": {
+    "point": 0.0,
+    "lo": 0.0,
+    "hi": 0.0,
+    "n": 2
+   },
+   "ante3_clear": {
+    "point": 0.0,
+    "lo": 0.0,
+    "hi": 0.0,
+    "n": 2
+   }
+  }
+ },
+ "per_seed": [
+  {
+   "seed": "11111111",
+   "outcome_clairvoyant": {
+    "seed": "11111111",
+    "won": false,
+    "final_ante": 1,
+    "furthest_ante": 1,
+    "furthest_blind_idx": 2,
+    "blinds_cleared": 2,
+    "final_money": 8,
+    "steps": 11,
+    "n_decisions": 10,
+    "mean_decision_s": 0.04812983000010718,
+    "total_decision_s": 0.48129830000107177
+   },
+   "outcome_determinized": {
+    "seed": "11111111",
+    "won": false,
+    "final_ante": 1,
+    "furthest_ante": 1,
+    "furthest_blind_idx": 2,
+    "blinds_cleared": 2,
+    "final_money": 8,
+    "steps": 11,
+    "n_decisions": 10,
+    "mean_decision_s": 0.07525242000119761,
+    "total_decision_s": 0.7525242000119761
+   },
+   "disagreement": [
+    {
+     "type": "skip_blind",
+     "agree": true,
+     "t_clair_s": 0.0799090999935288,
+     "t_det_s": 0.06435099997906946
+    },
+    {
+     "type": "skip_blind",
+     "agree": true,
+     "t_clair_s": 0.038409700006013736,
+     "t_det_s": 0.07572890000301413
+    },
+    {
+     "type": "play",
+     "agree": false,
+     "t_clair_s": 0.04618350000237115,
+     "t_det_s": 0.07283089999691583
+    },
+    {
+     "type": "play",
+     "agree": false,
+     "t_clair_s": 0.0632550000154879,
+     "t_det_s": 0.09338669999851845
+    },
+    {
+     "type": "discard",
+     "agree": false,
+     "t_clair_s": 0.0640578999882564,
+     "t_det_s": 0.08708329999353737
+    },
+    {
+     "type": "discard",
+     "agree": false,
+     "t_clair_s": 0.07023840001784265,
+     "t_det_s": 0.08933029999025166
+    },
+    {
+     "type": "discard",
+     "agree": false,
+     "t_clair_s": 0.06378009999752976,
+     "t_det_s": 0.08998229997814633
+    },
+    {
+     "type": "play",
+     "agree": false,
+     "t_clair_s": 0.05835750000551343,
+     "t_det_s": 0.08676730000297539
+    },
+    {
+     "type": "discard",
+     "agree": false,
+     "t_clair_s": 0.018387199990684167,
+     "t_det_s": 0.03848030001972802
+    },
+    {
+     "type": "play",
+     "agree": false,
+     "t_clair_s": 0.002131699991878122,
+     "t_det_s": 0.01023189999978058
+    }
+   ],
+   "wall_s": {
+    "clairvoyant_game": 0.48599839210510254,
+    "determinized_game": 0.7564966678619385,
+    "disagreement_walk": 55.49054574966431
+   }
+  },
+  {
+   "seed": "1558AXDL",
+   "outcome_clairvoyant": {
+    "seed": "1558AXDL",
+    "won": false,
+    "final_ante": 2,
+    "furthest_ante": 2,
+    "furthest_blind_idx": 2,
+    "blinds_cleared": 5,
+    "final_money": 1,
+    "steps": 31,
+    "n_decisions": 28,
+    "mean_decision_s": 0.04266519642572218,
+    "total_decision_s": 1.194625499920221
+   },
+   "outcome_determinized": {
+    "seed": "1558AXDL",
+    "won": false,
+    "final_ante": 1,
+    "furthest_ante": 1,
+    "furthest_blind_idx": 2,
+    "blinds_cleared": 2,
+    "final_money": 8,
+    "steps": 11,
+    "n_decisions": 10,
+    "mean_decision_s": 0.06572353999654297,
+    "total_decision_s": 0.6572353999654297
+   },
+   "disagreement": [
+    {
+     "type": "skip_blind",
+     "agree": true,
+     "t_clair_s": 0.06344540001009591,
+     "t_det_s": 0.06357809997280128
+    },
+    {
+     "type": "skip_blind",
+     "agree": true,
+     "t_clair_s": 0.036821699992287904,
+     "t_det_s": 0.0722329999844078
+    },
+    {
+     "type": "play",
+     "agree": false,
+     "t_clair_s": 0.04743540001800284,
+     "t_det_s": 0.08388019999256358
+    },
+    {
+     "type": "play",
+     "agree": false,
+     "t_clair_s": 0.06884940000600182,
+     "t_det_s": 0.09156669999356382
+    },
+    {
+     "type": "discard",
+     "agree": false,
+     "t_clair_s": 0.07262699998682365,
+     "t_det_s": 0.09152429999085143
+    },
+    {
+     "type": "play",
+     "agree": false,
+     "t_clair_s": 0.06835600000340492,
+     "t_det_s": 0.08746310000424273
+    },
+    {
+     "type": "discard",
+     "agree": false,
+     "t_clair_s": 0.04017560000647791,
+     "t_det_s": 0.051332300005014986
+    },
+    {
+     "type": "discard",
+     "agree": false,
+     "t_clair_s": 0.0488601999823004,
+     "t_det_s": 0.04182839998975396
+    },
+    {
+     "type": "play",
+     "agree": false,
+     "t_clair_s": 0.015792799997143447,
+     "t_det_s": 0.047484700015047565
+    },
+    {
+     "type": "buy",
+     "agree": true,
+     "t_clair_s": 0.03047820000210777,
+     "t_det_s": 0.02928420001990162
+    },
+    {
+     "type": "buy",
+     "agree": true,
+     "t_clair_s": 0.01728609998826869,
+     "t_det_s": 0.030495499988319352
+    },
+    {
+     "type": "other",
+     "agree": true,
+     "t_clair_s": 0.022370000020600855,
+     "t_det_s": 0.03146810000180267
+    },
+    {
+     "type": "buy",
+     "agree": false,
+     "t_clair_s": 0.011894600000232458,
+     "t_det_s": 0.03701909998198971
+    },
+    {
+     "type": "other",
+     "agree": true,
+     "t_clair_s": 0.021397599979536608,
+     "t_det_s": 0.023706400010269135
+    },
+    {
+     "type": "buy",
+     "agree": true,
+     "t_clair_s": 0.021228700003121048,
+     "t_det_s": 0.03491240000585094
+    },
+    {
+     "type": "sell",
+     "agree": false,
+     "t_clair_s": 0.016661400004522875,
+     "t_det_s": 0.0523455000075046
+    },
+    {
+     "type": "reroll",
+     "agree": true,
+     "t_clair_s": 0.024150700017344207,
+     "t_det_s": 0.03379820002010092
+    },
+    {
+     "type": "leave_shop",
+     "agree": true,
+     "t_clair_s": 0.015289200004190207,
+     "t_det_s": 0.04101499999524094
+    },
+    {
+     "type": "skip_blind",
+     "agree": true,
+     "t_clair_s": 0.03921759998775087,
+     "t_det_s": 0.0651676999987103
+    },
+    {
+     "type": "skip_blind",
+     "agree": true,
+     "t_clair_s": 0.03855599998496473,
+     "t_det_s": 0.07300150001537986
+    },
+    {
+     "type": "play",
+     "agree": false,
+     "t_clair_s": 0.04737559999921359,
+     "t_det_s": 0.08421119998092763
+    },
+    {
+     "type": "play",
+     "agree": false,
+     "t_clair_s": 0.06792479997966439,
+     "t_det_s": 0.09084770001936704
+    },
+    {
+     "type": "discard",
+     "agree": false,
+     "t_clair_s": 0.07132550000096671,
+     "t_det_s": 0.08625510000274517
+    },
+    {
+     "type": "discard",
+     "agree": false,
+     "t_clair_s": 0.06429780001053587,
+     "t_det_s": 0.08115220000036061
+    },
+    {
+     "type": "discard",
+     "agree": false,
+     "t_clair_s": 0.06511780002620071,
+     "t_det_s": 0.08523670001886785
+    },
+    {
+     "type": "play",
+     "agree": false,
+     "t_clair_s": 0.05365039999014698,
+     "t_det_s": 0.07416570000350475
+    },
+    {
+     "type": "discard",
+     "agree": false,
+     "t_clair_s": 0.037783000007038936,
+     "t_det_s": 0.0406111000047531
+    },
+    {
+     "type": "play",
+     "agree": false,
+     "t_clair_s": 0.002559899992775172,
+     "t_det_s": 0.00842729999567382
+    }
+   ],
+   "wall_s": {
+    "clairvoyant_game": 1.2054643630981445,
+    "determinized_game": 0.6614151000976562,
+    "disagreement_walk": 142.61655592918396
+   }
+  }
+ ]
+}

@@ -1550,3 +1550,27 @@ style diversity in labels / belief / CFR are non-restart refinements).
 5. Clean-up for the new session's lead: decide whether to keep or delete the W1-parallel partial files
    (`mp/agent/parallel/`, `train/parallel.py`, `tournament/parallel.py`, their tests/bench/notes) and the mixed
    uncommitted edits in `train_mlb.py`/`selfplay.py` (W0 prior flags + W1 `--workers` flags, default-off, tests green).
+
+### 2026-08-23 — PHASE 5 (rev 2) BUILD STARTED (new session, lead = Fable)
+
+Pre-launch housekeeping: W1-parallel partial files verified green (agent 337 + tournament 74 = 411/411) and
+committed as-is, default-off (`a6a4a0a`); `mp/ev/` + `mp/stats/` package scaffolding (bootstrap mirroring
+`mp/replay/_bootstrap.py`, conftest, pytest.ini) committed (`4525cb1`). `real1` confirmed stopped (no python
+processes); box free: 32 CPUs, RTX 3080 Ti.
+
+Launched in parallel ~15:00: **W1** (encoder v2 + `SetValueNet` 5M, strong), **W2** (`clone_determinized` +
+clairvoyance table on `real1/latest.pt`, sonnet), **W3** (analytic hand player, two budgets `fast` ≤ 5 ms /
+`full` ≤ 100 ms, `EVPlayer` for every state, sonnet-free strong), **W4** (`mp/stats` decision table + 126-seed
+sweep, sonnet), **W5** (staged: race calc + worker pool + trainer skeleton now; labels + V training after
+W1/W2/W3 land, strong). **W6** (advisor + head-to-heads, sonnet) waits on W3/W4/W5.
+
+Lead's design calls made at launch (not in the brief):
+- Label = P(win | FULL match state) by determinized rollouts (both games re-seeded with the SAME fresh seed =
+  same-seed MP preserved); V trains on the player's observation incl. `opponent_view(match, p)` (public fields +
+  `pvp_log` only) → V learns the expectation over the hidden opponent state. Both perspectives of one snapshot
+  are two samples (labels should sum to ~1).
+- Rollout policy = `EVPlayer(budget="fast")` (pure analytic, ≤ 5 ms/decision) — the label throughput is set by
+  this, not by the deliberate `full` budget used for live play / the advisor.
+- W1 gets a single engine exception: additive fields on `MLBMatch.pvp_log`/`PlayerView` if the opponent block
+  needs "hands used" per Nemesis. W2 owns `game.py`'s determinize API only.
+- `opp_econ` 4 (STATE_SPEC open item 2) is IN.

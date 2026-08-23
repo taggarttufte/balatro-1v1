@@ -622,6 +622,75 @@ class BalatroGame:
 
         return new
 
+    def clone_determinized(self, seed: "int | str | None" = None) -> "BalatroGame":
+        """Phase 5 W2 (DETERMINIZE_NOTES.md): a `clone()` that also samples a fresh WORLD
+        consistent with what the player has OBSERVED — the fix for Phase 4's MCTS being
+        clairvoyant (`clone()` copies the keyed RNG and the draw-pile order verbatim, so a
+        simulation saw the true future).
+
+        Kept bit-identical (everything `clone()` already copies, MINUS the two things
+        below): hand, discard pile, jokers + their state, consumables, dollars, the shop
+        shelf (items/prices/sold flags), booster choices on screen, this ante's boss, the
+        blind tags on offer, vouchers, planet levels, lives/pvp fields, tag state, every
+        counter, and the whole generation-layer bookkeeping (`run_state.used_jokers`,
+        `bosses_used`, `banned_keys`, `shop_joker_max`, `key_scope`, ...) — none of that is
+        "the future", it is either directly on screen or an already-materialised
+        consequence of past draws.
+
+        Resampled (see DETERMINIZE_NOTES.md §1-2 for the reasoning):
+          (b) `deck` (the draw pile) is reshuffled UNIFORMLY with `_local_shuffle`
+              (below): a small, fast, seeded Fisher-Yates — LOCAL, never touching
+              `run_state.rng`, and never Python's stdlib `random` module (forbidden in
+              this package by `test_no_random_module_in_engine`: every roll here must be
+              traceable to a seed). Deliberately NOT `PseudoRandom.pseudoshuffle` (the
+              LuaJIT port used for real game shuffles elsewhere in this file): benchmarked
+              ~4x slower per draw (a pure-Python port of LuaJIT's combined TW223
+              generator) — correct, but this call is on MCTS's hot path (one per
+              simulation) and the brief's ≤1.5x-of-`clone()` budget does not leave room
+              for it (DETERMINIZE_NOTES.md benchmarks). Fisher-Yates is uniform for any
+              starting order, so no sort_id pre-sort is needed the way the real
+              'nr'/'cashout' shuffle keys need one. Same Card objects (references into
+              `full_deck`, exactly as `clone()` aliases them), new order only.
+          (c) `run_state.rng` is replaced with a brand-new `PseudoRandom` on a fresh seed
+              string, so every FUTURE keyed draw (shop rerolls, pack contents on open,
+              next antes' bosses/tags/vouchers, future 'nr' shuffles, Lucky/Bloodstone/etc.
+              probability rolls) is decorrelated from the true run. Per-key state is NOT
+              carried across: a different seed means every key's first-use hash
+              (`pseudohash(key + seed)`) is a different number anyway, so carrying old
+              (key -> state) entries computed under the TRUE seed into a PseudoRandom
+              claiming a different seed would be internally inconsistent, not merely "a
+              bit predictive" — see DETERMINIZE_NOTES.md §2.
+
+        `seed=None` draws fresh, non-reproducible randomness (`secrets`, exactly like
+        `BalatroGame(seed=None)`); a given `seed` makes both the reshuffle AND every future
+        draw fully reproducible (two calls with the same `seed` are identical). Unlike
+        `__init__`, `self.seed_str` / `deck_key` / `stake` / `ruleset` are left UNCHANGED
+        on the clone (they are observation features the player has always known) — the new
+        randomness lives only in `run_state.rng` / `run_state.seed`. `det.determinized` is
+        always True on the result; `det.det_seed` records the resolved `seed` argument.
+        """
+        new = self.clone()
+        if seed is None:
+            seed = secrets.randbelow(1 << 40)
+        new_seed_str = _gk.normalize_seed(seed) if isinstance(seed, str) else _gk.seed_from_int(seed)
+
+        # (c) fresh keyed RNG — see docstring. Generation-layer bookkeeping already on
+        # `new.run_state` (pools, banned keys, owned lists, shop_joker_max, key_scope, ...)
+        # is untouched; only the PseudoRandom itself (and the seed string it is built on)
+        # is replaced.
+        new.run_state.rng = _gk.core.PseudoRandom(new_seed_str)
+        new.run_state.seed = new_seed_str
+
+        # (b) uniform reshuffle of the draw pile with a LOCAL, fast, seeded shuffle that
+        # never touches `run_state.rng`. `new.deck` is `clone()`'s own fresh list
+        # (aliased into `new.full_deck`), so this cannot perturb `self.deck` or share
+        # identity with it.
+        _local_shuffle(new.deck, "detshuffle:" + new_seed_str)
+
+        new.determinized = True
+        new.det_seed = seed
+        return new
+
     # ── Blind setup ──────────────────────────────────────────────────────────
 
     def _prepare_next_blind(self):
@@ -2191,6 +2260,31 @@ class BalatroGame:
 # ════════════════════════════════════════════════════════════════════════════
 # W2 helpers: TagContext against the engine (tags.py hooks, TAGS_NOTES §3)
 # ════════════════════════════════════════════════════════════════════════════
+
+def _local_shuffle(lst: list, seed_str: str) -> None:
+    """Phase 5 W2 (``clone_determinized``): an in-place, uniform Fisher-Yates shuffle,
+    seeded by an arbitrary string, with NO relationship to ``run_state.rng`` and no use
+    of Python's stdlib ``random`` (forbidden in this package, ``test_no_random_module_
+    in_engine``). A splitmix64 stream seeded off a ``blake2b`` digest of ``seed_str``
+    (``hashlib`` -- deterministic across processes, unlike the builtin salted ``hash()``
+    that ``state_signature()`` avoids for the same reason). Not
+    ``PseudoRandom.pseudoshuffle``: that pure-Python port of LuaJIT's combined TW223
+    generator is correct here too but ~4x slower per draw, which matters because this
+    runs once per MCTS simulation (DETERMINIZE_NOTES.md benchmarks the ``clone()``
+    budget this buys back)."""
+    import hashlib
+    state = int.from_bytes(hashlib.blake2b(seed_str.encode("utf-8"), digest_size=8).digest(),
+                           "little")
+    mask = (1 << 64) - 1
+    for i in range(len(lst) - 1, 0, -1):
+        state = (state + 0x9E3779B97F4A7C15) & mask
+        z = state
+        z = ((z ^ (z >> 30)) * 0xBF58476D1CE4E5B9) & mask
+        z = ((z ^ (z >> 27)) * 0x94D049BB133111EB) & mask
+        z ^= z >> 31
+        j = z % (i + 1)
+        lst[i], lst[j] = lst[j], lst[i]
+
 
 def _fast_clone_run_state(rs):
     """``RunState.clone()`` without deepcopy: every RunState field is a primitive, a FLAT
