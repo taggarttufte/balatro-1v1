@@ -1,0 +1,912 @@
+{
+ "meta": {
+  "date": "2026-08-23",
+  "command": "python mp/ev/gate_ev_player.py --seeds 12 --procs 4",
+  "n_seeds": 12,
+  "offset": 0,
+  "procs": 4,
+  "players": [
+   "fast",
+   "full",
+   "greedy"
+  ],
+  "wall_s": 29.65725040435791,
+  "cpu_count": 32
+ },
+ "summary": {
+  "fast": {
+   "n": 12,
+   "ante1_clear": {
+    "point": 1.0,
+    "lo": 1.0,
+    "hi": 1.0,
+    "n": 12
+   },
+   "ante2_clear": {
+    "point": 0.8333333333333334,
+    "lo": 0.5833333333333334,
+    "hi": 1.0,
+    "n": 12
+   },
+   "ante3_clear": {
+    "point": 0.8333333333333334,
+    "lo": 0.5833333333333334,
+    "hi": 1.0,
+    "n": 12
+   },
+   "ante4_clear": {
+    "point": 0.75,
+    "lo": 0.5,
+    "hi": 1.0,
+    "n": 12
+   },
+   "won": {
+    "point": 0.08333333333333333,
+    "lo": 0.0,
+    "hi": 0.25,
+    "n": 12
+   },
+   "mean_final_ante": {
+    "point": 5.333333333333333,
+    "lo": 4.25,
+    "hi": 6.416666666666667,
+    "n": 12
+   },
+   "mean_blinds_cleared": {
+    "point": 11.0,
+    "lo": 8.75,
+    "hi": 13.083333333333334,
+    "n": 12
+   },
+   "money_at_ante3": {
+    "point": 23.9,
+    "lo": 19.3,
+    "hi": 28.6,
+    "n": 10
+   },
+   "hands_unused_per_cleared_blind": 2.1666666666666665,
+   "hand_ms": {
+    "mean": 4.42874627653303,
+    "p50": 3.013300010934472,
+    "p95": 12.253700027940795,
+    "max": 50.126499991165474,
+    "n": 564
+   },
+   "shop_ms": {
+    "mean": 22.121711579130444,
+    "p50": 21.904299996094778,
+    "p95": 46.79609998129308,
+    "max": 165.85990000749007,
+    "n": 665
+   },
+   "inv_checked": 72,
+   "inv_failed": 0,
+   "seconds_total": 18.90473390003899
+  },
+  "full": {
+   "n": 12,
+   "ante1_clear": {
+    "point": 1.0,
+    "lo": 1.0,
+    "hi": 1.0,
+    "n": 12
+   },
+   "ante2_clear": {
+    "point": 0.8333333333333334,
+    "lo": 0.5833333333333334,
+    "hi": 1.0,
+    "n": 12
+   },
+   "ante3_clear": {
+    "point": 0.8333333333333334,
+    "lo": 0.5833333333333334,
+    "hi": 1.0,
+    "n": 12
+   },
+   "ante4_clear": {
+    "point": 0.75,
+    "lo": 0.5,
+    "hi": 1.0,
+    "n": 12
+   },
+   "won": {
+    "point": 0.0,
+    "lo": 0.0,
+    "hi": 0.0,
+    "n": 12
+   },
+   "mean_final_ante": {
+    "point": 5.25,
+    "lo": 4.25,
+    "hi": 6.166666666666667,
+    "n": 12
+   },
+   "mean_blinds_cleared": {
+    "point": 10.75,
+    "lo": 8.583333333333334,
+    "hi": 12.833333333333334,
+    "n": 12
+   },
+   "money_at_ante3": {
+    "point": 24.4,
+    "lo": 20.9,
+    "hi": 28.6,
+    "n": 10
+   },
+   "hands_unused_per_cleared_blind": 2.302325581395349,
+   "hand_ms": {
+    "mean": 73.57533578201866,
+    "p50": 58.07719999575056,
+    "p95": 180.65140000544488,
+    "max": 415.8076000167057,
+    "n": 531
+   },
+   "shop_ms": {
+    "mean": 22.467328943269383,
+    "p50": 22.05379999941215,
+    "p95": 47.40420001326129,
+    "max": 169.2705000168644,
+    "n": 653
+   },
+   "inv_checked": 72,
+   "inv_failed": 0,
+   "seconds_total": 59.98623160002171
+  },
+  "greedy": {
+   "n": 12,
+   "ante1_clear": {
+    "point": 0.5,
+    "lo": 0.25,
+    "hi": 0.75,
+    "n": 12
+   },
+   "ante2_clear": {
+    "point": 0.0,
+    "lo": 0.0,
+    "hi": 0.0,
+    "n": 12
+   },
+   "ante3_clear": {
+    "point": 0.0,
+    "lo": 0.0,
+    "hi": 0.0,
+    "n": 12
+   },
+   "ante4_clear": {
+    "point": 0.0,
+    "lo": 0.0,
+    "hi": 0.0,
+    "n": 12
+   },
+   "won": {
+    "point": 0.0,
+    "lo": 0.0,
+    "hi": 0.0,
+    "n": 12
+   },
+   "mean_final_ante": {
+    "point": 1.5,
+    "lo": 1.25,
+    "hi": 1.75,
+    "n": 12
+   },
+   "mean_blinds_cleared": {
+    "point": 2.3333333333333335,
+    "lo": 1.75,
+    "hi": 2.8333333333333335,
+    "n": 12
+   },
+   "money_at_ante3": {
+    "point": NaN,
+    "lo": NaN,
+    "hi": NaN,
+    "n": 0
+   },
+   "hands_unused_per_cleared_blind": 1.3571428571428572,
+   "hand_ms": {
+    "mean": 2.0169577378726986,
+    "p50": 2.0299000025261194,
+    "p95": 2.7248999977018684,
+    "max": 2.9129000031389296,
+    "n": 168
+   },
+   "shop_ms": {
+    "mean": 0.06049285730114207,
+    "p50": 0.05569998756982386,
+    "p95": 0.09630000567995012,
+    "max": 0.10809997911565006,
+    "n": 28
+   },
+   "inv_checked": 0,
+   "inv_failed": 0,
+   "seconds_total": 0.38035429996671155
+  }
+ },
+ "deltas": {
+  "fast": {
+   "n": 12,
+   "ante1_clear": {
+    "point": 0.5,
+    "lo": 0.25,
+    "hi": 0.75,
+    "n": 12
+   },
+   "final_ante": {
+    "point": 3.8333333333333335,
+    "lo": 2.75,
+    "hi": 5.0,
+    "n": 12
+   },
+   "blinds_cleared": {
+    "point": 8.666666666666666,
+    "lo": 6.5,
+    "hi": 10.75,
+    "n": 12
+   },
+   "final_money": {
+    "point": 5.416666666666667,
+    "lo": 0.9166666666666666,
+    "hi": 9.916666666666666,
+    "n": 12
+   }
+  },
+  "full": {
+   "n": 12,
+   "ante1_clear": {
+    "point": 0.5,
+    "lo": 0.25,
+    "hi": 0.75,
+    "n": 12
+   },
+   "final_ante": {
+    "point": 3.75,
+    "lo": 2.75,
+    "hi": 4.75,
+    "n": 12
+   },
+   "blinds_cleared": {
+    "point": 8.416666666666666,
+    "lo": 6.25,
+    "hi": 10.416666666666666,
+    "n": 12
+   },
+   "final_money": {
+    "point": 3.25,
+    "lo": -1.0,
+    "hi": 7.916666666666667,
+    "n": 12
+   }
+  }
+ },
+ "mlb": {
+  "seed": "11111111",
+  "done": true,
+  "winner": 1,
+  "steps": 504,
+  "final_ante": [
+   7,
+   7
+  ],
+  "lives": [
+   0,
+   1
+  ],
+  "pvp_log": [
+   [
+    2,
+    0,
+    6288,
+    6672
+   ],
+   [
+    3,
+    1,
+    17967,
+    13088
+   ],
+   [
+    4,
+    0,
+    26495,
+    30054
+   ],
+   [
+    5,
+    1,
+    24356,
+    22279
+   ],
+   [
+    6,
+    0,
+    22495,
+    25956
+   ]
+  ],
+  "seconds": 6.6838439000130165
+ },
+ "per_seed": {
+  "fast": [
+   {
+    "seed": "11111111",
+    "player": "fast",
+    "won": false,
+    "furthest_ante": 6,
+    "furthest_blind": "Boss",
+    "final_ante": 6,
+    "final_money": 25,
+    "blinds_cleared": 12,
+    "hands_unused": 23,
+    "money_at_ante3": 38,
+    "steps": 152,
+    "seconds": 2.073177800019039,
+    "inv_checked": 6,
+    "inv_failed": 0
+   },
+   {
+    "seed": "1558AXDL",
+    "player": "fast",
+    "won": false,
+    "furthest_ante": 6,
+    "furthest_blind": "Boss",
+    "final_ante": 6,
+    "final_money": 26,
+    "blinds_cleared": 12,
+    "hands_unused": 32,
+    "money_at_ante3": 11,
+    "steps": 123,
+    "seconds": 1.5769192000152543,
+    "inv_checked": 6,
+    "inv_failed": 0
+   },
+   {
+    "seed": "15H9Z3IY",
+    "player": "fast",
+    "won": false,
+    "furthest_ante": 2,
+    "furthest_blind": "Boss",
+    "final_ante": 2,
+    "final_money": 12,
+    "blinds_cleared": 5,
+    "hands_unused": 8,
+    "money_at_ante3": null,
+    "steps": 56,
+    "seconds": 0.3774179999891203,
+    "inv_checked": 6,
+    "inv_failed": 0
+   },
+   {
+    "seed": "1KV4W6YS",
+    "player": "fast",
+    "won": false,
+    "furthest_ante": 6,
+    "furthest_blind": "Boss",
+    "final_ante": 6,
+    "final_money": 27,
+    "blinds_cleared": 13,
+    "hands_unused": 27,
+    "money_at_ante3": 29,
+    "steps": 177,
+    "seconds": 2.1070188999874517,
+    "inv_checked": 6,
+    "inv_failed": 0
+   },
+   {
+    "seed": "1MD1YZ9T",
+    "player": "fast",
+    "won": false,
+    "furthest_ante": 6,
+    "furthest_blind": "Boss",
+    "final_ante": 6,
+    "final_money": 38,
+    "blinds_cleared": 13,
+    "hands_unused": 24,
+    "money_at_ante3": 33,
+    "steps": 166,
+    "seconds": 1.8657631000096444,
+    "inv_checked": 6,
+    "inv_failed": 0
+   },
+   {
+    "seed": "28V7DD4H",
+    "player": "fast",
+    "won": false,
+    "furthest_ante": 7,
+    "furthest_blind": "Boss",
+    "final_ante": 7,
+    "final_money": 27,
+    "blinds_cleared": 13,
+    "hands_unused": 21,
+    "money_at_ante3": 25,
+    "steps": 171,
+    "seconds": 2.147187499998836,
+    "inv_checked": 6,
+    "inv_failed": 0
+   },
+   {
+    "seed": "29DAQVG1",
+    "player": "fast",
+    "won": false,
+    "furthest_ante": 5,
+    "furthest_blind": "Boss",
+    "final_ante": 5,
+    "final_money": 27,
+    "blinds_cleared": 10,
+    "hands_unused": 32,
+    "money_at_ante3": 20,
+    "steps": 94,
+    "seconds": 1.0465076999971643,
+    "inv_checked": 6,
+    "inv_failed": 0
+   },
+   {
+    "seed": "29Y3L4S9",
+    "player": "fast",
+    "won": false,
+    "furthest_ante": 6,
+    "furthest_blind": "Boss",
+    "final_ante": 6,
+    "final_money": 27,
+    "blinds_cleared": 15,
+    "hands_unused": 31,
+    "money_at_ante3": 20,
+    "steps": 163,
+    "seconds": 1.7151828999922145,
+    "inv_checked": 6,
+    "inv_failed": 0
+   },
+   {
+    "seed": "29ZSW8MY",
+    "player": "fast",
+    "won": false,
+    "furthest_ante": 2,
+    "furthest_blind": "Boss",
+    "final_ante": 2,
+    "final_money": 13,
+    "blinds_cleared": 4,
+    "hands_unused": 9,
+    "money_at_ante3": null,
+    "steps": 47,
+    "seconds": 0.19762730001821183,
+    "inv_checked": 6,
+    "inv_failed": 0
+   },
+   {
+    "seed": "2BRGI767",
+    "player": "fast",
+    "won": false,
+    "furthest_ante": 5,
+    "furthest_blind": "Boss",
+    "final_ante": 5,
+    "final_money": 26,
+    "blinds_cleared": 12,
+    "hands_unused": 25,
+    "money_at_ante3": 24,
+    "steps": 143,
+    "seconds": 1.7381257999804802,
+    "inv_checked": 6,
+    "inv_failed": 0
+   },
+   {
+    "seed": "2CP4KSXZ",
+    "player": "fast",
+    "won": true,
+    "furthest_ante": 9,
+    "furthest_blind": "Boss",
+    "final_ante": 9,
+    "final_money": 15,
+    "blinds_cleared": 17,
+    "hands_unused": 40,
+    "money_at_ante3": 18,
+    "steps": 182,
+    "seconds": 3.0631363000138663,
+    "inv_checked": 6,
+    "inv_failed": 0
+   },
+   {
+    "seed": "2GHBLJD9",
+    "player": "fast",
+    "won": false,
+    "furthest_ante": 4,
+    "furthest_blind": "Boss",
+    "final_ante": 4,
+    "final_money": 24,
+    "blinds_cleared": 6,
+    "hands_unused": 14,
+    "money_at_ante3": 21,
+    "steps": 78,
+    "seconds": 0.9966694000177085,
+    "inv_checked": 6,
+    "inv_failed": 0
+   }
+  ],
+  "full": [
+   {
+    "seed": "11111111",
+    "player": "full",
+    "won": false,
+    "furthest_ante": 5,
+    "furthest_blind": "Boss",
+    "final_ante": 5,
+    "final_money": 20,
+    "blinds_cleared": 10,
+    "hands_unused": 19,
+    "money_at_ante3": 38,
+    "steps": 122,
+    "seconds": 3.896571999997832,
+    "inv_checked": 6,
+    "inv_failed": 0
+   },
+   {
+    "seed": "1558AXDL",
+    "player": "full",
+    "won": false,
+    "furthest_ante": 6,
+    "furthest_blind": "Boss",
+    "final_ante": 6,
+    "final_money": 27,
+    "blinds_cleared": 12,
+    "hands_unused": 30,
+    "money_at_ante3": 19,
+    "steps": 143,
+    "seconds": 5.540271100006066,
+    "inv_checked": 6,
+    "inv_failed": 0
+   },
+   {
+    "seed": "15H9Z3IY",
+    "player": "full",
+    "won": false,
+    "furthest_ante": 2,
+    "furthest_blind": "Boss",
+    "final_ante": 2,
+    "final_money": 11,
+    "blinds_cleared": 5,
+    "hands_unused": 11,
+    "money_at_ante3": null,
+    "steps": 55,
+    "seconds": 2.0665786000026856,
+    "inv_checked": 6,
+    "inv_failed": 0
+   },
+   {
+    "seed": "1KV4W6YS",
+    "player": "full",
+    "won": false,
+    "furthest_ante": 6,
+    "furthest_blind": "Boss",
+    "final_ante": 6,
+    "final_money": 27,
+    "blinds_cleared": 14,
+    "hands_unused": 32,
+    "money_at_ante3": 20,
+    "steps": 179,
+    "seconds": 7.8211605999968015,
+    "inv_checked": 6,
+    "inv_failed": 0
+   },
+   {
+    "seed": "1MD1YZ9T",
+    "player": "full",
+    "won": false,
+    "furthest_ante": 6,
+    "furthest_blind": "Boss",
+    "final_ante": 6,
+    "final_money": 26,
+    "blinds_cleared": 11,
+    "hands_unused": 23,
+    "money_at_ante3": 34,
+    "steps": 124,
+    "seconds": 4.56084859999828,
+    "inv_checked": 6,
+    "inv_failed": 0
+   },
+   {
+    "seed": "28V7DD4H",
+    "player": "full",
+    "won": false,
+    "furthest_ante": 7,
+    "furthest_blind": "Boss",
+    "final_ante": 7,
+    "final_money": 25,
+    "blinds_cleared": 13,
+    "hands_unused": 27,
+    "money_at_ante3": 26,
+    "steps": 174,
+    "seconds": 9.61495100002503,
+    "inv_checked": 6,
+    "inv_failed": 0
+   },
+   {
+    "seed": "29DAQVG1",
+    "player": "full",
+    "won": false,
+    "furthest_ante": 5,
+    "furthest_blind": "Boss",
+    "final_ante": 5,
+    "final_money": 25,
+    "blinds_cleared": 10,
+    "hands_unused": 32,
+    "money_at_ante3": 20,
+    "steps": 94,
+    "seconds": 2.63281619999907,
+    "inv_checked": 6,
+    "inv_failed": 0
+   },
+   {
+    "seed": "29Y3L4S9",
+    "player": "full",
+    "won": false,
+    "furthest_ante": 6,
+    "furthest_blind": "Boss",
+    "final_ante": 6,
+    "final_money": 24,
+    "blinds_cleared": 14,
+    "hands_unused": 29,
+    "money_at_ante3": 22,
+    "steps": 159,
+    "seconds": 6.508702399994945,
+    "inv_checked": 6,
+    "inv_failed": 0
+   },
+   {
+    "seed": "29ZSW8MY",
+    "player": "full",
+    "won": false,
+    "furthest_ante": 2,
+    "furthest_blind": "Boss",
+    "final_ante": 2,
+    "final_money": 14,
+    "blinds_cleared": 4,
+    "hands_unused": 10,
+    "money_at_ante3": null,
+    "steps": 47,
+    "seconds": 1.9625819000066258,
+    "inv_checked": 6,
+    "inv_failed": 0
+   },
+   {
+    "seed": "2BRGI767",
+    "player": "full",
+    "won": false,
+    "furthest_ante": 6,
+    "furthest_blind": "Boss",
+    "final_ante": 6,
+    "final_money": 25,
+    "blinds_cleared": 14,
+    "hands_unused": 29,
+    "money_at_ante3": 23,
+    "steps": 162,
+    "seconds": 5.520846700004768,
+    "inv_checked": 6,
+    "inv_failed": 0
+   },
+   {
+    "seed": "2CP4KSXZ",
+    "player": "full",
+    "won": false,
+    "furthest_ante": 8,
+    "furthest_blind": "Boss",
+    "final_ante": 8,
+    "final_money": 15,
+    "blinds_cleared": 16,
+    "hands_unused": 40,
+    "money_at_ante3": 21,
+    "steps": 170,
+    "seconds": 4.88839409998036,
+    "inv_checked": 6,
+    "inv_failed": 0
+   },
+   {
+    "seed": "2GHBLJD9",
+    "player": "full",
+    "won": false,
+    "furthest_ante": 4,
+    "furthest_blind": "Boss",
+    "final_ante": 4,
+    "final_money": 22,
+    "blinds_cleared": 6,
+    "hands_unused": 15,
+    "money_at_ante3": 21,
+    "steps": 72,
+    "seconds": 4.9725084000092465,
+    "inv_checked": 6,
+    "inv_failed": 0
+   }
+  ],
+  "greedy": [
+   {
+    "seed": "11111111",
+    "player": "greedy",
+    "won": false,
+    "furthest_ante": 2,
+    "furthest_blind": "Boss",
+    "final_ante": 2,
+    "final_money": 21,
+    "blinds_cleared": 3,
+    "hands_unused": 2,
+    "money_at_ante3": null,
+    "steps": 29,
+    "seconds": 0.04247139999642968,
+    "inv_checked": 0,
+    "inv_failed": 0
+   },
+   {
+    "seed": "1558AXDL",
+    "player": "greedy",
+    "won": false,
+    "furthest_ante": 2,
+    "furthest_blind": "Boss",
+    "final_ante": 2,
+    "final_money": 22,
+    "blinds_cleared": 3,
+    "hands_unused": 3,
+    "money_at_ante3": null,
+    "steps": 33,
+    "seconds": 0.0487518000009004,
+    "inv_checked": 0,
+    "inv_failed": 0
+   },
+   {
+    "seed": "15H9Z3IY",
+    "player": "greedy",
+    "won": false,
+    "furthest_ante": 1,
+    "furthest_blind": "Big",
+    "final_ante": 1,
+    "final_money": 8,
+    "blinds_cleared": 1,
+    "hands_unused": 1,
+    "money_at_ante3": null,
+    "steps": 14,
+    "seconds": 0.025737799995113164,
+    "inv_checked": 0,
+    "inv_failed": 0
+   },
+   {
+    "seed": "1KV4W6YS",
+    "player": "greedy",
+    "won": false,
+    "furthest_ante": 2,
+    "furthest_blind": "Boss",
+    "final_ante": 2,
+    "final_money": 25,
+    "blinds_cleared": 3,
+    "hands_unused": 5,
+    "money_at_ante3": null,
+    "steps": 23,
+    "seconds": 0.02975519999745302,
+    "inv_checked": 0,
+    "inv_failed": 0
+   },
+   {
+    "seed": "1MD1YZ9T",
+    "player": "greedy",
+    "won": false,
+    "furthest_ante": 2,
+    "furthest_blind": "Boss",
+    "final_ante": 2,
+    "final_money": 33,
+    "blinds_cleared": 4,
+    "hands_unused": 5,
+    "money_at_ante3": null,
+    "steps": 32,
+    "seconds": 0.04520710001816042,
+    "inv_checked": 0,
+    "inv_failed": 0
+   },
+   {
+    "seed": "28V7DD4H",
+    "player": "greedy",
+    "won": false,
+    "furthest_ante": 1,
+    "furthest_blind": "Big",
+    "final_ante": 1,
+    "final_money": 9,
+    "blinds_cleared": 1,
+    "hands_unused": 2,
+    "money_at_ante3": null,
+    "steps": 12,
+    "seconds": 0.019460299983620644,
+    "inv_checked": 0,
+    "inv_failed": 0
+   },
+   {
+    "seed": "29DAQVG1",
+    "player": "greedy",
+    "won": false,
+    "furthest_ante": 1,
+    "furthest_blind": "Big",
+    "final_ante": 1,
+    "final_money": 9,
+    "blinds_cleared": 1,
+    "hands_unused": 2,
+    "money_at_ante3": null,
+    "steps": 13,
+    "seconds": 0.0202504999761004,
+    "inv_checked": 0,
+    "inv_failed": 0
+   },
+   {
+    "seed": "29Y3L4S9",
+    "player": "greedy",
+    "won": false,
+    "furthest_ante": 2,
+    "furthest_blind": "Boss",
+    "final_ante": 2,
+    "final_money": 24,
+    "blinds_cleared": 3,
+    "hands_unused": 4,
+    "money_at_ante3": null,
+    "steps": 26,
+    "seconds": 0.03968000001623295,
+    "inv_checked": 0,
+    "inv_failed": 0
+   },
+   {
+    "seed": "29ZSW8MY",
+    "player": "greedy",
+    "won": false,
+    "furthest_ante": 2,
+    "furthest_blind": "Boss",
+    "final_ante": 2,
+    "final_money": 26,
+    "blinds_cleared": 3,
+    "hands_unused": 5,
+    "money_at_ante3": null,
+    "steps": 28,
+    "seconds": 0.04016740000224672,
+    "inv_checked": 0,
+    "inv_failed": 0
+   },
+   {
+    "seed": "2BRGI767",
+    "player": "greedy",
+    "won": false,
+    "furthest_ante": 1,
+    "furthest_blind": "Boss",
+    "final_ante": 1,
+    "final_money": 15,
+    "blinds_cleared": 2,
+    "hands_unused": 3,
+    "money_at_ante3": null,
+    "steps": 19,
+    "seconds": 0.021766499994555488,
+    "inv_checked": 0,
+    "inv_failed": 0
+   },
+   {
+    "seed": "2CP4KSXZ",
+    "player": "greedy",
+    "won": false,
+    "furthest_ante": 1,
+    "furthest_blind": "Boss",
+    "final_ante": 1,
+    "final_money": 15,
+    "blinds_cleared": 2,
+    "hands_unused": 3,
+    "money_at_ante3": null,
+    "steps": 18,
+    "seconds": 0.024909399973694235,
+    "inv_checked": 0,
+    "inv_failed": 0
+   },
+   {
+    "seed": "2GHBLJD9",
+    "player": "greedy",
+    "won": false,
+    "furthest_ante": 1,
+    "furthest_blind": "Boss",
+    "final_ante": 1,
+    "final_money": 15,
+    "blinds_cleared": 2,
+    "hands_unused": 3,
+    "money_at_ante3": null,
+    "steps": 17,
+    "seconds": 0.022196900012204424,
+    "inv_checked": 0,
+    "inv_failed": 0
+   }
+  ]
+ }
+}
