@@ -1,0 +1,108 @@
+{
+  "meta": {
+    "n_seeds_requested": 126,
+    "processes": 16,
+    "player_spec": "hand=greedy,reroll=1,buy=0",
+    "max_ante": 8,
+    "wall_seconds": 1.8721768856048584
+  },
+  "aggregate": {
+    "n_seeds": 126,
+    "n_errors": 0,
+    "n_visits": 800,
+    "decide_ms_mean_overall": 2.0968571248522494,
+    "decide_ms_p95_overall": 3.2804000074975193,
+    "urgency_mean_overall": 0.659945233611111,
+    "by_ante": {
+      "1": {
+        "n_visits": 252,
+        "n_shop_visits": 252,
+        "n_pack_visits": 0,
+        "reroll_p_hit_mean": 0.7173714579625254,
+        "reroll_net_ev_mean": -2.076829655070226,
+        "best_net_ev_mean": 3.826332999129931,
+        "pct_best_is_leave": 0.21825396825396826,
+        "interest_loss_share_of_true_cost": 0.3323540485658639,
+        "urgency_mean": 0.4932045855379188,
+        "urgency_p10": 0.3733333333333333,
+        "urgency_p90": 0.5944444444444444,
+        "voucher_net_ev_mean": -2.4217855130809665,
+        "pack_net_ev_by_kind": {
+          "Celestial": 0.3339421783914584,
+          "Buffoon": -0.5543633260718612,
+          "Standard": -8.65784045952696,
+          "Spectral": -1.574825040346729,
+          "Arcana": -2.3814381665602093
+        },
+        "decide_ms_mean": 2.204257936336078
+      },
+      "2": {
+        "n_visits": 362,
+        "n_shop_visits": 362,
+        "n_pack_visits": 0,
+        "reroll_p_hit_mean": 0.6352044203186342,
+        "reroll_net_ev_mean": -1.0693376530031333,
+        "best_net_ev_mean": 6.553965276918518,
+        "pct_best_is_leave": 0.1132596685082873,
+        "interest_loss_share_of_true_cost": 0.3786175693831552,
+        "urgency_mean": 0.7081177255985267,
+        "urgency_p10": 0.5642,
+        "urgency_p90": 0.8785999999999999,
+        "voucher_net_ev_mean": 1.0751647158796733,
+        "pack_net_ev_by_kind": {
+          "Celestial": 2.9906948348579814,
+          "Standard": -8.388905049780933,
+          "Arcana": -0.9786116850822797,
+          "Buffoon": -1.8060524992866402,
+          "Spectral": 0.48171000784417806
+        },
+        "decide_ms_mean": 2.095238674571609
+      },
+      "3": {
+        "n_visits": 176,
+        "n_shop_visits": 176,
+        "n_pack_visits": 0,
+        "reroll_p_hit_mean": 0.6344975316581497,
+        "reroll_net_ev_mean": 1.2562256728934567,
+        "best_net_ev_mean": 9.656118637518595,
+        "pct_best_is_leave": 0.03977272727272727,
+        "interest_loss_share_of_true_cost": 0.17417167435687564,
+        "urgency_mean": 0.7898257196969696,
+        "urgency_p10": 0.7311199999999999,
+        "urgency_p90": 0.829,
+        "voucher_net_ev_mean": 4.641019497487129,
+        "pack_net_ev_by_kind": {
+          "Arcana": 0.6567287686013278,
+          "Standard": -5.983703192363898,
+          "Spectral": 2.1410268646498083,
+          "Celestial": 5.551431737362182,
+          "Buffoon": 1.1982524582818777
+        },
+        "decide_ms_mean": 1.9677085213267922
+      },
+      "4": {
+        "n_visits": 10,
+        "n_shop_visits": 10,
+        "n_pack_visits": 0,
+        "reroll_p_hit_mean": 0.6350261353502625,
+        "reroll_net_ev_mean": 2.9695462665196466,
+        "best_net_ev_mean": 10.5468014875,
+        "pct_best_is_leave": 0.0,
+        "interest_loss_share_of_true_cost": 0.06757081841499674,
+        "urgency_mean": 0.8320688,
+        "urgency_p10": 0.823568,
+        "urgency_p90": 0.841488,
+        "voucher_net_ev_mean": 9.338118287499999,
+        "pack_net_ev_by_kind": {
+          "Arcana": 2.338736,
+          "Standard": -4.666666666666667,
+          "Celestial": 8.36949911050353,
+          "Spectral": 3.1408000000000005,
+          "Buffoon": 1.1550786869516658
+        },
+        "decide_ms_mean": 1.7219599976669997
+      }
+    }
+  },
+  "per_seed_errors": []
+}
