@@ -1615,3 +1615,30 @@ Phase B (overnight): TRAINV_NOTES §6 —
   B2 `train_v` full (~25 min GPU) → B3 `tournament_v` 30 seeds (~10 min).
 Run Phase A before B1 (A2 sanity-checks the player the labels come from). B's numbers are the first REAL
 Phase-5 results: V-vs-rules tournament + clairvoyance table are what Tagg reads next session.
+
+### 2026-08-24 — PHASE 5 (rev 2) FIRST RESULTS: runbook executed (Phases A + B complete)
+
+Ops notes: 30-proc clairvoyance and a concurrent net-loading h2h OOM'd a 47 GB box — 10 procs for
+torch-loading pools is the ceiling here. `full+stats` vs `real1:det` WEDGED >2.5 h in one match
+(no per-match cap); h2h reruns now use `--max-steps 4000` (normal match = 300–800 steps).
+Label campaign: post-fix-pass throughput 287.9 labels/min at 16 workers (3x projection) — 51,024
+labels / 2,126 jobs / 0 failures in 2.95 h. V (5M) overfits 51k labels by epoch ~7: best held-out
+Brier 0.060 / AUC 0.784 / ECE 0.021 at step ~1250; ckpt rotation ate the early optimum first
+run — dense-checkpoint retrain to 2k steps recovered it (keeper: `v_full_best/ckpt_0001000.pt`).
+
+**HEADLINES (all in mp/results/, committed `20e1ad0` + this):**
+1. **The pivot is measured.** Honest (determinized) `real1` = 33% ante-1 / mean ante 1.83 — scripted-
+   greedy level after 106 gens. Its hand play was the oracle's: det-vs-clair agreement 10.5% (play),
+   0.7% (discard); strategic actions 78–82% agree.
+2. **The analytic EVPlayer is the strongest player in the repo, no net needed:** 126-seed gate
+   95.2%/96.0% ante-1 (greedy 31.7%), mean ante 4.7/4.9; **beats real1:det 57/58 (98.3% [94.8,100])**,
+   lives +3.27, Nemesis 92.3%. fast ≈ full head-to-head (26/60) at 1/20th the cost.
+3. **Negative results that shape v2:** stats-tier-as-policy loses to rules 8/60 (keep it as the
+   advisor's diagnostic layer); **argmax-V loses to rules 2/60** — per-action EV gaps (≪0.05) sit
+   below label noise (mean CI ±0.24 at n_rollouts=8), so V-as-full-policy is premature. Levers, in
+   order: (a) n_rollouts 8→32 on fewer states (noise ∝ 1/√n; throughput now affords it),
+   (b) within-state ranking loss (pairs of actions from one state, same rollout worlds — cancels
+   shared noise), (c) V only at the expectimax LEAF (hand play) with rules elsewhere, (d) more
+   labels + regularisation (5M params saturate 51k rows by epoch 7).
+NEXT SESSION: pick among (a)-(d) with Tagg; the advisor (`mp/ev/cli.py advise`) is ready for his
+Bloodstone state whenever he wants to poke it.
