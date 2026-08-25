@@ -565,6 +565,11 @@ class _DelayedGrat:
 JOKER_REGISTRY["j_delayed_grat"] = _DelayedGrat()
 
 # ── j_faceless: earn $5 if 3+ face cards discarded at once ────────────────────
+# card.lua:2858-2872: fires once per discard ACTION (guarded on
+# `context.other_card == context.full_hand[#context.full_hand]`) and counts `v:is_face()`
+# over the whole highlighted set — so debuffed face cards do NOT count (card.lua:965) and
+# with Pareidolia EVERY discarded card counts (card.lua:967).  Both now come from
+# ScoreContext.is_face_card + game._hook_ctx(all_face_cards=...)  (W-EXTRACT, 2026-08-24).
 class _Faceless:
     def on_discard(self, inst, cards, ctx):
         face_count = sum(1 for c in cards if ctx.is_face_card(c))
@@ -684,14 +689,20 @@ class _CardSharp:
 JOKER_REGISTRY["j_card_sharp"] = _CardSharp()
 
 # ── j_reserved_parking: 1 in 2 chance of $1 per face card HELD in hand ───────
-# card.lua:3304 — key 'parking', odds 2; held-card `individual` context, so it
-# rolls once per face card per held pass (Mime / Red seal re-roll). The roll is
-# consumed BEFORE the debuff check, exactly like the Lua.
+# card.lua:3302-3319 — key 'parking', odds 2; held-card `individual` context, so it
+# rolls once per face card per held pass (Mime / Red seal re-roll,
+# state_events.lua:798-802 recomputes the effects inside the reps loop).
+# The condition chain is `context.other_card:is_face() and pseudorandom('parking') < ...`
+# and Lua's `and` short-circuits: a DEBUFFED held face card is not a face card
+# (card.lua:965) so NO 'parking' draw is consumed and the joker returns nothing.  The
+# `if context.other_card.debuff` arm at card.lua:3305-3310 is dead code in vanilla.
+# (Fixed 2026-08-24 by the debuff guard in ScoreContext.is_face_card: the engine used to
+# roll first and only withhold the money, desyncing the keyed stream and handing the card
+# a "had effect" retrigger it never earns.)
 class _ReservedParking:
     def on_held_card(self, inst, card, ctx):
         if ctx.is_face_card(card) and prob_roll(ctx, "parking", 2):
-            if not card.debuffed:
-                ctx.pending_money += 1
+            ctx.pending_money += 1
             return True
         return False
 JOKER_REGISTRY["j_reserved_parking"] = _ReservedParking()

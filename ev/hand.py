@@ -22,8 +22,17 @@ horizon = the end of the current blind.  The maths is in ``EV_NOTES.md``; the sh
       a dynamic programme over rounds whose per-round score distributions come from
       sampled fresh hands of this deck (``BlindModel``).
     * Objective at a regular blind: P(clear) + beta·(hands unused) + gamma·(discards
-      unused).  At a Nemesis (PvP) blind: 0.5·P(score ≥ opponent) + 0.5·P(score >
-      opponent) with the opponent's unplayed hands modelled symmetrically.
+      unused) + beta·(dollars the action EXTRACTS).  At a Nemesis (PvP) blind:
+      0.5·P(score ≥ opponent) + 0.5·P(score > opponent) with the opponent's unplayed hands
+      modelled symmetrically, and no extraction term (no money at a PvP blind).
+    * **The extraction layer** (``EXTRACT_NOTES.md``) prices the per-action money procs in
+      dollars — Gold seal, Lucky, Business Card, Golden Ticket, Rough Gem, Reserved
+      Parking, Faceless, Mail-In Rebate, Trading Card, Delayed Gratification, To Do List,
+      Purple seal → Tarot, Gold enhancement held to round end — plus a first-order value
+      for cycling toward a held Tarot's targets, and generates the sandbag lines
+      (dump the seals, play the proc cards) that the greedy objective could never emit.
+      Every dollar is only banked when the tail DP still clears the blind with probability
+      ``extract_min_clear`` after the line, so a sandbag never costs a life.
 
 ``budget="full"`` (Monte-Carlo expectimax, ≤ 100 ms)
     Top-K candidates by the fast scorer; each is stepped on ``n_worlds`` sampled worlds
@@ -49,14 +58,17 @@ import _bootstrap  # noqa: F401  (fork guard: the mp/engine balatro_sim)
 from _bootstrap import State
 from balatro_sim.card_selection import HypotheticalScorer
 from balatro_sim.constants import HAND_BASE, HAND_LEVEL_CHIPS, HAND_LEVEL_MULT, RANK_CHIPS
+from balatro_sim.constants import INTEREST_CAP, INTEREST_RATE
 from balatro_sim.hand_eval import evaluate_hand
+from balatro_sim.round_cards import from_round_picks
 
 from sampling import sample_world, world_rng, canonical_card_key
 
 __all__ = [
     "HandConfig", "DEFAULT_HAND_CONFIG", "hand_ev", "rank_hand_actions", "best_hand_action",
     "HandAnalysis", "BlindModel", "blind_model_for", "end_of_blind_value", "play_out_blind",
-    "estimate_clear_probability", "board_ratio", "opponent_final_atoms",
+    "estimate_clear_probability", "board_ratio", "opponent_final_atoms", "ProcBoard",
+    "extraction_ev", "extraction_lines",
 ]
 
 
@@ -75,6 +87,14 @@ class HandConfig:
     full_top_k: int = 5           # budget="full": candidates rolled out
     full_n_worlds: int = 3        # budget="full": worlds per candidate (common random numbers)
     rollout_lite: bool = True     # rollouts inside "full" use the lite candidate set
+    # ── the extraction / sandbag layer (EXTRACT_NOTES.md) ──────────────────────
+    extract: bool = True          # price the per-action money procs at all
+    tarot_value_dollars: float = 4.0   # what one created Tarot is worth (until V takes over)
+    extract_min_clear: float = 0.90    # tail-DP safety gate: only bank money above this
+    extract_lines: int = 6        # extra extraction candidate lines per decision (max)
+    junk_dollars: float = 0.8     # keep-value units per dollar, for the junk ORDERINGS only
+    tarot_cycle_fraction: float = 0.5  # fraction of a Tarot's value a good target unlocks
+    interest_bonus: float = 0.16  # extra worth of a $ that still earns interest, see §2
 
 
 DEFAULT_HAND_CONFIG = HandConfig()
@@ -144,11 +164,97 @@ def _popcount(x: int) -> int:
     return bin(x).count("1")
 
 
+# ═════════════════════════════════════════════════════════════ money procs (extraction)
+#
+# Every coefficient below is a CLOSED-FORM expectation in dollars, verified against the
+# engine's implementation and the Lua reference (see EXTRACT_NOTES.md §1 for the audit
+# table with file:line for both sides).  Nothing here rolls RNG or touches ``game``.
+
+_FACE_RANKS = frozenset((11, 12, 13))
+#: Tarots that target cards in hand, and how many targets they consume.
+_TAROT_TARGETS = {
+    "c_magician": 2, "c_empress": 2, "c_heirophant": 2, "c_lovers": 2, "c_chariot": 2,
+    "c_justice": 2, "c_devil": 2, "c_tower": 2,          # enhancement tarots
+    "c_star": 3, "c_moon": 3, "c_sun": 3, "c_world": 3,  # suit conversion
+    "c_strength": 2, "c_hanged_man": 2, "c_death": 2,
+}
+#: Suit each conversion tarot produces (consumables.TAROT_SUIT).
+_TAROT_SUIT = {"c_star": "Diamonds", "c_moon": "Clubs", "c_sun": "Hearts", "c_world": "Spades"}
+_TAROT_ENHANCEMENT = frozenset(("c_magician", "c_empress", "c_heirophant", "c_lovers",
+                                "c_chariot", "c_justice", "c_devil", "c_tower"))
+
+
+class ProcBoard:
+    """Which per-action money procs THIS board can fire, and with what coefficient.
+
+    Built once per ``HandAnalysis`` from ``game`` — jokers, the round's Mail-In rank, the
+    free consumable slots and ``G.GAME.probabilities.normal`` (= ``2 ** owned Oops! All 6s``,
+    engine ``jokers/base.sync_probabilities``; computed locally so nothing is mutated)."""
+
+    __slots__ = ("p_business", "p_parking", "faceless", "ticket", "trading", "rough_gem",
+                 "mail_rank", "delayed_grat", "todo_hand", "free_slots", "any_card_proc",
+                 "any", "p_normal")
+
+    def __init__(self, game):
+        jokers = list(getattr(game, "jokers", ()) or ())
+        keys = {j.key for j in jokers}
+        p = float(2 ** sum(1 for j in jokers if j.key == "j_oops"))
+        self.p_normal = p
+        # `pseudorandom(k) < normal/odds` -> P = min(1, normal/odds)   (base.prob_roll)
+        self.p_business = min(1.0, p / 2.0) if "j_business" in keys else 0.0
+        self.p_parking = min(1.0, p / 2.0) if "j_reserved_parking" in keys else 0.0
+        self.faceless = "j_faceless" in keys
+        self.ticket = "j_ticket" in keys
+        self.rough_gem = "j_rough_gem" in keys
+        # Trading Card: first discard of the round, exactly 1 card -> $3 and destroy it
+        # (card.lua:2802 `discards_used <= 0 and #full_hand == 1`).
+        self.trading = any(j.key == "j_trading" and not j.state.get("used") for j in jokers)
+        # Mail-In Rebate: $5 per discarded card of the round's rank (card.lua:2825-2835)
+        self.mail_rank = 0
+        if "j_mail" in keys:
+            try:
+                self.mail_rank = int(from_round_picks(getattr(game, "round_picks", None)).get("mail") or 0)
+            except Exception:               # noqa: BLE001
+                self.mail_rank = 0
+        # Delayed Gratification: $2 per remaining discard IF none is used this round.
+        self.delayed_grat = any(j.key == "j_delayed_grat" and not j.state.get("discarded")
+                                for j in jokers)
+        # To Do List: $4 when the played hand type matches the listed one (card.lua:2975)
+        self.todo_hand = ""
+        for j in jokers:
+            if j.key == "j_todo_list":
+                self.todo_hand = str(j.state.get("target") or "")
+        self.free_slots = max(0, int(getattr(game, "consumable_slots", 0))
+                              - len(getattr(game, "consumable_hand", ()) or ()))
+        #: a per-CARD proc exists (so the keep/junk orderings must be proc-aware)
+        self.any_card_proc = bool(self.p_business or self.p_parking or self.ticket
+                                  or self.rough_gem or self.mail_rank)
+        self.any = bool(self.any_card_proc or self.faceless or self.trading
+                        or self.delayed_grat or self.todo_hand)
+
+    @classmethod
+    def empty(cls) -> "ProcBoard":
+        """A board with no procs at all (``cfg.extract=False``): every coefficient 0."""
+        self = cls.__new__(cls)
+        for s in cls.__slots__:
+            setattr(self, s, 0)
+        self.p_normal = 1.0
+        self.todo_hand = ""
+        self.faceless = self.ticket = self.trading = self.rough_gem = False
+        self.delayed_grat = False
+        self.any_card_proc = self.any = False
+        return self
+
+
+_NO_PROCS = ProcBoard.empty()
+
+
 # ═══════════════════════════════════════════════════════════════════════ deck composition
 
 class DeckComp:
     """Composition (never order) of a pile of cards: counts by rank / suit, chip means."""
-    __slots__ = ("total", "by_rank", "by_suit", "suit_chips", "avg_chips", "n_active")
+    __slots__ = ("total", "by_rank", "by_suit", "suit_chips", "avg_chips", "n_active",
+                 "n_gold", "n_plain")
 
     def __init__(self, cards):
         by_rank: dict = {}
@@ -157,8 +263,14 @@ class DeckComp:
         tot_chips = 0.0
         n_active = 0
         total = 0
+        n_gold = 0
+        n_plain = 0
         for c in cards:
             total += 1
+            if c.enhancement == "Gold":
+                n_gold += 1            # hold-to-round-end money (extraction layer)
+            elif c.enhancement == "None":
+                n_plain += 1           # a targetable card for an enhancement tarot
             if c.enhancement == "Stone":
                 continue
             n_active += 1
@@ -177,6 +289,8 @@ class DeckComp:
         self.by_suit = by_suit
         self.suit_chips = suit_chips
         self.n_active = n_active
+        self.n_gold = n_gold
+        self.n_plain = n_plain
         self.avg_chips = (tot_chips / n_active) if n_active else 0.0
 
     def suit_avg(self, suit: str) -> float:
@@ -675,7 +789,9 @@ class HandAnalysis:
         else:
             self.can_discard = self.d > 0 and self.boss != "bl_psychic"
         self.psychic = self.boss == "bl_psychic"
+        self.procs = ProcBoard(game) if cfg.extract else _NO_PROCS
         self._prep_cards()
+        self._prep_tarot_wants()
         self._gen_play_candidates()
         self._score_plays()
         self.model = model
@@ -687,6 +803,12 @@ class HandAnalysis:
         self._tail_cache: dict = {}
         self._chips_cache: dict = {}
         self._gen_cache: dict = {}
+        self._safe_cache: dict = {}
+        self._cycle_cache: dict = {}
+        # the extraction layer is off at a Nemesis (no unused-hand money, every hand is
+        # played anyway) and off when there is simply nothing to extract
+        self.extract_on = bool(cfg.extract) and not self.pvp and self.model is not None and (
+            self.procs.any or self.has_card_proc or bool(self._tarot_wants))
 
     # ── per-card facts ──────────────────────────────────────────────────────
 
@@ -737,12 +859,142 @@ class HandAnalysis:
             if ws >= 3:
                 v += 0.8 * (ws - 2)
             v += 0.02 * self.chips[j]
-            if c.enhancement not in ("None", "Stone") or c.seal != "None" or c.edition != "None":
+            # SCORING-relevant modifiers only.  The blanket "+0.5 for any enhancement /
+            # seal / edition" used to make a Purple seal (worth nothing when played, a
+            # Tarot when discarded) look keep-worthy, so "discard the purple seals" was
+            # never generated -- W-EXTRACT replaces that half with the dollar terms below.
+            if (c.enhancement in ("Bonus", "Mult", "Wild", "Glass", "Steel", "Lucky")
+                    or c.edition != "None" or c.seal in ("Red", "Blue")):
                 v += 0.5
             kv.append(v)
         self.keep_value = kv
-        self.junk_order = sorted(range(self.n), key=lambda j: (kv[j], self.chips[j], j))
         self.full_mask = (1 << self.n) - 1
+        self._prep_procs()
+
+    def _prep_procs(self):
+        """Per-card money-proc value in DOLLARS, in three flavours, and the two junk
+        orderings they imply (EXTRACT_NOTES.md §2/§3):
+
+        ``proc_play[j]``    what card ``j`` pays when it is a SCORING card of a played hand
+                            (Gold seal $3, Lucky 1/15·$20, Business Card ½·$2 on a face,
+                            Golden Ticket $4 on a Gold card, Rough Gem $1 on a Diamond);
+        ``proc_hold[j]``    what it pays while it stays in hand (Gold enhancement $3 at
+                            round end, Reserved Parking ½·$1 per hand still to be played);
+        ``proc_discard[j]`` what it pays when DISCARDED (Purple seal -> a Tarot, Mail-In
+                            Rebate $5 on the round's rank).
+
+        ``play_keep`` / ``discard_keep`` fold those into the structural keep value at
+        ``cfg.junk_dollars`` keep-units per dollar.  They order JUNK ONLY -- the objective
+        prices the money in P(clear) units itself, so the exchange rate here never decides
+        a decision, only which cards a generated line throws away."""
+        n, hand, pb, cfg = self.n, self.hand, self.procs, self.cfg
+        chips = self.chips
+        # Fast path: nothing on the board or in the hand can pay, so the three orderings
+        # collapse to the structural keep value and NOTHING extra is computed.  This is the
+        # ante-1 common case and the whole reason the 5 ms fast budget survives the layer.
+        # (``faceless`` needs ``is_face`` even though its payout is set-level; ``trading`` /
+        # ``delayed_grat`` / ``todo_list`` are set-level only and stay on the fast path)
+        if not (pb.any_card_proc or pb.faceless) and not any(
+                c.seal in ("Gold", "Purple") or c.enhancement in ("Gold", "Lucky") for c in hand):
+            z = [0.0] * n
+            self.proc_play = self.proc_hold = self.proc_discard = z
+            self.is_face = self.gold_enh = self.purple = [False] * n
+            self.has_card_proc = self.has_play_proc = False
+            self.play_keep = self.discard_keep = self.keep_value
+            order = sorted(range(n), key=lambda j: (self.keep_value[j], chips[j], j))
+            self.play_junk_order = self.discard_junk_order = self.junk_order = order
+            return
+        self.proc_play = [0.0] * n
+        self.proc_hold = [0.0] * n
+        self.proc_discard = [0.0] * n
+        self.is_face = [False] * n
+        self.gold_enh = [False] * n
+        self.purple = [False] * n
+        pareidolia = bool(self.flags.get("pareidolia"))
+        p_lucky_money = min(1.0, pb.p_normal / 15.0)     # card.lua:1076, denominator 15
+        h_left = max(0, self.h)
+        for j, c in enumerate(hand):
+            if self.hidden[j] or c.debuffed:
+                continue                 # a face-down card is junk of unknown value; a
+                                         # debuffed one is skipped by every proc (Card:is_face
+                                         # card.lua:965, scoring.py:257 `continue`)
+            face = pareidolia or c.rank in _FACE_RANKS
+            self.is_face[j] = face
+            passes = 2.0 if c.seal == "Red" else 1.0     # Red seal retriggers the whole pass
+            play = 0.0
+            if c.seal == "Gold":
+                play += 3.0
+            if c.enhancement == "Lucky":
+                play += 20.0 * p_lucky_money
+            if pb.p_business and face:
+                play += 2.0 * pb.p_business
+            if pb.ticket and c.enhancement == "Gold":
+                play += 4.0
+            if pb.rough_gem and c.suit == "Diamonds":
+                play += 1.0
+            self.proc_play[j] = play * passes
+            hold = 0.0
+            if c.enhancement == "Gold":
+                self.gold_enh[j] = True
+                hold += 3.0 * passes     # a Red-sealed Gold card pays twice at round end
+            if pb.p_parking and face:
+                hold += pb.p_parking * h_left
+            self.proc_hold[j] = hold
+            disc = 0.0
+            if c.seal == "Purple":
+                self.purple[j] = True
+                disc += cfg.tarot_value_dollars
+            if pb.mail_rank and c.rank == pb.mail_rank and c.enhancement != "Stone":
+                disc += 5.0
+            self.proc_discard[j] = disc
+        self.has_card_proc = any(self.proc_play) or any(self.proc_hold) or any(self.proc_discard)
+        self.has_play_proc = any(self.proc_play)
+        w = cfg.junk_dollars
+        pp, ph, pd = self.proc_play, self.proc_hold, self.proc_discard
+        # burning a card as a non-scoring PLAY filler wastes all three of its uses
+        self.play_keep = [kv + w * (pp[j] + ph[j] + pd[j]) for j, kv in enumerate(self.keep_value)]
+        # discarding it CASHES proc_discard and forfeits the other two
+        self.discard_keep = [kv + w * (pp[j] + ph[j] - pd[j]) for j, kv in enumerate(self.keep_value)]
+        self.play_junk_order = sorted(range(n), key=lambda j: (self.play_keep[j], chips[j], j))
+        self.discard_junk_order = sorted(range(n), key=lambda j: (self.discard_keep[j], chips[j], j))
+        #: back-compat alias: the historic ``junk_order`` was play filler
+        self.junk_order = self.play_junk_order
+
+    def _prep_tarot_wants(self):
+        """First-order targeting value of the TARGETED tarots already in hand.
+
+        A held tarot is only worth its ``tarot_value_dollars`` if there is something in
+        hand worth putting it on.  Each entry is ``(want_mask, need, pile_count)``: the
+        hand cards that qualify as targets, how many of them the tarot needs, and how many
+        qualifying cards are left in the draw pile.  ``_cycle_ev`` then prices a cycling
+        line by the hypergeometric probability that the draw supplies the missing ones.
+
+        Modelled: the four SUIT tarots (Star / Moon / Sun / World -- convert up to 3 cards,
+        so a flush wants ``flush_need - 3`` real cards of that suit already in hand) and
+        the eight ENHANCEMENT tarots (want a plain card; overwriting an enhancement wastes
+        it).  NOT modelled: Strength / Hanged Man / Death targeting, and which SPECIFIC
+        card the tarot should land on (see EXTRACT_NOTES.md §6)."""
+        out: list = []
+        self._tarot_wants = out
+        if not self.cfg.extract:
+            return
+        held = getattr(self.game, "consumable_hand", ()) or ()
+        if not held:
+            return
+        for key in held:
+            k = _TAROT_TARGETS.get(key)
+            if k is None:
+                continue
+            if key in _TAROT_SUIT:
+                suit = _TAROT_SUIT[key]
+                out.append((self.suit_bits.get(suit, 0), max(1, self.flush_need - k),
+                            self.deck.by_suit.get(suit, 0)))
+            elif key in _TAROT_ENHANCEMENT:
+                want = 0
+                for j, c in enumerate(self.hand):
+                    if not self.hidden[j] and c.enhancement == "None" and not c.debuffed:
+                        want |= 1 << j
+                out.append((want, 1, self.deck.n_plain))
 
     # ── candidates ──────────────────────────────────────────────────────────
 
@@ -752,6 +1004,20 @@ class HandAnalysis:
         idx.sort(key=lambda j: (-self.chips[j], j))
         return idx[:k]
 
+    def _reps(self, bits: int, k: int) -> list:
+        """Representative choices of ``k`` cards out of ``bits`` for one structural hand
+        type: the highest-chip pick, plus -- when the board has per-card money procs -- the
+        pick that maximises PLAY value instead.  Two same-rank Kings score identically, but
+        only one of them carries the Gold seal; without this variant the gold-seal /
+        lucky / Business-Card line is never even a candidate."""
+        a = tuple(sorted(self._best_of(bits, k)))
+        if not self.has_play_proc:
+            return [a]
+        idx = [j for j in range(self.n) if bits >> j & 1]
+        idx.sort(key=lambda j: (-self.proc_play[j], -self.chips[j], j))
+        b = tuple(sorted(idx[:k]))
+        return [a] if b == a else [a, b]
+
     def _scoring_sets(self) -> list:
         """Structural scoring sets: (indices tuple, hint) for every hand type makeable."""
         out: list = []
@@ -760,9 +1026,9 @@ class HandAnalysis:
         for r, bits in rb.items():
             c = _popcount(bits)
             if c >= 2:
-                out.append(tuple(self._best_of(bits, min(5, c))))
+                out.extend(self._reps(bits, min(5, c)))
                 if c >= 3:
-                    out.append(tuple(self._best_of(bits, 2)))
+                    out.extend(self._reps(bits, 2))
         # two pair / full house
         pairs = [(r, bits) for r, bits in rb.items() if _popcount(bits) >= 2]
         pairs.sort(key=lambda rb_: -RANK_CHIPS.get(rb_[0], 0))
@@ -779,7 +1045,7 @@ class HandAnalysis:
         for s, bits in sb.items():
             c = _popcount(bits)
             if c >= self.flush_need:
-                out.append(tuple(sorted(self._best_of(bits, 5))))
+                out.extend(tuple(sorted(t)) for t in self._reps(bits, 5))
                 if c > 5:
                     # the flush that keeps the highest cards for later: lowest 5
                     idx = [j for j in range(self.n) if bits >> j & 1]
@@ -798,6 +1064,8 @@ class HandAnalysis:
         for w in _STRAIGHT_WINDOWS:
             if all(r in present for r in w):
                 out.append(tuple(sorted(self._best_of(present[r], 1)[0] for r in w)))
+                if self.has_play_proc:
+                    out.append(tuple(sorted(self._reps(present[r], 1)[-1][0] for r in w)))
         # singles: every visible non-stone card, and stones alone
         for j in range(self.n):
             if not self.hidden[j]:
@@ -876,6 +1144,11 @@ class HandAnalysis:
         hand, flags = self.hand, self.flags
         evald = []
         cheap = []
+        #: indices tuple -> (bitmask of the cards that actually SCORE, hand type).  Money
+        #: procs fire per SCORING card, not per played card (state_events.lua:648-780).
+        #: Built here from the SAME membership test the chip sum needs -- by identity, not
+        #: ``card in scoring``: Card is a dataclass, so ``in`` compares every field.
+        self._scoring_of: dict = {}
         for t in self.play_cands:
             cards = [hand[j] for j in t]
             try:
@@ -885,7 +1158,14 @@ class HandAnalysis:
                 cheap.append(0.0)
                 continue
             bc, bm = self._base(ht)
-            total = bc + sum(self.chips[j] for j in t if hand[j] in scoring)
+            sc_ids = {id(c) for c in scoring}
+            smask = 0
+            total = bc
+            for j in t:
+                if id(hand[j]) in sc_ids:
+                    total += self.chips[j]
+                    smask |= 1 << j
+            self._scoring_of[t] = (smask, ht)
             s = total * bm
             if not self._type_allowed(ht):
                 s = 0.0
@@ -1274,6 +1554,210 @@ class HandAnalysis:
                           + 0.5 * self._value_for_need(keep_mask, m, h, d, need_win))
         return total
 
+    # ── extraction: money procs in dollars ──────────────────────────────────
+
+    def _p_clear_after(self, h: int, d: int, need: float) -> float:
+        """P(the blind is still cleared) from a fresh position with ``h`` hands / ``d``
+        discards and ``need`` chips outstanding — the tail DP's own pure-probability
+        lookup (``BlindModel.p_clear``), which is what the safety gate is defined on."""
+        if need <= 0.0:
+            return 1.0
+        if h <= 0 or self.model is None:
+            return 0.0
+        key = (int(need), h, d)
+        v = self._safe_cache.get(key)
+        if v is None:
+            v = self._safe_cache[key] = self.model.p_clear(need / max(self.ratio, 1e-6), h, d)
+        return v
+
+    def extraction_safe(self, h: int, d: int, need: float) -> bool:
+        """The gate of EXTRACT_NOTES §4: money is only worth banking when what is left
+        after the line still clears the blind with probability ``cfg.extract_min_clear``.
+        Always False at a Nemesis (there is no money at a PvP blind and every hand is
+        played anyway — EV_NOTES §3)."""
+        if not self.extract_on:
+            return False
+        return self._p_clear_after(h, d, need) >= self.cfg.extract_min_clear
+
+    def _dollar_rate(self) -> float:
+        """$1 in P(clear) units.  ``beta_hand`` IS the rate (an unused hand pays $1), and
+        below the interest cap a dollar is worth a bit more because it keeps earning:
+        ``player.build_proxy`` values money as ``$ + 0.8·interest`` (PlayerConfig
+        interest_weight 0.4, two rounds), whose MARGINAL rate is 1 + 0.8/INTEREST_RATE
+        = 1.16.  Same convention, no new model (brief §3.2)."""
+        r = self.cfg.beta_hand
+        g = self.game
+        if not getattr(g, "no_interest", False):
+            cap = float(getattr(g, "interest_cap", INTEREST_CAP))
+            if float(getattr(g, "dollars", 0)) < cap * INTEREST_RATE:
+                r *= 1.0 + self.cfg.interest_bonus
+        return r
+
+    def _scoring_mask(self, t: tuple) -> tuple:
+        """(scoring bitmask, hand type) of a play, computed on demand for actions that are
+        not in the structural candidate set (``hand_ev`` on an arbitrary action)."""
+        got = self._scoring_of.get(t)
+        if got is not None:
+            return got
+        cards = [self.hand[j] for j in t if j < self.n]
+        try:
+            ht, scoring = evaluate_hand(cards, **self.flags)
+        except Exception:               # noqa: BLE001
+            return (0, "")
+        got = (sum(1 << j for j in t if j < self.n and self.hand[j] in scoring), ht)
+        self._scoring_of[t] = got
+        return got
+
+    def _gold_delta(self, t: tuple, m: int, p_clear: float) -> float:
+        """Gold ENHANCEMENT is an end-of-round payout on cards still HELD (game.py
+        _end_round, card.lua:1033-1039): a Gold card that leaves the hand now forfeits its
+        $3, and the ``m`` fresh cards may bring one in.  Conditioned on ``p_clear`` — a
+        failed blind never reaches the payout."""
+        if not (self.deck.n_gold or any(self.gold_enh)):
+            return 0.0
+        lost = 0.0
+        for j in t:
+            if j < self.n and self.gold_enh[j]:
+                lost += 2.0 if self.hand[j].seal == "Red" else 1.0
+        gained = (m * self.deck.n_gold / self.deck.total) if self.deck.total else 0.0
+        return 3.0 * (gained - lost) * p_clear
+
+    def _play_extraction(self, t: tuple, m: int, p_clear: float) -> float:
+        """Dollars a PLAY of ``t`` pays.  Immediate procs are unconditional (``ease_dollars``
+        inside the scoring loop); the hold term is conditioned on finishing the round."""
+        pb = self.procs
+        smask, ht = self._scoring_mask(t)
+        money = 0.0
+        mm = smask
+        pp = self.proc_play
+        while mm:
+            low = mm & -mm
+            money += pp[low.bit_length() - 1]
+            mm ^= low
+        if pb.todo_hand and ht == pb.todo_hand:
+            money += 4.0
+        if pb.p_parking:
+            # Reserved Parking fires on the cards STILL IN HAND while this hand scores --
+            # the played selection has already left G.hand (state_events.lua:478-488, the
+            # held phase at :784-870).  Exactly counted for THIS hand; later hands refill
+            # to the same deck composition whatever we do now, so they cancel (§5).
+            played = set(t)
+            money += pb.p_parking * sum(1 for j in range(self.n)
+                                        if self.is_face[j] and j not in played)
+        return money + self._gold_delta(t, m, p_clear)
+
+    def _discard_extraction(self, t: tuple, m: int, p_clear: float) -> float:
+        """Dollars a DISCARD of ``t`` pays (Purple seals -> Tarots, Faceless, Mail-In
+        Rebate, Trading Card) net of what the discard costs (Delayed Gratification)."""
+        pb = self.procs
+        money = 0.0
+        n_purple = 0
+        for j in t:
+            if j >= self.n:
+                continue
+            money += self.proc_discard[j]
+            if self.purple[j]:
+                n_purple += 1
+        if n_purple > pb.free_slots:
+            # game.py:_discard re-checks _free_consumable_slots per card, exactly like the
+            # real G.GAME.consumeable_buffer (card.lua:2253-2255): the overflow pays nothing
+            money -= (n_purple - pb.free_slots) * self.cfg.tarot_value_dollars
+        if pb.faceless and sum(1 for j in t if j < self.n and self.is_face[j]) >= 3:
+            money += 5.0
+        if pb.trading and len(t) == 1:
+            money += 3.0                 # ... and the card is destroyed (not priced, §7)
+        if pb.delayed_grat:
+            # $2 per discard remaining at round end, but ONLY if none was used: the first
+            # discard of the round forfeits the whole row (misc.py:_DelayedGrat)
+            money -= 2.0 * max(0, self.d)
+        return money + self._gold_delta(t, m, p_clear)
+
+    def _cycle_ev(self, keep_mask: int, m: int) -> float:
+        """Tarot-targeting value of drawing ``m`` fresh cards onto ``keep_mask``: for each
+        held targeted tarot whose targets are NOT in the kept cards, the hypergeometric
+        probability that the draw supplies them, times a fraction of the tarot's value.
+        First-order — see ``_prep_tarot_wants`` and EXTRACT_NOTES §6."""
+        if not self._tarot_wants or m <= 0:
+            return 0.0
+        key = (keep_mask, m)
+        v = self._cycle_cache.get(key)
+        if v is not None:
+            return v
+        N = self.deck.total
+        unit = self.cfg.tarot_value_dollars * self.cfg.tarot_cycle_fraction
+        total = 0.0
+        for want, need, pile in self._tarot_wants:
+            miss = need - _popcount(want & keep_mask)
+            if miss <= 0 or pile <= 0 or N <= 0:
+                continue
+            total += _hyper_tail(N, pile, min(m, N), miss) * unit
+        self._cycle_cache[key] = total
+        return total
+
+    def extraction_ev(self, action: dict) -> float:
+        """Public: expected DOLLARS ``action`` extracts (money procs + tarot cycling).
+        UNGATED — this is the raw amount; ``evaluate`` applies the safety gate of §4."""
+        if not self.extract_on:
+            return 0.0
+        t = tuple(action.get("cards", ()))
+        mask = sum(1 << j for j in t if j < self.n)
+        keep = self.full_mask & ~mask
+        m = min(len(t), self.hand_size - _popcount(keep))
+        kind = action.get("type")
+        if kind == "play":
+            pc = self._p_clear_after(self.h - 1, self.d, self.need - self._exact_of(t))
+            return self._play_extraction(t, m, pc) + self._cycle_ev(keep, m)
+        if kind == "discard":
+            pc = self._p_clear_after(self.h, self.d - 1, self.need)
+            return self._discard_extraction(t, m, pc) + self._cycle_ev(keep, m)
+        return 0.0
+
+    def _exact_of(self, t: tuple) -> float:
+        for tt, _, s, _ in self.plays:
+            if tt == t:
+                return s
+        return self._cheap_of(t) * self.ratio
+
+    def _extraction_discard_lines(self) -> list:
+        """Discard lines that exist only to EXTRACT: dump the purple seals / Mail-In ranks,
+        dump three faces for Faceless, dump one card for Trading Card.  Generated ONLY when
+        the tail DP says the blind is still safe after spending the discard (§4)."""
+        cfg = self.cfg
+        if not self.extract_on or self.d <= 0 or not self.can_discard:
+            return []
+        if self._p_clear_after(self.h, self.d - 1, self.need) < cfg.extract_min_clear:
+            return []
+        pb, n = self.procs, self.n
+        out: list = []
+
+        def push(core: list, fill_to: int = 5):
+            core = sorted(set(core))[:5]
+            if not core:
+                return
+            out.append(tuple(core))
+            room = fill_to - len(core)
+            if room > 0:
+                have = set(core)
+                fill = [j for j in self.discard_junk_order if j not in have][:room]
+                if fill:
+                    out.append(tuple(sorted(core + fill)))
+
+        proc_idx = [j for j in range(n) if self.proc_discard[j] > 0.0]
+        if proc_idx:
+            proc_idx.sort(key=lambda j: (-self.proc_discard[j], self.discard_keep[j], j))
+            # only the seals a free consumable slot can actually absorb are worth dumping
+            cap = max(1, pb.free_slots) if any(self.purple[j] for j in proc_idx) else 5
+            push(proc_idx[:cap])
+        if pb.faceless:
+            faces = [j for j in range(n) if self.is_face[j]]
+            if len(faces) >= 3:
+                faces.sort(key=lambda j: (self.discard_keep[j], self.chips[j], j))
+                push(faces[:3], fill_to=5)
+        if pb.trading and self.discard_junk_order:
+            out.append((self.discard_junk_order[0],))
+        cap = 3 if self.lite else cfg.extract_lines
+        return out[:cap]
+
     # ── actions ─────────────────────────────────────────────────────────────
 
     def _discard_lines(self) -> list:
@@ -1285,15 +1769,13 @@ class HandAnalysis:
         lines: list = []
         seen = set()
 
-        def add_keep(keep_mask: int):
-            disc = full & ~keep_mask
-            if disc == 0:
+        def add_disc(idx: list):
+            if not idx:
                 return
-            idx = [j for j in range(n) if disc >> j & 1]
             if len(idx) > 5:
-                # discard only the 5 least valuable of them
-                idx.sort(key=lambda j: (self.keep_value[j], self.chips[j], j))
-                idx = idx[:5]
+                # discard only the 5 least valuable of them (DISCARD-value: a purple seal
+                # is worth MORE gone, a gold card worth more kept)
+                idx = sorted(idx, key=lambda j: (self.discard_keep[j], self.chips[j], j))[:5]
             t = tuple(sorted(idx))
             if t in seen:
                 return
@@ -1301,6 +1783,12 @@ class HandAnalysis:
                 return
             seen.add(t)
             lines.append(t)
+
+        def add_keep(keep_mask: int):
+            disc = full & ~keep_mask
+            if disc == 0:
+                return
+            add_disc([j for j in range(n) if disc >> j & 1])
 
         # suits
         for s, bits in self.suit_bits.items():
@@ -1316,7 +1804,7 @@ class HandAnalysis:
                 for r in have:
                     # keep one card of the rank: prefer the majority suit, then chips
                     best_j = max((j for j in range(n) if present[r] >> j & 1),
-                                 key=lambda j: (self.keep_value[j], self.chips[j]))
+                                 key=lambda j: (self.discard_keep[j], self.chips[j]))
                     keep |= 1 << best_j
                 add_keep(keep)
         # rank groups (pair+) and combinations of them
@@ -1332,23 +1820,40 @@ class HandAnalysis:
         if self.plays:
             t, ht, s, _ = max(self.plays, key=lambda p: p[2])
             add_keep(sum(1 << j for j in t))
-        # junk-out k worst (keep everything else)
+        # junk-out k worst (keep everything else) -- by DISCARD value
         for k in range(1, min(5, n) + 1):
             m = 0
-            for j in self.junk_order[:k]:
+            for j in self.discard_junk_order[:k]:
                 m |= 1 << j
             add_keep(full & ~m)
-        if self.lite:
-            lines = lines[:6]
-        else:
-            lines = lines[: self.cfg.max_discard_lines]
+        lines = lines[:6] if self.lite else lines[: self.cfg.max_discard_lines]
+        # the extraction lines are appended AFTER the cap: they are a different KIND of
+        # line (bank money / cycle the deck), not a worse chase line, and they are already
+        # gated on the tail DP
+        seen = set(lines)
+        for t in self._extraction_discard_lines():
+            if t in seen:
+                continue
+            if self._legal_disc is not None and t not in self._legal_disc:
+                continue
+            seen.add(t)
+            lines.append(t)
         return lines
 
     def evaluate(self) -> list:
-        """[(action, ev)] for every play / discard candidate."""
+        """[(action, ev)] for every play / discard candidate.
+
+        The extraction term (EXTRACT_NOTES §2-§4) enters at the objective's own exchange
+        rate, $1 = ``beta_hand`` = 0.012 P(clear) units — the same rate that already pays
+        for an unused hand — and ONLY for lines the tail DP still calls safe.  That gate is
+        what makes sandbagging self-regulating: banking $4 of Tarot is worth 0.056, so it
+        only wins against clearing now when the risk it adds is smaller than that."""
         out: list = []
         h, d, need = self.h, self.d, self.need
         full = self.full_mask
+        extract = self.extract_on
+        rate = self._dollar_rate() if extract else 0.0
+        gate = self.cfg.extract_min_clear
         for t, ht, s, _ in self.plays:
             mask = sum(1 << j for j in t)
             keep = full & ~mask
@@ -1359,6 +1864,10 @@ class HandAnalysis:
                 ev = self._value_for_need(keep, m, h - 1, d, need - s)
             # tie-breaks (bounded by 1e-6): higher score now, fewer cards spent
             ev += 1e-6 * s / (s + max(need, 1.0)) - 1e-9 * len(t)
+            if extract:
+                pc = self._p_clear_after(h - 1, d, need - s)
+                if pc >= gate:
+                    ev += rate * (self._play_extraction(t, m, pc) + self._cycle_ev(keep, m))
             out.append(({"type": "play", "cards": list(t)}, ev))
         if d > 0:
             for t in self._discard_lines():
@@ -1367,6 +1876,10 @@ class HandAnalysis:
                 m = min(len(t), self.hand_size - _popcount(keep))
                 ev = self.position_value(keep, m, h, d - 1, need)
                 ev -= 1e-9 * len(t)
+                if extract:
+                    pc = self._p_clear_after(h, d - 1, need)
+                    if pc >= gate:
+                        ev += rate * (self._discard_extraction(t, m, pc) + self._cycle_ev(keep, m))
                 out.append(({"type": "discard", "cards": list(t)}, ev))
         return out
 
@@ -1622,6 +2135,56 @@ def hand_ev(game, action: dict, *, budget: str = "fast", value_fn=None, rng=None
             acc += end_of_blind_value(w2, game, cfg, value_fn=value_fn, model=model, ratio=ratio)
         return acc / len(worlds)
     raise ValueError(f"unknown budget {budget!r}")
+
+
+def extraction_ev(game, action: dict, *, cfg: HandConfig = DEFAULT_HAND_CONFIG) -> float:
+    """Expected DOLLARS ``action`` extracts from a ``SELECTING_HAND`` state: the money
+    procs that fire (Gold seal, Lucky, Business Card, Golden Ticket, Rough Gem, Reserved
+    Parking, Faceless, Mail-In Rebate, Trading Card, Purple seal -> Tarot, Gold enhancement
+    held to round end) plus the first-order tarot-targeting value of what it cycles.
+
+    UNGATED — the raw dollar amount, for tests / the advisor.  The player only banks it
+    when ``HandAnalysis.extraction_safe`` says the blind survives the line."""
+    if game.state != State.SELECTING_HAND:
+        return 0.0
+    return HandAnalysis(game, cfg, legal=game.legal_actions()).extraction_ev(action)
+
+
+def extraction_lines(game, legal: Optional[list] = None, *,
+                     cfg: HandConfig = DEFAULT_HAND_CONFIG) -> list:
+    """``[(action, ev, reason)]`` — the SAFETY-GATED sandbag lines at this state, best
+    first, or ``[]`` when there is nothing to extract or the tail DP says the blind is not
+    safe enough to spend a resource on money.
+
+    A line qualifies when its gated extraction term is non-zero: the dedicated
+    ``_extraction_discard_lines`` (dump the Purple seals / three faces for Faceless / one
+    card for Trading Card) and every play whose scoring cards carry a proc.  ``ev`` is the
+    full objective value, so it is directly comparable with ``rank_hand_actions``.
+    (Interface for W-PAIRS's ``greedy_vs_extract`` pair source, brief §5.2.)"""
+    if game.state != State.SELECTING_HAND:
+        return []
+    if legal is None:
+        legal = game.legal_actions()
+    an = HandAnalysis(game, cfg, legal=legal)
+    if not an.extract_on:
+        return []
+    out = []
+    for a, ev in an.evaluate():
+        t = tuple(a.get("cards", ()))
+        mask = sum(1 << j for j in t if j < an.n)
+        keep = an.full_mask & ~mask
+        m = min(len(t), an.hand_size - _popcount(keep))
+        if a["type"] == "play":
+            pc = an._p_clear_after(an.h - 1, an.d, an.need - an._exact_of(t))
+            money = an._play_extraction(t, m, pc) + an._cycle_ev(keep, m)
+        else:
+            pc = an._p_clear_after(an.h, an.d - 1, an.need)
+            money = an._discard_extraction(t, m, pc) + an._cycle_ev(keep, m)
+        if pc < cfg.extract_min_clear or abs(money) < 1e-9:
+            continue
+        out.append((a, float(ev), f"extract ${money:.2f} (P(clear after) {pc:.2f})"))
+    out.sort(key=lambda x: (-x[1], _action_sort_key(x[0])))
+    return out
 
 
 def best_hand_action(game, **kw) -> dict:

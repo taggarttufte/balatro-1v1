@@ -278,7 +278,27 @@ class EVPlayer:
         ranked = _hand.rank_hand_actions(game, **kw)
         if not explain:
             return [(a, ev, "") for a, ev in ranked]
-        return [(a, ev, self._hand_reason(game, a, ev)) for a, ev in ranked]
+        # W-EXTRACT: the money decomposition the advisor renders (the sandbag fixtures of
+        # brief §7 read it).  One HandAnalysis for the whole ranking, not one per action.
+        money: dict = {}
+        try:
+            an = _hand.HandAnalysis(game, self.hand_cfg, legal=legal)
+            if an.extract_on:
+                for a, _ in ranked:
+                    if a.get("type") in ("play", "discard"):
+                        d = an.extraction_ev(a)
+                        if abs(d) >= 0.005:
+                            money[_hand._action_sort_key(a)] = d
+        except Exception:               # noqa: BLE001  (an explanation must never break act)
+            money = {}
+        out = []
+        for a, ev in ranked:
+            r = self._hand_reason(game, a, ev)
+            d = money.get(_hand._action_sort_key(a))
+            if d is not None:
+                r += f" [extract ${d:+.2f}]"
+            out.append((a, ev, r))
+        return out
 
     @staticmethod
     def _hand_reason(game, a: dict, ev: float) -> str:

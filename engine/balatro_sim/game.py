@@ -40,7 +40,7 @@ from typing import Optional
 
 from .card import Card, make_standard_deck
 from .hand_eval import evaluate_hand
-from .scoring import score_hand
+from .scoring import score_hand, _n_mime_reps
 from .constants import (
     BLIND_CHIPS, blind_base_chips, STARTING_HANDS, STARTING_DISCARDS, HAND_SIZE,
     INTEREST_RATE, INTEREST_CAP, HAND_PAYOUT, STARTING_MONEY,
@@ -458,6 +458,12 @@ class BalatroGame:
             consumables=self.consumable_hand,
             blind_kind=self.current_blind.kind,
             hands_played=getattr(self, "_hands_played_round", 0),
+            # Pareidolia is a `find_joker` lookup inside Card:is_face (card.lua:967), not a
+            # scoring-pass flag: it must be visible to the NON-scoring hooks too (Faceless
+            # Joker counts `v:is_face()` over the discarded set, card.lua:2861).  Only
+            # scoring.py used to set it (via _Pareidolia.pre_score), so every on_discard /
+            # on_round_end hook saw all_face_cards=False.  (W-EXTRACT, 2026-08-24)
+            all_face_cards=any(j.key == "j_pareidolia" for j in self.jokers),
         )
 
     # Alias kept for MCTS-side callers that used the earlier name.
@@ -1979,6 +1985,24 @@ class BalatroGame:
         # so discard money is still paid at a PvP blind.
         if self.discards_left > 0 and self.money_per_discard:
             earnings += self.discards_left * self.money_per_discard
+        # Gold enhancement: "$3 if this card is held in hand at end of round."
+        # (Gold SEAL is different — "$3 when played and scores" — and now lives in
+        # scoring.py. The two were conflated before the 2026-07-29 audit.)
+        #
+        # Card:get_end_of_round_effect (card.lua:1033-1039): `:1034 if self.debuff then
+        # return {} end`, else h_dollars = 3 (game.lua:654).  The held-card loop
+        # (state_events.lua:171-233) repeats the payout once per Red seal (:191-196, gated
+        # on the card having produced an effect — a Gold ENHANCEMENT with a Red SEAL is a
+        # legal card) and once per Mime (:199-207), paying `ease_dollars` on EVERY rep
+        # (:221-223).  That whole loop runs inside end_round() BEFORE G.FUNCS.evaluate_round
+        # reads G.GAME.dollars for the interest row (state_events.lua:1191), so Gold money
+        # counts toward the interest base — hence this block sits above `interest = ...`.
+        # (W-EXTRACT, 2026-08-24: was after the interest, ignored debuff and ignored reps.)
+        _mime_reps = _n_mime_reps(self.jokers)
+        for c in self.hand:
+            if c.enhancement == "Gold" and not c.debuffed:
+                self.dollars += 3 * (1 + (1 if c.seal == "Red" else 0) + _mime_reps)
+
         interest = 0 if self.no_interest else min(self.dollars // INTEREST_RATE, self.interest_cap)
         self.dollars += blind_money + earnings
         # Investment Tag rows (tag.lua:117-130) — paid through ctx.add_dollars
@@ -2006,13 +2030,6 @@ class BalatroGame:
         # Fire on_round_end hooks (one shared context); pending money / created cards /
         # self-destructs are drained by base.drain_joker_state (created cards -> _materialize)
         fire_hook(self, "on_round_end")
-
-        # Gold enhancement: "$3 if this card is held in hand at end of round."
-        # (Gold SEAL is different — "$3 when played and scores" — and now lives
-        # in scoring.py. The two were conflated before the 2026-07-29 audit.)
-        for c in self.hand:
-            if c.enhancement == "Gold":
-                self.dollars += 3
 
         # Blue Seal: "Creates the Planet card for the final played poker hand of
         # the round if this card is held in hand." End-of-round, held-in-hand.

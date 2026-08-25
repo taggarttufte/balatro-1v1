@@ -211,7 +211,17 @@ class ScoreContext:
         return len(self.jokers)
 
     def is_face_card(self, card) -> bool:
-        """Respects Pareidolia flag."""
+        """``Card:is_face()`` with no ``from_boss`` (card.lua:964-970): a DEBUFFED card is
+        never a face card (:965 ``if self.debuff and not from_boss then return end``),
+        otherwise rank J/Q/K or Pareidolia owned (:967).
+
+        The debuff guard belongs here, not in the callers: Lua's ``and`` short-circuits, so
+        ``is_face()`` returning nil means a following ``pseudorandom(...)`` in the same
+        condition chain is NEVER ROLLED (Reserved Parking, card.lua:3303).  Call sites that
+        must bypass the debuff (``is_face(true)``, blind.lua's The Plant / The Mark) use the
+        raw ``Card.is_face_card`` property instead — see game.py:_boss_debuffs_card."""
+        if getattr(card, "debuffed", False):
+            return False
         return self.all_face_cards or card.is_face_card
 
     def fold_mult(self):
