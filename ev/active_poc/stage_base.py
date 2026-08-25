@@ -33,7 +33,7 @@ import _bootstrap  # noqa: E402,F401
 from active_poc import corpus as C  # noqa: E402
 from active_poc import training as T  # noqa: E402
 
-DEFAULT_CORPUS = r"C:\Users\Taggart\projects\balatro-rl\mp\ev\runs\labels_full\shards"
+DEFAULT_CORPUS = str(Path(__file__).resolve().parents[1] / "runs" / "labels_full" / "shards")
 
 
 def build_parser() -> argparse.ArgumentParser:

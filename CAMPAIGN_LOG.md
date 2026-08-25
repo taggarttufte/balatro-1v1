@@ -1729,3 +1729,25 @@ Throughput: 102 labels/min @ 8 workers. 0/1,176 job failures. Worktree note: bot
 W-ACTIVE) were created from stale `main` and had to reset to mp/campaign — future worktree prompts should
 say so explicitly. POC files live in W-ACTIVE's worktree (mp/ev/active_poc/ + mp/results/active_poc_*) —
 merge at close-out with W-LEAF's diff. Remaining: W-AUX only.
+
+### 2026-08-25 — V-v2 ROUND CLOSED OUT + R1 CAMPAIGN LAUNCHED (lead)
+
+Close-out: all suites green as-merged (engine 1651 / mp-tests 1073 / mp-ev 307 / agent 396), engine_parity
+**126/126 through ante 8**. Committed on mp/campaign: `8e714ff` W-EXTRACT+engine · `3a0b443` lever-(b) stack
+(PAIRS+RANK+AUX) · `435db03` W-PROBE · `8c3fdca` docs · `967e4a7` W-LEAF worktree merge (3-way, 0 conflicts,
+291 green post-merge) · `239f9a7` W-ACTIVE POC merge · `d25fbba` **canonicalization sweep** (parse_seeds
+normalizes '0'->'O' pre-dedupe; sample_states reservoir sha1) · `c474d2a` gen_pairs --per-kind passthrough.
+Worktrees removed. Smoke: per-kind honored, aux on, extraction detected, 0 failures, 487 ms/rollout (quiet box).
+
+**R1 CAMPAIGN RUNNING** (background, resumable, PAUSE = touch mp/ev/runs/pairs_v2/PAUSE):
+`gen_pairs --run-dir mp/ev/runs/pairs_v2 --seeds default+random:3000 --seed-rng 42 --n-states 14
+--n-worlds 8 --workers 16 --minutes 600 --aux --probe-jobs 25 --reps 4
+--per-kind {hand:5,nemesis:4,shop:2,pack:2,blind_select:1} --mix {close_call:.55,gve:.30,random:.15}`
+Projection ~46 pairs/min -> ~27k pairs / ~55k fresh-policy absolute rows with aux. Proc-rich slice seeds are
+inside `default`. **Lead deviation, logged: the W-ACTIVE disagreement hook is NOT wired tonight** — its
+per-label effect was non-significant and hand-integrating an untested selection layer before an unattended
+night trades a nicety against run reliability; the per-kind weighting delivers the reallocation effect.
+Queued for the NEXT campaign with proper integration+tests. W-DOCS agent running in parallel (README claims
+ledger, CLAUDE.md/AGENTS.md router, top-level bridge, hygiene scan); lead reviews, commits, THEN pushes
+(push approved by Tagg). NEXT after campaign: R2 train (old-51k absolute via fingerprint flag + new pairs,
+aux on minus pvp_margin_next, lam_rank 1.0) -> R3 eval battery -> compiled report.
