@@ -1,0 +1,275 @@
+{
+ "name": "aux_pairs_g1",
+ "run_dir": "mp\\ev\\runs\\aux_pairs_g1",
+ "timestamp": "2026-08-25T02:27:12",
+ "pool": {
+  "submitted": 44,
+  "done": 44,
+  "failed": 0,
+  "skipped": 0,
+  "elapsed_s": 485.92587549999735,
+  "job_seconds": 3643.8841285000017,
+  "paused": false,
+  "interrupted": false,
+  "exhausted": false,
+  "failed_ids": [],
+  "n_workers": 8,
+  "jobs_per_min": 5.432927393058768,
+  "mean_job_s": 82.81554837500003
+ },
+ "n_pairs": 238,
+ "n_abs_rows": 476,
+ "n_seeds": 44,
+ "skipped_states": 26,
+ "variance": {
+  "n_pairs": 238,
+  "n_worlds": 8,
+  "crn": {
+   "var_paired_per_rollout_block": 0.18374849939975987,
+   "var_unpaired_per_rollout_block": 0.32090336134453784,
+   "var_reduction_factor": 1.7464271131073912,
+   "mean_rho": 0.4635696960496423,
+   "n_with_rho": 160,
+   "se_paired_at_n": 0.15155382682390434,
+   "se_unpaired_at_n": 0.20028210146707376
+  },
+  "direct": {
+   "n_pairs": 0,
+   "var_paired": NaN,
+   "var_unpaired": NaN,
+   "var_reduction_factor": NaN
+  },
+  "resolved_frac": 0.037815126050420166,
+  "by_source": {
+   "close_call": {
+    "n": 122,
+    "var_reduction_factor": 2.4543239951278912,
+    "resolved_frac": 0.01639344262295082
+   },
+   "random": {
+    "n": 116,
+    "var_reduction_factor": 1.3894348894348894,
+    "resolved_frac": 0.0603448275862069
+   }
+  },
+  "by_state_kind": {
+   "blind_select": {
+    "n": 30,
+    "var_reduction_factor": 1.220149253731343,
+    "resolved_frac": 0.03333333333333333
+   },
+   "hand": {
+    "n": 48,
+    "var_reduction_factor": 2.749333333333334,
+    "resolved_frac": 0.0
+   },
+   "nemesis": {
+    "n": 54,
+    "var_reduction_factor": 2.27710843373494,
+    "resolved_frac": 0.018518518518518517
+   },
+   "pack": {
+    "n": 49,
+    "var_reduction_factor": 1.7505422993492414,
+    "resolved_frac": 0.061224489795918366
+   },
+   "shop": {
+    "n": 57,
+    "var_reduction_factor": 1.3812080536912754,
+    "resolved_frac": 0.07017543859649122
+   }
+  }
+ },
+ "mix": {
+  "n": 238,
+  "pair_source": {
+   "close_call": 122,
+   "random": 116
+  },
+  "pair_source_frac": {
+   "close_call": 0.5126050420168067,
+   "random": 0.48739495798319327
+  },
+  "state_kind": {
+   "blind_select": 30,
+   "hand": 48,
+   "nemesis": 54,
+   "pack": 49,
+   "shop": 57
+  },
+  "state_kind_frac": {
+   "blind_select": 0.12605042016806722,
+   "hand": 0.20168067226890757,
+   "nemesis": 0.226890756302521,
+   "pack": 0.20588235294117646,
+   "shop": 0.23949579831932774
+  },
+  "requested": {
+   "close_call": 118,
+   "greedy_vs_extract": 78,
+   "random": 42
+  },
+  "requested_to_realised": {
+   "close_call->close_call": 71,
+   "close_call->random": 47,
+   "greedy_vs_extract->close_call": 51,
+   "greedy_vs_extract->random": 27,
+   "random->random": 42
+  }
+ },
+ "abs_dataset": {
+  "n": 476,
+  "n_seeds": 44,
+  "y_mean": 0.48818278312683105,
+  "y_sd": 0.3308551609516144,
+  "by_kind": {
+   "blind_select": {
+    "n": 60,
+    "y_mean": 0.6041666865348816,
+    "y_sd": 0.26236772537231445,
+    "ci_mean": 0.2485211044549942,
+    "trunc_frac": 0.0
+   },
+   "hand": {
+    "n": 96,
+    "y_mean": 0.4153645932674408,
+    "y_sd": 0.27391761541366577,
+    "ci_mean": 0.2471141815185547,
+    "trunc_frac": 0.0
+   },
+   "nemesis": {
+    "n": 108,
+    "y_mean": 0.4861111044883728,
+    "y_sd": 0.374742716550827,
+    "ci_mean": 0.21844159066677094,
+    "trunc_frac": 0.0
+   },
+   "pack": {
+    "n": 98,
+    "y_mean": 0.4094387888908386,
+    "y_sd": 0.33635035157203674,
+    "ci_mean": 0.2278822362422943,
+    "trunc_frac": 0.0
+   },
+   "shop": {
+    "n": 114,
+    "y_mean": 0.5581140518188477,
+    "y_sd": 0.32494089007377625,
+    "ci_mean": 0.23427224159240723,
+    "trunc_frac": 0.0
+   }
+  },
+  "by_ante": {
+   "1": {
+    "n": 62,
+    "y_mean": 0.4818548262119293,
+    "y_sd": 0.19552293419837952,
+    "ci_mean": 0.2685420513153076,
+    "trunc_frac": 0.0
+   },
+   "2": {
+    "n": 134,
+    "y_mean": 0.48041045665740967,
+    "y_sd": 0.2613355815410614,
+    "ci_mean": 0.25376880168914795,
+    "trunc_frac": 0.0
+   },
+   "3": {
+    "n": 114,
+    "y_mean": 0.4583333432674408,
+    "y_sd": 0.3741461932659149,
+    "ci_mean": 0.2183052897453308,
+    "trunc_frac": 0.0
+   },
+   "4": {
+    "n": 78,
+    "y_mean": 0.49839743971824646,
+    "y_sd": 0.3633299469947815,
+    "ci_mean": 0.22334083914756775,
+    "trunc_frac": 0.0
+   },
+   "5": {
+    "n": 76,
+    "y_mean": 0.5131579041481018,
+    "y_sd": 0.3823721408843994,
+    "ci_mean": 0.21522250771522522,
+    "trunc_frac": 0.0
+   },
+   "6": {
+    "n": 12,
+    "y_mean": 0.6666666865348816,
+    "y_sd": 0.4714045524597168,
+    "ci_mean": 0.16220782697200775,
+    "trunc_frac": 0.0
+   }
+  },
+  "ci_mean": 0.2337508648633957,
+  "trunc_frac": 0.0
+ },
+ "aux_coverage": {
+  "a": {
+   "money_next_shop": 0.9453781512605042,
+   "lives_2antes": 1.0,
+   "pvp_margin_next": 0.9537815126050421,
+   "blind_cleared": 0.9831932773109243,
+   "xmult_by_ante4": 0.8151260504201681,
+   "extract_income": 1.0,
+   "cards_modified": 1.0,
+   "tarots_used": 1.0
+  },
+  "b": {
+   "money_next_shop": 0.9453781512605042,
+   "lives_2antes": 1.0,
+   "pvp_margin_next": 0.9453781512605042,
+   "blind_cleared": 0.9831932773109243,
+   "xmult_by_ante4": 0.8151260504201681,
+   "extract_income": 1.0,
+   "cards_modified": 1.0,
+   "tarots_used": 1.0
+  }
+ },
+ "throughput": {
+  "pairs_per_min": 29.279250834121747,
+  "workers": 8,
+  "s_per_pair_in_worker": 15.026830398739273,
+  "ms_per_rollout": 939.1768999212045,
+  "elapsed_s": 487.7173968999996
+ },
+ "timing_totals": {
+  "selfplay_s": 63.586121300009836,
+  "pair_s": 3576.385634899947,
+  "n_snapshots": 264,
+  "n_pairs": 238,
+  "n_rollouts": 3808,
+  "rollout_decisions": 609898,
+  "rollout_policy_s": 3135.3509389945684,
+  "total_s": 3643.221087500031
+ },
+ "config": {
+  "n_states": 6,
+  "n_worlds": 8,
+  "close_gap": 0.03,
+  "mix": {
+   "close_call": 0.5,
+   "greedy_vs_extract": 0.4,
+   "random": 0.1
+  },
+  "policy": "auto",
+  "budget": "fast",
+  "shop_tier": "rules",
+  "epsilon_selfplay": 0.1,
+  "epsilon_rollout": 0.02,
+  "encoder": "auto",
+  "max_ante": 12,
+  "deck_key": "b_red",
+  "stake": 1,
+  "lives": 4,
+  "policy_seed": 0,
+  "rollout_seed": 0,
+  "allow_clairvoyant": false,
+  "coupling": "step_then_determinize",
+  "aux": true
+ },
+ "seeds_spec": "random:60",
+ "has_extraction": true
+}

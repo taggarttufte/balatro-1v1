@@ -102,6 +102,9 @@ def build_parser() -> argparse.ArgumentParser:
     ap.add_argument("--flush-jobs", type=int, default=16, help="flush a shard every N jobs")
     ap.add_argument("--shard-rows", type=int, default=4000, help="...or when the buffer holds N rows")
     ap.add_argument("--symmetry-jobs", type=int, default=0)
+    ap.add_argument("--aux", action="store_true",
+                    help="W-AUX: record auxiliary targets from the rollouts this job already "
+                         "runs into each row's meta['aux'] (ev/AUX_NOTES.md)")
     ap.add_argument("--allow-clairvoyant", action="store_true", help="plumbing only (no W2)")
     ap.add_argument("--name", default=None, help="results file name (default: run-dir name)")
     return ap
@@ -126,7 +129,8 @@ def main(argv=None) -> int:
             "epsilon_rollout": args.epsilon_rollout, "encoder": args.encoder, "max_ante": args.max_ante,
             "deck_key": args.deck, "stake": args.stake, "lives": args.lives,
             "policy_seed": args.policy_seed, "rollout_seed": args.rollout_seed,
-            "allow_clairvoyant": args.allow_clairvoyant, "shop_tier": args.shop_tier}
+            "allow_clairvoyant": args.allow_clairvoyant, "shop_tier": args.shop_tier,
+            "aux": args.aux}
 
     def jobs():
         for i, s in enumerate(seeds):
@@ -220,8 +224,12 @@ def main(argv=None) -> int:
             sym = {"n_pairs": len(sums), "mean_y0_plus_y1": statistics.fmean(sums),
                    "sd": statistics.pstdev(sums) if len(sums) > 1 else 0.0}
     holdout = sorted(s for s in ds.seeds() if DS.seed_in_holdout(s, 0.1))
+    aux_cov = None
+    if args.aux and len(ds):
+        import aux_targets as AX  # noqa: WPS433
+        aux_cov = AX.coverage([m.get("aux") for m in ds.meta])
     out = {"name": name, "run_dir": str(run_dir), "timestamp": datetime.now().isoformat(timespec="seconds"),
-           "pool": summary.as_dict(), "dataset": dsum, "symmetry_check": sym,
+           "pool": summary.as_dict(), "dataset": dsum, "symmetry_check": sym, "aux_coverage": aux_cov,
            "holdout_seeds_at_0.1": holdout, "n_holdout_rows_at_0.1": int(sum(
                1 for s in ds.columns["seed"].tolist() if DS.seed_in_holdout(s, 0.1))) if len(ds) else 0,
            "timing_totals": state["timing"], "config": base, "seeds_spec": args.seeds}

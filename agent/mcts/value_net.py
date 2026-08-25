@@ -34,6 +34,13 @@ Checkpoint: `save_checkpoint(path, net, encoder, extra)` writes one atomic `torc
 payload carrying `STATE_SPEC_VERSION`, `layout_fingerprint()`, the encoder description and
 the `ValueNetConfig`; `load_checkpoint(path, device)` refuses a fingerprint mismatch and
 rebuilds `(net, encoder, extra)` bit-exactly.
+
+Auxiliary heads (Phase 5 rev 2, W-AUX; `ev/AUX_NOTES.md`): `ValueNetConfig.aux_heads`
+(default `{}`) optionally attaches small heads to the SHARED TRUNK, used only by
+`forward_with_aux` inside the trainer. With none configured nothing is constructed — same
+parameters, same init draws, same `state_dict` — so an old checkpoint (no `aux_heads` key
+in its `cfg`) still loads `strict=True`, and `forward` / `p_win` / `make_value_fn` /
+`make_values_many` are untouched whether heads exist or not.
 """
 from __future__ import annotations
 
@@ -83,6 +90,15 @@ class ValueNetConfig:
     caps: dict = field(default_factory=lambda: DEFAULT_CAPS_V2.as_dict())
     scalar_dim: int = SCALAR_DIM_V2
     key_vocab: int = KEY_VOCAB_SIZE_V2
+    # ── auxiliary prediction heads (Phase 5 rev 2, W-AUX; ev/AUX_NOTES.md) ──
+    # {head name: output width}.  EMPTY BY DEFAULT: no modules, no parameters, no state_dict
+    # entries, no RNG draws at construction — a net built without them is bit-identical to
+    # the pre-W-AUX net, and an old checkpoint (whose `cfg` has no `aux_heads` key at all)
+    # rebuilds with `{}` and loads `strict=True` unchanged.  Heads read the SHARED TRUNK
+    # (`encode`) and are used only by `forward_with_aux`; `forward` / `p_win` — every
+    # play-time path — never touch them.
+    aux_heads: dict = field(default_factory=dict)
+    aux_hidden: int = 0        # 0 = linear head; > 0 = one hidden layer of this width
 
     def as_dict(self) -> dict:
         return asdict(self)
@@ -98,6 +114,23 @@ class ValueNetConfig:
 # ════════════════════════════════════════════════════════════════════════════════
 # The net
 # ════════════════════════════════════════════════════════════════════════════════
+
+def _aux_head(width: int, dim: int, hidden: int = 0) -> nn.Module:
+    """One auxiliary head off the trunk: linear, or ONE hidden layer (brief §6b.2 caps it
+    there — an aux head is a probe, not a second network).  Orthogonal init with the same
+    conventions as `value_head`, so a fresh head starts near zero output."""
+    if hidden and hidden > 0:
+        layers = [nn.Linear(width, hidden), nn.ReLU(), nn.Linear(hidden, dim)]
+        nn.init.orthogonal_(layers[0].weight, gain=np.sqrt(2))
+        nn.init.constant_(layers[0].bias, 0)
+        nn.init.orthogonal_(layers[2].weight, gain=1.0)
+        nn.init.constant_(layers[2].bias, 0)
+        return nn.Sequential(*layers)
+    head = nn.Linear(width, dim)
+    nn.init.orthogonal_(head.weight, gain=1.0)
+    nn.init.constant_(head.bias, 0)
+    return head
+
 
 class SetValueNet(nn.Module):
 
@@ -157,6 +190,14 @@ class SetValueNet(nn.Module):
         nn.init.orthogonal_(self.value_head.weight, gain=1.0)
         nn.init.constant_(self.value_head.bias, 0)
 
+        # ── auxiliary heads (W-AUX) — LAST, so that with none configured the module
+        # registration order, the parameter order and every init RNG draw above are
+        # unchanged from the pre-W-AUX net.  An empty ModuleDict has no parameters and
+        # contributes nothing to `state_dict()`.
+        self.aux_heads = nn.ModuleDict()
+        for name, dim in sorted((cfg.aux_heads or {}).items()):
+            self.aux_heads[name] = _aux_head(W, int(dim), int(cfg.aux_hidden or 0))
+
     # ── introspection ────────────────────────────────────────────────────────
 
     def n_params(self) -> int:
@@ -173,6 +214,7 @@ class SetValueNet(nn.Module):
             "trunk_in": [self.trunk_in],
             "res_blocks": [self.res_blocks],
             "value_head": [self.value_head],
+            "aux_heads": [self.aux_heads],          # 0 unless W-AUX heads are configured
         }
         out = {k: sum(p.numel() for m in ms for p in m.parameters()) for k, ms in groups.items()}
         assert sum(out.values()) == self.n_params()
@@ -253,11 +295,31 @@ class SetValueNet(nn.Module):
         return self.res_blocks(trunk)
 
     def forward(self, batch: dict) -> torch.Tensor:
-        """(B,) LOGITS — pre-sigmoid. `logits.sigmoid()` is P(win)."""
+        """(B,) LOGITS — pre-sigmoid. `logits.sigmoid()` is P(win).
+
+        Unchanged by W-AUX: the auxiliary heads are never evaluated here, so play-time
+        inference costs exactly what it did before whether or not a checkpoint carries
+        them."""
         return self.value_head(self.encode(batch)).squeeze(-1)
 
     def p_win(self, batch: dict) -> torch.Tensor:
         return self.forward(batch).sigmoid()
+
+    # ── auxiliary heads (W-AUX; trainer graph only) ──────────────────────────
+
+    def aux_head_names(self) -> list[str]:
+        return list(self.aux_heads.keys())
+
+    def forward_with_aux(self, batch: dict) -> tuple[torch.Tensor, dict]:
+        """`(value logits (B,), {head name: (B, dim) raw output})` from ONE trunk pass.
+
+        The trunk is shared, so aux gradients shape the same representation V reads — the
+        whole point (brief §6b). With no heads configured this is `forward` plus an empty
+        dict, but the TRAINER still calls `forward` directly in that case so the no-aux
+        path stays bit-identical."""
+        trunk = self.encode(batch)
+        logits = self.value_head(trunk).squeeze(-1)
+        return logits, {name: head(trunk) for name, head in self.aux_heads.items()}
 
 
 # ════════════════════════════════════════════════════════════════════════════════

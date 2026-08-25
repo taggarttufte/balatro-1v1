@@ -241,6 +241,7 @@ class RolloutResult:
     lives: tuple
     n_nemeses: int
     forced: int = 0               # no-progress guard interventions
+    aux: Optional[dict] = None    # W-AUX: the rollout observer's result(), None without one
 
 
 def _determinize(match, seed: int):
@@ -304,8 +305,14 @@ class _Guard:
 
 def rollout(match, *, seed: int, policy_factory: Callable, max_ante: int = DEFAULT_MAX_ANTE,
             max_steps: int = DEFAULT_MAX_STEPS, race_cfg: _race.RaceConfig = _race.DEFAULT,
-            determinize: bool = True) -> RolloutResult:
-    """One determinized play-out of ``match`` (not modified) with fresh policies on both sides."""
+            determinize: bool = True, observer_factory: Optional[Callable] = None) -> RolloutResult:
+    """One determinized play-out of ``match`` (not modified) with fresh policies on both sides.
+
+    ``observer_factory`` (W-AUX, additive): ``factory() -> observer`` with ``start(m)`` /
+    ``after(m, player, action)`` / ``finish(m)`` / ``result()``.  One fresh observer per
+    rollout; its ``result()`` lands in ``RolloutResult.aux``.  ``None`` (the default) is a
+    single ``is not None`` test per step and leaves every number below bit-identical —
+    ``aux_targets.make_recorder_factory()`` is the one this campaign passes."""
     t0 = time.perf_counter()
     m, det = _determinize(match, seed) if determinize else (match.clone(), False)
     if det:
@@ -316,6 +323,9 @@ def rollout(match, *, seed: int, policy_factory: Callable, max_ante: int = DEFAU
     decisions = 0
     pol_s = 0.0
     guard = _Guard()
+    observer = observer_factory() if observer_factory is not None else None
+    if observer is not None:
+        observer.start(m)
     while not m.done and steps < max_steps and not _truncated(m, max_ante):
         p = m.current_player()
         if p is None:
@@ -325,9 +335,13 @@ def rollout(match, *, seed: int, policy_factory: Callable, max_ante: int = DEFAU
         a = guard.choose(m, p, acts, pols[p](m, p, acts))
         pol_s += time.perf_counter() - t1
         m.step(p, a)
+        if observer is not None:
+            observer.after(m, p, a)
         guard.after(m, a)
         steps += 1
         decisions += 1
+    if observer is not None:
+        observer.finish(m)
     if m.done:
         p0 = 1.0 if m.winner == 0 else 0.0
         trunc = False
@@ -338,7 +352,8 @@ def rollout(match, *, seed: int, policy_factory: Callable, max_ante: int = DEFAU
                          steps=steps, decisions=decisions, seconds=time.perf_counter() - t0,
                          policy_seconds=pol_s, antes=tuple(g.ante for g in m.games),
                          lives=tuple(g.lives for g in m.games), n_nemeses=len(m.pvp_log),
-                         forced=guard.forced)
+                         forced=guard.forced,
+                         aux=(observer.result() if observer is not None else None))
 
 
 # ── labels ────────────────────────────────────────────────────────────────────────
@@ -364,6 +379,10 @@ class LabelResult:
     decisions: int = 0
     policy_seconds: float = 0.0
     forced: int = 0
+    #: W-AUX: ``{player: {aux field: mean over the rollouts or None}}``, empty without an
+    #: observer.  It is keyed by PLAYER (not by perspective), so ``flipped()`` carries the
+    #: same dict through unchanged — player 1's row reads ``aux_by_player[1]``.
+    aux_by_player: dict = field(default_factory=dict)
 
     def as_tuple(self) -> tuple:
         return self.y, self.ci
@@ -374,7 +393,7 @@ class LabelResult:
                            outcomes=[1.0 - o for o in self.outcomes], trunc_frac=self.trunc_frac,
                            determinized=self.determinized, seconds=self.seconds,
                            decisions=self.decisions, policy_seconds=self.policy_seconds,
-                           forced=self.forced)
+                           forced=self.forced, aux_by_player=self.aux_by_player)
 
 
 def _ci_of(outcomes: Sequence[float]) -> float:
@@ -391,25 +410,38 @@ def _ci_of(outcomes: Sequence[float]) -> float:
 
 def label_both(match, *, n_rollouts: int = 8, seed: int = 0, policy_factory: Optional[Callable] = None,
                max_ante: int = DEFAULT_MAX_ANTE, max_steps: int = DEFAULT_MAX_STEPS,
-               race_cfg: _race.RaceConfig = _race.DEFAULT, determinize: bool = True) -> tuple:
-    """(LabelResult for player 0, LabelResult for player 1) from ONE set of rollouts."""
+               race_cfg: _race.RaceConfig = _race.DEFAULT, determinize: bool = True,
+               observer_factory: Optional[Callable] = None) -> tuple:
+    """(LabelResult for player 0, LabelResult for player 1) from ONE set of rollouts.
+
+    ``observer_factory`` (W-AUX) is threaded into every rollout and its per-rollout results
+    are averaged over the rollout set into ``LabelResult.aux_by_player`` (brief §6b.1: "mean
+    over the shared worlds")."""
     if policy_factory is None:
         policy_factory = make_policy_factory()
     t0 = time.perf_counter()
     outs, trunc, det, dec, pol_s, forced = [], 0, True, 0, 0.0, 0
+    aux_worlds = []
     for i in range(int(n_rollouts)):
         r = rollout(match, seed=seed * 1_000_003 + i, policy_factory=policy_factory, max_ante=max_ante,
-                    max_steps=max_steps, race_cfg=race_cfg, determinize=determinize)
+                    max_steps=max_steps, race_cfg=race_cfg, determinize=determinize,
+                    observer_factory=observer_factory)
         outs.append(r.p0_win)
         trunc += int(r.truncated)
         det = det and r.determinized
         dec += r.decisions
         pol_s += r.policy_seconds
         forced += r.forced
+        if r.aux is not None:
+            aux_worlds.append(r.aux)
     n = len(outs)
+    aux_by_player = {}
+    if aux_worlds:
+        import aux_targets as AX
+        aux_by_player = {p: AX.aggregate(aux_worlds, p) for p in (0, 1)}
     res0 = LabelResult(y=sum(outs) / n, ci=_ci_of(outs), n=n, outcomes=outs, trunc_frac=trunc / n,
                        determinized=det, seconds=time.perf_counter() - t0, decisions=dec,
-                       policy_seconds=pol_s, forced=forced)
+                       policy_seconds=pol_s, forced=forced, aux_by_player=aux_by_player)
     return res0, res0.flipped()
 
 
@@ -553,7 +585,9 @@ def label_job(payload: dict) -> dict:
     ``policy_seed`` 0, ``rollout_seed`` 0, ``encoder`` "auto", ``max_ante`` 12, ``deck_key``
     "b_red", ``stake`` 1, ``lives`` 4, ``allow_clairvoyant`` False (refuse plain-clone rollouts),
     ``independent_perspectives`` False (label player 1 from its OWN rollout set — the
-    sum-to-one symmetry check; doubles the cost).
+    sum-to-one symmetry check; doubles the cost), ``aux`` False (W-AUX: record the
+    auxiliary targets of ``aux_targets.AUX_SPECS`` during the rollouts the job already runs
+    and put the per-world means in each row's ``meta["aux"]``; brief §6b).
 
     Returns ``{"rows": [{"obs", "y", "meta"}...], "timing": {...}, "selfplay": {...}}``.
     """
@@ -572,9 +606,15 @@ def label_job(payload: dict) -> dict:
     lives = int(payload.get("lives", 4))
     allow_clair = bool(payload.get("allow_clairvoyant", False))
     shop_tier = payload.get("shop_tier", "rules")
+    aux_on = bool(payload.get("aux", False))          # W-AUX: record auxiliary targets
     if not allow_clair and not has_determinize():
         raise RuntimeError("MLBMatch.clone_determinized (W2) is missing: rollouts would be "
                            "clairvoyant; pass allow_clairvoyant=True for plumbing tests only")
+    observer_factory, aux_version = None, None
+    if aux_on:
+        import aux_targets as AX
+        observer_factory = AX.make_recorder_factory((0, 1))
+        aux_version = AX.AUX_VERSION
     encode = make_encoder(payload.get("encoder", "auto"))
     sp_factory = make_policy_factory(policy, budget=budget, epsilon=eps_sp, shop_tier=shop_tier)
     ro_factory = make_policy_factory(policy, budget=budget, epsilon=eps_ro, shop_tier=shop_tier)
@@ -589,7 +629,7 @@ def label_job(payload: dict) -> dict:
     for i, s in enumerate(snaps):
         base = rollout_seed * 7919 + s.step * 31 + i
         r0, r1 = label_both(s.match, n_rollouts=n_rollouts, seed=base, policy_factory=ro_factory,
-                            max_ante=max_ante)
+                            max_ante=max_ante, observer_factory=observer_factory)
         t_label += r0.seconds
         dec += r0.decisions
         pol_s += r0.policy_seconds
@@ -597,7 +637,8 @@ def label_job(payload: dict) -> dict:
         if independent:
             # the symmetry check: player 1's label from its OWN rollout set
             _, r1 = label_both(s.match, n_rollouts=n_rollouts, seed=base + 500_009,
-                               policy_factory=ro_factory, max_ante=max_ante)
+                               policy_factory=ro_factory, max_ante=max_ante,
+                               observer_factory=observer_factory)
             t_label += r1.seconds
             dec += r1.decisions
             pol_s += r1.policy_seconds
@@ -611,6 +652,10 @@ def label_job(payload: dict) -> dict:
                     "n_rollouts_cfg": n_rollouts, "epsilon_rollout": eps_ro,
                     "independent": independent, "forced": r.forced, "shop_tier": shop_tier,
                     "budget": budget}
+            if r.aux_by_player:
+                # W-AUX (brief §6b.3): additive `aux` dict, this player's perspective.
+                meta["aux"] = r.aux_by_player.get(p, {})
+                meta["aux_version"] = aux_version
             rows.append({"obs": encode(s.match, p), "y": r.y, "meta": meta})
     return {
         "rows": rows,
