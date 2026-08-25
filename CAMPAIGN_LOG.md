@@ -1751,3 +1751,48 @@ Queued for the NEXT campaign with proper integration+tests. W-DOCS agent running
 ledger, CLAUDE.md/AGENTS.md router, top-level bridge, hygiene scan); lead reviews, commits, THEN pushes
 (push approved by Tagg). NEXT after campaign: R2 train (old-51k absolute via fingerprint flag + new pairs,
 aux on minus pvp_margin_next, lam_rank 1.0) -> R3 eval battery -> compiled report.
+
+### 2026-08-25/26 — R1 CAMPAIGN COMPLETE, R2 TRAINING LAUNCHED (lead, autonomous)
+
+**R1: 42,468 pairs / 84,936 absolute rows — the ENTIRE 3,126-seed set exhausted before the 10 h cap**
+(79.8 pairs/min on the quiet box, 725 ms/rollout, 2/3,124 job failures). **Realized VRF 2.08x overall
+(CRN, n=42,468; direct audit n=341 agrees at 2.10x, rho 0.556) — the per-kind hand/nemesis weighting
+lifted it ABOVE the 2x bar** (uniform mix had measured 1.78x). Kinds: hand 15,620 + nemesis 12,496 = 66%;
+mix close_call 24,579 / random 17,655 / greedy_vs_extract 234 (thin as predicted — proc boards rare;
+78x the pilot's 3). Resolved 4.8% at 8 worlds. Results: mp/results/pairs_pairs_v2.json.
+
+**R2 launched** (sequential GPU): arm A `v_v2` = 135k absolute rows (new 85k + old 51k, fingerprint any)
++ 42k pair shards (lam_rank 1.0, tau 0.05) + aux heads (all minus pvp_margin_next per W-AUX), ckpt every
+250 / keep 30 (rotation ate the optimum last time); arm B `v_v2_ctrl` = SAME absolute data, no pairs,
+no aux — isolates lever (b)+aux from data freshness. Then R3: gate, tournament vs rules (2/60 baseline),
+h2h Vleaf(new V) vs full and vs real1:det, pair-acc, fixtures.
+
+### 2026-08-26 — R2 COMPLETE, R3 BATTERY RUNNING (lead, autonomous)
+
+R2 (6,000 steps each, ckpt every 250): **v_v2** (135k abs + 42k pairs, lam_rank 1.0, aux minus
+pvp_margin_next) best @ step 2000: Brier 0.0614 / AUC 0.782 / ECE **0.0146** / train-eval pair_acc 0.620.
+**v_v2_ctrl** (same 135k abs, no pairs/aux) best @ step 2250: Brier **0.0578** / AUC **0.7995** / ECE 0.031.
+The ranking loss trades a little absolute calibration for ordering, as designed.
+**Offline pair-acc on IDENTICAL held-out resolved pairs (n=216, evaluate_pairs, tau-independent):
+v_v2 0.620 [0.554,0.682] > ctrl 0.588 [0.521,0.652] > keeper 0.574 [0.507,0.638]** — direction right
+(+3.2pp lever effect, +4.6pp total), CIs overlap; 216 resolved pairs cannot separate 3pp. Behavioral
+battery is the arbiter. R3 RUNNING (sequential background): tournament_v v_v2 vs rules (2/60 baseline),
+tournament_v ctrl (attribution), h2h ev:full+Vleaf(v_v2 ckpt) vs ev:full (--checkpoint override;
+vs-real1 pairing skipped — one --checkpoint flag would override BOTH sides' checkpoints).
+
+### 2026-08-26 — V-v2 VERDICT: THE RANKING LEVER WORKS, CLEANLY ATTRIBUTED (R3 complete)
+
+**Argmax-V vs rules, 60 matches each: old keeper 2/60 · same-data control (no pairs/aux) 2/60 ·
+V-v2 (pairs+rank+aux) 12/60 (20%, lives margin −3.15 → −2.10, Fisher p≈0.004 vs both).** Data freshness
+alone contributed NOTHING (control = baseline exactly); the whole 6x jump is the counterfactual-pairs
+ranking loss + aux heads. Offline concurs directionally: held-out resolved-pair acc 0.620 > 0.588 > 0.574.
+**V-at-leaf with the new V: 24/60 [28.3, 53.3] — IDENTICAL to old-V's null.** Reading: V's marginal signal
+shows where it acts alone and is redundant where the analytic leaf proxy already encodes the same
+information. Lever (c) stays a socket, not a win.
+
+Round totals: 42,468 pairs / 84,936 rows / VRF 2.08x realized · argmax-V 2→12/60 attributed ·
+extraction layer free w/ matches-won 2x · repo pushed public w/ claims ledger. NEXT-ROUND LEVERS (for
+Tagg): (1) resolved-pair scarcity — 4.8% resolve at 8 worlds; spend worlds on close pairs (adaptive
+n_worlds) or raise n_worlds on close_call source; (2) batch the 24 leaf V calls (163→<100 ms) then
+re-test leaf with a stronger V; (3) disagreement hook w/ tests; (4) rules+V hybrid: argmax-V only where
+V's ranking is confident, rules elsewhere — 12/60 as a floor suggests headroom; (5) per-target cycle EV.

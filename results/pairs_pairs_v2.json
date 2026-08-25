@@ -1,0 +1,308 @@
+{
+ "name": "pairs_v2",
+ "run_dir": "mp\\ev\\runs\\pairs_v2",
+ "timestamp": "2026-08-25T12:41:57",
+ "pool": {
+  "submitted": 3126,
+  "done": 3124,
+  "failed": 2,
+  "skipped": 0,
+  "elapsed_s": 31897.110984500003,
+  "job_seconds": 508358.96962549933,
+  "paused": false,
+  "interrupted": false,
+  "exhausted": true,
+  "failed_ids": [
+   "ZMTUFHKP",
+   "OWUGOI4O"
+  ],
+  "n_workers": 16,
+  "jobs_per_min": 5.876394263138254,
+  "mean_job_s": 162.72694290188838
+ },
+ "n_pairs": 42468,
+ "n_abs_rows": 84936,
+ "n_seeds": 3124,
+ "skipped_states": 1268,
+ "variance": {
+  "n_pairs": 42468,
+  "n_worlds": 8,
+  "crn": {
+   "var_paired_per_rollout_block": 0.1584570188982695,
+   "var_unpaired_per_rollout_block": 0.3293551787596664,
+   "var_reduction_factor": 2.078514293968352,
+   "mean_rho": 0.556315589967988,
+   "n_with_rho": 29479,
+   "se_paired_at_n": 0.1407377964950556,
+   "se_unpaired_at_n": 0.20290243306810862
+  },
+  "direct": {
+   "n_pairs": 341,
+   "var_paired": 0.020356030058651026,
+   "var_unpaired": 0.04273964442815249,
+   "var_reduction_factor": 2.0996060776589758
+  },
+  "resolved_frac": 0.048153904116040314,
+  "by_source": {
+   "close_call": {
+    "n": 24579,
+    "var_reduction_factor": 2.5584260832089245,
+    "resolved_frac": 0.03303633182798324
+   },
+   "greedy_vs_extract": {
+    "n": 234,
+    "var_reduction_factor": 2.4898040708521925,
+    "resolved_frac": 0.029914529914529916
+   },
+   "random": {
+    "n": 17655,
+    "var_reduction_factor": 1.6497886713096985,
+    "resolved_frac": 0.06944208439535543
+   }
+  },
+  "by_state_kind": {
+   "blind_select": {
+    "n": 2190,
+    "var_reduction_factor": 1.2085526152763,
+    "resolved_frac": 0.1050228310502283
+   },
+   "hand": {
+    "n": 15620,
+    "var_reduction_factor": 2.6173815485361906,
+    "resolved_frac": 0.033162612035851476
+   },
+   "nemesis": {
+    "n": 12496,
+    "var_reduction_factor": 2.683612334711521,
+    "resolved_frac": 0.02976952624839949
+   },
+   "pack": {
+    "n": 5925,
+    "var_reduction_factor": 1.6709853869626736,
+    "resolved_frac": 0.05907172995780591
+   },
+   "shop": {
+    "n": 6237,
+    "var_reduction_factor": 1.4523556339456305,
+    "resolved_frac": 0.09219175885842552
+   }
+  }
+ },
+ "mix": {
+  "n": 42468,
+  "pair_source": {
+   "close_call": 24579,
+   "greedy_vs_extract": 234,
+   "random": 17655
+  },
+  "pair_source_frac": {
+   "close_call": 0.5787651879061881,
+   "greedy_vs_extract": 0.005510031082226617,
+   "random": 0.4157247810115852
+  },
+  "state_kind": {
+   "blind_select": 2190,
+   "hand": 15620,
+   "nemesis": 12496,
+   "pack": 5925,
+   "shop": 6237
+  },
+  "state_kind_frac": {
+   "blind_select": 0.05156823961571065,
+   "hand": 0.36780634830931525,
+   "nemesis": 0.2942450786474522,
+   "pack": 0.1395168126589432,
+   "shop": 0.1468635207685787
+  },
+  "requested": {
+   "close_call": 24278,
+   "greedy_vs_extract": 12126,
+   "random": 6064
+  },
+  "requested_to_realised": {
+   "close_call->close_call": 16491,
+   "close_call->greedy_vs_extract": 7,
+   "close_call->random": 7780,
+   "greedy_vs_extract->close_call": 8088,
+   "greedy_vs_extract->greedy_vs_extract": 227,
+   "greedy_vs_extract->random": 3811,
+   "random->random": 6064
+  }
+ },
+ "abs_dataset": {
+  "n": 84936,
+  "n_seeds": 3124,
+  "y_mean": 0.47475120425224304,
+  "y_sd": 0.32426145672798157,
+  "by_kind": {
+   "blind_select": {
+    "n": 4380,
+    "y_mean": 0.49038243293762207,
+    "y_sd": 0.29495373368263245,
+    "ci_mean": 0.2439829707145691,
+    "trunc_frac": 0.0
+   },
+   "hand": {
+    "n": 31240,
+    "y_mean": 0.46717149019241333,
+    "y_sd": 0.3132973611354828,
+    "ci_mean": 0.23803284764289856,
+    "trunc_frac": 0.0
+   },
+   "nemesis": {
+    "n": 24992,
+    "y_mean": 0.4903569221496582,
+    "y_sd": 0.34303176403045654,
+    "ci_mean": 0.22913801670074463,
+    "trunc_frac": 0.0
+   },
+   "pack": {
+    "n": 11850,
+    "y_mean": 0.45773208141326904,
+    "y_sd": 0.32463908195495605,
+    "ci_mean": 0.2341972142457962,
+    "trunc_frac": 0.0
+   },
+   "shop": {
+    "n": 12474,
+    "y_mean": 0.4731466472148895,
+    "y_sd": 0.32047039270401,
+    "ci_mean": 0.23622791469097137,
+    "trunc_frac": 0.0
+   }
+  },
+  "by_ante": {
+   "1": {
+    "n": 12670,
+    "y_mean": 0.49247729778289795,
+    "y_sd": 0.19112513959407806,
+    "ci_mean": 0.26856863498687744,
+    "trunc_frac": 0.0
+   },
+   "2": {
+    "n": 18242,
+    "y_mean": 0.47931456565856934,
+    "y_sd": 0.25099846720695496,
+    "ci_mean": 0.25599953532218933,
+    "trunc_frac": 0.0
+   },
+   "3": {
+    "n": 19368,
+    "y_mean": 0.4733322858810425,
+    "y_sd": 0.32457202672958374,
+    "ci_mean": 0.23511981964111328,
+    "trunc_frac": 0.0
+   },
+   "4": {
+    "n": 18914,
+    "y_mean": 0.4703724682331085,
+    "y_sd": 0.37645548582077026,
+    "ci_mean": 0.21681556105613708,
+    "trunc_frac": 0.0
+   },
+   "5": {
+    "n": 11928,
+    "y_mean": 0.46218979358673096,
+    "y_sd": 0.40363118052482605,
+    "ci_mean": 0.20566150546073914,
+    "trunc_frac": 0.0
+   },
+   "6": {
+    "n": 3244,
+    "y_mean": 0.46443432569503784,
+    "y_sd": 0.41429778933525085,
+    "ci_mean": 0.20161481201648712,
+    "trunc_frac": 0.0
+   },
+   "7": {
+    "n": 504,
+    "y_mean": 0.451884925365448,
+    "y_sd": 0.3996264636516571,
+    "ci_mean": 0.20783506333827972,
+    "trunc_frac": 0.0
+   },
+   "8": {
+    "n": 66,
+    "y_mean": 0.4337121248245239,
+    "y_sd": 0.38510358333587646,
+    "ci_mean": 0.21328991651535034,
+    "trunc_frac": 0.0
+   }
+  },
+  "ci_mean": 0.23492221534252167,
+  "trunc_frac": 0.0
+ },
+ "aux_coverage": {
+  "a": {
+   "money_next_shop": 0.9462183290948479,
+   "lives_2antes": 1.0,
+   "pvp_margin_next": 0.9534473014975982,
+   "blind_cleared": 0.9921352547800697,
+   "xmult_by_ante4": 0.8146604502213431,
+   "extract_income": 1.0,
+   "cards_modified": 1.0,
+   "tarots_used": 1.0
+  },
+  "b": {
+   "money_next_shop": 0.943745879250259,
+   "lives_2antes": 1.0,
+   "pvp_margin_next": 0.9515399830460582,
+   "blind_cleared": 0.991052086276726,
+   "xmult_by_ante4": 0.8146604502213431,
+   "extract_income": 1.0,
+   "cards_modified": 1.0,
+   "tarots_used": 1.0
+  }
+ },
+ "throughput": {
+  "pairs_per_min": 79.8465287266562,
+  "workers": 16,
+  "s_per_pair_in_worker": 11.865685822624087,
+  "ms_per_rollout": 724.1612424340664,
+  "elapsed_s": 31912.220113200005
+ },
+ "timing_totals": {
+  "selfplay_s": 3757.359014800066,
+  "pair_s": 503911.94551519974,
+  "n_snapshots": 43736,
+  "n_pairs": 42468,
+  "n_rollouts": 695856,
+  "rollout_decisions": 112541741,
+  "rollout_policy_s": 438458.64456106466,
+  "total_s": 508142.84012889955
+ },
+ "config": {
+  "n_states": 14,
+  "n_worlds": 8,
+  "close_gap": 0.03,
+  "mix": {
+   "close_call": 0.55,
+   "greedy_vs_extract": 0.3,
+   "random": 0.15
+  },
+  "policy": "auto",
+  "budget": "fast",
+  "shop_tier": "rules",
+  "epsilon_selfplay": 0.1,
+  "epsilon_rollout": 0.02,
+  "encoder": "auto",
+  "max_ante": 12,
+  "deck_key": "b_red",
+  "stake": 1,
+  "lives": 4,
+  "policy_seed": 0,
+  "rollout_seed": 0,
+  "allow_clairvoyant": false,
+  "coupling": "step_then_determinize",
+  "aux": true,
+  "per_kind": {
+   "hand": 5,
+   "nemesis": 4,
+   "shop": 2,
+   "pack": 2,
+   "blind_select": 1
+  }
+ },
+ "seeds_spec": "default+random:3000",
+ "has_extraction": true
+}
