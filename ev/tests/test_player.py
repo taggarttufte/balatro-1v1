@@ -184,6 +184,29 @@ def test_value_fn_tier_argmaxes_v_on_clones():
     assert EVPlayer(value_fn=v2).act(g) == {"type": "leave_shop"}
 
 
+def test_value_fn_leaf_only_skips_the_v_tier_at_shop_and_blind_select():
+    """W-LEAF: lever (c) is V at the expectimax LEAF only.  With
+    ``value_fn_leaf_only=True`` a value_fn that WOULD change the SHOP/BLIND_SELECT decision
+    (see `test_value_fn_tier_argmaxes_v_on_clones` above) must be ignored there -- the rules
+    tier decides instead -- even though the same value_fn is still wired into the full-budget
+    hand rollout's leaf (checked via the fast-budget rule-tier baseline: with budget="fast"
+    there is no leaf to feed V into either way, so a leaf_only player must be BYTE-IDENTICAL
+    to a plain value_fn=None rules player at SHOP / BLIND_SELECT)."""
+    g = _shop()
+
+    def v2(world):
+        return float(world.dollars)            # would pick "leave_shop" if it ran here
+    leaf_only = EVPlayer(value_fn=v2, value_fn_leaf_only=True)
+    rules_only = EVPlayer(value_fn=None)
+    assert _key(leaf_only.act(g)) == _key(rules_only.act(g))
+    assert [_key(a) for a, _, _ in leaf_only.explain(g)] == [_key(a) for a, _, _ in rules_only.explain(g)]
+
+    g2 = BalatroGame(seed="11111111", ruleset="vanilla")
+    assert g2.state == State.BLIND_SELECT
+    assert _key(EVPlayer(value_fn=v2, value_fn_leaf_only=True).act(g2)) == \
+        _key(EVPlayer(value_fn=None).act(g2))
+
+
 def test_rule_tier_buys_a_joker_that_raises_the_proxy():
     g = _shop()
     base = build_proxy(g)

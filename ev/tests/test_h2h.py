@@ -3,10 +3,12 @@ JSON schema matches ADVISOR_NOTES.md's documented shape (Phase 5 rev 2, W6)."""
 from __future__ import annotations
 
 import json
+from pathlib import Path
 
 import pytest
 
 import _bootstrap  # noqa: F401
+from _bootstrap import State
 
 import h2h
 
@@ -78,6 +80,54 @@ def test_build_player_ev_specs():
     assert obj_full.budget == "full" and obj_full.stats is None
     assert obj_stats.budget == "full" and obj_stats.stats is not None
     assert callable(pol_fast) and callable(pol_full) and callable(pol_stats)
+
+
+_HAS_VLEAF_CKPT = Path(h2h.VLEAF_CKPT_DEFAULT).exists()
+
+
+@pytest.mark.skipif(not _HAS_VLEAF_CKPT, reason=f"no V checkpoint at {h2h.VLEAF_CKPT_DEFAULT} "
+                    "(mp/ev/runs/ is gitignored; W-LEAF's keeper checkpoint must be copied in)")
+def test_build_player_ev_vleaf_spec():
+    """W-LEAF: `ev:full+Vleaf` wires the keeper checkpoint into a full-budget EVPlayer via
+    MatchAwareEVPlayer -- `.policy()` (not `C.adapt_player`) is what `_one_worker_job` needs,
+    since only `.policy()` binds the opponent view from the live match on every call."""
+    pol, obj = h2h.build_player("ev:full+Vleaf", 0)
+    assert callable(pol)
+    import match_player as MPl
+    assert isinstance(obj, MPl.MatchAwareEVPlayer)
+    assert obj.ev.budget == "full"
+    assert obj.ev.value_fn is not None
+    assert obj.ev.value_fn_leaf_only is True, \
+        "lever (c) is V at the LEAF only -- SHOP/BLIND_SELECT must keep the rules tier"
+    assert hasattr(obj, "reset") and callable(obj.reset)
+
+
+@pytest.mark.skipif(not _HAS_VLEAF_CKPT, reason=f"no V checkpoint at {h2h.VLEAF_CKPT_DEFAULT} "
+                    "(mp/ev/runs/ is gitignored; W-LEAF's keeper checkpoint must be copied in)")
+def test_vleaf_match_aware_player_acts_on_a_real_hand_state():
+    """End-to-end wiring smoke, the REAL checkpoint (not a stub): bind to a live match, drive
+    to a SELECTING_HAND state, and confirm `.act()` returns a legal action with no value_fn
+    error (n_errors stays 0 -- a broken value_fn would raise per EV_NOTES fix pass 3, not
+    silently degrade)."""
+    import hand as H
+    import match_player as MPl
+    net, encoder = MPl.load_value(h2h.VLEAF_CKPT_DEFAULT, device="cpu")
+    mp_player = MPl.MatchAwareEVPlayer(net, encoder, device="cpu", budget="full", seed=0)
+    m = _bootstrap.MLBMatch(seed="11111111", deck_key="b_red", stake=1, lives=4)
+    mp_player.bind(m, 0)
+    g = m.games[0]
+    steps = 0
+    while g.state != State.SELECTING_HAND and steps < 20:
+        if g.state == State.BLIND_SELECT:
+            g.step({"type": "play_blind"})
+        else:
+            g.step({"type": "advance"})
+        steps += 1
+    assert g.state == State.SELECTING_HAND
+    a = mp_player.act(g)
+    assert H._action_sort_key(a) in {H._action_sort_key(x) for x in g.legal_actions()}
+    assert mp_player.n_errors == 0
+    assert mp_player.n_calls > 0
 
 
 def test_build_player_scripted_spec():

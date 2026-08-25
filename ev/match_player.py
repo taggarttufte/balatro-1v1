@@ -43,7 +43,8 @@ class MatchAwareEVPlayer:
 
     def __init__(self, net, encoder: SetEncoderV2, *, device: str = "cpu", budget: str = "fast",
                  seed: int = 0, epsilon: float = 0.0, stats=None, n_worlds: Optional[int] = None,
-                 top_k: Optional[int] = None, swallow: bool = False, name: str = "ev+V"):
+                 top_k: Optional[int] = None, swallow: bool = False, name: str = "ev+V",
+                 value_fn_leaf_only: bool = False):
         import player as P                      # W3
         self.values_many = make_values_many(net, encoder, device)
         self.net, self.encoder, self.device = net, encoder, device
@@ -54,8 +55,12 @@ class MatchAwareEVPlayer:
         self.match = None
         self.player: Optional[int] = None
         self.name = name
+        # W-LEAF passthrough (Phase 5 rev 2 V2 round): isolate "V at the expectimax leaf
+        # only" (EVPlayer.value_fn_leaf_only) from "argmax-V as the SHOP/BOOSTER_OPEN/
+        # BLIND_SELECT policy too" -- see player.py's EVPlayer.__init__ docstring. Default
+        # False: identical to every pre-existing caller of this wrapper.
         self._kw = dict(budget=budget, seed=int(seed), epsilon=float(epsilon), stats=stats,
-                        n_worlds=n_worlds, top_k=top_k)
+                        n_worlds=n_worlds, top_k=top_k, value_fn_leaf_only=bool(value_fn_leaf_only))
         self._P = P
         self._seats: dict = {}
         self.ev = self._make(int(seed))

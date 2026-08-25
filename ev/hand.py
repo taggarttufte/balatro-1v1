@@ -34,12 +34,18 @@ horizon = the end of the current blind.  The maths is in ``EV_NOTES.md``; the sh
       Every dollar is only banked when the tail DP still clears the blind with probability
       ``extract_min_clear`` after the line, so a sandbag never costs a life.
 
-``budget="full"`` (Monte-Carlo expectimax, ≤ 100 ms)
+``budget="full"`` (Monte-Carlo expectimax)
     Top-K candidates by the fast scorer; each is stepped on ``n_worlds`` sampled worlds
     (``sampling.sample_world``: draw pile reshuffled, composition kept) and the blind is
     played out with the fast policy; the end-of-blind state is valued by ``value_fn`` (V)
     if given, else the analytic proxy.  Common random numbers: every candidate sees the
-    same worlds.
+    same worlds.  No ``value_fn``: K=``full_top_k`` (5) x ``full_n_worlds`` (3) worlds,
+    ~51-74 ms mean (EV_NOTES §2/§6).  A ``value_fn`` given (and no explicit ``top_k``/
+    ``n_worlds`` override): K=``full_top_k_v`` (3) x ``full_n_worlds_v`` (8) worlds per
+    EV_NOTES §8.3 -- measured ~163 ms mean / 144 ms p50 on this box (LEAF_NOTES.md §2),
+    over its ~100 ms target; the V forward pass is ~35-45% of that (24 unbatched
+    single-item calls/decision -- batching them is the natural next lever, LEAF_NOTES.md
+    §2, not attempted here).
 
 Side-effect freedom: every public function works on clones or the ``HypotheticalScorer``;
 ``state_signature()`` and ``run_state.rng`` are bit-identical before and after (tests).
@@ -86,6 +92,8 @@ class HandConfig:
     max_discard_lines: int = 14   # chase lines considered per decision
     full_top_k: int = 5           # budget="full": candidates rolled out
     full_n_worlds: int = 3        # budget="full": worlds per candidate (common random numbers)
+    full_top_k_v: int = 3         # budget="full" WITH value_fn: candidates rolled out (EV_NOTES §8.3)
+    full_n_worlds_v: int = 8      # budget="full" WITH value_fn: worlds per candidate (fits the 100 ms budget)
     rollout_lite: bool = True     # rollouts inside "full" use the lite candidate set
     # ── the extraction / sandbag layer (EXTRACT_NOTES.md) ──────────────────────
     extract: bool = True          # price the per-action money procs at all
@@ -2079,9 +2087,18 @@ def rank_hand_actions(game, *, budget: str = "fast", value_fn=None, rng=None,
         ranked = _hand_ranking_fast(game, cfg, legal=legal)
         return ranked[:top_k] if top_k else ranked
     if budget == "full":
-        nw = n_worlds if n_worlds is not None else cfg.full_n_worlds
+        # W-LEAF / EV_NOTES §8.3: with a value_fn, the leaf is worth more worlds and fewer
+        # candidates (K=3 x 8 worlds fits the 100 ms budget) -- flag-driven on value_fn's
+        # presence, an explicit top_k/n_worlds from the caller always wins, and the path
+        # with no value_fn is byte-for-byte the original K=5 x 3-world default.
+        if value_fn is not None:
+            nw = n_worlds if n_worlds is not None else cfg.full_n_worlds_v
+            tk = top_k if top_k is not None else cfg.full_top_k_v
+        else:
+            nw = n_worlds if n_worlds is not None else cfg.full_n_worlds
+            tk = top_k
         return _hand_ranking_full(game, cfg, value_fn=value_fn, rng=rng, n_worlds=nw,
-                                  top_k=top_k, legal=legal)
+                                  top_k=tk, legal=legal)
     raise ValueError(f"unknown budget {budget!r} (want 'fast' or 'full')")
 
 

@@ -331,6 +331,61 @@ def test_full_budget_value_fn_exception_propagates():
         H.rank_hand_actions(g, budget="full", value_fn=bad, n_worlds=2, top_k=2)
 
 
+def test_full_budget_defaults_to_k3_x_8_worlds_with_a_value_fn(monkeypatch):
+    """EV_NOTES §8.3 / W-LEAF: a value_fn set (and no explicit top_k/n_worlds) resolves to
+    HandConfig.full_top_k_v x full_n_worlds_v = 3 x 8 -- flag-driven on value_fn's presence,
+    not a hardcoded change to the no-V default (K=5 x 3 worlds, checked below)."""
+    g = _in_blind()
+    n_sample_world_calls = [0]
+    real_sample_world = H.sample_world
+
+    def counting_sample_world(game, rng):
+        n_sample_world_calls[0] += 1
+        return real_sample_world(game, rng)
+
+    monkeypatch.setattr(H, "sample_world", counting_sample_world)
+    n_value_calls = [0]
+
+    def v(world):
+        n_value_calls[0] += 1
+        return 0.5
+
+    H.rank_hand_actions(g, budget="full", value_fn=v)
+    assert n_sample_world_calls[0] == H.DEFAULT_HAND_CONFIG.full_n_worlds_v == 8
+    # worlds are shared across the K rolled-out candidates (common random numbers): the
+    # value_fn is called once per (candidate, world) pair, so this count pins K too.
+    assert n_value_calls[0] == H.DEFAULT_HAND_CONFIG.full_top_k_v * H.DEFAULT_HAND_CONFIG.full_n_worlds_v == 24
+
+
+def test_full_budget_default_worlds_unchanged_without_a_value_fn(monkeypatch):
+    """The no-V path must be byte-for-byte the original K=5 x 3-world default."""
+    g = _in_blind()
+    n_sample_world_calls = [0]
+    real_sample_world = H.sample_world
+
+    def counting_sample_world(game, rng):
+        n_sample_world_calls[0] += 1
+        return real_sample_world(game, rng)
+
+    monkeypatch.setattr(H, "sample_world", counting_sample_world)
+    H.rank_hand_actions(g, budget="full")
+    assert n_sample_world_calls[0] == H.DEFAULT_HAND_CONFIG.full_n_worlds == 3
+
+
+def test_full_budget_explicit_top_k_and_n_worlds_override_the_value_fn_defaults():
+    """An explicit top_k / n_worlds from the caller always wins over the K=3x8 V-defaults
+    (this is what EVPlayer(n_worlds=..., top_k=...) relies on)."""
+    g = _in_blind()
+    n_value_calls = [0]
+
+    def v(world):
+        n_value_calls[0] += 1
+        return 0.5
+
+    H.rank_hand_actions(g, budget="full", value_fn=v, top_k=2, n_worlds=5)
+    assert n_value_calls[0] == 2 * 5 == 10
+
+
 def test_board_ratio_is_cached_by_board_signature():
     g = _in_blind()
     g.debug_add_joker("j_joker")

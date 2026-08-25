@@ -168,12 +168,24 @@ class EVPlayer:
     def __init__(self, value_fn: Optional[Callable] = None, *, stats=None, budget: str = "fast",
                  seed: int = 0, epsilon: float = 0.0, no_action: Optional[dict] = None,
                  cfg: PlayerConfig = DEFAULT_PLAYER_CONFIG, hand_cfg: HandConfig = DEFAULT_HAND_CONFIG,
-                 n_worlds: Optional[int] = None, top_k: Optional[int] = None, name: str = "ev"):
+                 n_worlds: Optional[int] = None, top_k: Optional[int] = None, name: str = "ev",
+                 value_fn_leaf_only: bool = False):
         if budget not in ("fast", "full"):
             raise ValueError(f"budget must be 'fast' or 'full', got {budget!r}")
         self.value_fn = value_fn
         self.stats = stats
         self.budget = budget
+        # W-LEAF (Phase 5 rev 2 V2 round): the brief's lever (c) is "V at the expectimax
+        # LEAF only" -- but the plumbing below (built by W3/W5) argmaxes value_fn over EVERY
+        # SHOP / BOOSTER_OPEN / BLIND_SELECT candidate too the moment value_fn is set, which
+        # is a DIFFERENT, already-measured thing (PHASE5_V2_BRIEF section 0: "argmax-V as a
+        # policy loses to the rules player 2/60"). value_fn_leaf_only=True keeps value_fn
+        # wired into the full-budget hand rollout's leaf (hand.rank_hand_actions /
+        # end_of_blind_value -- unaffected by this flag) while SHOP / BOOSTER_OPEN /
+        # BLIND_SELECT fall through to the analytic rules tier, exactly as if value_fn were
+        # None there.  Default False: every existing caller (W5 rollouts, W6 advisor,
+        # tournament_v) is unchanged.
+        self.value_fn_leaf_only = bool(value_fn_leaf_only)
         self.seed = int(seed)
         self.epsilon = float(epsilon)
         self.no_action = dict(no_action) if no_action is not None else {"type": "advance"}
@@ -257,7 +269,7 @@ class EVPlayer:
                     r = self._rank_with_stats(game, legal)
                     if r:
                         return r
-                if self.value_fn is not None:
+                if self.value_fn is not None and not self.value_fn_leaf_only:
                     return self._rank_with_value(game, legal)
             if s == State.SHOP:
                 return self._rank_shop_rules(game, legal)
@@ -324,7 +336,7 @@ class EVPlayer:
 
     def _rank_blind_select(self, game, legal: list) -> list:
         keys = [a["type"] for a in legal]
-        if self.value_fn is not None:
+        if self.value_fn is not None and not self.value_fn_leaf_only:
             return self._rank_with_value(game, legal)
         px = build_proxy(game, self.cfg, self.hand_cfg)
         out = [({"type": "play_blind"}, px["p_clear"],

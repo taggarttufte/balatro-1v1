@@ -9,6 +9,12 @@ Player specs (``build_player``):
     ev:fast              EVPlayer(budget="fast")
     ev:full               EVPlayer(budget="full")
     ev:full+stats         EVPlayer(budget="full", stats=mp/stats/decide.py)
+    ev:full+Vleaf          EVPlayer(budget="full", value_fn=V, value_fn_leaf_only=True) via
+                           MatchAwareEVPlayer -- V values the full-budget hand rollout's
+                           LEAF only (SHOP/BOOSTER_OPEN/BLIND_SELECT keep the rules tier);
+                           V = mp/ev/runs/v_full_best/ckpt_0001000.pt (W-LEAF, Phase 5 rev 2
+                           V2 round) unless ``--checkpoint`` overrides it; the K=3 x 8-world
+                           leaf resolution (EV_NOTES §8.3) applies automatically (hand.py)
     real1:det              the non-clairvoyant `real1` MCTS baseline
                            (mcts.determinize.make_determinized_player on
                            mp/agent/runs/real1/latest.pt, real1.sh's Stage B search flags)
@@ -54,6 +60,10 @@ import common as C  # noqa: E402  (mp/eval/common.py: DEFAULT_SEEDS, bootstrap_c
 __all__ = ["build_player", "run_h2h", "write_report", "REAL1_FLAGS", "REAL1_CKPT_DEFAULT"]
 
 REAL1_CKPT_DEFAULT = str(_MP / "agent" / "runs" / "real1" / "latest.pt")
+# W-LEAF's keeper V checkpoint (Phase 5 rev 2 V2 round, lever (c)): CPU by default -- the
+# ops cap is on concurrent torch-LOADING processes, not device, and CUDA across an 8-worker
+# spawn pool contends for one GPU for no benefit at this batch size (1 state/call).
+VLEAF_CKPT_DEFAULT = str(_MP / "ev" / "runs" / "v_full_best" / "ckpt_0001000.pt")
 # Exactly measure_clairvoyance.py's REAL1_FLAGS -- real1.sh's Stage B search hyperparameters,
 # the only thing that must be shared between the clairvoyant and determinized arms.
 REAL1_FLAGS = dict(
@@ -86,6 +96,24 @@ def build_player(spec: str, seed: int, *, sims: int = 40, checkpoint: Optional[s
         tokens = {t for t in body.split("+") if t}
         budget = "full" if "full" in tokens else "fast"
         stats = _decide_module() if "stats" in tokens else None
+        if "Vleaf" in tokens:
+            # W-LEAF: lever (c), V at the expectimax leaf ONLY -- via the existing
+            # MatchAwareEVPlayer wrapper (mp/ev/match_player.py, W5) so the opponent view V
+            # sees is bound from the live match, not a bare clone.  `.policy()` gives the
+            # (match, p, acts) -> action form `_one_worker_job` needs (NOT `C.adapt_player`,
+            # which has no match to bind the opponent view from); the wrapper itself is the
+            # returned "player_obj" (`.reset()` clears its per-seat EVPlayers too).
+            # `value_fn_leaf_only=True`: the brief's own section 0 already measured "argmax-V
+            # as a policy loses to the rules player 2/60" -- a DIFFERENT, already-known-bad
+            # thing from lever (c). Without this flag the SAME value_fn would also argmax
+            # SHOP/BOOSTER_OPEN/BLIND_SELECT (EVPlayer's existing, broader value_fn contract),
+            # which would silently re-measure that known failure instead of the leaf lever.
+            import match_player as MPl
+            net, encoder = MPl.load_value(checkpoint or VLEAF_CKPT_DEFAULT, device="cpu")
+            obj = MPl.MatchAwareEVPlayer(net, encoder, device="cpu", budget=budget, seed=seed,
+                                         epsilon=0.0, stats=stats, name=spec,
+                                         value_fn_leaf_only=True)
+            return obj.policy(), obj
         obj = P.EVPlayer(budget=budget, stats=stats, seed=seed, epsilon=0.0, name=spec)
         return C.adapt_player(obj), obj
     if kind == "real1":
