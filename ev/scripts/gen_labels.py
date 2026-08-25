@@ -68,10 +68,16 @@ def parse_seeds(spec: str, rng_seed: int = 0) -> list:
             out.extend(l.strip() for l in Path(part[5:]).read_text(encoding="utf-8").splitlines() if l.strip())
         else:
             out.extend(s.strip() for s in part.split(",") if s.strip())
+    # Canonicalise BEFORE dedupe/bookkeeping: the engine maps '0' -> 'O' (rng.core.
+    # normalize_seed), shards store game.seed_str (canonical), and the holdout hash applies
+    # to the canonical form — a raw-string seed list silently diverges for ~15% of random
+    # seeds (found by the W-ACTIVE POC; W-PAIRS hit the same class via done.ids).
+    from balatro_sim import game_keys as _gk
     seen = set()
     uniq = []
     for s in out:
-        if s not in seen:
+        s = _gk.normalize_seed(str(s))
+        if s and s not in seen:
             seen.add(s)
             uniq.append(s)
     return uniq

@@ -513,7 +513,13 @@ def sample_states(seed: str, *, n_states: int = 12, per_kind: Optional[dict] = N
     if per_kind is None:
         share = max(1, int(math.ceil(n_states / max(len(kinds) - 1, 1))))   # "other" is rare
         per_kind = {k: share for k in kinds}
-    rng = random.Random(rng_seed if rng_seed is not None else hash((seed, policy_seed)) & 0xFFFFFFFF)
+    # sha1, not hash(): str hash is PYTHONHASHSEED-salted per process, so the default
+    # snapshot set differed across workers/runs (found independently by W-PAIRS and the
+    # W-ACTIVE POC). Stable across processes; explicit rng_seed still overrides.
+    if rng_seed is None:
+        import hashlib as _hl
+        rng_seed = int.from_bytes(_hl.sha1(f"{seed}:{policy_seed}".encode()).digest()[:4], "big")
+    rng = random.Random(rng_seed)
     reservoirs: dict = {k: [] for k in kinds}
     seen: dict = {k: 0 for k in kinds}
 
