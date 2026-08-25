@@ -1642,3 +1642,90 @@ run — dense-checkpoint retrain to 2k steps recovered it (keeper: `v_full_best/
    labels + regularisation (5M params saturate 51k rows by epoch 7).
 NEXT SESSION: pick among (a)-(d) with Tagg; the advisor (`mp/ev/cli.py advise`) is ready for his
 Bloodstone state whenever he wants to poke it.
+
+### 2026-08-24 — V-v2 BUILD ROUND KICKED OFF: levers (b)+(c) + extraction layer (lead = Fable)
+
+Tagg picked levers **(b) within-state ranking loss + (c) V at the expectimax leaf**, and added the
+design requirement that non-PvP blinds should support SANDBAGGING (purple seals, gold seal / lucky /
+Business Card procs, Reserved Parking, gold holds, tarot targeting) — verified unrepresentable in the
+current player in three places (objective pays to bank hands; junk order keeps enhancements; full
+budget re-ranks fast's top-5 only). Brief: `docs/PHASE5_V2_BRIEF_2026-08.md`.
+
+Wave 1 launched: **W-EXTRACT** (strong: proc-EV terms + seal-aware keep/junk + safety-gated
+extraction lines + engine proc fidelity vs Lua), **W-LEAF** (sonnet, git worktree: keeper V into the
+full budget value_fn, K=3×8 worlds, 30-seed h2hs), **W-PAIRS** (strong: paired-action label jobs on
+shared determinized worlds, frozen shard schema, variance-reduction measurement), **W-RANK** (sonnet:
+pairwise loss in train_v.py against the frozen schema). **W-PROBE** (sandbag fixtures) waits on
+W-EXTRACT. Box shared with Tagg (GPU in use) — dev gates ≤ 8 procs, full campaigns deferred to the
+idle-box runbook (brief §8). No commits until lead verifies gates.
+
+### 2026-08-25 — W-ACTIVE POC launched (active label selection, Tagg's pick from the field survey)
+
+Tagg reviewed a survey of adjacent-field techniques (QD descriptor archives, PLR/active selection, auxiliary
+heads, LLM-written encode layer, SF/ReBeL/PSRO parked) and picked **active label selection** for a POC.
+W-ACTIVE (opus, isolated worktree — main repo mid-edit by wave 1): 3-arm measurement of value-per-label —
+ensemble-disagreement selection vs naive |error| selection vs uniform, ~3k labels/arm on a 12k base subsample
+of the 51k corpus, identical retrains, common holdout. Verdict feeds the pair-campaign state sampler if
+positive. Budget ~3–4 h, ≤ 8 workers, GPU polite. Queued next-round candidates from the same survey:
+auxiliary heads on rollout intermediates (highest payoff confidence) + QD build archive.
+
+**2026-08-25 addendum:** Tagg also approved **auxiliary heads** (#3 from the survey). Spec written as brief
+§6b (W-AUX, strong). Sequencing: launches when W-PAIRS + W-RANK land (file ownership), MUST land before the
+full overnight campaign so aux targets are recorded from the first row (campaign-runs-once principle).
+
+**2026-08-25 addendum 2:** Field-survey reference doc written: `docs/FIELD_INSPIRATION_2026-08.md` — the five
+approaches with paper lineage + status. **#4 (LLM-writes-the-encode-layer) = BACK POCKET by Tagg's call**, full
+estimate preserved in the doc (§4: ~3 sessions + fleet day, double-counting = #1 risk, writeup potential).
+
+**2026-08-25 addendum 3 (Tagg approved):** Round close-out gains **W-DOCS**: AI-evaluator legibility pass —
+mp/README.md claims ledger (claim → evidence path → repro command), "self-audits that changed conclusions"
+section, repo-root CLAUDE.md/AGENTS.md router, top-level README bridge to mp/, low-signal signposting
+(mark superseded/vendored/generated areas so limited-context tools spend budget on the load-bearing files;
+steer away from LOW-SIGNAL only, never from unflattering results). Context: mp/campaign has NO upstream —
+the entire oracle/EV arc is invisible on GitHub; **push staged, Tagg said yes, execute at close-out** after
+a hygiene scan (_reference/ exclusion must be documented in-README). Numbers in the ledger wait for this
+round's results (extraction gates, V-leaf h2h, pairs) — write once.
+
+**2026-08-25 landings so far:** W-RANK done (25/25; pairwise loss + fingerprint filtering + bit-exact resume;
+shard interop verified against W-PAIRS' real writer). W-LEAF done (worktree held for merge): V-at-leaf = clean
+NULL with current V (24/60 vs full, CI contains 0.5; 52/58 vs real1:det), BUT added load-bearing
+`value_fn_leaf_only` (old plumbing argmaxed V at every decision incl. shops — would have confounded lever-c
+evals) and diagnosis shows V's leaf semantics BETTER than proxy (proxy: cleared≈won, failed=0, PvP binary) —
+resolution, not semantics, is the gap → strengthens lever (b). Leaf cost 163 ms vs 100 target (unbatched V
+calls; batching flagged). W-EXTRACT done: ante-1 gate UNCHANGED 95.2/96.0, matches won 2x (1.6→3.2%), dev
+slice +$12.50 @ ante 6, layer cost −0.9% (free), 4 engine bugs fixed vs Lua (Parking RNG desync on debuffed
+faces; is_face debuff guard; non-scoring hooks Pareidolia-blind; gold-enh interest-base timing), parity
+126/126 held, suites 205/1651/1073 green, 6 bonus procs encoded, `extraction_lines()` hook ready for W-PAIRS.
+**W-PROBE launched** (sonnet: 6 sandbag fixtures + matched controls + qualitative-ordering regression tests).
+Still running: W-PAIRS, W-ACTIVE, W-PROBE. W-AUX waits on W-PAIRS.
+
+**2026-08-25 W-PAIRS landed + LEAD GATE DECISION.** Variance-reduction 1.784x overall (n=1,301, two
+estimators agree) — BELOW the 2x bar — but decomposes by STATE KIND, not ante: hand/nemesis 2.48–2.62x
+(rho +0.63, the binarised image of the 0.77–0.90 continuous measurement), shop/pack/blind_select 1.2–1.8x.
+Mechanism (PAIRS_NOTES §4): hand branches keep consuming shared streams in lockstep + 'nr' reshuffle
+re-syncs; shop/pack branches change ownership → permanent desync. Coupling-order and pre/post-extraction
+controls both null. **Lead ruling: the pivot contingency does NOT fire — the lever is full-strength exactly
+where the argmax-V failure lives (within-hand ranking). Campaign design: pair generation weighted toward
+hand/nemesis; shop/pack pairs at n_worlds 16 (1/n reduction is rho-independent); absolute labels ride along
+(every pair = 2 rows); PROC-BIASED state selection to fill greedy_vs_extract (3/1301 under uniform sampling —
+extract_on needs proc-carrying boards; use W-EXTRACT's exposure-scan seeds).** Throughput 22.2 pairs/min @ 8
+workers under load → ~44–60 @ 16. Crash-safe resume held under a live external kill. Trainer interop verified
+on real shards. Caveats logged: sample_states reservoir seed is PYTHONHASHSEED-salted (pin rng_seed for any
+reproducibility claim); resolved-pair rate 5.7% at 8 worlds. **W-AUX LAUNCHED** (last builder; brief §6b).
+Remaining: W-AUX, W-ACTIVE → close-out (verify, merge W-LEAF worktree, commits) → W-DOCS + push → campaign.
+
+**2026-08-25 W-ACTIVE POC landed — QUALIFIED NO, decomposed.** 3 arms x 6 paired training seeds, 12k base +
+~2.4k rows/arm, full 5,160-row holdout. Neither rule significantly beats uniform per-label (disagreement
+ΔBCE −0.0012±0.0010, err-proxy −0.0021±0.0012; bar |t|≥2.57). BUT: (1) noise-chasing quantified — error
+proxy picks near-0.5 max-aleatoric states (+10% Brier noise floor, 54% of its "error" evaporates on
+re-measure, its rows alone AUC 0.503 = zero ranking info) AND costs 2.47x to score → DROPPED. (2)
+Disagreement scores free (3 fwd passes) and reallocates toward the thin tail unprompted (31% ante≥5 vs
+corpus 17.6%), per-kind wins track oversampling → **CAMPAIGN CARRIES disagreement hook: ~2% overhead,
+50% uniform floor, per-kind caps (POC's own §7 sketch)**. (3) TWO REAL BUGS: (a) `sample_states` default
+reservoir RNG hash-salted per process (confirms W-PAIRS independently; POC has the sha1 fix — adopt at
+close-out); (b) **engine canonicalises seeds '0'→'O' and holdout-hash applies to CANONICAL form — raw-string
+holdout checks leak/lose ~15% of seeds; close-out must sweep for this pattern before the campaign.**
+Throughput: 102 labels/min @ 8 workers. 0/1,176 job failures. Worktree note: both worktree agents (W-LEAF,
+W-ACTIVE) were created from stale `main` and had to reset to mp/campaign — future worktree prompts should
+say so explicitly. POC files live in W-ACTIVE's worktree (mp/ev/active_poc/ + mp/results/active_poc_*) —
+merge at close-out with W-LEAF's diff. Remaining: W-AUX only.
