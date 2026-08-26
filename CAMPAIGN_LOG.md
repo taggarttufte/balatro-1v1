@@ -1919,3 +1919,26 @@ best, each step attributed** (control isolated data-freshness; sweep+confirmatio
 v3 isolated corpus). V-at-leaf with s1: **29/60 [35.0, 60.0]** vs plain full — still a null, trend
 24 → 24 → 29 across V generations; Nemesis rate 0.506. Keeper: ev/runs/v_v3/s1/ckpt_0002000.pt.
 Results: tournament_v_v3_s{1,2,3}.json, h2h_vleaf_v3_vs_ev_full_30seeds.{json,md}.
+
+### 2026-08-26 — W-ENCODE-POC LANDED (`7105089`, lead-verified 63+333 green): THE LOOP WORKS AND
+VERIFICATION BITES
+
+8/10 real measurements ACCEPTED (Cloud 9 / Rocket / Hermit / Seed Money exact incl. non-trivial claims:
+Rocket pays the upgraded boss value, Hermit caps the GAIN at $20, Seed Money is a step function); the 2
+REJECTS are the method's proof — findable only by measurement: **Satellite = the ENGINE is wrong** (Lua
+reads global consumeable_usage, engine keeps per-instance set never seeded → 100% of a mid-run buy's
+value lost) and **Green Joker's closed form is 2.8x low** because ev:fast discards 0.99/hand (the max(0,·)
+floor is always active — a POLICY fact no Lua reading supplies). Both negative controls REJECTED; L1
+lesson: the residual-CI gate ACCEPTS scale errors (spread inflates with the residual) — the 2x band is
+the gate that sees them. **5 engine-fidelity findings, 3 MATERIAL, queued not fixed: (1)
+Blueprint/Brainstorm DOUBLE-SCALE every self-mutating joker (missing `not context.blueprint` guard —
+Ride the Bus/Green Joker/Obelisk 2x fast, Ice Cream melts 2x fast; affects current corpora wherever
+Blueprint+scaler co-occur); (2) Ice Cream never melts (engine floors at 0, Lua destroys); (3) ev:fast
+`_RATIO_CACHE` is process-global keyed by a sig that omits planet levels/deck comp → per-seed rows are
+worker-partition-dependent (2/24 seeds, 8%) — gate_ev_player per-seed rows not reproducible; aggregates
+verified stable but FIX EARLY (cold-cache contract).** Shop blind spot quantified: ev:fast SELLS Ride
+the Bus pre-12-hands on 25% of seeds. **FLEET VERDICT: warranted, gated on ONE structural change —
+separate author from verifier** (POC author wrote both entries and scenarios; L1 = adversarial/
+auto-generated scenarios + interaction sweeps (4/5 findings were interaction/process-state, invisible
+solo) + cold-cache contract + stochastic path). Honest gap: no evidence yet a verified entry IMPROVES
+the player — that is L3's gate, untouched.
