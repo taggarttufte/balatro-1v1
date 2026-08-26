@@ -1796,3 +1796,44 @@ Tagg): (1) resolved-pair scarcity — 4.8% resolve at 8 worlds; spend worlds on 
 n_worlds) or raise n_worlds on close_call source; (2) batch the 24 leaf V calls (163→<100 ms) then
 re-test leaf with a stronger V; (3) disagreement hook w/ tests; (4) rules+V hybrid: argmax-V only where
 V's ranking is confident, rules elsewhere — 12/60 as a floor suggests headroom; (5) per-target cycle EV.
+
+### 2026-08-26 — DESIGN INPUT (Tagg): PvP TURN PROTOCOL — "compulsion on the trailer"
+
+Tagg's proposal for agent-vs-agent Nemesis play (real MLB is real-time w/ live scores; current engine =
+canonical alternation, order-invariant only at level-0): **both play hand 1 simultaneously; thereafter the
+LOWER score is compelled to act; leader may pass/conserve.** A war-of-attrition discretization of the
+real-time race. Unlocks: (1) leader conservation (glass/procs/gold holds — currently torched by always-
+play-out); (2) **trailer pivot: extraction at a DECIDED-LOST Nemesis** — amends the extraction safety gate's
+"never at a Nemesis" to "not while the race is live" (tail DP decides "no outs"); (3) minimal-overtake vs
+statement-hand signaling (level-2 ladder; immediate win = level-1 react-to-revealed-score replacing the
+symmetric atoms); (4) big-hands-first sequencing vs the early-end cut. **Value squeeze (wall-clock speed
+play) deliberately OMITTED** — meaningless in turn abstraction; for human-facing play the agent is
+rate-limited to the protocol, so speed is never weaponized. NOTE: the protocol is a MODELING CHOICE (cannot
+be oracle-verified); document as such. Pre-build check from mod/server source: stall/concede handling,
+round end when trailer exhausts behind, tie rule interaction mid-blind (default: equal scores → simultaneous).
+Queued as candidate workstream next round; PvP turn states = prime pair-generation material.
+
+**2026-08-26 design addendum (Tagg): the ghost product — DEFERRED by his call, recorded for later.**
+Vision: a Lua mod (MP-mod-like layout) to play vs the agent in the real game; polished demo. Key
+architecture decision (lead): **ship a MIRROR, not a recording** — EVPlayer at eps=0 is deterministic in
+(seed, observable state), so a live local sidecar (engine advancing the agent's mirror game on the same
+seed; coupling surface = per-blind outcomes + PvP scores over local IPC) fixes Tagg's static-ghost
+exploitability wrinkle (comeback money + lives differential make the real agent closed-loop) with less
+machinery than branch-tree precomputation. Static ghost recording (mod ghost format) stays the MVP.
+Difficulty ladder from checkpoints — MEASURED via paired h2h, not assumed by recency; doubles as a
+regression suite. "Playthroughs-to-beat-the-ghost" = a HUMAN CLAIRVOYANCE CURVE (same condition as the
+63.3->33.3% agent measurement) — great metric + demo framing; replay-with-knowledge runs are
+clairvoyant data → evaluation only, never training (Tagg's own call, correct); first blind runs remain
+the disagreement-pair gold.
+
+### 2026-08-26 — REPO SPLIT: mp/ → balatro-1v1 (Tagg's call, name his pick)
+
+This repository is the mp/ subproject of taggarttufte/balatro-rl, split out with full history
+(`git filter-repo --subdirectory-filter mp/`, 24 campaign commits preserved, contents promoted to
+root) + a 1,896-rewrite path/import sweep across 215 files, verified by the complete gate from the
+new root: **3,758 tests / 0 failures, engine_parity AND parity_check 126/126 through ante 8,
+126-seed EV gate ledger-exact**. Sweep landmines documented in the split agent's report: checkpoint
+`kind` tags protected (rewriting = bricked .pt files), multiprocessing `mp.` false positives skipped,
+ground-truth `driver` provenance fields preserved; one false-passing eval test surfaced by the rename
+(EVAL_NOTES §7b). The predecessor repo stays intact and archived as the historical artifact —
+the July-2026 audit that links the two projects is copied into docs/ with provenance.
