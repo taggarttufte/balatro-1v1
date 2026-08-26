@@ -1,10 +1,10 @@
-"""Shared pytest setup for mp/tests.
+"""Shared pytest setup for tests.
 
-* Puts ``mp/`` on ``sys.path`` so tests import the subproject as top-level
+* Puts the repo root on ``sys.path`` so tests import the subproject as top-level
   packages (``from rng.core import PseudoRandom``), matching how the engine
-  code under ``mp/`` imports it.
+  code in this repo imports it.
 * Exposes whether the LuaJIT oracle (``lupa`` + extracted Balatro Lua under
-  ``mp/_reference/balatro_src``) is available on this machine.
+  ``_reference/balatro_src``) is available on this machine.
 """
 
 from __future__ import annotations

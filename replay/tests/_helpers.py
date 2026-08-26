@@ -1,7 +1,7 @@
 """
 Shared test helpers: a self-contained, engine-only random-legal player (mirrors
-mp/tournament/players.py::RandomLegalPlayer, hand-rolled here so mp/replay's tests never
-import the frozen mp/tournament package) and small drivers that exercise the EXACT hook
+tournament/players.py::RandomLegalPlayer, hand-rolled here so replay's tests never
+import the frozen tournament package) and small drivers that exercise the EXACT hook
 contract documented in REPLAY_NOTES.md -- these ARE the "≤3 lines" the contract promises,
 proven by being the thing the tests actually run.
 """
@@ -12,7 +12,7 @@ import random
 from .._bootstrap import BalatroGame, MLBMatch, State
 from ..log import MatchLogger, TrajectoryLogger
 
-# 20 of the 126 oracle ground-truth seeds (mp/oracle/ground_truth/*.json stems) -- any
+# 20 of the 126 oracle ground-truth seeds (oracle/ground_truth/*.json stems) -- any
 # BalatroGame-constructible seed string works; these are just real, already-verified seeds.
 SEEDS = [
     "11111111", "1558AXDL", "15H9Z3IY", "1KV4W6YS", "1MD1YZ9T",

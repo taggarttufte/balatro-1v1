@@ -2,7 +2,7 @@
 through the ENGINE (``balatro_sim.mlb_match.MLBMatch``) and every rule of
 ``docs/PHASE2_BRIEF_2026-08.md`` "Exit gate" is asserted, not eyeballed.
 
-Items (see mp/tests/GATE_NOTES.md for what each proves and how the key classes are defined):
+Items (see tests/GATE_NOTES.md for what each proves and how the key classes are defined):
   1. lives / comeback / endless / early-end / tie          -> class TestLives
   2. money at the Nemesis and at a failed regular blind    -> class TestMoney
   3. queue alignment between the two players (RNG key diff) -> class TestAlignment (+ voucher stream)
@@ -10,10 +10,10 @@ Items (see mp/tests/GATE_NOTES.md for what each proves and how the key classes a
      bans and the ante >= 2 boss slot                        -> class TestVanillaUnchanged
   5. clone() mid-match replays identically                  -> class TestClone
 
-Matches are driven by ``mp/scripts/mlb_match_demo.py`` (``MatchRecorder`` + ``ScriptedPlayer``);
+Matches are driven by ``scripts/mlb_match_demo.py`` (``MatchRecorder`` + ``ScriptedPlayer``);
 each scenario is run once per (seed, deck) and cached for the whole module.
 
-Run:  python -m pytest mp/tests/test_mlb_match_gate.py -q -rx
+Run:  python -m pytest tests/test_mlb_match_gate.py -q -rx
 """
 from __future__ import annotations
 
@@ -29,7 +29,7 @@ for _p in (str(MP_ROOT), str(MP_ROOT / "scripts")):
     if _p not in sys.path:
         sys.path.insert(0, _p)
 
-import mlb_match_demo as D  # noqa: E402  (imports the mp/engine fork through engine_parity.import_engine)
+import mlb_match_demo as D  # noqa: E402  (imports the engine fork through engine_parity.import_engine)
 from oracle import engine_parity as EP  # noqa: E402
 from oracle import parity_check as PC  # noqa: E402
 from rng import pools as P  # noqa: E402

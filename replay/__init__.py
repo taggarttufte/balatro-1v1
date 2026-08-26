@@ -1,11 +1,11 @@
 """
-mp/replay — trajectory logging + exact replay + tagging + viewer export (Phase 4 W3).
+replay — trajectory logging + exact replay + tagging + viewer export (Phase 4 W3).
 
-Engine-only package: never imports ``mp/agent`` (torch) or anything from ``mp/tournament``.
-``mp/engine/**``, ``mp/rng/**``, ``mp/agent/**``, ``mp/tournament/**`` and ``mp/eval/**`` are
+Engine-only package: never imports ``agent`` (torch) or anything from ``tournament``.
+``engine/**``, ``rng/**``, ``agent/**``, ``tournament/**`` and ``eval/**`` are
 FROZEN for this workstream -- everything here only *reads* the engine through
 ``oracle.engine_parity.import_engine()`` (the same fork-guarded entry point
-``mp/tournament/bootstrap.py`` and ``mp/eval/conftest.py`` use).
+``tournament/bootstrap.py`` and ``eval/conftest.py`` use).
 
 See ``REPLAY_NOTES.md`` for the format spec, the hook contract callers wire in, the CLI, tag
 definitions, viz-export coverage and the ghost-replay feasibility note.
@@ -16,7 +16,7 @@ Modules:
     log          TrajectoryLogger (single BalatroGame) + MatchLogger (MLBMatch)
     replay       replay() / replay_match() (exact re-run + signature assertion), narrate()
     tags         pure tag functions over a decoded JSONL line + tag_file()
-    export_viz   best-effort mp/../viz trajectory.json export
-    cli          `python -m mp.replay.cli {show,verify,filter,stats}`
+    export_viz   best-effort V7-era `viz/` trajectory.json export (see export_viz.py)
+    cli          `python -m replay.cli {show,verify,filter,stats}`
 """
 from __future__ import annotations

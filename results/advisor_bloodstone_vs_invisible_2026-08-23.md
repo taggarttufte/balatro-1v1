@@ -1,8 +1,8 @@
 # Advisor acceptance test: Bloodstone vs Invisible Joker(+Blueprint) (2026-08-23)
 
-Phase 5 rev 2 gate 5 (`mp/docs/PHASE5_BRIEF_2026-08.md` §3): "the snapshot advisor prints two
-P(win) +/- CI for Tagg's state." Fixture: `mp/ev/fixtures/bloodstone_vs_invisible.py`.
-Command: `python mp/ev/cli.py advise fixture:bloodstone_vs_invisible --player {0,1} --rollouts 32`.
+Phase 5 rev 2 gate 5 (`docs/PHASE5_BRIEF_2026-08.md` §3): "the snapshot advisor prints two
+P(win) +/- CI for Tagg's state." Fixture: `ev/fixtures/bloodstone_vs_invisible.py`.
+Command: `python ev/cli.py advise fixture:bloodstone_vs_invisible --player {0,1} --rollouts 32`.
 No V checkpoint exists yet (Phase 5 W5 hasn't trained one) -- both runs below are `--checkpoint`-free,
 so the report's "V" line correctly prints `n/a`; this doc still stands as the acceptance
 check per PHASE5_BRIEF_2026-08.md's own note ("the advisor must work without one").

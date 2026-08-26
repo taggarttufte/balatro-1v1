@@ -1,4 +1,4 @@
-"""Smoke tests for every mp.replay.cli subcommand, called in-process via main() (no
+"""Smoke tests for every replay.cli subcommand, called in-process via main() (no
 subprocess: this exercises the same argparse plumbing without a slow process spawn)."""
 from __future__ import annotations
 

@@ -1,11 +1,11 @@
 /**
  * Headless driver for Blueprint's seed analyzer (miaklwalker/Blueprint, a TypeScript
- * port of Immolate / TheSoul).  Emits one raw JSON per seed; mp/oracle/build_ground_truth.py
- * converts those into the mp/oracle/schema.md format.
+ * port of Immolate / TheSoul).  Emits one raw JSON per seed; oracle/build_ground_truth.py
+ * converts those into the oracle/schema.md format.
  *
  * Run from the Blueprint checkout so vite-node picks up its tsconfig:
  *
- *   cd mp/oracle/blueprint_runner/vendor/Blueprint
+ *   cd oracle/blueprint_runner/vendor/Blueprint
  *   npx vite-node ../../run_blueprint.ts -- --seeds 7LB2WVPK,ALEEB --antes 8 --out ../../_raw
  *
  * Options (all optional):

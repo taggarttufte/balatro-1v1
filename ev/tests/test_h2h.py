@@ -86,7 +86,7 @@ _HAS_VLEAF_CKPT = Path(h2h.VLEAF_CKPT_DEFAULT).exists()
 
 
 @pytest.mark.skipif(not _HAS_VLEAF_CKPT, reason=f"no V checkpoint at {h2h.VLEAF_CKPT_DEFAULT} "
-                    "(mp/ev/runs/ is gitignored; W-LEAF's keeper checkpoint must be copied in)")
+                    "(ev/runs/ is gitignored; W-LEAF's keeper checkpoint must be copied in)")
 def test_build_player_ev_vleaf_spec():
     """W-LEAF: `ev:full+Vleaf` wires the keeper checkpoint into a full-budget EVPlayer via
     MatchAwareEVPlayer -- `.policy()` (not `C.adapt_player`) is what `_one_worker_job` needs,
@@ -103,7 +103,7 @@ def test_build_player_ev_vleaf_spec():
 
 
 @pytest.mark.skipif(not _HAS_VLEAF_CKPT, reason=f"no V checkpoint at {h2h.VLEAF_CKPT_DEFAULT} "
-                    "(mp/ev/runs/ is gitignored; W-LEAF's keeper checkpoint must be copied in)")
+                    "(ev/runs/ is gitignored; W-LEAF's keeper checkpoint must be copied in)")
 def test_vleaf_match_aware_player_acts_on_a_real_hand_state():
     """End-to-end wiring smoke, the REAL checkpoint (not a stub): bind to a live match, drive
     to a SELECTING_HAND state, and confirm `.act()` returns a legal action with no value_fn

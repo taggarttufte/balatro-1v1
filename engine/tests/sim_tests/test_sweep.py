@@ -4,7 +4,7 @@ face-down bosses (House / Wheel / Mark / Fish) through Card.face_down, permanent
 deltas (Ouija / Ectoplasm), ante 0 (Hieroglyph at ante 1, boss pinned), Invisible Joker /
 Perkeo copies, Negative consumable slot bookkeeping, JokerInstance.clone sort_id,
 state_signature, env_mp revival through the round transition, env_v5 BoosterChoice picks.
-See mp/engine/SWEEP_NOTES.md.
+See engine/SWEEP_NOTES.md.
 """
 from __future__ import annotations
 

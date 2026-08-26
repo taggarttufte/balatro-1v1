@@ -9,12 +9,12 @@
  *   the real game (a) slot 2 of a shop cannot repeat slot 1, and (b) a booster opened while the
  *   shop is displayed cannot contain a card currently shown in the shop.
  *
- * Policy encoded here (matches mp/oracle/schema.md "shops"):
+ * Policy encoded here (matches oracle/schema.md "shops"):
  *   per shop visit: draw slot 1, lock it, draw slot 2, lock it; choose both packs; open both
  *   packs (in order) with the two slots locked; unlock the slots.  After the ante's last visit,
  *   reroll pairs (lock first while drawing second, unlock after) until `cards` items exist.
  *
- *   cd mp/oracle/blueprint_runner/vendor/Blueprint
+ *   cd oracle/blueprint_runner/vendor/Blueprint
  *   npx vite-node ../../run_blueprint_faithful.ts -- --seed-file ../../seeds.txt --antes 8 --cards 50 --out ../../_raw
  */
 import * as fs from "node:fs";

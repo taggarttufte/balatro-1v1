@@ -1,10 +1,10 @@
-"""Tests for mp/eval/rho_decay.py: rho(h) == 1 with no perturbation, rho decreasing with a
+"""Tests for eval/rho_decay.py: rho(h) == 1 with no perturbation, rho decreasing with a
 larger perturbation, perturbation validation, and CLI/JSON round-trip.  Run:
-python -m pytest mp/eval/tests -q (repo root).
+python -m pytest eval/tests -q (repo root).
 
 NB these run the real engine (no mocks) -- kept to small-ish seed counts / low n_boot to stay
 fast; the FULL measurement (126+ seeds, n_boot=2000) is run separately by
-`python -m mp.eval.rho_decay --all` and written to mp/results/ (see EVAL_NOTES.md).
+`python -m eval.rho_decay --all` and written to results/ (see EVAL_NOTES.md).
 """
 from __future__ import annotations
 

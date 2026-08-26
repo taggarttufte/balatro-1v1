@@ -22,7 +22,7 @@ class every existing test exercises) and adds:
     default ``decide_many`` (a plain list comprehension over ``player.act``) it produces
     exactly the same actions, in the same per-agent order, with the same no-progress
     guard — the ordering across agents changes and nothing else, and nothing in a
-    ``BalatroGame`` or a ``Player`` is shared between agents.  ``mp/agent`` supplies the
+    ``BalatroGame`` or a ``Player`` is shared between agents.  ``agent`` supplies the
     interesting ``decide_many``: one that collects every agent's MCTS leaf and evaluates
     them in a single forward pass.
 
@@ -38,7 +38,7 @@ class every existing test exercises) and adds:
     testable without any multiprocessing at all: ``ParallelTournament(driver=LocalDriver(...))``
     must reproduce ``Tournament.run`` exactly (``tests/test_parallel_runner.py``).
 
-The multiprocess driver lives in ``mp/agent/parallel/pool.py`` (it needs torch and the
+The multiprocess driver lives in ``agent/parallel/pool.py`` (it needs torch and the
 agent layer; this module must keep importing with neither).
 """
 from __future__ import annotations
@@ -197,7 +197,7 @@ class TournamentDriver(Protocol):
 
     Deliberately coarse: one call per ante for the driving, one per ante for the
     cross-agent mutations.  A driver may live in this process (``LocalDriver``) or hold
-    the games in N worker processes (``mp/agent/parallel/pool.py::WorkerPool``); the
+    the games in N worker processes (``agent/parallel/pool.py::WorkerPool``); the
     tournament cannot tell the difference and neither can its result.
     """
 
@@ -260,13 +260,13 @@ class LocalDriver:
 
     * ``tests/test_parallel_runner.py`` — owning all N agents, it proves the refactor is a
       refactor (``ParallelTournament`` + ``LocalDriver`` == ``Tournament``, byte for byte).
-    * ``mp/agent``'s ``--workers 0`` path — same thing, but with the lockstep
+    * ``agent``'s ``--workers 0`` path — same thing, but with the lockstep
       ``decide_many`` so one process still batches its trees.
     * **each worker process** — owning the SUBSET of agents it was assigned
       (``indices=[3, 7, 11]``).  Global agent indices are used throughout, so a worker's
       ops, outcomes and summaries slot straight into the main process's bookkeeping.
 
-    ``decide_many`` defaults to ``serial_decide``; pass ``mp/agent``'s
+    ``decide_many`` defaults to ``serial_decide``; pass ``agent``'s
     ``parallel.lockstep.LockstepDecider`` to batch the agents' MCTS leaves into one
     forward pass.
     """

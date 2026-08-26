@@ -2,19 +2,19 @@
 
 The last step of Phase 1: clear the reachability probe, close the W2/W3 "for W5" lists,
 dispose of every `docs/MP_UPDATE_LIST_2026-08.md` §7 item, protect each fix with a test.
-Nothing outside `mp/engine/` was edited except two probe fixes in
-`mp/tests/test_engine_reachability.py` (allowed by the brief).  `mp/rng/*` and
-`mp/oracle/ground_truth/*` untouched.  Nothing committed.
+Nothing outside `engine/` was edited except two probe fixes in
+`tests/test_engine_reachability.py` (allowed by the brief).  `rng/*` and
+`oracle/ground_truth/*` untouched.  Nothing committed.
 
 ## 0. Gate numbers (final clean run, lead should re-run)
 
 | gate | before W5 | after W5 |
 |---|---|---|
-| `python -m pytest mp/engine/tests -q` | 1358 passed / 10 skipped / 0 failed | **1441 passed / 10 skipped / 0 failed** (+43 `test_hand_eval_flags.py`, +36 `test_sweep.py`, +4 from existing parametrised tests) |
-| `python -m pytest mp/tests/test_engine_invariants.py -q` | 14/14 | **14/14** |
-| `python -m mp.oracle.engine_parity --antes 1-8 --rerolls 5` | 126/126 exact through ante 8 | **126/126 exact through ante 8** (re-run after every non-trivial change; never dropped) |
-| `python -m pytest mp/tests/test_engine_reachability.py -q` | 226 passed / 6 failed / 3 xfailed | **233 passed / 0 failed / 2 xfailed** (`j_luchador`, `v_blank` — both "no measurable change definable") |
-| `python -m pytest mp/tests -q` | 386 / 6 / 3 | **393 passed / 0 failed / 2 xfailed** |
+| `python -m pytest engine/tests -q` | 1358 passed / 10 skipped / 0 failed | **1441 passed / 10 skipped / 0 failed** (+43 `test_hand_eval_flags.py`, +36 `test_sweep.py`, +4 from existing parametrised tests) |
+| `python -m pytest tests/test_engine_invariants.py -q` | 14/14 | **14/14** |
+| `python -m oracle.engine_parity --antes 1-8 --rerolls 5` | 126/126 exact through ante 8 | **126/126 exact through ante 8** (re-run after every non-trivial change; never dropped) |
+| `python -m pytest tests/test_engine_reachability.py -q` | 226 passed / 6 failed / 3 xfailed | **233 passed / 0 failed / 2 xfailed** (`j_luchador`, `v_blank` — both "no measurable change definable") |
+| `python -m pytest tests -q` | 386 / 6 / 3 | **393 passed / 0 failed / 2 xfailed** |
 | `engine_parity --probe` | 11/12 (`state_signature` missing) | **12/12** |
 
 Non-gate policies (for the record): `--reference generate --reroll-every-shop --buy-shelf`
@@ -27,7 +27,7 @@ non-exact (it compares against the no-buy JSON) — see §B8 for what changed th
 | # | item | disposition | where |
 |---|---|---|---|
 | A1 | `j_four_fingers` / `j_shortcut` / `j_smeared` (+`j_pareidolia`) flags set AFTER `evaluate_hand` | **FIXED.** `hand_eval.py` rewritten as a port of `evaluate_poker_hand` + `get_X_same` / `get_flush` / `get_straight` / `get_highest` (misc_functions.lua:376-620) with `evaluate_hand(cards, *, four_fingers, shortcut, smeared, pareidolia)`. Four Fingers: 4-card floor, the off card does NOT score, Straight Flush = union of the flush subset and the straight subset (2H 3H 4H 5S KH scores all 5), Flush Five / Flush House with 4 suited. Shortcut: the Lua j=1..14 walk (Ace low+high, ONE skip between present ranks, never at j=14, no wrap). Smeared: `is_suit(..., flush_calc)` pairing. Wild = any suit unless debuffed. `pareidolia` accepted, no-op (face-ness never affects the hand TYPE in the Lua either). `base.hand_eval_flags(jokers)` + `BalatroGame.hand_eval_flags()` compute the flags from the ACTIVE board (Crimson Heart's disabled joker is not `find_joker`'d) and `_play_hand` passes them BEFORE scoring; the Crimson Heart roll moved ahead of evaluation. The three envs' dry-run subset evaluators (`env_v7._best_hand_score`, `env_sim` / `env_v5 _update_play_combos`) and `card_selection.validate_play_subset` / `get_valid_play_mask` take the same flags so the reward estimate evaluates what the play path will. | `hand_eval.py`, `jokers/base.py`, `game.py::_play_hand`, `card_selection.py`, `env_v7.py`, `env_sim.py`, `env_v5.py`; tests `sim_tests/test_hand_eval_flags.py` (43: A-2-3-4 wheel w/ Four Fingers, T-J-Q-K-A shortcut irrelevance, wheel+gap, no wrap-around, Stone in the size floor, Wild ties, Flush Five/House with 4 suited, play-path + Crimson Heart) |
-| A2 | `j_flower_pot` probe | **PROBE FIXED** (joker correct per card.lua:3807-3840 — reads the scoring hand with the Wild fill rule). The probe played a High Card (only the Jack scores); now plays the 4-suit STRAIGHT. | `mp/tests/test_engine_reachability.py` |
+| A2 | `j_flower_pot` probe | **PROBE FIXED** (joker correct per card.lua:3807-3840 — reads the scoring hand with the Wild fill rule). The probe played a High Card (only the Jack scores); now plays the 4-suit STRAIGHT. | `tests/test_engine_reachability.py` |
 | A3 | `j_space` probe | **PROBE FIXED** — `repeats=2` (first `space` draw ≥ 0.25 on all 7 harness seeds; ALEEB fires on the 2nd, 0.208). Verified the level-up lands in `planet_levels` (the probe signature includes it) and on THIS hand (`pre_score`). Not an engine bug. | same |
 | A4 | `j_chicot` / boss debuffs at play time | **FIXED.** `game._boss_debuffs_card(card)` = `Blind:debuff_card` (blind.lua:624-648) as a predicate: suit bosses via `is_suit(suit, bypass_debuff)` (**Wild cards are debuffed by every suit boss; Smeared extends the suit; Stone never**), The Plant via `is_face(true)` (**Pareidolia ⇒ every card debuffed**), The Pillar via `played_this_ante`, Verdant Leaf until a Joker is sold, nothing on non-boss / disabled blinds. Applied over `full_deck` at blind start, on every draw, **re-evaluated over the hand at play time** and after a consumable use (the game re-runs it on `set_base`/`set_ability`). `BlindInfo.disabled` is consulted by the predicate, by `_stay_flipped`, and every other boss effect keys off `boss_key`, which Chicot blanks. | `game.py`; `test_sweep.py::TestPlayTimeDebuffs` (7) |
 | B5 | `bl_fish` wrong `_draw_to_full` model; `bl_house` / `bl_wheel` / `bl_mark` no-ops | **FIXED — all four modelled.** `Card.face_down` (copied by `Card.copy`). `game._stay_flipped(card, after_play)` = `Blind:stay_flipped` (blind.lua:605-622): Wheel `pseudorandom('wheel') < normal/7` per drawn card, House = initial deal (`hands_played == 0 and discards_used == 0`, new `_discards_used_round`), Mark = `is_face(true)` (Pareidolia counts), Fish = the redraw after a PLAYED hand (`prepped`), nothing when disabled (Chicot). Revealed when played / discarded (`G.play:emplace` flips), cleared at every blind start. **Obs layer:** `env_v7._encode_obs` (and env_sim) set only the "present" bit for a face-down card and exclude it from the other cards' suit/rank/connectivity stats; env_mp inherits. `UNMODELLED_BOSS_BLINDS` is now `[]` (kept for callers); env_v7's boss one-hot covers all **28** bosses (the four were drawable since W2 but encoded as all-zeros = "no boss") → `OBS_DIM` 443 → **447**, MP 447 → **451** (tests assert the composition, not the literal; `N_BOSS_TYPES == 28` pinned). The old Fish hand-size penalty is gone. | `card.py`, `game.py`, `env_v7.py`, `env_sim.py`; `test_sweep.py::TestFaceDownBosses` (9) |
@@ -132,5 +132,5 @@ Gift Card on consumables, Luchador sell-during-blind, Baseball interleaving.
 `tests/`: NEW `sim_tests/test_hand_eval_flags.py` (43), NEW `sim_tests/test_sweep.py` (36);
 edited `engine_tests/test_env_v7.py` (N_BOSS_TYPES 28), `engine_tests/test_jokers.py` and
 `sim_tests/test_game_keys.py` (hook list + `UNMODELLED == []`).
-`mp/tests/test_engine_reachability.py`: `j_space` (`repeats=2`), `j_flower_pot` (STRAIGHT),
+`tests/test_engine_reachability.py`: `j_space` (`repeats=2`), `j_flower_pot` (STRAIGHT),
 `v_retcon` (xfail lifted).

@@ -4,8 +4,8 @@ real thing: Balatro's own ``pseudohash``/``pseudoseed``/``pseudorandom``/
 (via ``lupa``).
 
 Ground truth is regenerated live whenever ``lupa`` and the extracted game Lua
-(``mp/_reference/balatro_src``) are present; otherwise the cached copy at
-``mp/tests/fixtures/rng_ground_truth.json`` is used.  When both are present
+(``_reference/balatro_src``) are present; otherwise the cached copy at
+``tests/fixtures/rng_ground_truth.json`` is used.  When both are present
 the live data is also diffed against the cache, so a LuaJIT/game-source change
 cannot go unnoticed.
 
@@ -14,7 +14,7 @@ Every recorded double is stored as its 16-hex-digit IEEE bit pattern, so
 
 Regenerate the cache with::
 
-    python mp/tests/test_rng_core.py --regen
+    python tests/test_rng_core.py --regen
 
 Force the cache-only path (to verify it) with ``MP_RNG_NO_ORACLE=1``.
 """

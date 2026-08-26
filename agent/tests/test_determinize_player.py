@@ -11,7 +11,7 @@ Covers:
   - a short full playthrough (cold-start net, small sims) completes
   - the `real1/latest.pt` checkpoint loads through `make_determinized_player` and
     produces a legal action (skipped if the checkpoint file is not present — it lives
-    under the gitignored `mp/agent/runs/`)
+    under the gitignored `agent/runs/`)
 """
 from __future__ import annotations
 
@@ -211,7 +211,7 @@ def test_make_determinized_player_cold_start():
 
 
 @pytest.mark.skipif(not os.path.exists(_REAL1_CKPT),
-                    reason="mp/agent/runs/real1/latest.pt not present on this checkout")
+                    reason="agent/runs/real1/latest.pt not present on this checkout")
 def test_make_determinized_player_loads_real1_checkpoint():
     """Sanity: the checkpoint loader real1.sh trained under (encoder=set, heuristic
     prior) loads through the determinized wrapper and returns a legal action on a

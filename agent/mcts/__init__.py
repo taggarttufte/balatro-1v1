@@ -1,4 +1,4 @@
-"""mcts — AlphaZero-style tree search for Balatro (mp/agent fork of balatro-mcts)."""
+"""mcts — AlphaZero-style tree search for Balatro (agent fork of balatro-mcts)."""
 from .action import action_key, action_from_key, ActionKey
 from .node import Node
 from .outcome import (

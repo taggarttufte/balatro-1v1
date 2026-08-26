@@ -15,7 +15,7 @@ from pathlib import Path
 _EVAL = str(Path(__file__).resolve().parents[2] / "eval")
 if _EVAL not in sys.path:
     sys.path.insert(0, _EVAL)
-import common as C  # noqa: E402  (mp/eval/common.py: DEFAULT_SEEDS, drivers, adapt_player)
+import common as C  # noqa: E402  (eval/common.py: DEFAULT_SEEDS, drivers, adapt_player)
 
 
 def _key(a):

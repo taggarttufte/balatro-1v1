@@ -2,7 +2,7 @@
 
 - seeds: 30 (['11111111', '1558AXDL', '15H9Z3IY', '1KV4W6YS', '1MD1YZ9T', '28V7DD4H', '29DAQVG1', '29Y3L4S9', '29ZSW8MY', '2BRGI767', '2CP4KSXZ', '2GHBLJD9', '2H9N3ISZ', '2K9H9HN', '34JCNMPA', '3SZ71111', '41Y71M6E', '46Y8UZEG', '4H2L46CE', '4K8A9QER', '4R219TNX', '4T1SZKLF', '4UEGRRRA', '51F2NVWK', '56QZEVDV', '5AWWF1M1', '5UIUKHCI', '5YVHAEP', '6H6WNQM2', '7I4M53DL'])
 - trials: 60 (both seatings per seed); decided 60, undecided 0
-- sims=40  checkpoint=mp/ev/runs/v_v2/ckpt_0002000.pt  lives=4  max_steps=4000  deck=b_red  stake=1
+- sims=40  checkpoint=ev/runs/v_v2/ckpt_0002000.pt  lives=4  max_steps=4000  deck=b_red  stake=1
 - procs=8  wall clock: 263.5s  mean 30.39s/match
 
 ## Summary

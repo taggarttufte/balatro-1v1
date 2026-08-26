@@ -7,7 +7,7 @@ Re-targeted to the fork engine (2026-08-21)
 -------------------------------------------
 The balatro-mcts original was a 44-dim vector over 12 action types with 8 hand slots,
 2 consumables, 7 shop slots and 5 joker slots — the V7 action space. The fork's
-`legal_actions()` (mp/engine/balatro_sim/game.py:1342) can emit indices past every one
+`legal_actions()` (engine/balatro_sim/game.py:1342) can emit indices past every one
 of those bounds, and an out-of-bounds index used to be silently dropped, which makes two
 DIFFERENT actions share one all-but-identical feature row and therefore one prior:
 

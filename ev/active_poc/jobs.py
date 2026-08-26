@@ -37,7 +37,7 @@ __all__ = [
     "pool_job", "arm_job", "snapshots_for_seed",
 ]
 
-# The `labels_full` campaign config (mp/results/labels_full.json -> "config"), verbatim.
+# The `labels_full` campaign config (results/labels_full.json -> "config"), verbatim.
 # Anything the POC changes is passed per job, never here.
 CORPUS_CONFIG = {
     "n_states": 12, "n_rollouts": 8, "policy": "ev", "budget": "fast",

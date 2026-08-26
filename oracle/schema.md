@@ -1,11 +1,11 @@
-# Oracle ground-truth schema (`mp/oracle/ground_truth/<SEED>.json`)
+# Oracle ground-truth schema (`oracle/ground_truth/<SEED>.json`)
 
 One file per seed. Keys are Balatro 1.0.1o internal keys (`G.P_CENTERS` / `G.P_BLINDS` /
 `G.P_TAGS` / `G.P_CARDS`); every keyed object also carries the analyzer display `name`.
-`mp/oracle/keymap.py` is the name<->key table (with the analyzer aliases: "Speed Tag" = `tag_skip`,
+`oracle/keymap.py` is the name<->key table (with the analyzer aliases: "Speed Tag" = `tag_skip`,
 "Canio" = `j_caino`, "Drivers License" = `j_drivers_license`, "Mail In Rebate" = `j_mail`).
 
-Validate with `python -m mp.oracle.parity_check --validate-only`.
+Validate with `python -m oracle.parity_check --validate-only`.
 
 ```jsonc
 {
@@ -20,7 +20,7 @@ Validate with `python -m mp.oracle.parity_check --validate-only`.
   "shop_queue_depth": 50,                // items per ante in shop_queue
   "source": {
     "primary": "blueprint",
-    "primary_detail": {"repo": "...", "commit": "<sha>", "driver": "mp/oracle/blueprint_runner/run_blueprint.ts", "generated_at": "..."},
+    "primary_detail": {"repo": "...", "commit": "<sha>", "driver": "oracle/blueprint_runner/run_blueprint.ts", "generated_at": "..."},
     "cross_checks": {
       "thesoul_wasm":  {"status": "agree" | "DISAGREE", "fields_compared": 2973, "mismatches": [...], ...},
       "balatrohq_ssr": {"status": "agree", "mismatches": []}          // ALEEB only
@@ -60,7 +60,7 @@ Validate with `python -m mp.oracle.parity_check --validate-only`.
 
   "variants": {
     "game_faithful_used_jokers": {        // see "Variants" below
-      "note": "...", "driver": "mp/oracle/blueprint_runner/run_blueprint_faithful.ts",
+      "note": "...", "driver": "oracle/blueprint_runner/run_blueprint_faithful.ts",
       "fields_differing": 3,
       "reasons": {"same_shop_duplicate": 1, "collides_with_displayed_shop": 2, "downstream_resample_shift": 0},
       "overrides": [{"path": "antes.4.shops[0].packs[1].cards[2]", "value": <item>}, ...]
@@ -140,5 +140,5 @@ game rule: `Card:set_ability` marks *every* created card in `G.GAME.used_jokers`
 `variants.game_faithful_used_jokers` holds the full difference: apply `overrides` (JSON-path -> item)
 to `antes` to get the used_jokers-faithful sequence.  Boss, voucher, tags and pack kinds never differ.
 Across the 126-seed corpus (8 antes, 50-deep queues) 953 fields differ (222 same-shop duplicates,
-319 pack/shop collisions, 412 downstream shifts); `python -m mp.oracle.parity_check --variant faithful`
+319 pack/shop collisions, 412 downstream shifts); `python -m oracle.parity_check --variant faithful`
 compares against that sequence.  See SOURCES.md for the evidence behind this variant.

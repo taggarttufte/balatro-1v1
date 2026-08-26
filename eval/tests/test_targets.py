@@ -1,7 +1,7 @@
-"""Tests for mp/eval/targets.py: vanilla_boss_target's chip-formula pin, the
+"""Tests for eval/targets.py: vanilla_boss_target's chip-formula pin, the
 scaled_own_big_blind / table_target factories, the get_target registry, and the module's
-"engine-only, no mp.eval heavy imports" claim (subprocess-isolated). Run:
-python -m pytest mp/eval/tests -q (repo root)."""
+"engine-only, no eval heavy imports" claim (subprocess-isolated). Run:
+python -m pytest eval/tests -q (repo root)."""
 from __future__ import annotations
 
 import json
@@ -20,7 +20,7 @@ from balatro_sim.game import BOSS_CHIP_MULT
 from tournament.runner import Tournament
 from tournament.players import default_population
 
-_REPO_ROOT = Path(__file__).resolve().parents[3]   # .../balatro-rl (mp/eval/tests -> ^3)
+_REPO_ROOT = Path(__file__).resolve().parents[2]   # repo root (eval/tests -> ^2)
 
 WHITE = 1
 THREE_DECKS = ("b_red", "b_checkered", "b_plasma")
@@ -110,7 +110,7 @@ def test_scaled_own_big_blind_defaults_to_zero_before_any_big_blind():
 
 def test_scaled_own_big_blind_scales_by_k_and_matches_common_own_big_blind_target():
     """This module deliberately DUPLICATES eval/common.py::own_big_blind_target (so
-    mp/agent never has to import the heavier common.py) -- pin that the two are numerically
+    agent never has to import the heavier common.py) -- pin that the two are numerically
     identical for the same (game, big_blind)."""
     game = C.BalatroGame(seed="7I4M53DL", ruleset="mlb")
     big_blind = {game.ante: 321}
@@ -233,18 +233,31 @@ def test_get_target_unknown_name_raises():
 # ============================================================================ "engine-only deps" claim
 
 def test_targets_module_avoids_heavy_mp_eval_imports_when_imported_alone():
-    """Import targets.py in a FRESH interpreter with only mp/eval on sys.path (mirroring
-    how mp/agent would import it) and confirm it never pulled in mlb_match_demo,
-    oracle.parity_check or mp.rng.generate/pools -- eval/common.py's heavier bootstrap
-    chain, and precisely what the Phase 4 brief's "engine-only deps" asks this module to
-    avoid so mp/agent can import it cheaply."""
+    """Import targets.py in a FRESH interpreter with only eval on sys.path (mirroring
+    how agent would import it) and confirm it never pulled in mlb_match_demo,
+    oracle.parity_check or torch -- eval/common.py's heavier bootstrap chain, and
+    precisely what the Phase 4 brief's "engine-only deps" asks this module to avoid so
+    agent can import it cheaply.
+
+    FOUND DURING THE 2026-08 REPO SPLIT, not fixed: `rng.pools` / `rng.generate` ARE
+    pulled in, transitively, by `engine/balatro_sim/game_keys.py` (which derives every
+    key table from `pools` at import time) -- so they are unavoidable for ANY import of
+    the engine fork, and they are pure-Python data modules with no torch/numpy cost.
+    They were in this forbidden list before the split and the assertion still passed,
+    because under the predecessor layout those modules were named `mp.rng.pools` /
+    `mp.rng.generate` and the literal names below never matched. Promoting the packages
+    to the repo root renamed them and surfaced the false pass. The list below now names
+    only the genuinely-heavy modules (the claim that actually matters); the transitive
+    rng import is asserted explicitly rather than deleted, so it stays visible."""
     script = (
         "import sys; "
-        "sys.path.insert(0, 'mp/eval'); "
+        "sys.path.insert(0, 'eval'); "
         "import targets; "
-        "forbidden = ['mlb_match_demo', 'oracle.parity_check', 'rng.generate', 'rng.pools', 'torch']; "
+        "forbidden = ['mlb_match_demo', 'oracle.parity_check', 'oracle.engine_parity', 'torch', 'numpy']; "
         "leaked = [m for m in forbidden if m in sys.modules]; "
         "assert not leaked, leaked; "
+        # documented, expected transitive cost of importing the engine fork at all:
+        "assert 'rng.pools' in sys.modules, 'game_keys no longer derives its tables from pools?'; "
         "assert targets.vanilla_boss_target(1, 'b_red', 1) == 600; "
         "print('OK')"
     )

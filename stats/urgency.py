@@ -1,11 +1,11 @@
 """
 urgency.py -- "how badly does this build need to improve before the next blind(s)" for the
-W4 decision-statistics module (Phase 5 rev 2, mp/docs/PHASE5_BRIEF_2026-08.md).
+W4 decision-statistics module (Phase 5 rev 2, docs/PHASE5_BRIEF_2026-08.md).
 
 ``urgency(game) in [0, 1]`` feeds ``decide.py``: a needed improvement now is worth more than
 the same improvement bought comfortably ahead, and (under MLB) worth much more with few
 lives left or a Nemesis blind on deck (losing ANY blind costs a life under MLB -- see
-``play_sp_mlb``'s note in mp/eval/common.py -- so life pressure is not Nemesis-only).
+``play_sp_mlb``'s note in eval/common.py -- so life pressure is not Nemesis-only).
 
 Method (documented, simple by design): sample a handful of hands from the deck's
 COMPOSITION (never its shuffle order -- ``hit.sample_hand_scores``, itself a thin wrapper
@@ -50,7 +50,7 @@ def next_blind_chip_target(game) -> float:
     """The next blind's chip target, or (under MLB, a Nemesis) a documented proxy for it: the
     real Nemesis target is the opponent's live score, unknowable from the shop, so the
     vanilla boss-blind chip formula at that ante stands in -- the same "external, calibration-
-    free" idea ``mp/eval/common.py::external_vanilla_big_blind_target`` uses."""
+    free" idea ``eval/common.py::external_vanilla_big_blind_target`` uses."""
     ante, blind_idx = next_blind_info(game)
     return float(blind_base_chips(ante, blind_idx, game.blind_scaling) * game.ante_scaling)
 

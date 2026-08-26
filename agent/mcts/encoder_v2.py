@@ -34,7 +34,7 @@ default caps (`DEFAULT_CAPS_V2`), not by the live caps, so an encoder built with
 caps produces the same numbers in the same rows plus more padding — and the net is
 pad-invariant, so the value is unchanged.
 
-Nothing here imports `mp/ev` or `mp/stats` (they import this).
+Nothing here imports `ev` or `stats` (they import this).
 """
 from __future__ import annotations
 

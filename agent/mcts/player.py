@@ -2,8 +2,8 @@
 player.py — an MCTS `Player`: `act(game) -> action dict | None`.
 
 This is the plug-in shape W2's tournament runner and W4's eval harness expect
-(`mp/tournament/players.py`'s `Player` protocol: `act(game) -> action`). Neither
-imports `mp/agent` in Phase 3 — this class is the thing that gets wired in when they
+(`tournament/players.py`'s `Player` protocol: `act(game) -> action`). Neither
+imports `agent` in Phase 3 — this class is the thing that gets wired in when they
 do, and it is deliberately the only place that knows how to turn "a game" into "an
 action" without a training loop attached.
 
@@ -30,7 +30,7 @@ W3 additions (2026-08-22)
   search (see BATCH_NOTES.md §3).
 * `BatchedMCTSPlayerGroup` decides for N agents at once (`act_many`), batching their
   leaves across trees with no approximation at all. That needs a driver that hands over
-  all N games together — see the 10-line `mp/tournament/players.py` diff in
+  all N games together — see the 10-line `tournament/players.py` diff in
   BATCH_NOTES.md §6.
 """
 from __future__ import annotations
@@ -311,11 +311,11 @@ def make_player(checkpoint: Optional[str] = None, sims: int = 100, device: str =
 
     Defaults are the tournament's: tree reuse on, Gumbel selection, argmax at the end,
     and `no_action={"type": "advance"}` so `game.step(player.act(game))` is always safe
-    (`mp/tournament/runner.py::_drive_to_next_nemesis` steps unconditionally).
+    (`tournament/runner.py::_drive_to_next_nemesis` steps unconditionally).
 
     `heuristic_prior` / `max_hand_candidates` are W0's hand prior and candidate mask
     (`mcts/heuristic.py`); both default to OFF so this factory's behaviour is unchanged
-    for every existing caller (`mp/eval`'s `checkpoint:` spec, `mp/tournament`).
+    for every existing caller (`eval`'s `checkpoint:` spec, `tournament`).
     """
     policy = load_policy(checkpoint, device=device, batched=True, encoder=encoder)
     return MCTSPlayer(

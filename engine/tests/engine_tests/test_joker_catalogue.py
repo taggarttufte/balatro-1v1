@@ -60,8 +60,8 @@ class TestCatalogueRegistryConsistency:
         # Phase 1 W1 (2026-08-21) resolved the four known dead aliases
         # (j_lucky_joker removed — not a real joker; j_ring_master / j_space /
         # j_ticket are the GAME keys and now carry the single implementation).
-        # The registry is keyed 1:1 against mp/rng/pools.py, so nothing may be
-        # unreachable any more. See mp/engine/REKEY_NOTES.md.
+        # The registry is keyed 1:1 against rng/pools.py, so nothing may be
+        # unreachable any more. See engine/REKEY_NOTES.md.
         assert unreachable == [], (
             f"unexpected unreachable implementations: {unreachable}")
 

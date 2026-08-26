@@ -1,6 +1,6 @@
 """
 hit.py -- "is this a hit for my build, and how likely am I to see one" for the W4
-decision-statistics module (Phase 5 rev 2, mp/docs/PHASE5_BRIEF_2026-08.md).
+decision-statistics module (Phase 5 rev 2, docs/PHASE5_BRIEF_2026-08.md).
 
 Two valuation regimes, by design (STATS_NOTES.md has the full rationale):
 
@@ -17,7 +17,7 @@ Two valuation regimes, by design (STATS_NOTES.md has the full rationale):
    too many to dry-run every shop visit. ``pool_dollar_value`` is a FAST, cheap proxy (a
    handful of dict lookups) built from ``synergy.py``'s existing ``estimate_joker_strength`` /
    ``coherence_score`` -- exactly what the brief calls "synergy tags ... as a cheap prior".
-   ``is_hit`` thresholds that proxy; P(hit) then comes from ``mp/rng/generate.get_current_pool``
+   ``is_hit`` thresholds that proxy; P(hit) then comes from ``rng/generate.get_current_pool``
    -- the SAME function the real game/generator uses to cull a pool -- called with an explicit
    (non-rolled) rarity so it consumes ZERO RNG and is safe to call on the live ``run_state``
    without cloning (``get_current_pool``'s only RNG read is the rarity roll, which an explicit
@@ -38,8 +38,8 @@ from balatro_sim.jokers.base import JokerInstance
 from balatro_sim.synergy import estimate_joker_strength, coherence_score
 from balatro_sim.consumables import TAROT_NAME, SPECTRAL_NAME, PLANET_HAND
 
-_gen = _gk.gen           # mp.rng.generate, the SAME module instance balatro_sim wires against
-_pools = _gk.pools        # mp.rng.pools
+_gen = _gk.gen           # rng.generate, the SAME module instance balatro_sim wires against
+_pools = _gk.pools        # rng.pools
 
 # ══════════════════════════════════════════════════════════════════ config
 

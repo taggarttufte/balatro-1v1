@@ -1,8 +1,8 @@
 """
-test_delegate.py — Phase 1 W2: the engine delegates ALL generation to mp/rng/generate
+test_delegate.py — Phase 1 W2: the engine delegates ALL generation to rng/generate
 through game.run_state (shelves, rerolls, packs, vouchers, bosses, tags, shuffles, created
 cards), the BOOSTER_OPEN state machine works, tags are wired, JokerInstance.clone() isolates
-nested containers.  See mp/engine/DELEGATE_NOTES.md.
+nested containers.  See engine/DELEGATE_NOTES.md.
 """
 from __future__ import annotations
 

@@ -1,5 +1,5 @@
-"""Tests for mp/eval/eval_harness.py: determinism, CI sanity (player vs itself), and report
-schema round-trip, across all three modes.  Run: python -m pytest mp/eval/tests -q (repo root).
+"""Tests for eval/eval_harness.py: determinism, CI sanity (player vs itself), and report
+schema round-trip, across all three modes.  Run: python -m pytest eval/tests -q (repo root).
 """
 from __future__ import annotations
 

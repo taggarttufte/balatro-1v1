@@ -1,18 +1,18 @@
 """
-Parity harness: replay seeds through the Python RNG port (mp.rng.generate) and diff against
-the oracle ground truth in mp/oracle/ground_truth/*.json.
+Parity harness: replay seeds through the Python RNG port (rng.generate) and diff against
+the oracle ground truth in oracle/ground_truth/*.json.
 
-    python -m mp.oracle.parity_check --validate-only                 # schema-check the JSONs (works today)
-    python -m mp.oracle.parity_check --seeds ALEEB,OG4YQPSI --antes 1-3
-    python -m mp.oracle.parity_check --antes 1-8 --queue-depth 20 --fields boss,voucher,tags,shop_queue,packs
-    python -m mp.oracle.parity_check --list                          # seeds available + cross-check status
+    python -m oracle.parity_check --validate-only                 # schema-check the JSONs (works today)
+    python -m oracle.parity_check --seeds ALEEB,OG4YQPSI --antes 1-3
+    python -m oracle.parity_check --antes 1-8 --queue-depth 20 --fields boss,voucher,tags,shop_queue,packs
+    python -m oracle.parity_check --list                          # seeds available + cross-check status
 
-Run from the repo root (mp/ is a namespace package; mp/oracle has __init__.py).
+Run from the repo root (``oracle`` has __init__.py; the repo root is a namespace package).
 
-Contract expected from mp/rng/generate.py (first match wins, all called with keyword args):
+Contract expected from rng/generate.py (first match wins, all called with keyword args):
     generate_ground_truth(seed=, deck=, stake=, antes=, shop_queue_depth=) -> dict
     generate_run(...)  |  analyze_seed(...)  |  generate(...)
-The returned dict must follow mp/oracle/schema.md at least for:
+The returned dict must follow oracle/schema.md at least for:
     antes[str(n)].boss.key, .voucher.key, .tags.small.key, .tags.big.key,
     antes[str(n)].shop_queue[i] -> {key, edition, stickers?}
     antes[str(n)].shops[j].packs[k] -> {key, cards:[{key, edition?, enhancement?, seal?}]}
@@ -159,25 +159,25 @@ def _validate_item(it: dict) -> list[str]:
 # ----------------------------------------------------------------------------- port adapter
 
 def load_port():
-    """Import mp.rng.generate and pick an entry point.  Returns (callable, name) or (None, reason).
+    """Import rng.generate and pick an entry point.  Returns (callable, name) or (None, reason).
 
     Preference: an explicit one-shot generator matching the documented contract; otherwise the
     RunState engine API (RunState / start_run / defeat_boss / generate_shop / open_pack /
     reroll_shop) driven with the oracle's policy by drive_runstate()."""
     try:
-        from mp.rng import generate as gen  # type: ignore
+        from rng import generate as gen  # type: ignore
     except ModuleNotFoundError as ex:
-        return None, (f"mp.rng.generate is not importable yet ({ex}). "
-                      "Agent C's port lives at mp/rng/generate.py; run with --validate-only until it exists.")
+        return None, (f"rng.generate is not importable yet ({ex}). "
+                      "Agent C's port lives at rng/generate.py; run with --validate-only until it exists.")
     except Exception as ex:  # syntax errors etc.
-        return None, f"mp.rng.generate failed to import: {type(ex).__name__}: {ex}\n{traceback.format_exc()}"
+        return None, f"rng.generate failed to import: {type(ex).__name__}: {ex}\n{traceback.format_exc()}"
     for name in ("generate_ground_truth", "generate_run", "analyze_seed"):
         fn = getattr(gen, name, None)
         if callable(fn):
-            return fn, f"mp.rng.generate.{name}"
+            return fn, f"rng.generate.{name}"
     if all(hasattr(gen, n) for n in ("RunState", "start_run", "defeat_boss", "generate_shop", "open_pack", "reroll_shop")):
         return (lambda **kw: drive_runstate(gen, **kw)), "RunState engine API via parity_check.drive_runstate"
-    return None, ("mp.rng.generate imported but exposes neither generate_ground_truth/generate_run/analyze_seed "
+    return None, ("rng.generate imported but exposes neither generate_ground_truth/generate_run/analyze_seed "
                   "nor the RunState engine API (see contract in parity_check.py docstring).")
 
 
@@ -418,7 +418,7 @@ def main(argv=None):
     fn, how = load_port()
     if fn is None:
         print(f"[port] {how}")
-        print("[port] Nothing to compare; ground truth is ready.  Re-run without --validate-only once mp/rng/generate.py exists.")
+        print("[port] Nothing to compare; ground truth is ready.  Re-run without --validate-only once rng/generate.py exists.")
         return 2
     print(f"[port] using {how}; fields={fields}; antes={antes}; variant={args.variant}")
 

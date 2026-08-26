@@ -1,4 +1,4 @@
-# DELEGATE_NOTES — Phase 1 W2: the engine delegates all generation to `mp/rng/generate.py`
+# DELEGATE_NOTES — Phase 1 W2: the engine delegates all generation to `rng/generate.py`
 
 **Agent P1-delegate, 2026-08-21.** Files: `balatro_sim/shop.py` (rewritten), `balatro_sim/game.py`
 (targeted edits, list in §8), `balatro_sim/consumables.py` (created-card paths + voucher routing),
@@ -9,10 +9,10 @@ tests), this note.  Out-of-ownership edits, each flagged: §9.
 
 | gate | result |
 |---|---|
-| `python -m pytest mp/engine/tests -q` | **1358 passed / 10 skipped / 0 failed** at the final run (1321 before P1-effects' later test additions; was 1279/13; +37 `test_delegate.py`, +6 new consumable/voucher/Fool tests; the 3 runtime skips in `test_rewards_v5` ("Could not reach shop") now reach the shop) |
-| `python -m pytest mp/tests/test_engine_invariants.py -q` | **14 passed / 0 failed / 0 xfail** (was 3 pass / 1 xfail / 10 fail) — incl. the three "effect rolls don't move generation" tests, which needed W3's `game.rng` deletion |
-| `python -m mp.oracle.engine_parity --antes 1-3` | **126/126 exact through ante 3**; `--antes 1-8 --rerolls 5` → **126/126 exact through ante 8**, no harness fallbacks (was 0/126 through ante 1) |
-| `python -m pytest mp/tests/test_engine_reachability.py -q` | **226 passed / 6 failed / 3 xfailed** at the final run (240/6/3 an hour earlier; the probe file is being edited concurrently by P1-effects) (was 186 / 46 / 3). Remaining 6 are not W2: `j_four_fingers`, `j_shortcut`, `j_smeared`, `j_flower_pot` (hand-eval flags set after `evaluate_hand` — W5), `j_chicot` (boss-disable flag nothing reads — W5), `j_space` (probability roll — W3/W5) |
+| `python -m pytest engine/tests -q` | **1358 passed / 10 skipped / 0 failed** at the final run (1321 before P1-effects' later test additions; was 1279/13; +37 `test_delegate.py`, +6 new consumable/voucher/Fool tests; the 3 runtime skips in `test_rewards_v5` ("Could not reach shop") now reach the shop) |
+| `python -m pytest tests/test_engine_invariants.py -q` | **14 passed / 0 failed / 0 xfail** (was 3 pass / 1 xfail / 10 fail) — incl. the three "effect rolls don't move generation" tests, which needed W3's `game.rng` deletion |
+| `python -m oracle.engine_parity --antes 1-3` | **126/126 exact through ante 3**; `--antes 1-8 --rerolls 5` → **126/126 exact through ante 8**, no harness fallbacks (was 0/126 through ante 1) |
+| `python -m pytest tests/test_engine_reachability.py -q` | **226 passed / 6 failed / 3 xfailed** at the final run (240/6/3 an hour earlier; the probe file is being edited concurrently by P1-effects) (was 186 / 46 / 3). Remaining 6 are not W2: `j_four_fingers`, `j_shortcut`, `j_smeared`, `j_flower_pot` (hand-eval flags set after `evaluate_hand` — W5), `j_chicot` (boss-disable flag nothing reads — W5), `j_space` (probability roll — W3/W5) |
 | `engine_parity --probe` | 11/12 hooks ok; only the optional `state_signature` is missing (harness fallback works) |
 
 Other parity policies (not gates, reported for completeness):
@@ -188,12 +188,12 @@ level `_GameTagContext`, `_fast_clone_run_state`, `_fast_clone_tag_state`.  Not 
 
 ## 9. Edits outside my ownership (each minimal, each flagged)
 
-1. **`mp/oracle/engine_parity.py` `EngineDriver.win_blind/leave_shop`** — the harness recorded
+1. **`oracle/engine_parity.py` `EngineDriver.win_blind/leave_shop`** — the harness recorded
    "ante N+1 start" when leaving the *after-Big* shop of ante N, i.e. before the ante-N boss is
    fought; the real game (and the engine) draw the next ante's boss/tags/voucher at Cash Out
    *after* the boss dies.  Now recorded when a Boss was just cleared; the old point is kept as a
    fallback for engines without the hooks.  This was the only thing between 0/126 and 126/126.
-2. **`mp/tests/test_engine_reachability.py` `skip_then_score`** — asserted `SHOP` after a skip;
+2. **`tests/test_engine_reachability.py` `skip_then_score`** — asserted `SHOP` after a skip;
    now `BLIND_SELECT` (after closing a tag pack if any).  Needed for `j_throwback`.
 3. **`balatro_sim/env_v5.py` `_step_play`** — two lines: advance `ROUND_EVAL` after a cleared
    blind.  env_v5 never handled `ROUND_EVAL`; it only ever reached shops through the sim-invented

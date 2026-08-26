@@ -98,7 +98,7 @@ class TournamentSetup:
     n_agents: int = 16
     life_rule: str = "paired"
     max_ante: int = 4
-    #: Trajectory logging (mp/replay).  ``None`` = off.  ``path`` is per worker; the main
+    #: Trajectory logging (replay).  ``None`` = off.  ``path`` is per worker; the main
     #: process concatenates the parts at the end of the generation.
     traj: Optional[dict] = None
 

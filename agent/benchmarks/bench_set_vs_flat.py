@@ -11,8 +11,8 @@ The merge (SETENC_NOTES §8.1) took the set net from ~25 embedding kernels per f
 which is exactly what that CUDA gap called for, but the re-run was deferred (machine in
 use). Run this and paste the table into SETENC_NOTES §6.2.
 
-    python mp/agent/benchmarks/bench_set_vs_flat.py
-    python mp/agent/benchmarks/bench_set_vs_flat.py --sims 500 --repeats 3
+    python agent/benchmarks/bench_set_vs_flat.py
+    python agent/benchmarks/bench_set_vs_flat.py --sims 500 --repeats 3
 
 Same state as every other Phase 3/4 throughput number: the ante-1 `SELECTING_HAND` demo
 state with 436 legal actions, Gumbel selection, `leaf_batch=16`, cold-init nets, best of

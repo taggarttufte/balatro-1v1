@@ -5,7 +5,7 @@ explained classes (imported from ``mlb_match_demo``, not copied); a key classifi
 must never actually differ (if it appears in ``diff_rng``'s output at all, that IS the
 violation), and UNKNOWN always fails.
 
-This generalises Phase 2's two-player ``TestAlignment`` (mp/tests/test_mlb_match_gate.py) to
+This generalises Phase 2's two-player ``TestAlignment`` (tests/test_mlb_match_gate.py) to
 N independent solo games instead of one ``MLBMatch`` pair -- the underlying invariant is the
 same: same seed, no skips -> identical run-structure streams; only each agent's OWN shop
 consumption (rerolls, purchases, packs opened) legitimately diverges the rest."""

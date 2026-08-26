@@ -25,7 +25,7 @@ this file is an independent re-implementation of the algorithm, not a copy.
 
 The same generator has been in LuaJIT since 2.0, so it is version-independent
 as far as LOVE/Balatro builds are concerned.  Validation against LuaJIT itself
-(via ``lupa``) lives in ``mp/tests/test_rng_core.py``.
+(via ``lupa``) lives in ``tests/test_rng_core.py``.
 
 Performance notes
 -----------------

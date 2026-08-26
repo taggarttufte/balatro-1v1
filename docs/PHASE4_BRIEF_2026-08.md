@@ -5,9 +5,9 @@ Lead-authored. Phase 3 closed 2026-08-22 with every gate green; the overnight sh
 objective** (the agent learned to skip 15/16 blinds and coast). Phase 4 turns the infrastructure into a training
 run whose checkpoints are worth keeping, then launches the first real run.
 
-State at kickoff: branch `mp/campaign` @ `2801ddb` (+ uncommitted 07:35 log entry). Gates: `pytest mp/engine/tests`
-**1614/10/3/0**, `mp/tests` **1073/2/0**, `mp/agent/tests` **131**, `mp/tournament/tests` **31**, `mp/eval/tests`
-**49**; `engine_parity` + `parity_check --antes 1-8` **126/126**. All must stay green. `mp/engine/**` and `mp/rng/**`
+State at kickoff: branch `mp/campaign` @ `2801ddb` (+ uncommitted 07:35 log entry). Gates: `pytest engine/tests`
+**1614/10/3/0**, `tests` **1073/2/0**, `agent/tests` **131**, `tournament/tests` **31**, `eval/tests`
+**49**; `engine_parity` + `parity_check --antes 1-8` **126/126**. All must stay green. `engine/**` and `rng/**`
 are FROZEN again (mtime snapshot: `docs/phase3_frozen_snapshot.txt` + the one lead fix to `game.py`).
 
 ## 0. Decisions already made (Tagg, 2026-08-22)
@@ -29,10 +29,10 @@ are FROZEN again (mtime snapshot: `docs/phase3_frozen_snapshot.txt` + the one le
 
 | # | Workstream | Model | Owns | Depends on |
 |---|---|---|---|---|
-| **W1** | Set-based encoder + set-based action features + subsampled `Sample` | strong | `mp/agent/mcts/{encoder_set.py,model_set.py,action_features_set.py}`, `mp/agent/train/{trajectory.py,sample.py}`, tests, `mp/agent/SETENC_NOTES.md`; may edit `mp/agent/mcts/{policy.py,search.py,batched.py}` ONLY behind a flag/interface, serial path byte-identical | — |
-| **W2** | Tournament-driven training loop (the real objective) + MCTS plug-in | strong | `mp/agent/train/{selfplay.py,population.py}`, `mp/agent/scripts/train_mlb.py`, `mp/tournament/players.py::MCTSPlayer` (apply BATCH_NOTES §7.2), `mp/tournament/runner.py` (`act_many` lockstep per §7.3 is OPTIONAL; remove `_repair_mlb_gameover_bug` — dead since the lead fix), tests, `mp/agent/TRAIN_NOTES.md` | W1's `Sample`/encoder interface — coordinate through an agreed `PolicyValueFn` + `Sample` contract (read each other's notes; W1 publishes the contract FIRST in `SETENC_NOTES.md` §0 within its first hour) |
-| **W3** | Trajectory logging + replay + tagging + viewer export | sonnet | `mp/replay/**` (new: `log.py`, `replay.py`, `tags.py`, `export_viz.py`, `cli.py`, tests), `mp/replay/REPLAY_NOTES.md`; a `TrajectoryLogger` hook that W2's loop and the tournament call (define it; W2 wires it) | engine only |
-| **W4** | Transfer-spread harness + interim external-target objective + cleanups | sonnet | `mp/eval/transfer_spread.py`, `mp/eval/targets.py` (per-ante external Nemesis targets; expose to `mp/agent` via a tiny importable module), `mp/eval/tests`, `mp/eval/EVAL_NOTES.md` §new; `mp/tournament/tests` additions for the cleanup | engine only |
+| **W1** | Set-based encoder + set-based action features + subsampled `Sample` | strong | `agent/mcts/{encoder_set.py,model_set.py,action_features_set.py}`, `agent/train/{trajectory.py,sample.py}`, tests, `agent/SETENC_NOTES.md`; may edit `agent/mcts/{policy.py,search.py,batched.py}` ONLY behind a flag/interface, serial path byte-identical | — |
+| **W2** | Tournament-driven training loop (the real objective) + MCTS plug-in | strong | `agent/train/{selfplay.py,population.py}`, `agent/scripts/train_mlb.py`, `tournament/players.py::MCTSPlayer` (apply BATCH_NOTES §7.2), `tournament/runner.py` (`act_many` lockstep per §7.3 is OPTIONAL; remove `_repair_mlb_gameover_bug` — dead since the lead fix), tests, `agent/TRAIN_NOTES.md` | W1's `Sample`/encoder interface — coordinate through an agreed `PolicyValueFn` + `Sample` contract (read each other's notes; W1 publishes the contract FIRST in `SETENC_NOTES.md` §0 within its first hour) |
+| **W3** | Trajectory logging + replay + tagging + viewer export | sonnet | `replay/**` (new: `log.py`, `replay.py`, `tags.py`, `export_viz.py`, `cli.py`, tests), `replay/REPLAY_NOTES.md`; a `TrajectoryLogger` hook that W2's loop and the tournament call (define it; W2 wires it) | engine only |
+| **W4** | Transfer-spread harness + interim external-target objective + cleanups | sonnet | `eval/transfer_spread.py`, `eval/targets.py` (per-ante external Nemesis targets; expose to `agent` via a tiny importable module), `eval/tests`, `eval/EVAL_NOTES.md` §new; `tournament/tests` additions for the cleanup | engine only |
 
 ### W1 — Set-based encoder (strong)
 
@@ -48,10 +48,10 @@ are FROZEN again (mtime snapshot: `docs/phase3_frozen_snapshot.txt` + the one le
 - `Sample` v2: obs as a dict of padded arrays + masks; `action_feats` only for the SUBSAMPLED candidate set
   (visited ∪ k random unvisited, k=8 default), `policy_target` renormalised over that set, `value_target`, and
   metadata (seed, ante, state). Bit-exact checkpoint round-trip must still hold.
-- Test: on 200 logged states from the overnight run (`mp/agent/runs/overnight_2026-08-22/` — read-only), the
+- Test: on 200 logged states from the overnight run (`agent/runs/overnight_2026-08-22/` — read-only), the
   set encoder produces finite, mask-invariant outputs (permuting items within a set changes nothing; padding
   changes nothing); a 10-minute cold run on the flat encoder vs the set encoder, paired by seed, via
-  `mp/eval/eval_harness.py --compare` — report it, no claim needed.
+  `eval/eval_harness.py --compare` — report it, no claim needed.
 
 ### W2 — Tournament-driven training (strong)
 
@@ -91,8 +91,8 @@ are FROZEN again (mtime snapshot: `docs/phase3_frozen_snapshot.txt` + the one le
 ### W4 — Transfer spread + targets + cleanups (sonnet)
 
 - `targets.py`: per-ante external Nemesis targets: `vanilla_boss(ante, deck, stake)`, `k × own Big-blind score`,
-  and a table derived from `mp/results/` tournament score distributions (median at each ante). Importable from
-  `mp/agent` without circularity (tiny module, engine-only deps).
+  and a table derived from `results/` tournament score distributions (median at each ante). Importable from
+  `agent` without circularity (tiny module, engine-only deps).
 - `transfer_spread.py`: given a player spec (scripted now, `checkpoint:` later), evaluate over the 126 seeds on
   Red / Checkered / Plasma at White via the eval harness in SP-MLB-solo mode with an external target, AND via
   the tournament (N=32 scripted+checkpoint mix) — output per-cell distributions + the cross-cell spread

@@ -6,7 +6,7 @@ The balatro-mcts original hardcoded two assumptions in `search.py` and `train/ag
     _is_win(game)  ==  game.state == GAME_OVER and game.ante > 8
     _shaped_z      ==  (blinds_completed + chip_ratio) / 24
 
-Both are false under Major League Balatro (`mp/engine/MLB_NOTES.md`): MLB is **endless**
+Both are false under Major League Balatro (`engine/MLB_NOTES.md`): MLB is **endless**
 (there is no ante-8 win; `game.ante > 8` just means the run is going well), the run ends
 when `lives` hits 0 or the opponent's does (`game.match_won`), and the thing a Nemesis
 blind actually produces is a *score margin against an external opponent*, which the
@@ -44,7 +44,7 @@ TOTAL_BLINDS = 24
 
 def is_stuck_state(game: BalatroGame) -> bool:
     """True when the game has no legal actions but is not over — always an MLB
-    coordination state (`mp/engine/MLB_NOTES.md` rules 1.2e / 1.3f):
+    coordination state (`engine/MLB_NOTES.md` rules 1.2e / 1.3f):
 
       * `State.PVP_WAIT` — hands exhausted at the Nemesis, waiting for the opponent
       * BLIND_SELECT with `pvp_ready` — readied, waiting for the server's `startBlind`

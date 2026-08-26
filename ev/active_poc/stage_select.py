@@ -1,6 +1,6 @@
 """stage_select.py — score the candidate pool with the ensemble and pick the three arms.
 
-    python mp/ev/active_poc/stage_select.py --arm-states 1200
+    python ev/active_poc/stage_select.py --arm-states 1200
 
 Loads the pool shards, runs the 3 base-corpus ensemble members over every pool row (GPU,
 sequential, one member resident at a time), collapses to per-state scores, and writes
@@ -36,8 +36,8 @@ from active_poc import training as T  # noqa: E402
 
 def build_parser() -> argparse.ArgumentParser:
     ap = argparse.ArgumentParser(description=__doc__.split("\n\n")[0])
-    ap.add_argument("--out", default="mp/ev/runs/active_poc")
-    ap.add_argument("--pool", default="mp/ev/runs/active_poc/pool/shards")
+    ap.add_argument("--out", default="ev/runs/active_poc")
+    ap.add_argument("--pool", default="ev/runs/active_poc/pool/shards")
     ap.add_argument("--arm-states", type=int, default=1200)
     ap.add_argument("--cap-mult", type=float, default=1.5, help="light stratification cap")
     ap.add_argument("--uniform-rng", type=int, default=4242)

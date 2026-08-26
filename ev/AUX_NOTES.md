@@ -7,28 +7,28 @@ Files owned and changed:
 
 | file | what |
 |---|---|
-| `mp/ev/aux_targets.py` | **new** — the spec table, the rollout observer, aggregation/masking |
-| `mp/ev/labels.py` | additive: `rollout(observer_factory=)`, `RolloutResult.aux`, `label_both` aggregation, `label_job` payload `aux` |
-| `mp/ev/pairs.py` | additive: `roll_pair(observer_factory=)`, `PairRollout.aux_a/aux_b`, `pair_record(aux=)`, `pair_job` payload `aux` |
-| `mp/agent/mcts/value_net.py` | additive: `ValueNetConfig.aux_heads/aux_hidden`, `SetValueNet.aux_heads`, `forward_with_aux`, `aux_head_names` |
-| `mp/ev/train_v.py` | additive: aux config, target extraction + masking + standardisation, multi-task loss, per-head metrics, tolerant net/optimizer load |
-| `mp/ev/scripts/gen_labels.py`, `gen_pairs.py` | one `--aux` flag + aux coverage in the results JSON |
-| `mp/ev/tests/test_aux.py` | **new**, 31 tests, ~8 s |
-| `mp/ev/AUX_NOTES.md` | this file |
+| `ev/aux_targets.py` | **new** — the spec table, the rollout observer, aggregation/masking |
+| `ev/labels.py` | additive: `rollout(observer_factory=)`, `RolloutResult.aux`, `label_both` aggregation, `label_job` payload `aux` |
+| `ev/pairs.py` | additive: `roll_pair(observer_factory=)`, `PairRollout.aux_a/aux_b`, `pair_record(aux=)`, `pair_job` payload `aux` |
+| `agent/mcts/value_net.py` | additive: `ValueNetConfig.aux_heads/aux_hidden`, `SetValueNet.aux_heads`, `forward_with_aux`, `aux_head_names` |
+| `ev/train_v.py` | additive: aux config, target extraction + masking + standardisation, multi-task loss, per-head metrics, tolerant net/optimizer load |
+| `ev/scripts/gen_labels.py`, `gen_pairs.py` | one `--aux` flag + aux coverage in the results JSON |
+| `ev/tests/test_aux.py` | **new**, 31 tests, ~8 s |
+| `ev/AUX_NOTES.md` | this file |
 
 Outputs written (all new files):
 
 | path | what |
 |---|---|
-| `mp/ev/runs/aux_g1/` | 576 aux-recorded labels, 6 shards |
-| `mp/ev/runs/aux_pairs_g1/` | 238 aux-recorded pairs + 476 absolute rows |
-| `mp/results/labels_aux_g1.json` | label-campaign summary + per-head coverage |
-| `mp/results/pairs_aux_pairs_g1.json` | pair-campaign summary + per-branch coverage |
-| `mp/results/aux_ablation.json` | the §6.2 gate: 9 runs, 3 selection rules, per-head metrics, and the two supporting 12-run ablations |
+| `ev/runs/aux_g1/` | 576 aux-recorded labels, 6 shards |
+| `ev/runs/aux_pairs_g1/` | 238 aux-recorded pairs + 476 absolute rows |
+| `results/labels_aux_g1.json` | label-campaign summary + per-head coverage |
+| `results/pairs_aux_pairs_g1.json` | pair-campaign summary + per-branch coverage |
+| `results/aux_ablation.json` | the §6.2 gate: 9 runs, 3 selection rules, per-head metrics, and the two supporting 12-run ablations |
 
 Not touched: `hand.py` (W-EXTRACT), `fixtures/` (W-PROBE), `dataset.py`, `player.py`,
-`workers.py`, `match_player.py`, `race.py`, `mp/engine/`, and everything else in
-`mp/results/`.
+`workers.py`, `match_player.py`, `race.py`, `engine/`, and everything else in
+`results/`.
 
 ---
 
@@ -239,7 +239,7 @@ existing checkpoint" path below — like `holdout_frac`, they are a deliberate o
 are not covered by the bit-exact guarantee.
 
 Producers: `gen_labels.py --aux` and `gen_pairs.py --aux` (both off by default; both write
-per-head coverage into their `mp/results/*.json`).
+per-head coverage into their `results/*.json`).
 
 ---
 
@@ -311,10 +311,10 @@ Two traps worth recording for whoever measures rollouts next:
 Two fresh aux-recorded campaigns, 8 workers each, box otherwise quiet, ~6 and ~8 minutes:
 
 ```bash
-python mp/ev/scripts/gen_labels.py --run-dir mp/ev/runs/aux_g1 --seeds random:60 --seed-rng 77 \
+python ev/scripts/gen_labels.py --run-dir ev/runs/aux_g1 --seeds random:60 --seed-rng 77 \
     --n-states 12 --n-rollouts 8 --workers 8 --policy ev --budget fast --shop-tier rules \
     --encoder v2 --flush-jobs 4 --aux --max-jobs 24 --minutes 13 --name aux_g1
-python mp/ev/scripts/gen_pairs.py --run-dir mp/ev/runs/aux_pairs_g1 --seeds random:60 --seed-rng 78 \
+python ev/scripts/gen_pairs.py --run-dir ev/runs/aux_pairs_g1 --seeds random:60 --seed-rng 78 \
     --n-states 6 --n-worlds 8 --workers 8 --probe-jobs 0 --flush-jobs 4 --aux \
     --max-jobs 44 --minutes 13 --name aux_pairs_g1
 ```
@@ -329,7 +329,7 @@ The pair campaign's variance-reduction factor came out **1.75× (mean ρ +0.464)
 PAIRS_NOTES' 1.78× / +0.468 on 1,301 pairs — an independent check that the aux
 instrumentation did not perturb the pair machinery.
 
-**Per-head coverage on the fresh batch** (`aux_coverage` in `mp/results/labels_aux_g1.json`
+**Per-head coverage on the fresh batch** (`aux_coverage` in `results/labels_aux_g1.json`
 and `pairs_aux_pairs_g1.json`):
 
 | head | labels | pairs (a / b) |
@@ -361,7 +361,7 @@ Branch a−b differences on the 238 pairs (the within-state signal `--aux-on-pai
 `lives_2antes` 58 %, `blind_cleared` 38 %, `cards_modified` 35 %, `tarots_used` 36 %,
 `xmult_by_ante4` 29 %, `extract_income` 18 %.
 
-### 6.2 The ablation — `mp/results/aux_ablation.json`
+### 6.2 The ablation — `results/aux_ablation.json`
 
 **Corpus (the brief's literal ask):** absolute = `aux_g1/shards` (576) + `aux_pairs_g1/abs_shards`
 (476) + `pairs_s1/abs_shards` (2,602) = **3,654 rows**; pairs = `aux_pairs_g1/shards` (238) +
@@ -489,9 +489,9 @@ do not perturb the base net's initialisation, because they are registered last.
 
 | suite | result |
 |---|---|
-| `mp/ev/tests/test_aux.py` (new) | **31 passed**, ~8 s |
-| `python -m pytest mp/ev` | **285 passed / 0 failed**, ~75 s (254 before this file) |
-| `python -m pytest mp/agent/tests` | **396 passed** (`value_net.py` is the only `mp/agent` file touched; `test_value_net.py` + `test_encoder_v2.py` = 35 of them) |
+| `ev/tests/test_aux.py` (new) | **31 passed**, ~8 s |
+| `python -m pytest ev` | **285 passed / 0 failed**, ~75 s (254 before this file) |
+| `python -m pytest agent/tests` | **396 passed** (`value_net.py` is the only `agent` file touched; `test_value_net.py` + `test_encoder_v2.py` = 35 of them) |
 
 No unrelated failures were seen in the final runs. Earlier in the build the tree was green
 too — W-EXTRACT's `hand.py`/engine churn and W-PROBE's fixtures were already settled by the
@@ -578,7 +578,7 @@ MEAN; **bit-exact resume with aux state**; bolting heads onto a headless checkpo
 
 ## 9. Note for W-ACTIVE (brief §6b.6) — NOT implemented
 
-`mp/results/active_poc_*.md` did not exist when this workstream closed (checked at the start
+`results/active_poc_*.md` did not exist when this workstream closed (checked at the start
 and at the end of the build), so there is no POC verdict to react to. The hook is recorded
 here for whoever picks it up.
 

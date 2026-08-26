@@ -14,7 +14,7 @@ if TYPE_CHECKING:
     from .game import BalatroGame
 
 from . import game_keys
-from .game_keys import gen as _gen           # mp.rng.generate — created cards + target picks (W2)
+from .game_keys import gen as _gen           # rng.generate — created cards + target picks (W2)
 from .constants import INTEREST_CAP, ENHANCEMENT_FROM_KEY
 
 _SUIT_FULL = {"S": "Spades", "H": "Hearts", "C": "Clubs", "D": "Diamonds"}
@@ -39,7 +39,7 @@ def _hand_sorted(game: "BalatroGame") -> list:
 # PLANET CARDS — each upgrades one hand type by 1 level
 # ════════════════════════════════════════════════════════════════════════════
 
-# Keys, names and hand types come from mp/rng/pools.py (game keys `c_*`; the
+# Keys, names and hand types come from rng/pools.py (game keys `c_*`; the
 # sim used a `pl_` prefix before the Phase 1 re-key).
 PLANET_HAND = dict(game_keys.PLANET_HAND)
 PLANET_NAME = dict(game_keys.PLANET_NAME)

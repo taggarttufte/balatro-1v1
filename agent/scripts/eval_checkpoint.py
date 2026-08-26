@@ -1,21 +1,21 @@
 """
-eval_checkpoint.py — evaluate a `train_cold` / `train_mlb` checkpoint with `mp/eval`'s
-harness and write a report in `mp/eval/eval_harness.py`'s own JSON schema, so
+eval_checkpoint.py — evaluate a `train_cold` / `train_mlb` checkpoint with `eval`'s
+harness and write a report in `eval/eval_harness.py`'s own JSON schema, so
 
-    python -m mp.eval.eval_harness --compare A.json B.json --out cmp.json
+    python -m eval.eval_harness --compare A.json B.json --out cmp.json
 
 pairs the two by seed exactly as it does for scripted players.
 
-Why this lives in `mp/agent` and not in `mp/eval`
+Why this lives in `agent` and not in `eval`
 ------------------------------------------------
-`mp/eval/common.py::parse_player_spec` raises `NotImplementedError` for `checkpoint:` and
-says, verbatim, that `mp/agent` owns the checkpoint loader. `mp/eval/**` is frozen for
+`eval/common.py::parse_player_spec` raises `NotImplementedError` for `checkpoint:` and
+says, verbatim, that `agent` owns the checkpoint loader. `eval/**` is frozen for
 Phase 4 W1, so rather than edit it this script imports the harness's own drivers
 (`play_sp_vanilla` / `play_sp_mlb`) and its bootstrap CI, and emits the same record shape.
 The comparison is then done by the frozen `--compare` path, unmodified.
 
-    python mp/agent/scripts/eval_checkpoint.py --checkpoint runs/x/latest.pt \\
-        --mode sp_mlb --sims 60 --device cuda --out mp/results/x.json
+    python agent/scripts/eval_checkpoint.py --checkpoint runs/x/latest.pt \\
+        --mode sp_mlb --sims 60 --device cuda --out results/x.json
 """
 from __future__ import annotations
 
@@ -35,7 +35,7 @@ if str(_MP_ROOT / "eval") not in sys.path:
 
 import torch  # noqa: E402
 
-import common as C  # noqa: E402  (mp/eval/common.py — read-only)
+import common as C  # noqa: E402  (eval/common.py — read-only)
 
 from mcts.player import make_player  # noqa: E402
 

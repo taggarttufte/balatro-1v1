@@ -1,12 +1,12 @@
 """
-Test bootstrap for mp/tournament.
+Test bootstrap for tournament.
 
-Mirrors mp/engine/conftest.py's fork-guard, using the same plain sys.path-insertion style
-every mp/* module uses (never a dotted ``mp.tournament...`` absolute import, which would
+Mirrors engine/conftest.py's fork-guard, using the same plain sys.path-insertion style
+every in-repo module uses (never a dotted ``tournament...`` absolute import, which would
 depend on ``mp`` resolving as a namespace package from whatever the caller's cwd happens to
-be).  Puts mp/ and mp/scripts on sys.path, then imports balatro_sim through
+be).  Puts the repo root and scripts on sys.path, then imports balatro_sim through
 ``oracle.engine_parity.import_engine()`` — the same fork-guarded entry point
-``mp/scripts/mlb_match_demo.py`` uses — and re-asserts loudly that the fork under mp/engine
+``scripts/mlb_match_demo.py`` uses — and re-asserts loudly that the fork under engine
 is the one that won, so a stray BRL top-level ``balatro_sim`` can never silently shadow it.
 """
 from __future__ import annotations
@@ -15,8 +15,8 @@ import os
 import sys
 from pathlib import Path
 
-_HERE = Path(__file__).resolve().parent          # mp/tournament
-_MP_ROOT = _HERE.parent                          # mp/
+_HERE = Path(__file__).resolve().parent          # tournament
+_MP_ROOT = _HERE.parent                          # repo root
 _ENGINE_ROOT = _MP_ROOT / "engine"
 _SCRIPTS_ROOT = _MP_ROOT / "scripts"
 
@@ -36,10 +36,10 @@ def _assert_fork_is_the_one_imported() -> None:
     expected = _ENGINE_ROOT / "balatro_sim" / "__init__.py"
     if pkg_file != expected:
         raise RuntimeError(
-            "mp/tournament tests imported the wrong balatro_sim:\n"
+            "tournament tests imported the wrong balatro_sim:\n"
             f"  got:      {pkg_file}\n"
             f"  expected: {expected}\n"
-            "Run with `python -m pytest mp/tournament/tests` from the repo root."
+            "Run with `python -m pytest tournament/tests` from the repo root."
         )
 
 

@@ -6,7 +6,7 @@ starts — adding a FIELD later means restarting from zero; adding a VALUE to a 
 not. So this spec deliberately includes fields we will not use on day 1 and reserves slack. Review the
 field list; anything missing that a strong player looks at must be added now.
 
-Base: the Phase 4 set encoder (`mp/agent/SETENC_NOTES.md` §0.2) — five masked item sets + scalars.
+Base: the Phase 4 set encoder (`agent/SETENC_NOTES.md` §0.2) — five masked item sets + scalars.
 **v1 = that encoder + the additions marked ➕ below.** Caps are transport only (the net is set-invariant).
 
 ## Item sets (padded + mask)

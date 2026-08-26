@@ -12,7 +12,7 @@ is unconditional -- EXTRACT_NOTES.md section 2's ``_discard_extraction``).
 ``build_control()``: the SAME hand shape without Faceless Joker -- "procs absent." Discarding
 the faces then banks nothing, so the clearing Ace-pair play wins outright.
 
-Verified ordering (``mp/ev/tests/test_probe_fixtures.py``, fast budget):
+Verified ordering (``ev/tests/test_probe_fixtures.py``, fast budget):
   sandbag:  discard [2,3,4]  (extract $5.00, Faceless) ranks ABOVE play [0,1] (clear now)
   control:  play [0,1] (clear now) ranks ABOVE any discard of the same three faces.
 """
@@ -21,8 +21,8 @@ from __future__ import annotations
 import sys
 from pathlib import Path
 
-_HERE = Path(__file__).resolve().parent            # mp/ev/fixtures
-_EV = _HERE.parent                                  # mp/ev
+_HERE = Path(__file__).resolve().parent            # ev/fixtures
+_EV = _HERE.parent                                  # ev
 for _p in (str(_EV), str(_HERE)):
     if _p not in sys.path:
         sys.path.insert(0, _p)

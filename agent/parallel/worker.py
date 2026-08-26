@@ -15,7 +15,7 @@ Windows / spawn
 The child re-imports this module and unpickles a :class:`~.protocol.WorkerSpec`.  Nothing
 in the spec is a closure or a handle; ``sys.path`` is re-established from the roots in the
 spec before any ``mcts`` / ``train`` / ``tournament`` import, so the worker can never pick
-up the repo-root ``balatro_sim`` instead of the frozen fork.  ``torch.set_num_threads(1)``
+up some other ``balatro_sim`` instead of the frozen fork.  ``torch.set_num_threads(1)``
 is set before the first forward pass any worker might do (local mode) — 16 workers each
 spawning 16 BLAS threads is the classic way to make a 16-core box slower than one core.
 
@@ -62,7 +62,7 @@ def worker_main(spec: WorkerSpec, cmd_q, res_q, leaf_q, reply_conn) -> int:
 
 
 def _prepare_paths(roots) -> None:
-    """mp/engine then mp/agent at the front (agent wins), mp/ on the end for
+    """engine then agent at the front (agent wins), the repo root on the end for
     ``import tournament`` — the same order ``conftest.py`` and ``scripts/_bootstrap.py``
     establish, so the fork guard in either of them passes in a worker too."""
     engine_root, agent_root, mp_root = (str(r) for r in roots)

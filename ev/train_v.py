@@ -3,14 +3,14 @@ train_v.py — regression of V = SetValueNet on label shards (Phase 5 rev 2, W5)
 extended with lever (b) — a within-state pairwise ranking loss on W-PAIRS's pair shards
 (Phase 5 rev 2, W-RANK; see ``ev/RANK_NOTES.md``).
 
-    python mp/ev/train_v.py --shards mp/ev/runs/labels_a/shards --run-dir mp/ev/runs/v1 \
+    python ev/train_v.py --shards ev/runs/labels_a/shards --run-dir ev/runs/v1 \
         --max-steps 20000 --device cuda
-    touch mp/ev/runs/v1/PAUSE            # pause between steps; resume with --resume latest
-    python mp/ev/train_v.py --resume mp/ev/runs/v1/latest.pt --max-steps 40000
+    touch ev/runs/v1/PAUSE            # pause between steps; resume with --resume latest
+    python ev/train_v.py --resume ev/runs/v1/latest.pt --max-steps 40000
 
     # + lever (b): add pair shards, tune lam_rank/tau
-    python mp/ev/train_v.py --shards ... --pair-shards mp/ev/runs/pairs_s1/shards \
-        --lam-rank 1.0 --tau 0.05 --run-dir mp/ev/runs/v2 --max-steps 20000
+    python ev/train_v.py --shards ... --pair-shards ev/runs/pairs_s1/shards \
+        --lam-rank 1.0 --tau 0.05 --run-dir ev/runs/v2 --max-steps 20000
 
 Loss: BCE on logits vs the SOFT label y (P(win) from rollouts) PLUS, when ``--pair-shards``
 is given, ``lam_rank`` times a confidence-weighted pairwise logistic term on
@@ -105,7 +105,7 @@ TRAINER_STATE_VERSION = 1
 @dataclass
 class TrainVConfig:
     shards: list = field(default_factory=list)
-    run_dir: str = "mp/ev/runs/v_default"
+    run_dir: str = "ev/runs/v_default"
     model: str = "set_value_net"        # | "dummy"
     net_cfg: dict = field(default_factory=dict)   # ValueNetConfig overrides
     holdout_frac: float = 0.1
@@ -1584,7 +1584,7 @@ def run(cfg: Optional[TrainVConfig] = None, *, resume: Optional[str] = None,
     log(f"=== stopped ({why}) at step {tr.step}; latest: {final}"
         + (f"; paused by {pause_path} (delete it or --resume)" if why == "PAUSE" else "")
         + (f"; {done_path.name} written" if natural else ""))
-    log(f"resume: python mp/ev/train_v.py --resume {final} --max-steps <N>")
+    log(f"resume: python ev/train_v.py --resume {final} --max-steps <N>")
     return summary
 
 

@@ -1,11 +1,11 @@
 # REKEY_NOTES — Phase 1 W1: the engine speaks game keys
 
-**Agent P1-rekey, 2026-08-21.** `mp/rng/pools.py` is now the single source of truth for every
-key / name / rarity / cost / eligibility flag in `mp/engine/balatro_sim/`. Nothing is hand-typed
+**Agent P1-rekey, 2026-08-21.** `rng/pools.py` is now the single source of truth for every
+key / name / rarity / cost / eligibility flag in `engine/balatro_sim/`. Nothing is hand-typed
 any more: `balatro_sim/game_keys.py` loads `pools` at import time and every catalogue in
 `shop.py`, `consumables.py`, `constants.py` and `game.py` is derived from it.
 
-**Tests: 1279 passed / 13 skipped / 0 failed** (`python -m pytest mp/engine/tests -q`, from the
+**Tests: 1279 passed / 13 skipped / 0 failed** (`python -m pytest engine/tests -q`, from the
 repo root). The baseline at the start of W1 was 847 / 13; the delta is W1's new
 `tests/sim_tests/test_game_keys.py` (263 tests) plus the W6 (`test_tags.py`) and W7
 (`test_env_rng_isolation.py`) suites that landed concurrently in the same tree.
@@ -14,7 +14,7 @@ repo root). The baseline at the start of W1 was 847 / 13; the delta is W1's new
 
 ## 1. New module: `balatro_sim/game_keys.py`
 
-Imports `mp.rng.pools` (namespace package, repo root on `sys.path`); falls back to appending the
+Imports `rng.pools` (namespace package, repo root on `sys.path`); falls back to appending the
 repo root, then to loading `pools.py` straight from its file path (it is pure data). Exposes:
 
 | name | from pools | notes |

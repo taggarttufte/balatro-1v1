@@ -18,9 +18,9 @@ Consequences these tests pin down:
 
 Expected RED against today's engine (single ``random.Random`` stream, no ``run_state``); goes
 green as W2/W3 land.  Tests needing a hook that does not exist yet ``xfail`` (non-strict)
-instead of erroring -- see mp/tests/HARNESS_NOTES.md for the hook list.
+instead of erroring -- see tests/HARNESS_NOTES.md for the hook list.
 
-Run:  python -m pytest mp/tests/test_engine_invariants.py -q
+Run:  python -m pytest tests/test_engine_invariants.py -q
 """
 from __future__ import annotations
 

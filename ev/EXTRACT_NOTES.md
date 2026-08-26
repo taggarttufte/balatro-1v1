@@ -1,10 +1,10 @@
 # EXTRACT_NOTES — W-EXTRACT: the sandbag / money-extraction layer (Phase 5 rev 2, 2026-08-24/25)
 
-Files: `mp/ev/hand.py` (the layer: `ProcBoard`, the per-card proc arrays, `extraction_ev`,
-`extraction_lines`, the safety gate, the candidate lines), `mp/ev/player.py` (the advisor's
-money decomposition only), `mp/engine/balatro_sim/{game.py, jokers/base.py, jokers/misc.py}`
-(four proc-fidelity fixes), tests `mp/ev/tests/test_extraction.py` (35), driver
-`mp/ev/scripts/extract_dev_slice.py` (new, mine).  Nothing else was touched — `mp/ev/h2h.py`,
+Files: `ev/hand.py` (the layer: `ProcBoard`, the per-card proc arrays, `extraction_ev`,
+`extraction_lines`, the safety gate, the candidate lines), `ev/player.py` (the advisor's
+money decomposition only), `engine/balatro_sim/{game.py, jokers/base.py, jokers/misc.py}`
+(four proc-fidelity fixes), tests `ev/tests/test_extraction.py` (35), driver
+`ev/scripts/extract_dev_slice.py` (new, mine).  Nothing else was touched — `ev/h2h.py`,
 `gate_ev_player.py`, `pairs.py`, `train_v.py`, `advisor.py` are read-only here (see §9 for
 the two interface requests).
 
@@ -60,9 +60,9 @@ evaluation per hand decision.
 
 ## 1. Engine fidelity — the audit and the four fixes
 
-Every §1-brief proc was checked line-by-line against `mp/_reference/balatro_src/`.  Five were
+Every §1-brief proc was checked line-by-line against `_reference/balatro_src/`.  Five were
 already faithful; four defects were found and fixed.  The Lua citations below are repeated in
-the test docstrings (`mp/ev/tests/test_extraction.py`).
+the test docstrings (`ev/tests/test_extraction.py`).
 
 | proc | Lua | engine | verdict |
 |---|---|---|---|
@@ -103,8 +103,8 @@ the test docstrings (`mp/ev/tests/test_extraction.py`).
    The block moved above `interest = …` and gained the debuff check and the rep multiplier.
 
 Gates after the engine change: `engine_parity --antes 1-8 --rerolls 5` **126/126 exact**
-(unchanged), `pytest mp/engine/tests` **1651 passed / 10 skipped / 3 xfailed**,
-`pytest mp/tests` **1073 passed / 2 xfailed**.  The parity harness never scores a hand
+(unchanged), `pytest engine/tests` **1651 passed / 10 skipped / 3 xfailed**,
+`pytest tests` **1073 passed / 2 xfailed**.  The parity harness never scores a hand
 (`debug_win_blind`), so it could not have caught any of these — which is exactly why the
 Lua diff was done by hand.
 
@@ -283,13 +283,13 @@ scoring cards); the interaction between cycling for a tarot and cycling for a dr
 ## 8. Measurements — how to reproduce
 
 ```
-python mp/ev/gate_ev_player.py --procs 8                                  # gate (a)
-python mp/ev/scripts/extract_dev_slice.py scan  --seeds 126 --procs 8     # pick the slice
-python mp/ev/scripts/extract_dev_slice.py slice --procs 8 --seeds <slice> # gate (b)
-python mp/ev/scripts/extract_dev_slice.py slice --procs 8 --to-ante 6 --seeds <slice>
-python mp/ev/scripts/extract_dev_slice.py h2h   --n-seeds 30 --procs 8 --max-steps 4000
-python -m pytest mp/ev                                                    # gate (c)
-python -m mp.oracle.engine_parity --antes 1-8 --rerolls 5 --quiet
+python ev/gate_ev_player.py --procs 8                                  # gate (a)
+python ev/scripts/extract_dev_slice.py scan  --seeds 126 --procs 8     # pick the slice
+python ev/scripts/extract_dev_slice.py slice --procs 8 --seeds <slice> # gate (b)
+python ev/scripts/extract_dev_slice.py slice --procs 8 --to-ante 6 --seeds <slice>
+python ev/scripts/extract_dev_slice.py h2h   --n-seeds 30 --procs 8 --max-steps 4000
+python -m pytest ev                                                    # gate (c)
+python -m oracle.engine_parity --antes 1-8 --rerolls 5 --quiet
 ```
 
 **The dev slice (12 seeds).**  Chosen by `scan`, which plays every one of the 126 ground-truth
@@ -354,7 +354,7 @@ extra dollars have not yet been converted into enough build to flip a Nemesis.
 
 1. **`h2h.py` cannot express "the fast player with a different `HandConfig`."**  `build_player`
    parses `ev:fast+full+stats` tokens only, so gate (d) is run by
-   `mp/ev/scripts/extract_dev_slice.py h2h` instead (same design as `h2h.py`: both seatings,
+   `ev/scripts/extract_dev_slice.py h2h` instead (same design as `h2h.py`: both seatings,
    spawn pool, `common.bootstrap_ci`).  A one-line addition — an `ev:fast+noextract` token, or
    a generic `hand_cfg` override — would let the lead run it through the standard driver and
    write the standard JSON/MD.  Not made here: `h2h.py` is not this workstream's file.

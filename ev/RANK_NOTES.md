@@ -1,14 +1,14 @@
 # RANK_NOTES — W-RANK: lever (b)'s loss (Phase 5 rev 2 V-v2, 2026-08-24/25)
 
-Owns: `mp/ev/train_v.py` additions (the pairwise ranking loss, pair shard I/O,
-`player_fingerprint` filtering, extended bit-exact resume), `mp/ev/tests/test_train_v_pairs.py`
-(17 tests), this file.  Nothing else touched.  `mp/ev/dataset.py`, `mp/ev/labels.py`,
-`mp/ev/pairs.py`, `mp/ev/hand.py`, `mp/ev/player.py` are read-only from here — see §2 for why
+Owns: `ev/train_v.py` additions (the pairwise ranking loss, pair shard I/O,
+`player_fingerprint` filtering, extended bit-exact resume), `ev/tests/test_train_v_pairs.py`
+(17 tests), this file.  Nothing else touched.  `ev/dataset.py`, `ev/labels.py`,
+`ev/pairs.py`, `ev/hand.py`, `ev/player.py` are read-only from here — see §2 for why
 this module carries its own small mirror of `dataset.py`'s shard conventions instead of
 extending it.
 
 Coded against the FROZEN schema in `docs/PHASE5_V2_BRIEF_2026-08.md` §5.3 without waiting for
-W-PAIRS (brief instruction).  W-PAIRS's actual `mp/ev/pairs.py` landed mid-build (2026-08-25);
+W-PAIRS (brief instruction).  W-PAIRS's actual `ev/pairs.py` landed mid-build (2026-08-25);
 §2 records the reconciliation once it did.
 
 ---
@@ -17,9 +17,9 @@ W-PAIRS (brief instruction).  W-PAIRS's actual `mp/ev/pairs.py` landed mid-build
 
 | file | what |
 |---|---|
-| `mp/ev/train_v.py` | unchanged W5 trainer + this round's additions (below) |
-| `mp/ev/tests/test_train_v_pairs.py` | 17 tests: shard I/O, splits, fingerprint filtering, loss/metrics, bit-exact resume w/ pairs, gradient-flow smoke, the tiny-set overfit, real-`pairs.py` interop, CLI |
-| `mp/ev/tests/test_train_v.py` | unchanged (8 tests) — the pre-existing pinned resume test is left as-is; a NEW test extends it to pairs (§4) rather than editing the original, so "no pairs configured" stays independently pinned |
+| `ev/train_v.py` | unchanged W5 trainer + this round's additions (below) |
+| `ev/tests/test_train_v_pairs.py` | 17 tests: shard I/O, splits, fingerprint filtering, loss/metrics, bit-exact resume w/ pairs, gradient-flow smoke, the tiny-set overfit, real-`pairs.py` interop, CLI |
+| `ev/tests/test_train_v.py` | unchanged (8 tests) — the pre-existing pinned resume test is left as-is; a NEW test extends it to pairs (§4) rather than editing the original, so "no pairs configured" stays independently pinned |
 
 Additions to `train_v.py`, by section:
 
@@ -124,7 +124,7 @@ under those exact names.  The one real difference: their per-row JSON blob colum
 an earlier version of this module).  `test_reads_pairs_py_shards_directly` builds a REAL
 `pairs.PairRow` + calls the REAL `pairs.save_pair_shard`, then loads it with THIS module's
 `PairDataset.load` — passing end to end, so `--pair-shards` pointed at W-PAIRS's real
-`mp/ev/runs/pairs_s1/shards` (or the idle-box campaign's output) should load unchanged.
+`ev/runs/pairs_s1/shards` (or the idle-box campaign's output) should load unchanged.
 Not re-verified against `pairs.pair_job`'s actual output end-to-end (that needs a real rollout
 campaign, out of scope for a trainer smoke test) — only against its shard-writing path, which
 is the actual interface boundary between the two workstreams.
@@ -139,7 +139,7 @@ side of the holdout split (`test_split_by_seed_matches_absolute_dataset`).
 
 `dataset.py`'s typed `META_COLUMNS` doesn't carry `player_fingerprint` (not this workstream's
 file to add a column to), so absolute-row filtering reads it out of each row's free-form
-`meta` dict — the old 51k corpus (`mp/ev/runs/labels_full*`) simply lacks the key entirely,
+`meta` dict — the old 51k corpus (`ev/runs/labels_full*`) simply lacks the key entirely,
 which is exactly how brief §2 says to identify it ("usable for absolute-BCE pretraining, never
 silently mixed [with a DIFFERENT new policy] — the trainer must be able to filter").
 
@@ -241,11 +241,11 @@ real GPU pair-loss smoke belongs in the idle-box run alongside the full retrain,
 ## 6. Test count, deviations, open items
 
 **Tests**: 17 new (`test_train_v_pairs.py`) + 8 unchanged (`test_train_v.py`) = 25 in this
-workstream's scope, all green.  Full `mp/ev` suite: green as of this writing modulo unrelated,
+workstream's scope, all green.  Full `ev` suite: green as of this writing modulo unrelated,
 in-flight churn from concurrent workstreams editing shared files this round (W-EXTRACT's
 `hand.py`/engine changes, W-PAIRS's `pairs.py`/`test_pairs.py`) — verified each failure seen
-during this build traced into `mp/ev/hand.py`/`mp/ev/tests/test_extraction.py` (not this
-workstream's files) via traceback inspection before moving on; re-run `python -m pytest mp/ev`
+during this build traced into `ev/hand.py`/`ev/tests/test_extraction.py` (not this
+workstream's files) via traceback inspection before moving on; re-run `python -m pytest ev`
 at merge time for a final clean read.
 
 **Deviations from the brief, with rationale**:
@@ -268,7 +268,7 @@ at merge time for a final clean read.
 
 **Open for the lead / idle-box round (brief §8)**: retune `lam_rank`/`tau`/`pair_weight_cap`
 against REAL pair deltas once the full campaign lands (defaults here are principled but
-un-fit); confirm `--pair-shards mp/ev/runs/pairs_s1/shards` loads with zero changes needed
+un-fit); confirm `--pair-shards ev/runs/pairs_s1/shards` loads with zero changes needed
 (expected green per §2, not yet run against real campaign output since none existed during
 this build); decide whether `ece_guardrail`'s default (0.05) needs adjusting once real V-v2
 holdout ECE is measured with pairs in the loss.

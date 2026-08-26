@@ -14,7 +14,7 @@ seals -- "procs absent" per the brief's control recipe.  With nothing to extract
 ``extract_on`` is False (the fast zero-cost path, EXTRACT_NOTES section 3) and the top-ranked
 action is simply the clearing Ace-pair play.
 
-Verified ordering (``mp/ev/tests/test_probe_fixtures.py``, fast budget):
+Verified ordering (``ev/tests/test_probe_fixtures.py``, fast budget):
   sandbag:  discard [5,6]  (extract $8.00, two Tarots) ranks ABOVE play [0,1] (clear now)
   control:  play [0,1] (clear now) ranks ABOVE any discard -- the seals carry no reason to
             leave the aces alone, but with nothing to bank, clearing wins outright.
@@ -24,8 +24,8 @@ from __future__ import annotations
 import sys
 from pathlib import Path
 
-_HERE = Path(__file__).resolve().parent            # mp/ev/fixtures
-_EV = _HERE.parent                                  # mp/ev
+_HERE = Path(__file__).resolve().parent            # ev/fixtures
+_EV = _HERE.parent                                  # ev
 for _p in (str(_EV), str(_HERE)):
     if _p not in sys.path:
         sys.path.insert(0, _p)

@@ -30,7 +30,7 @@ once. There are two independent sources of them:
      before any is evaluated, held apart by virtual loss. This DOES change the search
      (later descents in a batch see stale statistics), so it is opt-in and only worth it
      when a single tree is the entire workload — which is exactly the tournament's
-     `Player.act(game)` shape today (`mp/tournament/runner.py::_drive_to_next_nemesis`
+     `Player.act(game)` shape today (`tournament/runner.py::_drive_to_next_nemesis`
      drives one agent at a time). See BATCH_NOTES.md §3.
 
 The two compose: K trees x L in flight = a batch of K*L.

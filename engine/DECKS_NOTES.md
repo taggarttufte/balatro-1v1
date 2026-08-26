@@ -13,9 +13,9 @@ was copied.
 
 | gate | result |
 |---|---|
-| `python -m pytest mp/engine/tests -q` | **1584 passed / 10 skipped / 3 xfailed / 0 failed** (1441 at kickoff; +143 new, 1 assertion updated) |
-| `python -m pytest mp/tests -q` | **393 passed / 2 xfailed / 0 failed** (unchanged) |
-| `python -m mp.oracle.engine_parity --antes 1-8 --rerolls 5 --quiet` | **126/126 EXACT through ante 8** (Red / White unchanged) |
+| `python -m pytest engine/tests -q` | **1584 passed / 10 skipped / 3 xfailed / 0 failed** (1441 at kickoff; +143 new, 1 assertion updated) |
+| `python -m pytest tests -q` | **393 passed / 2 xfailed / 0 failed** (unchanged) |
+| `python -m oracle.engine_parity --antes 1-8 --rerolls 5 --quiet` | **126/126 EXACT through ante 8** (Red / White unchanged) |
 | Checkered + Plasma vs Red, 12 ground-truth seeds, every shop / boss / tag through ante 4 | **0 mismatches** (script in §4; 3-seed version is `TestGenerationUnchanged`) |
 
 ## 1. Per-deck status

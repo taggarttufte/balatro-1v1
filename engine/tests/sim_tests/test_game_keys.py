@@ -1,5 +1,5 @@
 """
-test_game_keys.py — the engine speaks GAME keys, with mp/rng/pools.py as the
+test_game_keys.py — the engine speaks GAME keys, with rng/pools.py as the
 single source of truth (Phase 1 W1, 2026-08-21).
 
 Guards:

@@ -4,7 +4,7 @@ bench_decide.py -- gate-3 timing benchmark: mean/p95 of ``decide.decision_table`
 states). Single-process, sequential -- this is a light read-only benchmark (state
 collection + timing only), safe to run interactively.
 
-Usage: python mp/stats/bench_decide.py [--n-states 300] [--seeds N]
+Usage: python stats/bench_decide.py [--n-states 300] [--seeds N]
 """
 from __future__ import annotations
 

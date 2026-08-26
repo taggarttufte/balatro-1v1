@@ -5,7 +5,7 @@ The game's REAL generation functions -- ``get_current_pool``, ``create_card``, `
 ``reset_idol_card``/``reset_mail_rank``/``reset_ancient_card``/``reset_castle_card``,
 ``create_card_for_shop`` (UI_definitions.lua:742-800), the ``Card:open`` pack loop
 (card.lua:1726-1781) and the primitives from misc_functions.lua -- are loaded VERBATIM from
-``mp/_reference/balatro_src`` into LuaJIT 2.1 (lupa) at test time, together with the game's own
+``_reference/balatro_src`` into LuaJIT 2.1 (lupa) at test time, together with the game's own
 ``Game:init_item_prototypes`` and ``Game:init_game_object``.  Only ``G``/``Card``/UI plumbing is
 stubbed (see ``_LUA_HARNESS``; the ``Card`` stub reproduces what ``Card:set_ability`` and
 ``Card:remove`` do to ``G.GAME.used_jokers``, card.lua:349-354 / 4741-4747).
@@ -70,7 +70,7 @@ def _sources_available() -> bool:
 
 pytestmark = pytest.mark.skipif(
     not (_lupa_available() and _sources_available()),
-    reason="needs lupa (LuaJIT 2.1) and the extracted game Lua under mp/_reference/balatro_src",
+    reason="needs lupa (LuaJIT 2.1) and the extracted game Lua under _reference/balatro_src",
 )
 
 

@@ -18,7 +18,7 @@ card the Sun then lands on is not modelled.
 produces a non-zero cycle value for any candidate that discards away the satisfying cards,
 holding nothing means the tarot machinery never engages at all).
 
-Verified ordering (``mp/ev/tests/test_probe_fixtures.py``, fast budget): the top-ranked
+Verified ordering (``ev/tests/test_probe_fixtures.py``, fast budget): the top-ranked
 clearing PLAY in the sandbag carries a strictly positive cycle bonus (``extract $0.93``) over
 the identical action's EV in the control (no bonus) -- the ordering claim here is on the
 EXTRACTION TERM, not a rank swap between two different actions (there is no non-cycling
@@ -30,8 +30,8 @@ from __future__ import annotations
 import sys
 from pathlib import Path
 
-_HERE = Path(__file__).resolve().parent            # mp/ev/fixtures
-_EV = _HERE.parent                                  # mp/ev
+_HERE = Path(__file__).resolve().parent            # ev/fixtures
+_EV = _HERE.parent                                  # ev
 for _p in (str(_EV), str(_HERE)):
     if _p not in sys.path:
         sys.path.insert(0, _p)

@@ -2,11 +2,11 @@
 gate_ev_player.py — Phase 5 gate 2 (W3): the analytic EV player on the 126 ground-truth
 seeds, vanilla ruleset, Red deck, White stake, against the scripted greedy baseline.
 
-    python mp/ev/gate_ev_player.py --procs 16                       # the full gate (126 seeds)
-    python mp/ev/gate_ev_player.py --seeds 12 --procs 4             # a small subset
-    python mp/ev/gate_ev_player.py --seeds 12 --offset 60 --procs 4 --players fast,greedy
+    python ev/gate_ev_player.py --procs 16                       # the full gate (126 seeds)
+    python ev/gate_ev_player.py --seeds 12 --procs 4             # a small subset
+    python ev/gate_ev_player.py --seeds 12 --offset 60 --procs 4 --players fast,greedy
 
-Writes ``mp/results/ev_player_gate_<date>.md`` + ``.json`` (``--out`` to override).  Per
+Writes ``results/ev_player_gate_<date>.md`` + ``.json`` (``--out`` to override).  Per
 seed and player: furthest ante / blind, won, blinds cleared, $ at the start of ante 3, hands
 unused per cleared blind, wall-clock per SELECTING_HAND / SHOP decision; in-process
 draw-order invariance checks (permute ``game.deck`` -> identical decision); one
@@ -25,7 +25,7 @@ import sys
 import time
 from pathlib import Path
 
-_HERE = Path(__file__).resolve().parent                    # mp/ev
+_HERE = Path(__file__).resolve().parent                    # ev
 _MP = _HERE.parent
 for _p in (str(_HERE), str(_MP), str(_MP / "eval"), str(_MP / "agent")):
     if _p not in sys.path:
@@ -33,7 +33,7 @@ for _p in (str(_HERE), str(_MP), str(_MP / "eval"), str(_MP / "agent")):
 
 import _bootstrap  # noqa: E402,F401
 from _bootstrap import BalatroGame, State, MLBMatch  # noqa: E402
-import common as C  # noqa: E402  (mp/eval/common.py)
+import common as C  # noqa: E402  (eval/common.py)
 
 _BLIND_ORDER = {"Small": 0, "Big": 1, "Boss": 2}
 PLAYERS = ("fast", "full", "greedy")
@@ -233,7 +233,7 @@ def main(argv=None):
     ap.add_argument("--players", default="fast,full,greedy")
     ap.add_argument("--inv-checks", type=int, default=6, help="draw-order invariance checks per (seed, player)")
     ap.add_argument("--no-mlb", action="store_true")
-    ap.add_argument("--out", default=None, help="results stem (default mp/results/ev_player_gate_<date>)")
+    ap.add_argument("--out", default=None, help="results stem (default results/ev_player_gate_<date>)")
     args = ap.parse_args(argv)
     seeds = C.DEFAULT_SEEDS[args.offset: args.offset + args.seeds] if args.seeds else C.DEFAULT_SEEDS[args.offset:]
     players = [p.strip() for p in args.players.split(",") if p.strip()]
@@ -262,7 +262,7 @@ def main(argv=None):
     summary = {p: summarise(per_seed[p]) for p in players}
     deltas = {p: paired(per_seed[p], per_seed["greedy"]) for p in players if p != "greedy" and "greedy" in per_seed}
     mlb = {} if args.no_mlb else run_mlb_match(seeds[0])
-    meta = {"date": date, "command": "python mp/ev/gate_ev_player.py " + " ".join(sys.argv[1:]), "n_seeds": len(seeds),
+    meta = {"date": date, "command": "python ev/gate_ev_player.py " + " ".join(sys.argv[1:]), "n_seeds": len(seeds),
             "offset": args.offset, "procs": args.procs, "players": players, "wall_s": time.time() - t0,
             "cpu_count": os.cpu_count()}
     write_report(stem.with_suffix(".md"), stem.with_suffix(".json"), summary, per_seed, deltas, mlb, meta)

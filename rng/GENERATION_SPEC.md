@@ -1,10 +1,10 @@
 # Balatro 1.0.1o Generation Spec
 
-**Owner:** Agent C. **Implements:** `mp/rng/generate.py`. **Depends on:** `core.py` (Agent A, RNG
+**Owner:** Agent C. **Implements:** `rng/generate.py`. **Depends on:** `core.py` (Agent A, RNG
 primitives), `pools.py` (Agent B, ordered pools). **Status:** every algorithm below is ported and
 cross-checked against the *real* Lua functions executing in LuaJIT 2.1 (see section 18).
 
-All citations are `file:line` into `mp/_reference/balatro_src/` (1.0.1o). Port the algorithms;
+All citations are `file:line` into `_reference/balatro_src/` (1.0.1o). Port the algorithms;
 never copy the Lua into deliverables.
 
 ---
@@ -636,7 +636,7 @@ the stateless branch) is a legendary without a gold-stake win sticker. Typed see
 
 ---
 
-## 18. Validation performed (`mp/tests/test_generate_oracle.py`)
+## 18. Validation performed (`tests/test_generate_oracle.py`)
 
 The **real** Lua functions `get_current_pool`, `create_card`, `poll_edition`, `get_pack`,
 `get_next_voucher_key`, `get_next_tag_key`, `get_new_boss`, `reset_idol_card/mail/ancient/castle`,
@@ -652,7 +652,7 @@ Tag cards, Voucher Tag x2, Aura x3, Erratic deck, idol/mail/anc/cas) over 30+22 
 **0 mismatches** in keys, fronts, editions, seals, stickers, vouchers, tags, bosses,
 `used_jokers` and `bosses_used`, after normalising the cosmetic Buffoon art suffix.
 
-The harness is the repo test `mp/tests/test_generate_oracle.py` (15 seeds x 7 scenarios + 20
+The harness is the repo test `tests/test_generate_oracle.py` (15 seeds x 7 scenarios + 20
 creation-path seeds, ~2 s; skips without lupa / `_reference`).
 
 **Runtime check against the game's own binary.** Balatro's `lua51.dll` reports `LuaJIT 2.0.5`

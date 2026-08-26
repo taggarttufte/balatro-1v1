@@ -1,10 +1,10 @@
 """
 cli.py — run an N-agent same-seed MLB tournament from the command line.
 
-    python -m mp.tournament.cli --seed 7I4M53DL --n 100 --life-rule none --max-ante 8
-    python -m mp.tournament.cli --seed 7I4M53DL --n 100 --life-rule paired --max-ante 40
-    python -m mp.tournament.cli --seed 7I4M53DL --n 32 --life-rule median --max-ante 8 \
-        --out mp/tournament/runs/demo
+    python -m tournament.cli --seed 7I4M53DL --n 100 --life-rule none --max-ante 8
+    python -m tournament.cli --seed 7I4M53DL --n 100 --life-rule paired --max-ante 40
+    python -m tournament.cli --seed 7I4M53DL --n 32 --life-rule median --max-ante 8 \
+        --out tournament/runs/demo
 
 Prints a per-ante summary (n present, score mean/std/median, tie fraction — the degeneracy
 metric, TOURNAMENT_NOTES.md §"heterogeneity"), how many died into that ante's Nemesis, and

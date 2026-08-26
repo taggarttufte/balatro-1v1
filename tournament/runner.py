@@ -49,8 +49,8 @@ __all__ = [
 
 # The synthetic op a trajectory log records when this module mutates a game OUTSIDE
 # ``step()`` -- the cross-agent life rule below is the only such place.  Value must match
-# ``mp/replay/_util.py::OP_LOSE_LIFE`` (REPLAY_NOTES.md §2.3); duplicated as a literal rather
-# than imported so ``mp/tournament`` keeps no dependency on ``mp/replay``, and pinned by
+# ``replay/_util.py::OP_LOSE_LIFE`` (REPLAY_NOTES.md §2.3); duplicated as a literal rather
+# than imported so ``tournament`` keeps no dependency on ``replay``, and pinned by
 # ``tests/test_trajectory_hook.py``.
 OP_LOSE_LIFE = "__lose_life__"
 
@@ -175,7 +175,7 @@ def _drive_to_next_nemesis(game, player, max_steps: int = 20_000,
     stored on the game: ``state_signature()`` sweeps up EVERY int/float/str/bool attribute of
     the game object (game.py:923), so attaching a diagnostic counter to it silently changes
     the run's signature and breaks trajectory replay.  Learned the hard way -- see
-    ``mp/agent/TRAIN_NOTES.md`` "Found, not fixed".
+    ``agent/TRAIN_NOTES.md`` "Found, not fixed".
     """
     n = 0
     sig = game.state_signature() if noop_budget else None
@@ -303,7 +303,7 @@ class Tournament:
         # ``BalatroGame`` -- which nothing outside this class used to be able to see until
         # ``run()`` had already finished.  Never mutate the games from here.
         self.on_fanout = on_fanout
-        # Trajectory-logging hooks (Phase 4 W2, for W3's ``mp/replay``; REPLAY_NOTES §2.3).
+        # Trajectory-logging hooks (Phase 4 W2, for W3's ``replay``; REPLAY_NOTES §2.3).
         # ``on_step(agent_idx, game, action)`` fires after EVERY ``game.step()`` this module
         # performs -- the agent's own actions, the no-progress guard's forced action, and
         # ``_cash_out``'s advance -- plus a synthetic ``{"type": OP_LOSE_LIFE}`` after the

@@ -1,6 +1,6 @@
 """Balatro's keyed pseudorandom core, ported from ``functions/misc_functions.lua``
 (1.0.1o) and validated bit-for-bit against the game's own Lua executing in
-LuaJIT (see ``mp/tests/test_rng_core.py``).
+LuaJIT (see ``tests/test_rng_core.py``).
 
 The game's chain for one keyed draw is::
 

@@ -33,7 +33,7 @@ Feature detection (Stage 1 was built before W1/W2/W3 landed):
     flag in the result (rollouts then share the true future; fine for plumbing tests, NOT a
     valid label — ``label_job`` refuses unless ``allow_clairvoyant=True``).
   * ``ev.player.EVPlayer`` (W3) — absent → the scripted greedy policy from
-    ``mp/scripts/mlb_match_demo`` with epsilon-random actions (``policy="scripted"``).
+    ``scripts/mlb_match_demo`` with epsilon-random actions (``policy="scripted"``).
   * ``mcts.encoder_v2`` (W1) — absent → ``encoder="dummy"`` (16 scalars) for plumbing tests.
 """
 from __future__ import annotations
@@ -74,7 +74,7 @@ def has_determinize() -> bool:
 
 def has_ev_player() -> bool:
     try:
-        import player as _p  # noqa: F401  (mp/ev/player.py, W3)
+        import player as _p  # noqa: F401  (ev/player.py, W3)
         return hasattr(_p, "EVPlayer")
     except Exception:
         return False
@@ -146,7 +146,7 @@ def _with_epsilon(obj, seed: int, epsilon: float) -> Callable:
 
 
 def _ev_policy(seed: int, epsilon: float, budget: str, value_fn=None, stats=None) -> Callable:
-    import player as P                 # mp/ev/player.py (W3)
+    import player as P                 # ev/player.py (W3)
     kw = {"budget": budget, "seed": seed, "epsilon": 0.0}
     if stats is not None:
         kw["stats"] = stats
@@ -154,8 +154,8 @@ def _ev_policy(seed: int, epsilon: float, budget: str, value_fn=None, stats=None
 
 
 def load_stats_module():
-    """W4's ``mp/stats/decide`` (has ``decision_table(game)``), importable as ``stats=`` for
-    ``EVPlayer``.  mp/stats is a flat package with its own bootstrap, so it goes on sys.path."""
+    """W4's ``stats/decide`` (has ``decision_table(game)``), importable as ``stats=`` for
+    ``EVPlayer``.  stats is a flat package with its own bootstrap, so it goes on sys.path."""
     stats_dir = os.path.join(str(MP_ROOT), "stats")
     if stats_dir not in sys.path:
         sys.path.insert(0, stats_dir)

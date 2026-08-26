@@ -5,7 +5,7 @@ tags.py -- Balatro 1.0.1o skip-blind Tags: the EFFECTS of all 24 tags, ported fr
 Scope
 -----
 * The *draw* of a tag (``get_next_tag_key``, key ``'Tag'..ante``) is Agent C's
-  ``mp/rng/generate.py``.  The *orbital hand* draw (key ``'orbital'``) is
+  ``rng/generate.py``.  The *orbital hand* draw (key ``'orbital'``) is
   ``generate.orbital_hand``.  Neither is imported here: this module is engine-agnostic and
   pure.  Everything it needs from the outside world comes through a :class:`TagContext`.
 * :class:`TagState` mirrors ``G.GAME.tags`` (oldest first) plus the three pieces of

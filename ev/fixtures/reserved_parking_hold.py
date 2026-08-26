@@ -16,7 +16,7 @@ held-face money (EXTRACT_NOTES.md section 2's ``proc_hold`` / ``_play_extraction
 ``build_control()``: the SAME hand shape without Reserved Parking -- "procs absent." A weak
 filler play no longer banks anything, so playing the Jacks to clear now wins outright.
 
-Verified ordering (``mp/ev/tests/test_probe_fixtures.py``, fast budget):
+Verified ordering (``ev/tests/test_probe_fixtures.py``, fast budget):
   sandbag:  play [7]  (lone filler, holds both Jacks, extract $1.00 Parking) ranks ABOVE
             play [0,1] (Jacks, clears now) -- the Jacks line ranks 9th, all 8 lines above it
             extract Parking money.
@@ -27,8 +27,8 @@ from __future__ import annotations
 import sys
 from pathlib import Path
 
-_HERE = Path(__file__).resolve().parent            # mp/ev/fixtures
-_EV = _HERE.parent                                  # mp/ev
+_HERE = Path(__file__).resolve().parent            # ev/fixtures
+_EV = _HERE.parent                                  # ev
 for _p in (str(_EV), str(_HERE)):
     if _p not in sys.path:
         sys.path.insert(0, _p)

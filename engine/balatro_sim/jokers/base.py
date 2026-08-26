@@ -4,7 +4,7 @@ base.py — Joker base class, registry, keyed-RNG accessors and hook helpers.
 Phase 1 W3 (effect-roll keys): every stochastic joker / card effect draws from
 the run's keyed ``PseudoRandom`` (``game.run_state.rng``) through
 ``ScoreContext.prng`` with the exact key string the real game uses
-(mp/rng/keys.py). There is NO unseeded fallback: a hook that needs a roll and
+(rng/keys.py). There is NO unseeded fallback: a hook that needs a roll and
 has no context raises. The legacy single-stream ``game.rng`` is gone.
 """
 from dataclasses import dataclass, field
@@ -15,7 +15,7 @@ if TYPE_CHECKING:
 
 class _JokerRegistry(dict):
     """
-    key -> singleton effect object. Keys are the GAME keys from mp/rng/pools.py
+    key -> singleton effect object. Keys are the GAME keys from rng/pools.py
     (`j_joker`, `j_ring_master`, ...). Registering the same key twice is an
     error: before the Phase 1 re-key 36 keys were registered in two modules
     with "last import wins" semantics, and the winner was the wrong
@@ -39,7 +39,7 @@ _PRNG_METHODS = ("pseudorandom", "pseudorandom_element", "pseudoshuffle")
 
 
 def is_prng(obj) -> bool:
-    """True if ``obj`` has the three draw methods of ``mp.rng.core.PseudoRandom``."""
+    """True if ``obj`` has the three draw methods of ``rng.core.PseudoRandom``."""
     return obj is not None and all(callable(getattr(obj, m, None)) for m in _PRNG_METHODS)
 
 
@@ -68,7 +68,7 @@ def prob_roll(ctx, key: str, odds: float) -> bool:
     return rng_of(ctx).pseudorandom(key) < ctx.probabilities_normal / odds
 
 
-# poll_edition() in mp/rng/generate.py returns the game's short names.
+# poll_edition() in rng/generate.py returns the game's short names.
 GEN_EDITION_TO_ENGINE = {"foil": "Foil", "holo": "Holographic", "polychrome": "Polychrome",
                          "negative": "Negative", None: "None"}
 

@@ -1,8 +1,8 @@
 """
 log.py — TrajectoryLogger (one BalatroGame) + MatchLogger (one MLBMatch): the whole logging
 hook a caller wires in.  See REPLAY_NOTES.md "Hook contract" for the exact call sites in
-mp/agent/train/loop.py::run_episode, the future W2 tournament-driven loop, and
-mp/tournament/runner.py::Tournament / mp/engine/balatro_sim/mlb_match.py::MLBMatch.
+agent/train/loop.py::run_episode, the future W2 tournament-driven loop, and
+tournament/runner.py::Tournament / engine/balatro_sim/mlb_match.py::MLBMatch.
 
 Contract (3 calls total, ``step`` reused once per actual state transition):
 

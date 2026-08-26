@@ -4,7 +4,7 @@
  * field by field.  This documents that the vendored Blueprint commit still agrees with
  * Immolate on boss / voucher / tags / shop queue / packs for those 9 seeds.
  *
- *   cd mp/oracle/blueprint_runner/vendor/Blueprint
+ *   cd oracle/blueprint_runner/vendor/Blueprint
  *   npx vite-node ../../check_fixtures.ts
  */
 import * as fs from "node:fs";

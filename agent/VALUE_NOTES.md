@@ -1,17 +1,17 @@
 # VALUE_NOTES — Phase 5 W1: STATE_SPEC v1 encoder + `SetValueNet` (5M)
 
-**Agent W1, 2026-08-23.** Deliverable: `mp/agent/mcts/encoder_v2.py`, `mp/agent/mcts/value_net.py`,
+**Agent W1, 2026-08-23.** Deliverable: `agent/mcts/encoder_v2.py`, `agent/mcts/value_net.py`,
 `tests/test_encoder_v2.py` (23), `tests/test_value_net.py` (12), this file, and one additive change to
-`mp/engine/balatro_sim/mlb_match.py` (§6). `encoder_set.py` / `model_set.py` are **byte-for-byte
+`engine/balatro_sim/mlb_match.py` (§6). `encoder_set.py` / `model_set.py` are **byte-for-byte
 unchanged**; the v2 encoder subclasses `SetEncoder` and the value net imports `model_set`'s blocks.
-Nothing here imports `mp/ev` or `mp/stats`.
+Nothing here imports `ev` or `stats`.
 
 ---
 
 ## 0. Interfaces (as implemented)
 
 ```python
-# mp/agent/mcts/encoder_v2.py
+# agent/mcts/encoder_v2.py
 STATE_SPEC_VERSION = 1
 SCALAR_LAYOUT_V2: list[tuple[str, int]]      # 28 blocks, spec order; SCALAR_DIM_V2 = 355
 KEY_VOCAB_V2 / KEY_VOCAB_SIZE_V2 = 439       # KEY_IDX_V2, key_index_v2(key), SPARE_KEY_MAP, SPARE_KEY_BASE = 407
@@ -36,7 +36,7 @@ class SetEncoderV2(SetEncoder):              # name = "set_v2", is_set = True, d
     batch(obs_list) -> Obs                   # inherited
 def collate(obs_list, device="cpu") -> dict[str, torch.Tensor]   # packed transfer off-CPU (policy_set._stack_obs)
 
-# mp/agent/mcts/value_net.py
+# agent/mcts/value_net.py
 @dataclass class ValueNetConfig(d_item=128, n_heads=4, ffn_mult=2, key_emb=64, card_emb=12, aux_emb=8,
                                 trunk_width=712, n_res_blocks=3, scalar_hidden=384, caps=dict,
                                 scalar_dim=355, key_vocab=439)          # .as_dict() / .from_dict()
@@ -187,9 +187,9 @@ At B=1 CUDA is launch-bound and slower than CPU, exactly as for the Phase-4 set 
 
 | suite | result |
 |---|---|
-| `python -m pytest mp/agent/tests` | **396 passed / 0 failed** (337 at kickoff + W1's 35: 23 `test_encoder_v2.py` + 12 `test_value_net.py` (1 CUDA test, skipped without a GPU) + W2's 24 `test_determinize_player.py` that landed concurrently; 192 s on the shared box — W1's two files run in 3.5 s) |
-| `python -m pytest mp/engine/tests` | **1649 passed / 10 skipped / 3 xfailed** (1614 at kickoff + W2's determinize tests, all green with the `mlb_match.py` change) |
-| `python -m pytest mp/tests` | **1073 passed / 2 xfailed** (unchanged) |
+| `python -m pytest agent/tests` | **396 passed / 0 failed** (337 at kickoff + W1's 35: 23 `test_encoder_v2.py` + 12 `test_value_net.py` (1 CUDA test, skipped without a GPU) + W2's 24 `test_determinize_player.py` that landed concurrently; 192 s on the shared box — W1's two files run in 3.5 s) |
+| `python -m pytest engine/tests` | **1649 passed / 10 skipped / 3 xfailed** (1614 at kickoff + W2's determinize tests, all green with the `mlb_match.py` change) |
+| `python -m pytest tests` | **1073 passed / 2 xfailed** (unchanged) |
 
 What the tests pin: layout widths/offsets/order; vocabulary sizes against the live tables + the Phase-4
 prefix + the spare-id promise; fingerprint stable and sensitive to caps / layout / vocab / version;
@@ -215,7 +215,7 @@ train/eval mode restored; a gradient step moves the loss; CPU == CUDA.
    it; the opponent's ante disambiguates "they are in the shop" (which ante's shop).
 2. **`opp_econ` 4 included** (Tagg's open item 2 — "I'd say yes"): sells this ante, $ spent this ante, and
    the two run totals. The engine did not record them, so `MLBMatch` now does (§6).
-3. **`pvp_log` was NOT extended in place.** `mp/replay/replay.py:288` and `mp/eval/common.py:323` unpack
+3. **`pvp_log` was NOT extended in place.** `replay/replay.py:288` and `eval/common.py:323` unpack
    it as exactly four values, so a 7-tuple would have broken frozen readers. A parallel `pvp_detail` list
    carries `(ante, loser, s0, s1, hands_played0, hands_played1, early_end)`; `pvp_log` is untouched.
 4. **Blind-offer semantics in the post-boss shop.** `_end_round` advances `ante` on entering the shop while
@@ -240,7 +240,7 @@ train/eval mode restored; a gradient step moves the loss; CPU == CUDA.
 10. `make_value_fn` returns **P(win)** (sigmoid), since `value_fn` is V(state) = P(win) in the brief; the
     raw logit is `net(batch)`.
 
-## 6. The engine change (`mp/engine/balatro_sim/mlb_match.py`, additive only)
+## 6. The engine change (`engine/balatro_sim/mlb_match.py`, additive only)
 
 * `PlayerView` gains defaulted fields `hands_played`, `sells_per_ante`, `spent_in_shop`, `sells_total`,
   `spent_total`, `last_life_loss_ante` (positional construction unchanged).

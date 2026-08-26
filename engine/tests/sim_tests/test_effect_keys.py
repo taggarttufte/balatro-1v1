@@ -4,7 +4,7 @@ exact key string the game uses, the right number of times, in the right order.
 
 Mechanism: ``RecordingPRNG`` wraps the run's bit-exact ``PseudoRandom`` and logs
 ``(method, key[, m, n])`` for every draw while delegating to the real thing, so the
-assertions below pin both the KEY (mp/rng/keys.py) and the DRAW COUNT per trigger
+assertions below pin both the KEY (rng/keys.py) and the DRAW COUNT per trigger
 (card.lua / state_events.lua call sites cited in EFFECTS_NOTES.md).
 
 Phase 1 W3 (P1-effects).

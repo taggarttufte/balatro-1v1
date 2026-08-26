@@ -2,14 +2,14 @@
 tournament_v.py — paired-by-seed MLB matches: ``EVPlayer(value_fn=V)`` vs ``EVPlayer(value_fn=None)``
 (Phase 5 rev 2, W5; gate 4's end-to-end check).
 
-    python mp/ev/scripts/tournament_v.py --checkpoint mp/ev/runs/v_s2/latest.pt --seeds default:30 \
+    python ev/scripts/tournament_v.py --checkpoint ev/runs/v_s2/latest.pt --seeds default:30 \
         --workers 4 --name v_s2
 
 One pool job = one seed = TWO matches (V in seat 0, then V in seat 1) through
 ``eval.common.play_1v1`` (``MLBMatch.play_out``, canonical alternation), so the seat is
 balanced within the pair.  Reports V's win count / rate with a Wilson 95% interval, the
 per-seat split, mean lives margin, mean final ante, and the V-call count / errors.  Writes
-``mp/results/tournament_v_<name>.json``.  Nothing in mp/eval or mp/tournament is edited.
+``results/tournament_v_<name>.json``.  Nothing in eval or tournament is edited.
 """
 from __future__ import annotations
 

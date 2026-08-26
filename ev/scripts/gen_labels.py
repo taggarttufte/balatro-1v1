@@ -1,10 +1,10 @@
 """
 gen_labels.py — the label campaign driver (Phase 5 rev 2, W5).
 
-    python mp/ev/scripts/gen_labels.py --run-dir mp/ev/runs/labels_a --seeds default+random:400 \
+    python ev/scripts/gen_labels.py --run-dir ev/runs/labels_a --seeds default+random:400 \
         --n-states 12 --n-rollouts 8 --workers 16 --minutes 600
-    touch mp/ev/runs/labels_a/PAUSE          # stops submitting; in-flight jobs finish; flush
-    python mp/ev/scripts/gen_labels.py --run-dir mp/ev/runs/labels_a --seeds default+random:400  # resumes
+    touch ev/runs/labels_a/PAUSE          # stops submitting; in-flight jobs finish; flush
+    python ev/scripts/gen_labels.py --run-dir ev/runs/labels_a --seeds default+random:400  # resumes
 
 One pool job = one seed (``labels.label_job``): self-play → stratified snapshots → labels for
 both perspectives → encoded rows.  Rows are buffered in the main process and flushed to
@@ -17,7 +17,7 @@ not saved.  Restarting with the same ``--run-dir`` and seed list skips the recor
 set (``independent_perspectives``), for the sum-to-one check in the summary.
 
 Outputs: ``<run-dir>/gen.jsonl`` (config / flush / summary), console one line per flush,
-``mp/results/labels_<name>.json`` (dataset summary: label mean/sd by kind and ante, CI
+``results/labels_<name>.json`` (dataset summary: label mean/sd by kind and ante, CI
 widths, truncation fraction, symmetry check, throughput).
 """
 from __future__ import annotations
@@ -32,8 +32,8 @@ import time
 from datetime import datetime
 from pathlib import Path
 
-HERE = Path(__file__).resolve().parent          # mp/ev/scripts
-EV_ROOT = HERE.parent                            # mp/ev
+HERE = Path(__file__).resolve().parent          # ev/scripts
+EV_ROOT = HERE.parent                            # ev
 MP_ROOT = EV_ROOT.parent                         # mp
 for _p in (str(EV_ROOT), str(MP_ROOT)):
     if _p not in sys.path:

@@ -24,7 +24,7 @@ Import map:
     protocol.py   the picklable messages
 
 and the trainer that ties them together is ``train/parallel.py::ParallelMLBTrainer``.
-See ``mp/agent/PARALLEL_NOTES.md``.
+See ``agent/PARALLEL_NOTES.md``.
 """
 
 __all__ = []

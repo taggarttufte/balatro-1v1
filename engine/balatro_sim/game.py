@@ -64,7 +64,7 @@ from .shop import (
     booster_contents, effective_price, can_afford, emplace_joker, BOOSTER_PICKS,
     EDITION_FROM_GEN, front_to_rank_suit, SHELF_KINDS,
 )
-from . import game_keys as _gk   # exposes gen (mp.rng.generate), core, normalize_seed, seed_from_int — Phase 1 seam
+from . import game_keys as _gk   # exposes gen (rng.generate), core, normalize_seed, seed_from_int — Phase 1 seam
 from . import tags as _tags      # W6 tag effects; wired here (W2), see DELEGATE_NOTES.md
 from . import decks as _decks    # Phase 2 W3: deck catalogue + engine-side deck hooks (DECKS_NOTES.md)
 from . import stakes as _stakes  # Phase 2 W3: stake catalogue + engine-side stake modifiers
@@ -145,7 +145,7 @@ class GameState:
 # blind.lua:605-622): the card is hidden from the observation (env_v7 zeroes its
 # features) and revealed when played / discarded / at round end.
 
-# Keys are the game's `bl_*` keys from mp/rng/pools.py (the five showdown
+# Keys are the game's `bl_*` keys from rng/pools.py (the five showdown
 # bosses were `bl_final_acorn/cerulean/crimson/verdant/violet` before the Phase 1
 # re-key; the game calls them `bl_final_acorn/bell/heart/leaf/vessel`).
 # `BOSS_MIN_ANTE` / `BOSS_MAX_ANTE` carry the game's `boss.min`/`boss.max`

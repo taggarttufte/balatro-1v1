@@ -1,33 +1,33 @@
 # GATE_NOTES — Phase 2 exit gate (W4, 2026-08-21)
 
-**Agent W4.**  Files: `mp/scripts/mlb_match_demo.py` (match driver + trace + RNG-key tools),
-`mp/tests/test_mlb_match_gate.py` (507 tests), three additions at the end of
-`mp/tests/test_engine_invariants.py` (22 tests), this note.  Nothing under `engine/` or `rng/`
+**Agent W4.**  Files: `scripts/mlb_match_demo.py` (match driver + trace + RNG-key tools),
+`tests/test_mlb_match_gate.py` (507 tests), three additions at the end of
+`tests/test_engine_invariants.py` (22 tests), this note.  Nothing under `engine/` or `rng/`
 was touched; no engine bug was fixed (none found — see §6).
 
 ## 0. Gates (final run, repo root, `python` = 3.13)
 
 | gate | result |
 |---|---|
-| `python -m pytest mp/engine/tests -q` | **1609 passed / 10 skipped / 3 xfailed / 0 failed** (unchanged from W1/W2/W3 hand-off) |
-| `python -m pytest mp/tests -q` | **1073 passed / 2 xfailed / 0 failed** (544 + 507 gate + 22 invariants) |
-| `python -m mp.oracle.engine_parity --antes 1-8 --rerolls 5 --quiet` | **126/126 EXACT through ante 8** |
-| `python -m mp.oracle.parity_check --antes 1-8 --variant faithful` | **126/126 EXACT through ante 8** |
-| `python mp/scripts/mlb_match_demo.py --seed 7I4M53DL` | full match trace, P2 wins at ante 2 (117 steps) |
-| `python -m pytest mp/tests/test_mlb_match_gate.py -q -rx` | **507 passed / 0 xfail / 0 failed**, ~27 s |
+| `python -m pytest engine/tests -q` | **1609 passed / 10 skipped / 3 xfailed / 0 failed** (unchanged from W1/W2/W3 hand-off) |
+| `python -m pytest tests -q` | **1073 passed / 2 xfailed / 0 failed** (544 + 507 gate + 22 invariants) |
+| `python -m oracle.engine_parity --antes 1-8 --rerolls 5 --quiet` | **126/126 EXACT through ante 8** |
+| `python -m oracle.parity_check --antes 1-8 --variant faithful` | **126/126 EXACT through ante 8** |
+| `python scripts/mlb_match_demo.py --seed 7I4M53DL` | full match trace, P2 wins at ante 2 (117 steps) |
+| `python -m pytest tests/test_mlb_match_gate.py -q -rx` | **507 passed / 0 xfail / 0 failed**, ~27 s |
 
 ## 1. How to run
 
 ```
 cd C:/Users/Taggart/projects/balatro-rl
-python mp/scripts/mlb_match_demo.py --seed 7I4M53DL                       # readable trace (per ante: blinds,
+python scripts/mlb_match_demo.py --seed 7I4M53DL                       # readable trace (per ante: blinds,
                                                                            #   cash-outs, lives, comeback, shops,
                                                                            #   Nemesis verdicts) + summary
-python mp/scripts/mlb_match_demo.py --seed ALEEB --deck b_plasma --stake 2 --max-antes 4 --quiet
-python mp/scripts/mlb_match_demo.py --seed 7I4M53DL --alignment            # + per-visit RNG key diff P1 vs P2
-python mp/scripts/mlb_match_demo.py --seed 7I4M53DL --json trace.json      # dump every recorded event
-python -m pytest mp/tests/test_mlb_match_gate.py -q -rx                    # the gate (≈27 s)
-python -m pytest mp/tests/test_engine_invariants.py -q                     # incl. the Phase-2 invariants
+python scripts/mlb_match_demo.py --seed ALEEB --deck b_plasma --stake 2 --max-antes 4 --quiet
+python scripts/mlb_match_demo.py --seed 7I4M53DL --alignment            # + per-visit RNG key diff P1 vs P2
+python scripts/mlb_match_demo.py --seed 7I4M53DL --json trace.json      # dump every recorded event
+python -m pytest tests/test_mlb_match_gate.py -q -rx                    # the gate (≈27 s)
+python -m pytest tests/test_engine_invariants.py -q                     # incl. the Phase-2 invariants
 ```
 
 Players in the demo: **P1 "opener"** (greedy best-hand play; never rerolls; opens booster slot 0 at

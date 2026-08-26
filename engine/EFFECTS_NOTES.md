@@ -7,7 +7,7 @@ scorer RNG, and the deletion of `game.rng`. New: `round_cards.py`,
 `tests/sim_tests/test_effect_keys.py`, this file.
 
 **Result.** Every stochastic effect now draws `game.run_state.rng.pseudorandom(<key>)` /
-`pseudorandom_element` / `pseudoshuffle` with the key string from `mp/rng/keys.py`, with the
+`pseudorandom_element` / `pseudoshuffle` with the key string from `rng/keys.py`, with the
 same draw count and order per trigger as the Lua call site. `game.rng` (the legacy
 `random.Random` single stream) is gone; `import random` does not exist in any game-logic
 module under `balatro_sim/` (`test_effect_keys.py::test_no_random_module_in_engine`). A hook
@@ -18,10 +18,10 @@ fallback.
 
 | suite | result |
 |---|---|
-| `python -m pytest mp/engine/tests -q` | **1321 passed / 10 skipped / 0 failed** (34 of them new, `test_effect_keys.py`) |
-| `python -m pytest mp/tests/test_engine_invariants.py -q` | **14 passed** (incl. `test_effect_rolls_do_not_move_generation` ×3 — needs W2's delegated generation, which landed concurrently) |
-| `python -m pytest mp/tests/test_engine_reachability.py -q` | **226 passed / 6 failed / 3 xfailed** (was 185 / 46 / 4; `python -m pytest mp/tests -q` overall 386 / 6 / 3) |
-| `python -m mp.oracle.engine_parity --probe` | 11/12 ok; `keyed_rng` ok (`game.rng` gone); only `state_signature` missing (W2 nice-to-have) |
+| `python -m pytest engine/tests -q` | **1321 passed / 10 skipped / 0 failed** (34 of them new, `test_effect_keys.py`) |
+| `python -m pytest tests/test_engine_invariants.py -q` | **14 passed** (incl. `test_effect_rolls_do_not_move_generation` ×3 — needs W2's delegated generation, which landed concurrently) |
+| `python -m pytest tests/test_engine_reachability.py -q` | **226 passed / 6 failed / 3 xfailed** (was 185 / 46 / 4; `python -m pytest tests -q` overall 386 / 6 / 3) |
+| `python -m oracle.engine_parity --probe` | 11/12 ok; `keyed_rng` ok (`game.rng` gone); only `state_signature` missing (W2 nice-to-have) |
 
 Reachability cleared by W3 (all previously red): `j_oops`, `j_turtle_bean`, `j_hiker`,
 `j_gift`, `j_ancient`, `j_castle`, `j_mime`, `j_campfire`, `j_hologram`, `j_lucky_cat`,

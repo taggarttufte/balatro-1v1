@@ -1,12 +1,12 @@
 """
 jokers/ — Joker effect implementations.
 
-JOKER_REGISTRY maps GAME joker key (mp/rng/pools.py) -> singleton effect object.
+JOKER_REGISTRY maps GAME joker key (rng/pools.py) -> singleton effect object.
 Every one of the 150 game keys has exactly one implementation; registering a
 key twice raises at import (see base._JokerRegistry), and the check at the
 bottom of this file raises if any registry key is not a game key or any game
 key is missing. Phase 1 W1 removed the old "later import wins" duplicates —
-see mp/engine/REKEY_NOTES.md for every decision.
+see engine/REKEY_NOTES.md for every decision.
 
 Trigger points:
   pre_score(context)               — fires before card loop (retrigger setup, flags)
@@ -32,9 +32,9 @@ Trigger points:
   on_init(context)                 — Card:set_ability on acquire (To Do List draw, Popcorn/Ramen/Ice Cream start values)
 
 Phase 1 W3: rolls use the game's key strings on ctx.prng (base.prob_roll / rng_of);
-created cards come from mp/rng/generate.py (base.create_consumable); the
+created cards come from rng/generate.py (base.create_consumable); the
 non-scoring hooks are fired through base.fire_hook(game, name) — see
-mp/engine/EFFECTS_NOTES.md.
+engine/EFFECTS_NOTES.md.
 """
 from .base import JOKER_REGISTRY, JokerInstance, register_joker
 
@@ -53,7 +53,7 @@ def _check_registry_against_pools() -> None:
     missing = sorted(set(JOKER_BY_KEY) - set(JOKER_REGISTRY))
     if extra or missing:
         raise RuntimeError(
-            "JOKER_REGISTRY is out of sync with mp/rng/pools.py: "
+            "JOKER_REGISTRY is out of sync with rng/pools.py: "
             f"not game keys={extra}; unimplemented game keys={missing}"
         )
 

@@ -1,10 +1,10 @@
 """
-mp/eval/rho_decay.py -- measure rho(h): the correlation of paired-arm outcomes h antes after
+eval/rho_decay.py -- measure rho(h): the correlation of paired-arm outcomes h antes after
 a single divergent decision, and the variance-reduction factor that correlation implies for a
 paired (common-random-numbers) experiment design.
 
 This is the experiment MP_TRAINING_DESIGN_2026-08.md §1 asks for and guesses numbers for
-("~0.9 at h=1 falling to ~0.3-0.5 at h=4-8") -- see mp/eval/EVAL_NOTES.md for the measured
+("~0.9 at h=1 falling to ~0.3-0.5 at h=4-8") -- see eval/EVAL_NOTES.md for the measured
 numbers and how they compare.
 
 Design (Phase 3 brief §W4): two `BalatroGame(seed, ruleset="mlb")` "arms" on the SAME seed,
@@ -17,10 +17,10 @@ docstring) against an EXTERNAL target (`external_vanilla_big_blind_target`: the 
 Big-Blind chip requirement for that ante, a function of ante/deck/stake only, coupled to
 NEITHER arm) so the two arms' scores are not coupled through a shared live opponent.
 
-    python -m mp.eval.rho_decay --perturbation buy_slot0 --horizons 1,2,4,8 \\
-        --out mp/results/rho_decay_buy_slot0.json
-    python -m mp.eval.rho_decay --all --n-extra-seeds 24 --out-dir mp/results
-    python -m mp.eval.rho_decay --list-perturbations
+    python -m eval.rho_decay --perturbation buy_slot0 --horizons 1,2,4,8 \\
+        --out results/rho_decay_buy_slot0.json
+    python -m eval.rho_decay --all --n-extra-seeds 24 --out-dir results
+    python -m eval.rho_decay --list-perturbations
 """
 from __future__ import annotations
 

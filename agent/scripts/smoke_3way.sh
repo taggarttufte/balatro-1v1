@@ -22,14 +22,14 @@
 # STAGE_A_MIN to 240-360 for a real warm-up; 10 minutes is a smoke and its blind-clear rate
 # is still ~0.05.
 #
-#   bash mp/agent/scripts/smoke_3way.sh                # from the repo root
-#   STAGE_A_MIN=240 STAGE_B_MIN=30 bash mp/agent/scripts/smoke_3way.sh
+#   bash agent/scripts/smoke_3way.sh                # from the repo root
+#   STAGE_A_MIN=240 STAGE_B_MIN=30 bash agent/scripts/smoke_3way.sh
 #
 # Read the result with:
-#   python mp/agent/scripts/smoke_3way_report.py
+#   python agent/scripts/smoke_3way_report.py
 set -euo pipefail
 
-RUNS=${RUNS:-mp/agent/runs}
+RUNS=${RUNS:-agent/runs}
 DEVICE=${DEVICE:-cuda}
 ENCODER=${ENCODER:-mlb}          # use the SAME encoder in both stages: --init refuses a mismatch
 SIMS=${SIMS:-40}
@@ -41,24 +41,24 @@ COMMON=(--device "$DEVICE" --encoder "$ENCODER" --sims "$SIMS" --leaf-batch 1
         --n-agents 16 --seeds-per-gen 2 --max-ante 4 --anchors 0.25 --run-dir "$RUNS")
 
 echo "=== Stage A: vanilla warm-up, ${STAGE_A_MIN} min ==="
-python mp/agent/scripts/train_cold.py \
+python agent/scripts/train_cold.py \
     --minutes "$STAGE_A_MIN" --device "$DEVICE" --ruleset vanilla --encoder "$ENCODER" \
     --sims "$SIMS" --max-decisions 1500 --checkpoint-every 50 \
     --run-dir "$RUNS" --run-name "${TAG}_stageA"
 A="$RUNS/${TAG}_stageA/latest.pt"
 
 echo "=== (a) warm start, no skip cap ==="
-python mp/agent/scripts/train_mlb.py "${COMMON[@]}" \
+python agent/scripts/train_mlb.py "${COMMON[@]}" \
     --minutes "$STAGE_B_MIN" --init "$A" --run-name "${TAG}_a"
 
 echo "=== (b) cold, skip cap 1/ante ==="
-python mp/agent/scripts/train_mlb.py "${COMMON[@]}" \
+python agent/scripts/train_mlb.py "${COMMON[@]}" \
     --minutes "$STAGE_B_MIN" --max-skips-per-ante 1 --run-name "${TAG}_b"
 
 echo "=== (c) warm start + skip cap 1/ante ==="
-python mp/agent/scripts/train_mlb.py "${COMMON[@]}" \
+python agent/scripts/train_mlb.py "${COMMON[@]}" \
     --minutes "$STAGE_B_MIN" --init "$A" --max-skips-per-ante 1 --run-name "${TAG}_c"
 
 echo
 echo "=== report ==="
-python mp/agent/scripts/smoke_3way_report.py --runs "$RUNS" --tag "$TAG"
+python agent/scripts/smoke_3way_report.py --runs "$RUNS" --tag "$TAG"

@@ -159,7 +159,7 @@ def test_load_state_source_bad_spec_raises():
 
 
 class _RandomLegalPlayer:
-    """Self-contained (no mp/tournament import), deterministic in `seed`."""
+    """Self-contained (no tournament import), deterministic in `seed`."""
 
     def __init__(self, seed: int = 0):
         self._rng = random.Random(seed)
@@ -172,14 +172,14 @@ class _RandomLegalPlayer:
 
 
 def _write_small_match_log(path: str, seed: str, n_steps: int = 24) -> list:
-    """Drives a small MLBMatch through mp/replay's MatchLogger (public class; read-only use
-    of mp/replay, matching mp/replay/tests/_helpers.py's own pattern) and returns the ops
-    actually applied, for an independent cross-check.  mp/replay is a real package (relative
-    imports inside it), so it must be imported as ``replay.log`` with mp/ on sys.path."""
+    """Drives a small MLBMatch through replay's MatchLogger (public class; read-only use
+    of replay, matching replay/tests/_helpers.py's own pattern) and returns the ops
+    actually applied, for an independent cross-check.  replay is a real package (relative
+    imports inside it), so it must be imported as ``replay.log`` with the repo root on sys.path."""
     mp_root = str(Path(_bootstrap.MP_ROOT))
     if mp_root not in sys.path:
         sys.path.insert(0, mp_root)
-    from replay.log import MatchLogger  # mp/replay/log.py
+    from replay.log import MatchLogger  # replay/log.py
 
     match = MLBMatch(seed=seed, deck_key="b_red", stake=1, lives=4)
     players = [_RandomLegalPlayer(seed=0), _RandomLegalPlayer(seed=1)]

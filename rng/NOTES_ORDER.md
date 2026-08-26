@@ -13,11 +13,11 @@ Lua from `$MOD` at test time (`BALATRO_MP_MOD_DIR` to relocate) and skips withou
 
 | gate | result |
 |---|---|
-| `python -m pytest mp/tests -q` | **544 passed / 2 xfailed / 0 failed** (393 + 151 new in `test_the_order.py`) |
-| `python -m pytest mp/engine/tests -q` | **1609 passed / 10 skipped / 3 xfailed / 0 failed** (final run; an earlier run during W1's concurrent `env_mp.py` rewrite showed one import error + one state-machine failure in W1's files, both gone by hand-off) |
-| `python -m mp.oracle.engine_parity --antes 1-8 --rerolls 5 --quiet` | **126/126 exact through ante 8** (vanilla path byte-identical) |
-| `python -m mp.oracle.parity_check --antes 1-8 --variant faithful` | **126/126 exact through ante 8** |
-| `python -m pytest mp/tests/test_generate_oracle.py -q` | 129 passed (the Phase-0 vanilla Lua oracle, untouched) |
+| `python -m pytest tests -q` | **544 passed / 2 xfailed / 0 failed** (393 + 151 new in `test_the_order.py`) |
+| `python -m pytest engine/tests -q` | **1609 passed / 10 skipped / 3 xfailed / 0 failed** (final run; an earlier run during W1's concurrent `env_mp.py` rewrite showed one import error + one state-machine failure in W1's files, both gone by hand-off) |
+| `python -m oracle.engine_parity --antes 1-8 --rerolls 5 --quiet` | **126/126 exact through ante 8** (vanilla path byte-identical) |
+| `python -m oracle.parity_check --antes 1-8 --variant faithful` | **126/126 exact through ante 8** |
+| `python -m pytest tests/test_generate_oracle.py -q` | 129 passed (the Phase-0 vanilla Lua oracle, untouched) |
 
 No cached fixture was regenerated.
 

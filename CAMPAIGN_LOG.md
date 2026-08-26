@@ -7,7 +7,7 @@ Subproject: **Balatro Multiplayer (MLB ruleset) statistical player.** Lives in `
 - **Goal:** an engine with real-Balatro RNG parity + MLB rules + 3 decks, with infra to run N-agent same-seed tournaments and produce the N×N comparison matrix. Plan: `docs/MP_CAMPAIGN_PLAN_2026-08.md`.
 - **Budget:** local compute only. No paid API spend without asking.
 - **Latitude:** agents may create/modify anything under `mp/`. **Nothing outside `mp/` is touched** — BRL code, branches, `results/`, README all stay as-is. No commits, no branch changes, no merge of `fix/sim-fidelity-2026-07` (that is a BRL decision for Tagg).
-- **Reference source:** Balatro 1.0.1o Lua extracted from the local Steam install to `mp/_reference/balatro_src/` — **gitignored, never committed, never copied into deliverables.** Port algorithms; do not vendor Lua.
+- **Reference source:** Balatro 1.0.1o Lua extracted from the local Steam install to `_reference/balatro_src/` — **gitignored, never committed, never copied into deliverables.** Port algorithms; do not vendor Lua.
 - **Oracle strategy (upgraded):** `lupa` provides LuaJIT 2.1 in-process. Ground truth for the RNG core = Balatro's actual `pseudohash`/`pseudoseed`/`pseudorandom` executed in LuaJIT. Public seed analyzers (Immolate / TheSoul / Blueprint / balatrohq) are the *end-to-end* cross-check for shop/pack/voucher/boss output.
 - **Gate:** Phase 0 must reproduce ante 1–3 shops/packs/vouchers/bosses on ≥10 known seeds exactly before Phase 1 keyed-RNG threading begins.
 
@@ -23,11 +23,11 @@ Subproject: **Balatro Multiplayer (MLB ruleset) statistical player.** Lives in `
 
 | Agent | Owns | Deliverable |
 |---|---|---|
-| A — RNG core | `mp/rng/core.py`, `mp/rng/luajit_random.py`, `mp/tests/test_rng_core.py`, `mp/rng/NOTES_CORE.md` | Python port validated against LuaJIT-executed Lua to 1e-13 |
-| B — Pools + keys | `mp/rng/pools.py`, `mp/rng/keys.py`, `mp/rng/NOTES_POOLS.md` | Exact game-order pools; every pseudoseed key string with construction rule |
-| C — Generation spec + port | `mp/rng/GENERATION_SPEC.md`, `mp/rng/generate.py`, `mp/rng/NOTES_GEN.md` | Algorithm for every generation event incl. resample; skeleton that reproduces an ante-1 shop |
-| D — Ground truth | `mp/oracle/ground_truth/*.json`, `mp/oracle/SOURCES.md`, `mp/oracle/parity_check.py`, `mp/oracle/blueprint_runner/` | ≥10 seeds with ante 1–3 outcomes; second independent oracle if Blueprint runs locally |
-| E — Engine fork | `mp/engine/balatro_sim/`, `mp/engine/tests/`, `mp/engine/FORK_NOTES.md` | `balatro_sim` from `fix/sim-fidelity-2026-07` + `clone()`/`legal_actions()` from balatro-mcts; tests green in new location |
+| A — RNG core | `rng/core.py`, `rng/luajit_random.py`, `tests/test_rng_core.py`, `rng/NOTES_CORE.md` | Python port validated against LuaJIT-executed Lua to 1e-13 |
+| B — Pools + keys | `rng/pools.py`, `rng/keys.py`, `rng/NOTES_POOLS.md` | Exact game-order pools; every pseudoseed key string with construction rule |
+| C — Generation spec + port | `rng/GENERATION_SPEC.md`, `rng/generate.py`, `rng/NOTES_GEN.md` | Algorithm for every generation event incl. resample; skeleton that reproduces an ante-1 shop |
+| D — Ground truth | `oracle/ground_truth/*.json`, `oracle/SOURCES.md`, `oracle/parity_check.py`, `oracle/blueprint_runner/` | ≥10 seeds with ante 1–3 outcomes; second independent oracle if Blueprint runs locally |
+| E — Engine fork | `engine/balatro_sim/`, `engine/tests/`, `engine/FORK_NOTES.md` | `balatro_sim` from `fix/sim-fidelity-2026-07` + `clone()`/`legal_actions()` from balatro-mcts; tests green in new location |
 
 Log entries follow.
 
@@ -35,9 +35,9 @@ Log entries follow.
 
 ### 2026-08-20 — Agent E (engine fork) — DONE ✅
 
-- Forked `balatro_sim` @ balatro-rl `4411dbf` (`fix/sim-fidelity-2026-07`) → `mp/engine/balatro_sim/`; tests → `mp/engine/tests/{engine_tests,sim_tests}/`.
+- Forked `balatro_sim` @ balatro-rl `4411dbf` (`fix/sim-fidelity-2026-07`) → `engine/balatro_sim/`; tests → `engine/tests/{engine_tests,sim_tests}/`.
 - Ported from balatro-mcts `ee75d11`: `clone()` (`game.py:291-389`), `legal_actions()` (`:662-763`), `_consumable_target_actions()` (`:765-812`), `JokerInstance.clone()` (`base.py:153-159`) + 3 clone test files + `bench_clone_step.py`. `game.py`/`base.py` now byte-identical to the mcts fork; kept balatro-rl's post-A1 `card_selection.py` (`N_INTENTS=4`) and post-audit `env_v7.py` (`OBS_DIM=443`).
-- Standalone: `mp/engine/pytest.ini` + `conftest.py` that **raises** if `balatro_sim` resolves to the BRL package.
+- Standalone: `engine/pytest.ini` + `conftest.py` that **raises** if `balatro_sim` resolves to the BRL package.
 - **Tests: 847 passed / 13 skipped / 0 failed** (baseline 825/3; −10 `TestActionMasking` skipped for missing `train_sim`, +32 clone tests).
 - **Bench:** clone ~15.9k/s (63 µs), step ~36k/s (28 µs), 6.2–6.8× faster than deepcopy. On target.
 - `FORK_NOTES.md` written with provenance + inherited fidelity issues (fork-relative line numbers: `game.py` shifted +105/+257).
@@ -51,7 +51,7 @@ Log entries follow.
 
 State on disk at interruption: `rng/core.py` 302 L, `rng/luajit_random.py` 287 L, `tests/test_rng_core.py` (fixtures empty, NOTES_CORE missing); `rng/pools.py` 715 L / 126 KB, `rng/keys.py` 363 L (NOTES_POOLS missing); `rng/generate.py` 1,386 L (spec + notes missing); `oracle/blueprint_runner/{run_blueprint.ts, run_thesoul.js, check_fixtures.ts, vendor/}` (ground_truth/ EMPTY, schema/SOURCES/parity_check missing).
 
-**RNG core signal before resume:** `pytest mp/tests/test_rng_core.py` → 3 passed, `test_luajit_random_sequences` failed. **First `math.random()` after seeding matches LuaJIT bit-for-bit.** Expected sequence shows identical consecutive doubles → the Lua oracle harness re-seeds between draws. Harness bug, not port bug. Told A to fix the harness, not the port.
+**RNG core signal before resume:** `pytest tests/test_rng_core.py` → 3 passed, `test_luajit_random_sequences` failed. **First `math.random()` after seeding matches LuaJIT bit-for-bit.** Expected sequence shows identical consecutive doubles → the Lua oracle harness re-seeds between draws. Harness bug, not port bug. Told A to fix the harness, not the port.
 
 All four resumed in place (context intact) with precise pick-up instructions.
 
@@ -84,7 +84,7 @@ All four resumed in place (context intact) with precise pick-up instructions.
 
 ### 2026-08-21 — Agent A (RNG core) — DONE ✅ BIT-EXACT
 
-- **17/17 tests pass against live LuaJIT; 14 pass + 3 skip with `MP_RNG_NO_ORACLE=1`** (cached fixture `tests/fixtures/rng_ground_truth.json`, 2.3 MB; regen: `python mp/tests/test_rng_core.py --regen`).
+- **17/17 tests pass against live LuaJIT; 14 pass + 3 skip with `MP_RNG_NO_ORACLE=1`** (cached fixture `tests/fixtures/rng_ground_truth.json`, 2.3 MB; regen: `python tests/test_rng_core.py --regen`).
 - `rng/luajit_random.py`: TW223 combined-LFSR + π/e seeding from LuaJIT 2.1 `lib_math.c`/`lj_prng.c`; the 10 discard steps folded into GF(2) byte-lookup tables (3.5× faster; literal form kept as `seed_reference` and cross-checked). `seed(0.0)` reproduces LuaJIT's hard-coded `lj_prng_seed_fixed` constants — independent anchor.
 - `rng/core.py`: `pseudohash`, `lcg_step`, `pseudoseed_predict`, `normalize_seed`, `PseudoRandom(seed)` with `pseudoseed/pseudorandom/pseudorandom_element/pseudoshuffle`, `snapshot/restore/clone`.
 - **Compared (all 64-bit bit patterns, no tolerance):** 52 seeds × 55 keys × 3 draws × 8 intermediates = 68,640 chain values; `pseudorandom_element` on arrays / string-keyed tables / `sort_id` lists; `pseudoshuffle` at 11 sizes; raw `math.randomseed` on 267 seeds incl. ±NaN/±inf/denormals/2^64; `pseudohash` on ~1,000 inputs incl. all 255 bytes; `%.13f` LCG step on 3,060 inputs incl. exact ties; 85k `string.format`+`tonumber` round trips. **Zero mismatches.**
@@ -102,11 +102,11 @@ All four resumed in place (context intact) with precise pick-up instructions.
 
 ### 2026-08-21 — Agent C (generation spec + port) — DONE ✅, harness promotion in progress
 
-- `rng/generate.py` (1,386 L) coded against the real `core.PseudoRandom` + `pools.py`. `generate_shop(RunState(seed="EXAMPLE1", ante=1))` → `j_egg`, `j_wrathful_joker`, `p_buffoon_normal_1`, `p_standard_mega_1`. `python -m mp.rng.generate EXAMPLE1 2` walks 2 antes.
+- `rng/generate.py` (1,386 L) coded against the real `core.PseudoRandom` + `pools.py`. `generate_shop(RunState(seed="EXAMPLE1", ante=1))` → `j_egg`, `j_wrathful_joker`, `p_buffoon_normal_1`, `p_standard_mega_1`. `python -m rng.generate EXAMPLE1 2` walks 2 antes.
 - `rng/GENERATION_SPEC.md` — 18 sections, every `file:line` citation spot-checked. `rng/NOTES_GEN.md` — assumptions, untested areas, required ground-truth format (§5).
 - Implemented: `RunState` (clone + acquire/release lifecycle), `get_current_pool`, `draw_from_pool`, `create_card`, `poll_edition`, `poll_seal`, `create_card_for_shop`, `generate_shop`, `reroll_shop`, `get_pack`, `open_pack`, `next_voucher`, `next_boss`, `next_tag`, `start_run`, `defeat_boss`, `reroll_boss`, `build_starting_deck`, `shuffle_deck`, consumable/joker creators (fool, blue_seal, aura, wheel_of_fortune, ectoplasm, hex, ankh, sigil, ouija, spectral_create_cards, immolate, certificate, marble_joker, misprint), `prob_roll` + `PROBABILITY_ROLLS`.
 
-**🎯 GENERATION-LAYER ORACLE WORKS.** C loaded the real Lua `get_current_pool`/`create_card`/`get_pack`/`get_next_voucher_key`/`get_next_tag_key`/`get_new_boss`/`poll_edition`/`create_card_for_shop`/`Card:open` loop/`pseudoshuffle` verbatim into LuaJIT and diffed the port: **0 mismatches** over 30 seeds × 7 scenarios × 3 antes (fresh shops, 2 rerolls each, all pack types, purchases, Showman, bans, Gold-stake stickers, fresh profile) + 22 seeds of consumable/tag/Erratic/reset paths. Only diff: cosmetic `p_buffoon_normal_1/_2` art suffix (unseeded `math.random`). Harness being promoted to `mp/tests/test_generate_oracle.py` (was in session scratchpad).
+**🎯 GENERATION-LAYER ORACLE WORKS.** C loaded the real Lua `get_current_pool`/`create_card`/`get_pack`/`get_next_voucher_key`/`get_next_tag_key`/`get_new_boss`/`poll_edition`/`create_card_for_shop`/`Card:open` loop/`pseudoshuffle` verbatim into LuaJIT and diffed the port: **0 mismatches** over 30 seeds × 7 scenarios × 3 antes (fresh shops, 2 rerolls each, all pack types, purchases, Showman, bans, Gold-stake stickers, fresh profile) + 22 seeds of consumable/tag/Erratic/reset paths. Only diff: cosmetic `p_buffoon_normal_1/_2` art suffix (unseeded `math.random`). Harness being promoted to `tests/test_generate_oracle.py` (was in session scratchpad).
 
 **Fidelity corrections to my brief:**
 1. **`used_jokers` is set on card CREATION (`Card:set_ability`), not purchase.** This is the dedupe mechanism for shelves AND packs — resample, not redraw — and pack cards also exclude the shelf behind them. The campaign brief assumed purchase; wrong.
@@ -139,14 +139,14 @@ Seed **`7I4M53DL`**, Red Deck, White Stake. Beat the Small Blind, enter the firs
 
 ### 2026-08-21 — Agent C follow-up — harness promoted, **shipped-runtime parity confirmed**
 
-- `mp/tests/test_generate_oracle.py` promoted (jit.off, no FFI punning, only str/int/bool cross the boundary, Lua sliced from `_reference` at test time). **`pytest mp/tests` → 146 passed / 1.7 s.** Perturbing a key makes it fail — it has teeth.
+- `tests/test_generate_oracle.py` promoted (jit.off, no FFI punning, only str/int/bool cross the boundary, Lua sliced from `_reference` at test time). **`pytest tests` → 146 passed / 1.7 s.** Perturbing a key makes it fail — it has teeth.
 - **The game ships LuaJIT 2.0.5** (`lua51.dll` beside `Balatro.exe`), not 2.1. C loaded that DLL via ctypes and compared seeded `math.random` sequences, the keyed chain, `pseudoshuffle`, `pseudorandom_element`, and the unseeded first draw against Agent A's core: **all match to `%.17g`.** → A's FMA/x87 caveat is CLOSED; the core is bit-exact for the shipped runtime.
 - Only 2.0.5/2.1 difference: string-hash `pairs()` order (2.1 randomizes per VM; 2.0.5 fixed). `pairs(G.GAME.hands)` order for To Do List / Orbital taken from the real DLL (stable 5/5 processes): `Flush House, Full House, Flush, Pair, High Card, Straight Flush, Straight, Two Pair, Flush Five, Five of a Kind, Three of a Kind, Four of a Kind` → `generate.HANDS_PAIRS_ORDER`, asserted against the DLL (skips w/ reason if Balatro isn't at the default Steam path; `BALATRO_DIR` overrides).
 - Still open (Phase 1 W8): end-to-end *game-state plumbing* around generation (run start, boss-defeat→voucher, Cash Out→tags/boss, shelf release on leave). MLB `banned_keys` hooked for Phase 2.
 
 ## Phase 1 — Engine correctness (REVISED architecture)
 
-**Decision:** do NOT re-implement generation inside the engine. `mp/rng/generate.py` is oracle-verified; the engine **delegates** to it for everything that appears (shop shelves, packs, vouchers, bosses, tags, deck shuffle, created cards) and only threads keyed RNG through *effect* rolls (lucky, glass, bloodstone, 8ball, …) that live in scoring/jokers. This gives queues, resample/in-place blocking, dedupe, Showman, The Order switch, and tags for free. Prerequisite: the engine must speak game keys (only 7/150 jokers currently agree).
+**Decision:** do NOT re-implement generation inside the engine. `rng/generate.py` is oracle-verified; the engine **delegates** to it for everything that appears (shop shelves, packs, vouchers, bosses, tags, deck shuffle, created cards) and only threads keyed RNG through *effect* rolls (lucky, glass, bloodstone, 8ball, …) that live in scoring/jokers. This gives queues, resample/in-place blocking, dedupe, Showman, The Order switch, and tags for free. Prerequisite: the engine must speak game keys (only 7/150 jokers currently agree).
 
 **Wave 1 (launched 2026-08-21):**
 
@@ -155,14 +155,14 @@ Seed **`7I4M53DL`**, Red Deck, White Stake. Beat the Small Blind, enter the firs
 | W1 re-key (GATE) | P1-rekey | `engine/balatro_sim/{shop.py catalogue, consumables.py names, constants.py, jokers/*} registry keys`, `engine/tests/*` | Re-key everything to game keys with `pools.py` as the single source of truth for key/name/rarity/cost; remove sim-side rarity/price tables; fix 21 renames, 79 rarities, 107 costs, 6 dups, 11 double-regs, `c_heirophant`, `pl_`/`s_` prefixes, 5 showdown boss names; add missing keys as stubs (`v_seed_money`, `v_money_tree`, `v_blank`, `v_antimatter`, `v_retcon`, `bl_fish`, `p_*_mega`) with TODO effects. Tests green. |
 | W6 tags | P1-tags | NEW `engine/balatro_sim/tags.py`, `engine/tests/sim_tests/test_tags.py` | Self-contained tag module: all 24 tags with effects, as pure functions over a narrow `TagContext` interface. No `game.py` edits yet — W2 wires it. |
 | W7 repro | P1-repro | `engine/balatro_sim/env_v7.py`, `env_sim.py`, `env_v5.py`, `card_selection.py` | `_best_hand_score` must not touch live RNG (clone or throwaway rng); thread rng in `env_sim`/`env_v5`; kill every reachable `rng_of` global fallback path. |
-| W8 harness | P1-harness | NEW `mp/tests/test_engine_invariants.py`, `mp/tests/test_engine_reachability.py`, `mp/oracle/engine_parity.py` | Stream-independence invariants (Lucky hit must not move next shop; owning a joker must not shift other slots); reachability probe (every joker/consumable measurably changes state); end-to-end ENGINE-vs-ground-truth harness with a scripted policy. Written against the target interfaces; expected RED until wave 2. |
+| W8 harness | P1-harness | NEW `tests/test_engine_invariants.py`, `tests/test_engine_reachability.py`, `oracle/engine_parity.py` | Stream-independence invariants (Lucky hit must not move next shop; owning a joker must not shift other slots); reachability probe (every joker/consumable measurably changes state); end-to-end ENGINE-vs-ground-truth harness with a scripted policy. Written against the target interfaces; expected RED until wave 2. |
 
 **Wave 2 (after W1):** W2 delegate generation (`shop.py`/`game.py` → `generate.RunState`, booster state machine fix, tag wiring), W3 effect-roll keys (`scoring.py`, `jokers/*`, `consumables.py` effects, `game.py` glass/purple → `pseudorandom(key)`; delete `game.rng`).
 **Wave 3:** W5 bug sweep (§7 list minus whatever W2/W3 already fixed), then run W8 harness green.
 
 ### 2026-08-21 ~05:00 — Wave 1 cut off by session limit (resets 3:40pm CT) — CHECKPOINT
 
-All four wave-1 agents (W1 rekey, W6 tags, W7 repro, W8 harness) were terminated while still in their reading phase. **Zero files written**; `mp/engine/` is pristine, `pytest mp/engine/tests` → 847 passed / 13 skipped; `pytest mp/tests` → 146 passed. Agent contexts are preserved; resume each via its ID with "pick up where you left off" (W1 was mid-way through resolving 45 jokers that have >1 implementation; W7 was about to write the baseline mutation probe).
+All four wave-1 agents (W1 rekey, W6 tags, W7 repro, W8 harness) were terminated while still in their reading phase. **Zero files written**; `engine/` is pristine, `pytest engine/tests` → 847 passed / 13 skipped; `pytest tests` → 146 passed. Agent contexts are preserved; resume each via its ID with "pick up where you left off" (W1 was mid-way through resolving 45 jokers that have >1 implementation; W7 was about to write the baseline mutation probe).
 
 **Resume order next session:** W1 first (it gates W2/W3), W6/W7/W8 concurrently. Then wave 2 (W2 delegate generation + booster state + tag wiring; W3 effect-roll keys), then W5 bug sweep, then W8 green.
 
@@ -197,8 +197,8 @@ Cross-agent note: P1-rekey touched `env_v7.py`/`env_v5.py` for key renames (kept
 
 ### 2026-08-21 — W1 P1-rekey — DONE ✅ **(WAVE-2 GATE OPEN)**
 
-- **1279 passed / 13 skipped / 0 failed** (`pytest mp/engine/tests`). New `test_game_keys.py` alone: 263.
-- **New `balatro_sim/game_keys.py`** derives EVERY catalogue from `mp.rng.pools` at import. Nothing hand-typed remains. `JOKER_REGISTRY` is now a dict subclass that **raises on duplicate registration**; `jokers/__init__.py` raises at import if registry ≠ pools. Registry: 197 registrations / 161 keys → exactly 150.
+- **1279 passed / 13 skipped / 0 failed** (`pytest engine/tests`). New `test_game_keys.py` alone: 263.
+- **New `balatro_sim/game_keys.py`** derives EVERY catalogue from `rng.pools` at import. Nothing hand-typed remains. `JOKER_REGISTRY` is now a dict subclass that **raises on duplicate registration**; `jokers/__init__.py` raises at import if registry ≠ pools. Registry: 197 registrations / 161 keys → exactly 150.
 - Jokers: 30 renames incl. the game's own typos (`j_gluttenous_joker`, `j_selzer`). name/rarity/cost/order match pools 150/150.
 - Consumables: `pl_*`/`s_*` → `c_*`. **Correction: `c_heirophant` IS the game key (the game's typo)** — my brief had it backwards; pools + ground truth are authoritative. Phantom `c_wheel` in env_v5 fixed.
 - Vouchers: 32 from pools, `VOUCHER_REQUIRES` exported. Implemented `v_seed_money`/`v_money_tree` (new cloned `game.interest_cap`), `v_blank`, `v_antimatter` (+1 slot). Stub: `v_retcon`.
@@ -225,7 +225,7 @@ Cross-agent note: P1-rekey touched `env_v7.py`/`env_v5.py` for key renames (kept
 
 ## ⏸ STOPPING POINT — 2026-08-21 (end of wave 1) — NEXT SESSION STARTS HERE
 
-**Verified by lead, independently:** `pytest mp/engine/tests` → **1279 passed / 13 skipped / 0 failed**. `pytest mp/tests` → **334 passed / 5 xfailed / 56 failed** (all 56 expected-red: they test the wave-2 target state). `git status` → only `?? mp/` (nothing committed, nothing outside `mp/` touched, fix branch unmerged). 78 Python files, ~97 MB incl. ground truth (vendor/ and _reference/ gitignored).
+**Verified by lead, independently:** `pytest engine/tests` → **1279 passed / 13 skipped / 0 failed**. `pytest tests` → **334 passed / 5 xfailed / 56 failed** (all 56 expected-red: they test the wave-2 target state). `git status` → only `?? mp/` (nothing committed, nothing outside `mp/` touched, fix branch unmerged). 78 Python files, ~97 MB incl. ground truth (vendor/ and _reference/ gitignored).
 
 **Done:** Phase 0 (oracle, 126/126 seeds exact through ante 8) and Phase 1 wave 1 (W1 re-key ✅, W6 tags ✅, W7 repro ✅, W8 harness ✅).
 
@@ -246,7 +246,7 @@ Cross-agent note: P1-rekey touched `env_v7.py`/`env_v5.py` for key renames (kept
 
 ### 2026-08-21 — W3 P1-effects — DONE ✅ (`game.rng` DELETED)
 
-- **Gates (agent-run):** `pytest mp/engine/tests` **1321 / 10 skip / 0 fail** (+34 `test_effect_keys.py`); `test_engine_invariants` **14/14** incl. all three "effect rolls don't move generation"; `test_engine_reachability` **226 pass / 6 fail / 3 xfail** (was 185/46/4); `engine_parity --probe` → `keyed_rng` ok, 11/12 hooks (only `state_signature` missing).
+- **Gates (agent-run):** `pytest engine/tests` **1321 / 10 skip / 0 fail** (+34 `test_effect_keys.py`); `test_engine_invariants` **14/14** incl. all three "effect rolls don't move generation"; `test_engine_reachability` **226 pass / 6 fail / 3 xfail** (was 185/46/4); `engine_parity --probe` → `keyed_rng` ok, 11/12 hooks (only `state_signature` missing).
 - `jokers/base.py`: `ScoreContext.prng` + `run_state` + `probabilities_normal` etc. **`rng_of` now raises `MissingPRNG` — global-random fallback deleted.** `prob_roll(ctx, key, odds)` = `pseudorandom(key) < normal/odds`. Helpers `fire_hook`, `add_joker/remove_joker`, `init_joker`, `sync_probabilities` (Oops = 2**n), `create_consumable` → `generate.create_from_spec`. P1-delegate adopted these in `shop.py`/`game.py`.
 - `scoring.py` rewritten to the Lua order: Space Joker in `before`; held phase per card per pass; **joker editions once per joker in `joker_main`** (Foil Greedy = +50, not +250); Lucky = `lucky_mult` then `lucky_money` per pass; Glass rolled in `_play_hand`. **Correction to my brief: Lua rolls `glass` once per scoring Glass card, NOT per retrigger** — `keys.py` was right; test pins it.
 - `jokers/*`: every roll keyed (`8ball`, `business`, `bloodstone`, `parking`, `space`, `misprint`, `gros_michel`, `cavendish`, `halu<ante>`, `invisible`, `perkeo`, `to_do`, `madness`…). **All 10 sentinel producers now create real cards** (`Tarot8ba1`, `Joker1rif1`, `marb_fr`, `cert_fr`/`certsl`…). Fixed: Photograph, Ancient, Castle, Idol, Mail, Flower Pot, Swashbuckler, Stencil, Stuntman, Turtle Bean, Hiker, Gift, Lucky Cat, Chicot, Matador, Trading, Sixth Sense, DNA, Hanging Chad, Raised Fist, Even Steven, Madness.
@@ -255,7 +255,7 @@ Cross-agent note: P1-rekey touched `env_v7.py`/`env_v5.py` for key renames (kept
 
 ### 2026-08-21 — W2 P1-delegate — DONE ✅ · **ENGINE PARITY 126/126 THROUGH ANTE 8**
 
-**Gates (independently re-run by lead):** `pytest mp/engine/tests` **1358 / 10 skip / 0 fail**; `test_engine_invariants` **14/14**; **`engine_parity --antes 1-8 --rerolls 5` → 126/126 seeds EXACT through ante 8, zero fallbacks** (was 0/126 through ante 1); `test_engine_reachability` 226 / 6 fail / 3 xfail; `--probe` 11/12 (only optional `state_signature` missing). No `random.Random` in game logic (only `env_sim.py:663` rollout helper, non-game).
+**Gates (independently re-run by lead):** `pytest engine/tests` **1358 / 10 skip / 0 fail**; `test_engine_invariants` **14/14**; **`engine_parity --antes 1-8 --rerolls 5` → 126/126 seeds EXACT through ante 8, zero fallbacks** (was 0/126 through ante 1); `test_engine_reachability` 226 / 6 fail / 3 xfail; `--probe` 11/12 (only optional `state_signature` missing). No `random.Random` in game logic (only `env_sim.py:663` rollout helper, non-game).
 
 - `shop.py` rewritten: shelves/rerolls/packs/vouchers from `generate` via `game.run_state`; `ShopItem` carries editions/stickers/coupons/playing-card fields; `BoosterChoice` objects; `used_jokers` = owned ∪ shelf ∪ open pack, rebuilt by `_sync_run_state` before every generation call + incremental acquire/release.
 - `game.py`: run start via `gen.start_run` (deck in `sort_id` order — `7I4M53DL` first deal matches ground-truth deck order); `gen.defeat_boss` at boss death (**ante increments at boss defeat, as the game does**); tags + boss + `orbital` at blind select; `nr<ante>`/`cashout<ante>` shuffles; **`BOOSTER_OPEN` bug FIXED** (buy → open → pick acquires / skip releases, mega = 2 picks, tag packs interrupt blind select); **skip now grants the blind's tag and does NOT open a shop** (real game; the sim had invented skip→shop); tags wired option B (generate owns shop-time tags, `tags.py` drives the rest via `_GameTagContext`, all 17 hooks); Director's Cut/Retcon `reroll_boss` action; `debug_win_blind`/`debug_add_joker`; **`JokerInstance.clone()` one-level-deep fix + regression test**; `run_state`/`tag_state` cloned without deepcopy (77 µs/clone).
@@ -270,7 +270,7 @@ Cross-agent note: P1-rekey touched `env_v7.py`/`env_v5.py` for key renames (kept
 
 ### 2026-08-21 — W5 P1-sweep — DONE ✅ · **PHASE 1 COMPLETE (reachability 0 failures)**
 
-**Gates (agent-run, lead should re-run):** `pytest mp/engine/tests` **1441 / 10 skip / 0 fail** (+79 new); `test_engine_invariants` **14/14**; **`engine_parity --antes 1-8 --rerolls 5` → 126/126 exact through ante 8** (never dropped); `test_engine_reachability` **233 / 0 fail / 2 xfail** (`j_luchador`, `v_blank` only); `pytest mp/tests` **393 / 0 / 2**; `--probe` **12/12**.
+**Gates (agent-run, lead should re-run):** `pytest engine/tests` **1441 / 10 skip / 0 fail** (+79 new); `test_engine_invariants` **14/14**; **`engine_parity --antes 1-8 --rerolls 5` → 126/126 exact through ante 8** (never dropped); `test_engine_reachability` **233 / 0 fail / 2 xfail** (`j_luchador`, `v_blank` only); `pytest tests` **393 / 0 / 2**; `--probe` **12/12**.
 
 - **Hand-eval flags:** `hand_eval.py` rewritten as a port of `evaluate_poker_hand`/`get_flush`/`get_straight`/`get_X_same` with `four_fingers`/`shortcut`/`smeared` (Four Fingers off-card does not score, SF = union of the two 4-subsets, Flush Five with 4 suited; Shortcut = the Lua j=1..14 walk, Ace low+high, one skip, no wrap). Flags computed from the active board BEFORE evaluation (Crimson Heart roll moved ahead); envs' dry-run subset evaluators use the same flags.
 - **Boss debuffs are a play-time predicate** (`_boss_debuffs_card` = `Blind:debuff_card`): Wild cards debuffed by every suit boss, Smeared extends the suit, Pareidolia + The Plant = everything; re-evaluated on draw / play / consumable use. Chicot verified end to end.
@@ -287,8 +287,8 @@ Cross-agent note: P1-rekey touched `env_v7.py`/`env_v5.py` for key renames (kept
 
 | Gate | Result |
 |---|---|
-| `pytest mp/engine/tests` | **1441 passed / 10 skipped / 0 failed** (started the day at 847) |
-| `pytest mp/tests` (RNG oracle + generation oracle + invariants + reachability) | **393 passed / 2 xfailed / 0 failed** (xfail: `j_luchador`, `v_blank` — no measurable change definable) |
+| `pytest engine/tests` | **1441 passed / 10 skipped / 0 failed** (started the day at 847) |
+| `pytest tests` (RNG oracle + generation oracle + invariants + reachability) | **393 passed / 2 xfailed / 0 failed** (xfail: `j_luchador`, `v_blank` — no measurable change definable) |
 | `engine_parity --antes 1-8 --rerolls 5` | **126/126 seeds EXACT through ante 8** |
 | `engine_parity --probe` | **12/12 hooks** |
 | `git status` | only `?? mp/` — nothing committed, nothing outside `mp/` touched, fix branch unmerged |
@@ -342,8 +342,8 @@ Log entries follow.
 
 ### 2026-08-21 — W3 decks + stakes — DONE ✅
 
-**Gates (agent-run, with W1/W2 editing concurrently):** `pytest mp/engine/tests` **1584 / 10 skip / 3 xfail / 0 fail**
-(1441 at kickoff, +106 `test_decks.py`, +37+3xfail `test_stakes.py`, 1 assertion updated); `pytest mp/tests`
+**Gates (agent-run, with W1/W2 editing concurrently):** `pytest engine/tests` **1584 / 10 skip / 3 xfail / 0 fail**
+(1441 at kickoff, +106 `test_decks.py`, +37+3xfail `test_stakes.py`, 1 assertion updated); `pytest tests`
 **393 / 2 xfail / 0**; `engine_parity --antes 1-8 --rerolls 5` **126/126 EXACT** (Red/White untouched).
 Notes: `engine/DECKS_NOTES.md`.
 
@@ -377,8 +377,8 @@ Notes: `engine/DECKS_NOTES.md`.
 
 ### 2026-08-21 — W2 The Order + MLB vouchers — DONE ✅
 
-Gates at hand-off (repo root): `pytest mp/tests` **544 / 2 xfail / 0** (393 + 151 new
-`tests/test_the_order.py`); `pytest mp/engine/tests` **1609 / 10 skip / 3 xfail / 0**;
+Gates at hand-off (repo root): `pytest tests` **544 / 2 xfail / 0** (393 + 151 new
+`tests/test_the_order.py`); `pytest engine/tests` **1609 / 10 skip / 3 xfail / 0**;
 `engine_parity --antes 1-8 --rerolls 5` **126/126 EXACT**; `parity_check --antes 1-8 --variant faithful`
 **126/126** (vanilla path byte-identical; no fixture regenerated).  Notes: `rng/NOTES_ORDER.md`.
 
@@ -413,8 +413,8 @@ Gates at hand-off (repo root): `pytest mp/tests` **544 / 2 xfail / 0** (393 + 15
 
 ### 2026-08-21 — W1 MLB match — DONE ✅
 
-**Gates (final, same tree as W2 + W3):** `pytest mp/engine/tests` **1609 passed / 10 skipped / 3 xfailed / 0 failed**;
-`pytest mp/tests` **544 passed / 2 xfailed / 0 failed**; `engine_parity --antes 1-8 --rerolls 5` **126/126 EXACT**
+**Gates (final, same tree as W2 + W3):** `pytest engine/tests` **1609 passed / 10 skipped / 3 xfailed / 0 failed**;
+`pytest tests` **544 passed / 2 xfailed / 0 failed**; `engine_parity --antes 1-8 --rerolls 5` **126/126 EXACT**
 (vanilla byte-identical: `ruleset="vanilla"` is the default and every MLB field is inert). Notes: `engine/MLB_NOTES.md`.
 
 **Landed.** `BalatroGame(ruleset="mlb")` = the mod client: Attrition bans → `run_state.banned_keys` before the first
@@ -460,12 +460,12 @@ key positions between the two games (MLB_NOTES §7).
 
 | gate | result |
 |---|---|
-| `python -m pytest mp/engine/tests -q` | **1609 passed / 10 skipped / 3 xfailed / 0 failed** (unchanged) |
-| `python -m pytest mp/tests -q` | **1073 passed / 2 xfailed / 0 failed** (544 + 507 `test_mlb_match_gate.py` + 22 new invariants) |
-| `python -m mp.oracle.engine_parity --antes 1-8 --rerolls 5 --quiet` | **126/126 EXACT through ante 8** |
-| `python -m mp.oracle.parity_check --antes 1-8 --variant faithful` | **126/126 EXACT through ante 8** |
-| `python mp/scripts/mlb_match_demo.py --seed 7I4M53DL` | full trace; P2 (reroller) wins at ante 2, 117 steps |
-| `python -m pytest mp/tests/test_mlb_match_gate.py -q -rx` | **507 passed / 0 xfail / 0 failed** (~27 s) |
+| `python -m pytest engine/tests -q` | **1609 passed / 10 skipped / 3 xfailed / 0 failed** (unchanged) |
+| `python -m pytest tests -q` | **1073 passed / 2 xfailed / 0 failed** (544 + 507 `test_mlb_match_gate.py` + 22 new invariants) |
+| `python -m oracle.engine_parity --antes 1-8 --rerolls 5 --quiet` | **126/126 EXACT through ante 8** |
+| `python -m oracle.parity_check --antes 1-8 --variant faithful` | **126/126 EXACT through ante 8** |
+| `python scripts/mlb_match_demo.py --seed 7I4M53DL` | full trace; P2 (reroller) wins at ante 2, 117 steps |
+| `python -m pytest tests/test_mlb_match_gate.py -q -rx` | **507 passed / 0 xfail / 0 failed** (~27 s) |
 
 Notes: `tests/GATE_NOTES.md` (how to run, what each item proves, the key-classification table, the voucher-stream finding).
 Deliverables: `scripts/mlb_match_demo.py` (CLI `--seed --deck --stake --lives --max-antes --quiet --alignment --json`; two
@@ -522,8 +522,8 @@ policy is being evaluated. Pin the interleaving contract (and Tagg's `7I4M53DL` 
 
 | Gate | Result |
 |---|---|
-| `pytest mp/engine/tests` | **1609 passed / 10 skipped / 3 xfailed / 0 failed** (1441 at kickoff) |
-| `pytest mp/tests` | **1073 passed / 2 xfailed / 0 failed** (393 at kickoff; +151 The Order oracle, +507 MLB gate, +22 invariants) |
+| `pytest engine/tests` | **1609 passed / 10 skipped / 3 xfailed / 0 failed** (1441 at kickoff) |
+| `pytest tests` | **1073 passed / 2 xfailed / 0 failed** (393 at kickoff; +151 The Order oracle, +507 MLB gate, +22 invariants) |
 | `engine_parity --antes 1-8 --rerolls 5` | **126/126 EXACT through ante 8** |
 | `parity_check --antes 1-8 --variant faithful` | **126/126 EXACT through ante 8** |
 | `scripts/mlb_match_demo.py --seed 7I4M53DL` | full match, P2 wins ante 2, 117 steps, 7 life losses logged with causes |
@@ -590,16 +590,16 @@ Real game, seed `7I4M53DL`, Red/White:
 ## Phase 3 — Infrastructure — KICKED OFF 2026-08-21 (late evening)
 
 **Lead brief: `docs/PHASE3_BRIEF_2026-08.md`.** Decisions: MCTS agent layer FORKED from `balatro-mcts` (`ee75d11`,
-read-only) into `mp/agent/`; N-agent interleaving contract = play Nemesis to exhaustion, server tie rule; lives
-pluggable (`paired` default / `median` / `none`); `mp/engine/**` + `mp/rng/**` FROZEN (mtime snapshot in
+read-only) into `agent/`; N-agent interleaving contract = play Nemesis to exhaustion, server tie rule; lives
+pluggable (`paired` default / `median` / `none`); `engine/**` + `rng/**` FROZEN (mtime snapshot in
 `docs/phase3_frozen_snapshot.txt`); model split W1/W3 strong, W2/W4 Sonnet.
 
 | Agent | Workstream | Model | Deliverable |
 |---|---|---|---|
-| W1 | Agent-layer fork + sync + checkpointing | strong | `mp/agent/**`, `AGENT_NOTES.md` |
-| W2 | N-agent same-seed runner + N×N matrix | sonnet | `mp/tournament/**`, `TOURNAMENT_NOTES.md` |
-| W3 | Batched inference + tree reuse (after W1) | strong | `mp/agent/mcts/batched.py`, `BATCH_NOTES.md` |
-| W4 | Eval harness + ρ-decay harness + first ρ(h) numbers | sonnet | `mp/eval/**`, `mp/results/`, `EVAL_NOTES.md` |
+| W1 | Agent-layer fork + sync + checkpointing | strong | `agent/**`, `AGENT_NOTES.md` |
+| W2 | N-agent same-seed runner + N×N matrix | sonnet | `tournament/**`, `TOURNAMENT_NOTES.md` |
+| W3 | Batched inference + tree reuse (after W1) | strong | `agent/mcts/batched.py`, `BATCH_NOTES.md` |
+| W4 | Eval harness + ρ-decay harness + first ρ(h) numbers | sonnet | `eval/**`, `results/`, `EVAL_NOTES.md` |
 
 Log entries follow.
 
@@ -607,12 +607,12 @@ Log entries follow.
 
 ### 2026-08-21 — P3-W2 tournament runner + N×N matrix — DONE ✅
 
-`mp/tournament/` (new package): `bootstrap.py`, `players.py`, `runner.py`, `matrix.py`,
+`tournament/` (new package): `bootstrap.py`, `players.py`, `runner.py`, `matrix.py`,
 `cli.py`, `conftest.py`, `tests/` (31 tests), `TOURNAMENT_NOTES.md`. No engine/rng edits.
 
-**Gates:** `pytest mp/tournament/tests -q` 31/0 (~49s); `pytest mp/engine/tests -q`
-1609/10/3/0 (unchanged); `pytest mp/tests -q` 1073/2/0 (unchanged);
-`python -m mp.tournament.cli --seed 7I4M53DL --n 100 --life-rule none --max-ante 8` runs,
+**Gates:** `pytest tournament/tests -q` 31/0 (~49s); `pytest engine/tests -q`
+1609/10/3/0 (unchanged); `pytest tests -q` 1073/2/0 (unchanged);
+`python -m tournament.cli --seed 7I4M53DL --n 100 --life-rule none --max-ante 8` runs,
 prints per-ante summary + wall clock (22.7s, 24483 steps).
 
 **Architecture:** each agent gets its OWN `BalatroGame(ruleset="mlb")`; with the engine's
@@ -638,20 +638,20 @@ runner (`_repair_mlb_gameover_bug`, detects the only situation that can never le
 occur under MLB: `GAME_OVER` with `lives > 0`), never edits engine files.
 
 **MCTS player:** `players.MCTSPlayer` is a clearly-marked `NotImplementedError` placeholder;
-`mp.agent` was never imported. See TOURNAMENT_NOTES.md §8 for the exact plug-in contract.
+`agent` was never imported. See TOURNAMENT_NOTES.md §8 for the exact plug-in contract.
 
 ### 2026-08-21 — P3-W1 agent fork + checkpoints — DONE ✅
 
-**Gates (repo root, `-p no:cacheprovider`):** `pytest mp/agent/tests` **85 passed / 0 failed**;
-`pytest mp/engine/tests` **1609 / 10 skip / 3 xfail / 0** (unchanged); `pytest mp/tests` **1073 / 2 xfail / 0**
+**Gates (repo root, `-p no:cacheprovider`):** `pytest agent/tests` **85 passed / 0 failed**;
+`pytest engine/tests` **1609 / 10 skip / 3 xfail / 0** (unchanged); `pytest tests` **1073 / 2 xfail / 0**
 (unchanged); all 41 files in `docs/phase3_frozen_snapshot.txt` byte-size identical (mtimes within the
-snapshot's 1 s rounding) — `mp/engine/**` and `mp/rng/**` untouched. Notes: `agent/AGENT_NOTES.md`.
+snapshot's 1 s rounding) — `engine/**` and `rng/**` untouched. Notes: `agent/AGENT_NOTES.md`.
 
-**Landed.** `mp/agent/` = `balatro-mcts` @ `ee75d11` (read-only source, still clean) re-targeted onto the
+**Landed.** `agent/` = `balatro-mcts` @ `ee75d11` (read-only source, still clean) re-targeted onto the
 frozen fork engine: `mcts/` (+`outcome.py`, +`player.py`), `train/` (+`loop.py`, +`checkpoint.py`),
 `scripts/`, `benchmarks/bench_search.py`, `tests/`, `pytest.ini` + `conftest.py` (fork guard: `balatro_sim`
-must be `mp/engine`'s, `mcts`/`train` must be `mp/agent`'s, else `RuntimeError`). `agent/runs/` appended to
-`mp/.gitignore`.
+must be `engine`'s, `mcts`/`train` must be `agent`'s, else `RuntimeError`). `agent/runs/` appended to
+`.gitignore`.
 
 **Re-target.** *Obs*: the copied 434-dim encoder is gone — `mcts/encoder.py` now CALLS
 `env_v7.BalatroV7Env._encode_obs` (it reads only `self.game`, so it is bound to a one-slot shim), pinned by a
@@ -679,7 +679,7 @@ readied root return `{}`/`chosen=None` instead of the original's `RuntimeError`,
 descent with `stop_reason="stuck"` and takes the outcome's pending value, `MCTSPlayer.act()` → `None`, and
 `play_episode` stops with `stop_reason="stuck"` so `resume_episode()` continues the SAME trajectory after the
 driver's `end_pvp()` — one z per episode. `MCTSPlayer` is the `act(game) -> action|None` shape W2's
-`players.py` expects (W2/W4 still do not import `mp/agent`).
+`players.py` expects (W2/W4 still do not import `agent`).
 
 **Checkpointing — round trip is BIT-EXACT on CPU.** `torch.save` of model + Adam + counters + RNG (numpy
 Generator, torch CPU/CUDA, python `random`) + config + replay buffer; atomic temp+`os.replace`;
@@ -705,7 +705,7 @@ continuing across the boundary.
 The inherited `buffer_capacity=200_000` would be ~19 GB of RAM and an unshippable checkpoint. Mitigated
 (capacity default → 20 000, `--buffer-checkpoint-cap` 5 000, numbered checkpoints weights-only 28.9 MB while
 only `latest.pt` carries the buffer); the real fix is to subsample the action set per training sample (~20×),
-which is a training-design decision, not W1's. (b) **needs engine change: `mp/engine/balatro_sim/env_v7.py`
+which is a training-design decision, not W1's. (b) **needs engine change: `engine/balatro_sim/env_v7.py`
 :702 — the obs encodes only 8 hand slots / 5 joker slots**, but `hand_size` and `joker_slots` both grow past
 those in real play, so a 9th card in hand is invisible to the net while being a legal `play` target (the
 *action* features handle it). Widening changes `OBS_DIM`, so do it before a long training run, not after.
@@ -724,16 +724,16 @@ rescales. Baseline table in §4.4.
 
 ### 2026-08-21 — P3-W4 eval + ρ-decay — DONE ✅
 
-**Agent W4.** `mp/eval/` (new): `common.py` (fork-guarded bootstrap; `Player` protocol + `scripted:`/`checkpoint:`
+**Agent W4.** `eval/` (new): `common.py` (fork-guarded bootstrap; `Player` protocol + `scripted:`/`checkpoint:`
 spec parsing; `SoloShim` drives one `BalatroGame` through `mlb_match_demo`'s policy signature; `play_sp_vanilla`
 / `play_sp_mlb` / `play_1v1` drivers; `play_arm_to_horizons` paired-arm driver; target functions; pure-python
 bootstrap/Pearson/Spearman stats; `sample_size_per_arm`), `eval_harness.py` (CLI, 3 modes, `--compare` paired
 diff+CI), `rho_decay.py` (CLI, 3 registered perturbations + `measure_rho`), `conftest.py`, `tests/` (49 tests).
-`mp/results/` (new): `demo_1v1.json`, `rho_decay_{buy_slot0,reroll_once,skip_small}.json`. Nothing under
-`mp/engine/` or `mp/rng/` touched.
+`results/` (new): `demo_1v1.json`, `rho_decay_{buy_slot0,reroll_once,skip_small}.json`. Nothing under
+`engine/` or `rng/` touched.
 
-**Gates:** `pytest mp/eval/tests -q` **49 passed**; `pytest mp/engine/tests -q` **1609/10 skip/3 xfail** and
-`pytest mp/tests -q` **1073/2 xfail** both unchanged from Phase 2 hand-off; `eval_harness --mode 1v1` (126
+**Gates:** `pytest eval/tests -q` **49 passed**; `pytest engine/tests -q` **1609/10 skip/3 xfail** and
+`pytest tests -q` **1073/2 xfail** both unchanged from Phase 2 hand-off; `eval_harness --mode 1v1` (126
 seeds, 21.7s) and `rho_decay --all --n-extra-seeds 24` (150 seeds × 3 perturbations, n_boot=2000, ~100s each)
 both ran clean and wrote the JSON above.
 
@@ -761,27 +761,27 @@ streams (Phase 1 invariant), so `greedy_hand`'s base score is identical between 
 disagree on owning changes the scoring — a smaller share of total score variance than card luck, for these
 early antes and this policy. Caveat: this likely makes ρ measured here an UPPER bound / VRF a LOWER bound —
 a stronger/trained policy that actually targets synergistic jokers would plausibly decorrelate faster.
-Full writeup, money/lives_lost tables, sample-size table: `mp/eval/EVAL_NOTES.md`.
+Full writeup, money/lives_lost tables, sample-size table: `eval/EVAL_NOTES.md`.
 
 **Needs engine change (found, not fixed):** `game.py:1546-1552,1571-1580,1582-1592` — the `bl_hook`/`bl_eye`/
 `bl_mouth` boss-ability-rejection branches inside `_play_hand` set `GAME_OVER` unconditionally on hand
 exhaustion, bypassing the mlb-aware `_mlb_fail_round` a few lines below; under `ruleset="mlb"` a failed blind
 against one of these three bosses ends the run instead of costing one life and proceeding. Found via
 `rho_decay`'s synthetic seed `BP49PU2Y` (1/150 seeds affected); harnesses already tolerate it (excluded from
-ρ(h), not miscounted) and `play_sp_mlb` now flags it (`ended_early_engine_gap`). `mp/engine` frozen — worked
+ρ(h), not miscounted) and `play_sp_mlb` now flags it (`ended_early_engine_gap`). `engine` frozen — worked
 around, not patched.
 
-Next: W1's checkpoint loader plugs into `mp.eval.common.Player` / `parse_player_spec("checkpoint:...")`
+Next: W1's checkpoint loader plugs into `eval.common.Player` / `parse_player_spec("checkpoint:...")`
 (interface documented in code + EVAL_NOTES.md §9) to eval trained agents through the same harness.
 
 
 ### 2026-08-22 — P3-W3 batched inference + tree reuse — DONE ✅
 
-Phase 3 exit-gate item 3. All in `mp/agent/` (W1's package, handed off): `mcts/batched.py` +
+Phase 3 exit-gate item 3. All in `agent/` (W1's package, handed off): `mcts/batched.py` +
 `mcts/reuse.py` new, `search.py` / `player.py` / `action_features.py` extended,
 `benchmarks/bench_batched.py`, `tests/test_batched.py` (29) + `tests/test_reuse.py` (17),
-`mp/agent/BATCH_NOTES.md`. Gates: `pytest mp/agent/tests -q` **131 passed** (85 W1 + 46 W3),
-`pytest mp/engine/tests -q` **1609 / 10 skip / 3 xfail / 0** and `pytest mp/tests -q`
+`agent/BATCH_NOTES.md`. Gates: `pytest agent/tests -q` **131 passed** (85 W1 + 46 W3),
+`pytest engine/tests -q` **1609 / 10 skip / 3 xfail / 0** and `pytest tests -q`
 **1073 / 2 xfail / 0** both unchanged; **41/41 frozen files** byte-identical vs
 `docs/phase3_frozen_snapshot.txt`.
 
@@ -842,7 +842,7 @@ carrying 400 visits would otherwise multiply every q̂ by ~450 and turn sequenti
 into greedy-by-Q) while q̂ still uses all visits; forced single-action states
 (`ROUND_EVAL` → `advance`) walk the tree down instead of dropping it.
 
-**Plug-in for the tournament (W3 did not edit `mp/tournament/**`):** `mcts.make_player()`
+**Plug-in for the tournament (W3 did not edit `tournament/**`):** `mcts.make_player()`
 + `mcts.load_policy()` turn a checkpoint path into a `Player` with `act(game) -> dict`
 (never `None` — `no_action={"type":"advance"}`, since `_drive_to_next_nemesis` steps
 unconditionally) and `reset()`. The exact 12-line replacement for the `MCTSPlayer`
@@ -865,11 +865,11 @@ expensive for a per-edge signature or a transposition table.
 
 | Gate | Result |
 |---|---|
-| `pytest mp/engine/tests` | **1614 / 10 skip / 3 xfail / 0** (+5 regression tests for the fix below) |
-| `pytest mp/tests` | **1073 / 2 xfail / 0** |
-| `pytest mp/agent/tests` | **131 / 0** |
-| `pytest mp/tournament/tests` | **31 / 0** |
-| `pytest mp/eval/tests` | **49 / 0** |
+| `pytest engine/tests` | **1614 / 10 skip / 3 xfail / 0** (+5 regression tests for the fix below) |
+| `pytest tests` | **1073 / 2 xfail / 0** |
+| `pytest agent/tests` | **131 / 0** |
+| `pytest tournament/tests` | **31 / 0** |
+| `pytest eval/tests` | **49 / 0** |
 | `engine_parity` + `parity_check` `--antes 1-8` | **126/126 both** |
 | `git status` | only `?? mp/` |
 
@@ -877,11 +877,11 @@ expensive for a per-edge signature or a transposition table.
 exhaustion through `_mlb_fail_round()` under MLB (found independently by W2 and W4; `TestBossRejectionRespectsMLB`).
 The W2 workaround in `tournament/runner.py::_repair_mlb_gameover_bug` is now dead code — remove in Phase 4.
 
-**Delivered:** `mp/agent/` (MCTS layer forked from balatro-mcts `ee75d11`, re-targeted to the fork engine, obs =
+**Delivered:** `agent/` (MCTS layer forked from balatro-mcts `ee75d11`, re-targeted to the fork engine, obs =
 env_v7's 447-dim, action features 56-dim, **bit-exact checkpoint round-trip**, outcome as a parameter, batched
-cross-tree leaf eval + tree reuse + `make_player()`); `mp/tournament/` (N-agent same-seed runner, 100 agents × 8
+cross-tree leaf eval + tree reuse + `make_player()`); `tournament/` (N-agent same-seed runner, 100 agents × 8
 antes in ~25 s, N×N outcome + log-margin matrices, population rank, per-ante distributions, 3 life rules,
-degeneracy metric); `mp/eval/` (3-mode eval harness with paired-by-seed CIs, ρ-decay harness).
+degeneracy metric); `eval/` (3-mode eval harness with paired-by-seed CIs, ρ-decay harness).
 
 **Measurements that change the plan:**
 - **ρ(h) is FLAT, not decaying** (N=150 seeds): buy_slot0 0.88→0.87, skip_small 0.81→0.77, reroll_once
@@ -907,7 +907,7 @@ heterogeneous N×N from real checkpoints. **Overnight 2026-08-22: disposable col
 
 ### 2026-08-22 ~01:40 — Overnight run launched + Phase 4 design decisions (Tagg)
 
-- **Overnight shakedown running:** `mp/agent/runs/overnight_2026-08-22/` — `train_cold --minutes 360 --device cuda
+- **Overnight shakedown running:** `agent/runs/overnight_2026-08-22/` — `train_cold --minutes 360 --device cuda
   --ruleset mlb --encoder mlb --sims 30 --checkpoint-every 50`, started 01:27 CDT, self-terminates ~07:30, console log
   + `.DONE` sentinel beside the run dir. Purpose: does the value head move under the MLB outcome signal? Checkpoints
   are DISPOSABLE (see below).
@@ -927,7 +927,7 @@ heterogeneous N×N from real checkpoints. **Overnight 2026-08-22: disposable col
 
 ### 2026-08-22 07:35 — OVERNIGHT SHAKEDOWN RESULT (lead read-out)
 
-Run `mp/agent/runs/overnight_2026-08-22/` (`train_cold --ruleset mlb --encoder mlb --sims 30 --max-antes 8
+Run `agent/runs/overnight_2026-08-22/` (`train_cold --ruleset mlb --encoder mlb --sims 30 --max-antes 8
 --max-decisions 1500`, cuda, 6 h): **2,072 episodes, 0 errors, 42 checkpoints, 5.8 ep/min steady-state.**
 
 | episodes | ante | len | z | z sd | policy loss | value loss |
@@ -967,11 +967,11 @@ frozen. Exit = first real training run launched by lead. Log entries follow.
 
 ### 2026-08-22 — P4-W3 trajectory log + replay — DONE ✅
 
-**Agent W3.** `mp/replay/**` (new package: `log.py`, `replay.py`, `tags.py`, `export_viz.py`,
+**Agent W3.** `replay/**` (new package: `log.py`, `replay.py`, `tags.py`, `export_viz.py`,
 `cli.py`, `_bootstrap.py`, `_util.py`, `conftest.py`, `tests/` — 82 tests). Engine-only (no
-`mp/agent` torch import, no `mp/tournament` import); `mp/engine/**`/`mp/rng/**`/`mp/agent/**`/
-`mp/tournament/**`/`mp/eval/**` read-only. Full spec, hook contract, tag definitions, viz-export
-coverage and the ghost-replay investigation are in `mp/replay/REPLAY_NOTES.md`.
+`agent` torch import, no `tournament` import); `engine/**`/`rng/**`/`agent/**`/
+`tournament/**`/`eval/**` read-only. Full spec, hook contract, tag definitions, viz-export
+coverage and the ghost-replay investigation are in `replay/REPLAY_NOTES.md`.
 
 - **`TrajectoryLogger`/`MatchLogger`**: `begin()`/`step()`/`end()`, exactly 3 call sites per
   loop. JSONL, one line/episode: `seed, deck_key, stake, ruleset, lives_start, actions[],
@@ -1004,24 +1004,24 @@ coverage and the ghost-replay investigation are in `mp/replay/REPLAY_NOTES.md`.
   already records), **MEDIUM overall** (a small converter is the only remaining work; not
   built here per the brief — investigation only). Full field list + a worked JSON skeleton in
   REPLAY_NOTES.md §6.
-- Gates: `mp/replay/tests` 82/82; `mp/engine/tests` 1614/10/3/0 unchanged; `mp/tests`
+- Gates: `replay/tests` 82/82; `engine/tests` 1614/10/3/0 unchanged; `tests`
   1073/2/0 unchanged. No engine bug found; no engine change requested.
 
 ### 2026-08-22 — P4-W4 transfer spread + targets — DONE ✅
 
-**Agent W4.** New: `mp/eval/targets.py` (per-ante external Nemesis targets, engine-only deps — no torch, no
-`mp.eval`'s heavy `mlb_match_demo`/oracle/rng chain, so `mp/agent` can import it directly), `mp/eval/
-transfer_spread.py` (the Red/Checkered/Plasma decision-gate harness), `mp/eval/tests/test_targets.py` (57) +
-`test_transfer_spread.py` (19). `mp/results/transfer_spread_{greedy,greedy_reroll1_buy1,weak}.{json,md}` — 3
-real scripted-player runs. `mp/engine/**`, `mp/rng/**`, `mp/agent/**`, `mp/tournament/**`, `mp/replay/**` only
-read, never edited. Gates: `pytest mp/eval/tests` **125/0** (49 Phase-3 + 76 new); `pytest mp/engine/tests`
-**1614/10/3/0** and `pytest mp/tests` **1073/2/0**, both unchanged.
+**Agent W4.** New: `eval/targets.py` (per-ante external Nemesis targets, engine-only deps — no torch, no
+`eval`'s heavy `mlb_match_demo`/oracle/rng chain, so `agent` can import it directly), `eval/
+transfer_spread.py` (the Red/Checkered/Plasma decision-gate harness), `eval/tests/test_targets.py` (57) +
+`test_transfer_spread.py` (19). `results/transfer_spread_{greedy,greedy_reroll1_buy1,weak}.{json,md}` — 3
+real scripted-player runs. `engine/**`, `rng/**`, `agent/**`, `tournament/**`, `replay/**` only
+read, never edited. Gates: `pytest eval/tests` **125/0** (49 Phase-3 + 76 new); `pytest engine/tests`
+**1614/10/3/0** and `pytest tests` **1073/2/0**, both unchanged.
 
 `targets.py`: `vanilla_boss_target(ante, deck_key, stake)`, `vanilla_boss_target_fn()` (the one to register as
 the Nemesis `chips_target` via `set_pvp_info` — the interim fix for the 07:35 overnight finding: a solo agent
 that skips both blinds and builds nothing now loses a life at the Nemesis), `scaled_own_big_blind(k)`,
 `table_target(path, quantile)` (reads a tournament run's `summary.jsonl`), `get_target(name, **kw)` registry.
-W2 integration point: `mp.agent.mcts.outcome.ExternalOutcome.from_margin` is already built for exactly this hook
+W2 integration point: `agent.mcts.outcome.ExternalOutcome.from_margin` is already built for exactly this hook
 ("the W2 / W4 hook", its own docstring).
 
 `transfer_spread.py`: SP-MLB-solo (mode a, vs `vanilla_boss_target`) + tournament population rank (mode b,
@@ -1052,13 +1052,13 @@ assessment's prior was actually about — a trained agent optimizing Plasma's re
 still show the predicted collapse. Full tables + per-cell furthest-ante/lives-lost + CIs: `EVAL_NOTES.md` S13.
 
 `env_v7` reward-reachability audit (notes only): `env_v7._finish_step`'s `R_BLIND_BASE*(9-ante)` reward
-(`env_v7.py:120,455,479`) is unreachable from every path `mp/agent` drives — the sole `BalatroV7Env(` in that
+(`env_v7.py:120,455,479`) is unreachable from every path `agent` drives — the sole `BalatroV7Env(` in that
 tree (`agent/tests/test_nn_policy.py:96`) only calls `.reset()`, and `mcts/encoder.py:44,59` steals only the
-unbound `_encode_obs` method via a `.game`-only shim, never constructing a real instance; `mp/agent`'s outcome
+unbound `_encode_obs` method via a `.game`-only shim, never constructing a real instance; `agent`'s outcome
 signal is exclusively `mcts.outcome.OutcomeFn`. It IS live, for real, through a DIFFERENT path:
-`mp/engine/balatro_sim/env_mp.py`'s `MultiplayerBalatroEnv`/`_PlayerEnvProxy` (`:80-81,145-147`, pre-Phase-3,
+`engine/balatro_sim/env_mp.py`'s `MultiplayerBalatroEnv`/`_PlayerEnvProxy` (`:80-81,145-147`, pre-Phase-3,
 built on `MLBMatch` directly) — already flagged in `MLB_NOTES.md` S5 and `agent/AGENT_NOTES.md` S8 — but that
-module is exercised only by engine-layer tests within `mp/`, never by any `mp/agent` training path. No code
+module is exercised only by engine-layer tests within `mp/`, never by any `agent` training path. No code
 change needed for Phase 4.
 
 Sanity/design details, `table_target` reader format, tournament-mode seed-count trade, and the "random" player
@@ -1066,16 +1066,16 @@ substitution: `EVAL_NOTES.md` S11-16.
 
 ### 2026-08-22 — P4-W1 set encoder + Sample v2 — DONE ✅
 
-**Delivered** (`mp/agent/`, notes in `agent/SETENC_NOTES.md`): `mcts/encoder_set.py`,
+**Delivered** (`agent/`, notes in `agent/SETENC_NOTES.md`): `mcts/encoder_set.py`,
 `mcts/action_features_set.py`, `mcts/model_set.py`, `mcts/policy_set.py`,
 `train/sample.py`, `--encoder set` wired through `policy.py` / `player.py` / `loop.py` /
 `checkpoint.py` / `train_cold.py`, `scripts/eval_checkpoint.py`,
-`benchmarks/bench_sample_size.py`, **53 new tests**. `mp/engine/**`, `mp/rng/**`,
-`mp/tournament/**`, `mp/eval/**` untouched; `search.py` / `batched.py` / `model.py` /
+`benchmarks/bench_sample_size.py`, **53 new tests**. `engine/**`, `rng/**`,
+`tournament/**`, `eval/**` untouched; `search.py` / `batched.py` / `model.py` /
 `action_features.py` untouched, so the flat serial path is byte-identical.
 
-**Gates:** `mp/agent/tests` **253**, `mp/engine/tests` **1614 / 10 skip / 3 xfail / 0**,
-`mp/tests` **1073 / 2 xfail / 0**, `mp/tournament/tests + mp/eval/tests` **181** — all green.
+**Gates:** `agent/tests` **253**, `engine/tests` **1614 / 10 skip / 3 xfail / 0**,
+`tests` **1073 / 2 xfail / 0**, `tournament/tests + eval/tests` **181** — all green.
 
 **The observation is now five masked sets + one scalar vector** (hand 16, jokers 12,
 consumables 6, shelf 8, packs 8; `scalars` 196) with a shared 251-key game-key embedding.
@@ -1113,7 +1113,7 @@ the frozen `eval_harness --compare`): **every CI straddles zero** — furthest a
 [−0.22, +0.32], lives lost +0.10 [−0.17, +0.38], final money +0.92 [−1.08, +3.15].
 No claim, and none is warranted: 10 minutes buys **one generation** (v7: 16 episodes /
 271 train steps; set: 11 / 137), both nets die around ante 2, and the box was shared with
-W2's gate run. Reports in `mp/results/w1_cmp_{v7,set,set_vs_v7}.json`.
+W2's gate run. Reports in `results/w1_cmp_{v7,set,set_vs_v7}.json`.
 
 **Throughput finding — the set net is launch-bound.** 436-action leaf, 200 sims,
 `leaf_batch=16`: flat **449** CPU / **327** CUDA sims/s; set **259** CPU / **118** CUDA. At a
@@ -1129,7 +1129,7 @@ choice for a self-play-bound run.
 
 **Also found, not fixed** (details in `SETENC_NOTES.md` §7.3): `train_cold --ruleset mlb`
 still trains against the degenerate free-Nemesis objective (the non-degenerate one lives only
-in W2's `train_mlb`) — it should be removed or made to refuse; `mp/eval/common.py::
+in W2's `train_mlb`) — it should be removed or made to refuse; `eval/common.py::
 parse_player_spec` still raises `NotImplementedError` for `checkpoint:` although
 `mcts.player.load_policy` / `make_player` now satisfy exactly the interface its docstring
 asks for (three lines in a file frozen for W1 — `scripts/eval_checkpoint.py` is the
@@ -1138,14 +1138,14 @@ against a [0,1] target) — a sigmoid is an obvious cheap win before the first r
 **Needs engine change: none.**
 
 **Follow-up 2026-08-22 (lead-requested, before the first long run) — DONE ✅** — `SETENC_NOTES.md` §8,
-`agent/tests/test_followups.py` (**18 tests**), `mp/agent/tests` **270 passed / 1 failed (not W1's, below)**.
+`agent/tests/test_followups.py` (**18 tests**), `agent/tests` **270 passed / 1 failed (not W1's, below)**.
 (1) **Embedding tables merged**: eleven `nn.Embedding`s → **three** offset-indexed tables (card block; an
 "aux" table for edition/rarity/shelf-kind/pack-set; the game-key table gathered ONCE for all four sets and
 split) — **~25 embedding kernels per forward → 7**; params 1,793,268 → **1,793,536**. The merge is
 equivalent, not approximate: every (field, value) pair keeps its own row and a test pins the merged gather
 equal to per-field gathers on shared weights. Old set checkpoints won't load (table shapes changed) — which
 is why this landed now. **sims/s re-measurement PENDING — machine in use**; one command re-runs all four
-cells and prints the `--device` recommendation: `python mp/agent/benchmarks/bench_set_vs_flat.py` (new).
+cells and prints the `--device` recommendation: `python agent/benchmarks/bench_set_vs_flat.py` (new).
 Pre-merge baseline to beat: flat 449 CPU / 327 CUDA, set 259 CPU / 118 CUDA.
 (2) **Both value heads bounded**: `value_activation` (default `sigmoid`, also `clamp`/`linear`) on
 `PolicyValueNet` and `SetPolicyValueNet` + `TrainConfig`, pinned by `_check_config`. Targets are in [0,1]
@@ -1159,25 +1159,25 @@ for both nets.
 a `--resume`, since resume takes the ruleset from the checkpoint. **CLI-only**: `ColdTrainer(ruleset="mlb")`
 is untouched and still drives W2's `MLBTrainer` and the MLB tests. `--ruleset vanilla` unchanged.
 **Not W1's, flagged not fixed:** `agent/tests/test_train_mlb.py::test_logged_tournament_trajectories_replay_exactly`
-fails in `mp/replay/replay.py:87` — `ReplayMismatch at step 40 (action={'indices': [2], 'type': 'pick_booster'})`.
+fails in `replay/replay.py:87` — `ReplayMismatch at step 40 (action={'indices': [2], 'type': 'pick_booster'})`.
 **Reproduced with the value-head change reverted**, so the follow-ups did not cause it. `replay.apply_op` is a
 straight `game.step(action)` compared against a `state_signature()` digest, so the recorded action list is not
 sufficient to reproduce the live state across a `pick_booster` (something mutating the game outside the logged
 ops, or logged indices being pre-pick while the engine shrinks `booster_choices` between picks). W3 owns
-`mp/replay/**`, W2 owns the logging hook.
+`replay/**`, W2 owns the logging hook.
 
 ### 2026-08-22 — P4-W2 tournament training loop — DONE ✅
 
-Phase 4 exit-gate item 2 (+ the command for item 6). New: `mp/agent/train/{selfplay.py,
-population.py}`, `mp/agent/scripts/{train_mlb.py, smoke_3way.sh, smoke_3way_report.py}`,
-`mp/agent/TRAIN_NOTES.md`, `mp/agent/tests/test_train_mlb.py` (69). Edited:
-`mp/agent/mcts/player.py` (additive `record_hook` / `Decision` / `legal_filter` /
-`batch_leaf_eval`), `mp/tournament/players.py` (BATCH_NOTES §7.2 applied) and
+Phase 4 exit-gate item 2 (+ the command for item 6). New: `agent/train/{selfplay.py,
+population.py}`, `agent/scripts/{train_mlb.py, smoke_3way.sh, smoke_3way_report.py}`,
+`agent/TRAIN_NOTES.md`, `agent/tests/test_train_mlb.py` (69). Edited:
+`agent/mcts/player.py` (additive `record_hook` / `Decision` / `legal_filter` /
+`batch_leaf_eval`), `tournament/players.py` (BATCH_NOTES §7.2 applied) and
 `runner.py` (Phase 3 workaround deleted, no-progress guard, W3 replay hooks) + 4 new
-tournament test files (25). **`mp/engine/**`, `mp/rng/**`, `mp/eval/**` untouched.**
-Gates: `mp/agent/tests` + `mp/tournament/tests` **328**, `mp/engine/tests`
-**1614 / 10 skip / 3 xfail / 0**, `mp/tests` + `mp/eval/tests` **1198 / 2 xfail**,
-`mp/replay/tests` **82**.
+tournament test files (25). **`engine/**`, `rng/**`, `eval/**` untouched.**
+Gates: `agent/tests` + `tournament/tests` **328**, `engine/tests`
+**1614 / 10 skip / 3 xfail / 0**, `tests` + `eval/tests` **1198 / 2 xfail**,
+`replay/tests` **82**.
 
 **The objective is fixed and it is measurably alive.** A generation runs `s` tournaments of
 N agents on one seed; at every Nemesis the N×N matrix gives each current-net agent a value
@@ -1249,7 +1249,7 @@ blind, which makes the Nemesis free again.
   tarots used with `[]` in SELECTING_HAND still return True and consume with no effect (enhancement/suit) or
   no-op (others); W2's driver-level no-progress guard covers the wedge.
 - `replay/_util.py`: `__set_pvp_info__` synthetic op (W2's diff) so solo external-target trajectories verify.
-- `eval/common.py::parse_player_spec`: `checkpoint:<path>[,sims=N,device=..]` → `mp/agent` `make_player` (lazy
+- `eval/common.py::parse_player_spec`: `checkpoint:<path>[,sims=N,device=..]` → `agent` `make_player` (lazy
   import). Verified live: the overnight checkpoint's first act on ALEEB is `skip_blind`.
 - Deleted disposable run dirs (`p4w2_*`, `w1_cmp_*`, `cuda_smoke`, ~1.1 GB); kept `overnight_2026-08-22/`.
 - Stray repo-root `C/overhead_*.jsonl` (W3 benchmark, bad Windows path) deleted; nothing outside `mp/` remains.
@@ -1261,7 +1261,7 @@ first real run launch (TRAIN_NOTES §8 two-stage command).
 
 ## ✅ PHASE 4 COMPLETE — 2026-08-22 — committed `ff6884e` on `mp/campaign`; FIRST REAL RUN LAUNCHED
 
-**Gates (lead, clean):** engine **1616/10/3/0**, mp/tests **1073/2**, agent **271**, tournament **57**, eval **125**,
+**Gates (lead, clean):** engine **1616/10/3/0**, tests **1073/2**, agent **271**, tournament **57**, eval **125**,
 replay **82**; engine_parity + parity_check **126/126**. Lead additions at close: SHOP consumable-target fix +
 tests, `__set_pvp_info__` replay op, `checkpoint:` player spec, PAUSE-file support in `train_cold` (Stage A) —
 verified: PAUSE at ep 6 → checkpoint → `--resume` → ep 110.
@@ -1272,7 +1272,7 @@ sims/s. → real run is `--encoder set --device cpu` (Tagg's architecture decisi
 **3-way smoke (10-min stages, set/CPU):** (a) warm-up only → skip 82%, clear 0%; (b) cap only → skip 46%, clear
 4%; **(c) warm-up + cap → skip 48%, clear up to 25%, most jokers (2.6), best rank vs anchors.** Recipe = (c).
 
-**FIRST REAL RUN `mp/agent/runs/real1.sh`** (launched ~17:00 CDT 2026-08-22, console `runs/real1.console.log`,
+**FIRST REAL RUN `agent/runs/real1.sh`** (launched ~17:00 CDT 2026-08-22, console `runs/real1.console.log`,
 sentinel `runs/real1.DONE`): Stage A `real1_stageA/` vanilla warm-up 300 min (45 ep/min at start, ~13k episodes)
 → Stage B `real1/` MLB tournament 2880 min (N=16, m=8, anchors 0.25, p-history 4, skip cap 1 annealed at
 clear-rate 0.5, value blend 0.7, sims 40, trajectories logged). **PAUSE:** `touch <run dir>/PAUSE`.
@@ -1302,13 +1302,13 @@ single-threaded; the GPU only wins on batched leaves (K≈32). Real lever = N wo
 The urgent Phase-4/5 unblocker. Stage A of the first real run cleared ante 1 in **46 of
 4 350 episodes (1.0%)** with **value loss 0.0008** — a constant target, nothing learning —
 and a 200-sim diagnostic cleared **0/53**, so it was never the budget. New:
-`mp/agent/mcts/heuristic.py`, `mp/agent/PRIOR_NOTES.md`,
-`mp/agent/tests/test_heuristic_prior.py` (**38**), `scripts/w0_smoke_report.py`,
+`agent/mcts/heuristic.py`, `agent/PRIOR_NOTES.md`,
+`agent/tests/test_heuristic_prior.py` (**38**), `scripts/w0_smoke_report.py`,
 `runs/w0_smoke.sh` + `w0_smoke2.sh`. Edited: `mcts/{search,player,__init__}.py`,
 `train/{loop,population,selfplay}.py`, `scripts/{train_cold,train_mlb}.py`.
-**`mp/engine/**`, `mp/rng/**`, `mp/tournament/**`, `mp/eval/**`, `mp/replay/**`
+**`engine/**`, `rng/**`, `tournament/**`, `eval/**`, `replay/**`
 untouched; no engine change needed.**
-Gates: `mp/agent/tests` **309** (271 + 38), `mp/tournament` + `mp/eval` + `mp/replay`
+Gates: `agent/tests` **309** (271 + 38), `tournament` + `eval` + `replay`
 **264 (57/125/82), unchanged**.
 
 **The prior, in one line each.** `play(S)` = the engine's own dry run — `evaluate_hand`
@@ -1387,7 +1387,7 @@ SKIP advances — judge arms on `clear%`, not on it.
 
 ### 2026-08-22 ~20:00 — FIRST REAL RUN RELAUNCHED with the W0 heuristic prior (lead)
 
-W0 delivered (`mp/agent/mcts/heuristic.py`, `PRIOR_NOTES.md`, 309 agent tests): dry-run hand-quality prior mixed
+W0 delivered (`agent/mcts/heuristic.py`, `PRIOR_NOTES.md`, 309 agent tests): dry-run hand-quality prior mixed
 into the MCTS prior on play/discard (λ, τ), top-K candidate mask, anneal on the blind-clear EMA. 10-min smoke:
 cold **0.0%** ante-1 clears → **λ0.8/τ0.35/K32: 15.7%**, value loss 0.0023 → 0.025 (target alive). Mask alone
 does nothing (0.4%); τ matters more than λ; more sims still doesn't help. Throughput 351 → 184 sims/s.
@@ -1419,12 +1419,12 @@ started at the 0.1 floor and climbs back as the EMA settles (0.29 by ep 50). Exp
 ### 2026-08-23 — P5-W1 multi-process self-play + shared batched evaluator — DONE ✅
 
 **Agent W1.** Phase 5 infra item #1, built while `runs/real1` (Stage B) was live — its run dir untouched, and
-`mp/engine/**`, `mp/rng/**`, `mp/eval/**`, `mp/replay/**` read only. New: `mp/tournament/parallel.py`,
-`mp/agent/parallel/` (10 modules), `mp/agent/train/parallel.py`, `mp/agent/benchmarks/bench_parallel.py`,
-`mp/agent/PARALLEL_NOTES.md`, `mp/agent/tests/test_parallel.py` (**28**),
-`mp/tournament/tests/test_parallel_runner.py` (**17**). Edited additively: `train/population.py`
+`engine/**`, `rng/**`, `eval/**`, `replay/**` read only. New: `tournament/parallel.py`,
+`agent/parallel/` (10 modules), `agent/train/parallel.py`, `agent/benchmarks/bench_parallel.py`,
+`agent/PARALLEL_NOTES.md`, `agent/tests/test_parallel.py` (**28**),
+`tournament/tests/test_parallel_runner.py` (**17**). Edited additively: `train/population.py`
 (`instantiate(..., policy_for=)`), `scripts/train_mlb.py` (`--workers`, `--evaluator-device`, …).
-Gates: `mp/agent/tests` **337** (309 + 28), `mp/tournament/tests` **74** (57 + 17), `mp/eval` + `mp/replay`
+Gates: `agent/tests` **337** (309 + 28), `tournament/tests` **74** (57 + 17), `eval` + `replay`
 **207 unchanged**.
 
 **Architecture (AlphaZero shape).** N worker processes each own a SUBSET of the tournament's seats — games,
@@ -1473,13 +1473,13 @@ as BATCH_NOTES §6 predicted).
 
 **FOR THE LEAD — one command, machine free:**
 ```
-python mp/agent/benchmarks/bench_parallel.py            # workers {1,4,8,12,16} x {cpu,cuda} + serial
-python mp/agent/benchmarks/bench_parallel.py --include-local   # + the "each worker holds its own net" arm
+python agent/benchmarks/bench_parallel.py            # workers {1,4,8,12,16} x {cpu,cuda} + serial
+python agent/benchmarks/bench_parallel.py --include-local   # + the "each worker holds its own net" arm
 ```
-**FOR THE LEAD — the swap for `real1`:** `touch mp/agent/runs/real1/PAUSE`, wait for `=== Stopped (PAUSE)`, then
+**FOR THE LEAD — the swap for `real1`:** `touch agent/runs/real1/PAUSE`, wait for `=== Stopped (PAUSE)`, then
 ```
-python mp/agent/scripts/train_mlb.py --resume mp/agent/runs/real1/latest.pt \
-    --minutes 2880 --device cpu --workers 12 --evaluator-device cpu --run-dir mp/agent/runs
+python agent/scripts/train_mlb.py --resume agent/runs/real1/latest.pt \
+    --minutes 2880 --device cpu --workers 12 --evaluator-device cpu --run-dir agent/runs
 ```
 (add `--log-trajectories --sig-every 50` to keep trajectory logging; pick `--workers` / `--evaluator-device`
 from the benchmark — 12/cpu is the conservative pre-benchmark choice on a 16C/32T box.)
@@ -1492,7 +1492,7 @@ candidate mask into `encode_leaf` would cut per-leaf Python, arena traffic and t
 is still the biggest single lever (PRIOR_NOTES §6, BATCH_NOTES §6); a crashed worker's agents are lost for the
 generation, not just the tournament; `partition_agents` balances by `sims`, which is a proxy for cost;
 `--objective external` is deliberately not parallelised.
-3. **Decision statistics (P5-W3, Opus) — Tagg's ask:** `mp/stats/` — for packs/rerolls/vouchers at any state: hit
+3. **Decision statistics (P5-W3, Opus) — Tagg's ask:** `stats/` — for packs/rerolls/vouchers at any state: hit
    valuation by dry-run gain on a clone, P(≥1 hit) exact (hypergeometric) + Monte Carlo through the real generator
    on determinized clones, true cost incl. interest loss ($1/$5, cap $25 held), urgency from the chip gap to the
    next target, net EV table; CLI + a 126-seed sweep for antes 1–3. = the curated-shortlist / layer-1 instrument;
@@ -1501,8 +1501,8 @@ generation, not just the tournament; `partition_agents` balances by `sims`, whic
 ### 2026-08-23 ~04:10 — PHASE 5 PAUSED at Tagg's request (strategic question pending)
 
 All three Phase 5 agents stopped. W2 (determinization) and W3 (decision stats) had not written anything. W1
-(parallel self-play) left PARTIAL, uncommitted, default-off work on disk: `mp/agent/parallel/`,
-`mp/agent/train/parallel.py`, `mp/tournament/parallel.py`, `tests/test_parallel.py`, `benchmarks/bench_parallel.py`,
+(parallel self-play) left PARTIAL, uncommitted, default-off work on disk: `agent/parallel/`,
+`agent/train/parallel.py`, `tournament/parallel.py`, `tests/test_parallel.py`, `benchmarks/bench_parallel.py`,
 `PARALLEL_NOTES.md`, plus additive `--workers`-style flags in `train_mlb.py`/`selfplay.py`. Tree is green
 (agent 309, tournament 74 with `test_parallel.py` excluded). **Do not trust the parallel path until finished.**
 The `real1` Stage B run continues untouched (gen 19 at 04:00).
@@ -1545,22 +1545,22 @@ style diversity in labels / belief / CFR are non-restart refinements).
 2. Decisions locked: V = P(win MLB match), MLB-only; V ≈ 5M params; symmetric opponent for labels first; Red/White
    first with conditioning fields; no policy net; acceptance test = advisor on Bloodstone-vs-Invisible(+Blueprint).
 3. Model split: W1/W3/W5 strong, W2/W4/W6 Sonnet. W6 after W3/W4/W5.
-4. Baseline to beat / compare: `mp/agent/runs/real1/latest.pt` (clairvoyant MCTS, 106 gens) — evaluate it
+4. Baseline to beat / compare: `agent/runs/real1/latest.pt` (clairvoyant MCTS, 106 gens) — evaluate it
    determinized (W2) before citing any number from it.
 5. Clean-up for the new session's lead: decide whether to keep or delete the W1-parallel partial files
-   (`mp/agent/parallel/`, `train/parallel.py`, `tournament/parallel.py`, their tests/bench/notes) and the mixed
+   (`agent/parallel/`, `train/parallel.py`, `tournament/parallel.py`, their tests/bench/notes) and the mixed
    uncommitted edits in `train_mlb.py`/`selfplay.py` (W0 prior flags + W1 `--workers` flags, default-off, tests green).
 
 ### 2026-08-23 — PHASE 5 (rev 2) BUILD STARTED (new session, lead = Fable)
 
 Pre-launch housekeeping: W1-parallel partial files verified green (agent 337 + tournament 74 = 411/411) and
-committed as-is, default-off (`a6a4a0a`); `mp/ev/` + `mp/stats/` package scaffolding (bootstrap mirroring
-`mp/replay/_bootstrap.py`, conftest, pytest.ini) committed (`4525cb1`). `real1` confirmed stopped (no python
+committed as-is, default-off (`a6a4a0a`); `ev/` + `stats/` package scaffolding (bootstrap mirroring
+`replay/_bootstrap.py`, conftest, pytest.ini) committed (`4525cb1`). `real1` confirmed stopped (no python
 processes); box free: 32 CPUs, RTX 3080 Ti.
 
 Launched in parallel ~15:00: **W1** (encoder v2 + `SetValueNet` 5M, strong), **W2** (`clone_determinized` +
 clairvoyance table on `real1/latest.pt`, sonnet), **W3** (analytic hand player, two budgets `fast` ≤ 5 ms /
-`full` ≤ 100 ms, `EVPlayer` for every state, sonnet-free strong), **W4** (`mp/stats` decision table + 126-seed
+`full` ≤ 100 ms, `EVPlayer` for every state, sonnet-free strong), **W4** (`stats` decision table + 126-seed
 sweep, sonnet), **W5** (staged: race calc + worker pool + trainer skeleton now; labels + V training after
 W1/W2/W3 land, strong). **W6** (advisor + head-to-heads, sonnet) waits on W3/W4/W5.
 
@@ -1598,7 +1598,7 @@ Headline numbers (details in VALUE/DETERMINIZE/EV/STATS/TRAINV/ADVISOR NOTES):
   pipeline proof only; PAUSE live-verified, resume continues schedule, 5M ckpt bit-exact; MatchAwareEVPlayer
   binds `opponent_view` into value_fn; smoke tournament V 0/12 (overfit-1k V vs tuned rules — expected).
   Shop tier for labels FROZEN = W3 rules (stats tier 4× cheaper but ante 3.9 vs 6.1).
-- W6: advisor CLI (`python mp/ev/cli.py advise fixture:bloodstone_vs_invisible --player 0 --rollouts 32`)
+- W6: advisor CLI (`python ev/cli.py advise fixture:bloodstone_vs_invisible --player 0 --rollouts 32`)
   prints rollout/race/V P(win) side by side + ranked actions + stats tables. Tagg's acceptance state:
   P0 rollout 0.906±0.105 vs race 0.215 (documented: race fits pre-edit history — real gap, not a bug).
   Engine caveat: Blueprint-on-Invisible is a scoring NO-OP (sell-triggers not forwarded) — future engine item.
@@ -1606,9 +1606,9 @@ Headline numbers (details in VALUE/DETERMINIZE/EV/STATS/TRAINV/ADVISOR NOTES):
 
 ## IDLE-BOX RUNBOOK (Tagg was using the machine — nothing heavy has run yet)
 Phase A (~1–1.5 h, any order, all ≤ 16–30 procs):
-  A1 `python mp/agent/scripts/measure_clairvoyance.py --checkpoint mp/agent/runs/real1/latest.pt --n-seeds 30 --sims 40 --processes 30 --determinize-mode per_sim --determinize-seed-base 0 --max-steps 20000 --n-boot 2000 --out-json mp/results/clairvoyance_2026-08-23.json --out-md mp/results/clairvoyance_2026-08-23.md`  (~25–40 min)
-  A2 `python mp/ev/gate_ev_player.py --procs 16`  (126-seed EV gate, ~4 min)
-  A3 `python mp/stats/sweep.py --out mp/results/stats_sweep_2026-08-23.json --processes 16`  (~minutes)
+  A1 `python agent/scripts/measure_clairvoyance.py --checkpoint agent/runs/real1/latest.pt --n-seeds 30 --sims 40 --processes 30 --determinize-mode per_sim --determinize-seed-base 0 --max-steps 20000 --n-boot 2000 --out-json results/clairvoyance_2026-08-23.json --out-md results/clairvoyance_2026-08-23.md`  (~25–40 min)
+  A2 `python ev/gate_ev_player.py --procs 16`  (126-seed EV gate, ~4 min)
+  A3 `python stats/sweep.py --out results/stats_sweep_2026-08-23.json --processes 16`  (~minutes)
   A4 three 30-seed h2h runs — exact commands ADVISOR_NOTES §4 (~25–35 min total)
 Phase B (overnight): TRAINV_NOTES §6 —
   B1 50k-label campaign (16 workers; ~9.5 h pre-fix-pass projection, plausibly ~5 h now; resumable; PAUSE file)
@@ -1626,7 +1626,7 @@ labels / 2,126 jobs / 0 failures in 2.95 h. V (5M) overfits 51k labels by epoch 
 Brier 0.060 / AUC 0.784 / ECE 0.021 at step ~1250; ckpt rotation ate the early optimum first
 run — dense-checkpoint retrain to 2k steps recovered it (keeper: `v_full_best/ckpt_0001000.pt`).
 
-**HEADLINES (all in mp/results/, committed `20e1ad0` + this):**
+**HEADLINES (all in results/, committed `20e1ad0` + this):**
 1. **The pivot is measured.** Honest (determinized) `real1` = 33% ante-1 / mean ante 1.83 — scripted-
    greedy level after 106 gens. Its hand play was the oracle's: det-vs-clair agreement 10.5% (play),
    0.7% (discard); strategic actions 78–82% agree.
@@ -1640,7 +1640,7 @@ run — dense-checkpoint retrain to 2k steps recovered it (keeper: `v_full_best/
    (b) within-state ranking loss (pairs of actions from one state, same rollout worlds — cancels
    shared noise), (c) V only at the expectimax LEAF (hand play) with rules elsewhere, (d) more
    labels + regularisation (5M params saturate 51k rows by epoch 7).
-NEXT SESSION: pick among (a)-(d) with Tagg; the advisor (`mp/ev/cli.py advise`) is ready for his
+NEXT SESSION: pick among (a)-(d) with Tagg; the advisor (`ev/cli.py advise`) is ready for his
 Bloodstone state whenever he wants to poke it.
 
 ### 2026-08-24 — V-v2 BUILD ROUND KICKED OFF: levers (b)+(c) + extraction layer (lead = Fable)
@@ -1678,7 +1678,7 @@ approaches with paper lineage + status. **#4 (LLM-writes-the-encode-layer) = BAC
 estimate preserved in the doc (§4: ~3 sessions + fleet day, double-counting = #1 risk, writeup potential).
 
 **2026-08-25 addendum 3 (Tagg approved):** Round close-out gains **W-DOCS**: AI-evaluator legibility pass —
-mp/README.md claims ledger (claim → evidence path → repro command), "self-audits that changed conclusions"
+README.md claims ledger (claim → evidence path → repro command), "self-audits that changed conclusions"
 section, repo-root CLAUDE.md/AGENTS.md router, top-level README bridge to mp/, low-signal signposting
 (mark superseded/vendored/generated areas so limited-context tools spend budget on the load-bearing files;
 steer away from LOW-SIGNAL only, never from unflattering results). Context: mp/campaign has NO upstream —
@@ -1727,7 +1727,7 @@ close-out); (b) **engine canonicalises seeds '0'→'O' and holdout-hash applies 
 holdout checks leak/lose ~15% of seeds; close-out must sweep for this pattern before the campaign.**
 Throughput: 102 labels/min @ 8 workers. 0/1,176 job failures. Worktree note: both worktree agents (W-LEAF,
 W-ACTIVE) were created from stale `main` and had to reset to mp/campaign — future worktree prompts should
-say so explicitly. POC files live in W-ACTIVE's worktree (mp/ev/active_poc/ + mp/results/active_poc_*) —
+say so explicitly. POC files live in W-ACTIVE's worktree (ev/active_poc/ + results/active_poc_*) —
 merge at close-out with W-LEAF's diff. Remaining: W-AUX only.
 
 ### 2026-08-25 — V-v2 ROUND CLOSED OUT + R1 CAMPAIGN LAUNCHED (lead)
@@ -1739,8 +1739,8 @@ Close-out: all suites green as-merged (engine 1651 / mp-tests 1073 / mp-ev 307 /
 normalizes '0'->'O' pre-dedupe; sample_states reservoir sha1) · `c474d2a` gen_pairs --per-kind passthrough.
 Worktrees removed. Smoke: per-kind honored, aux on, extraction detected, 0 failures, 487 ms/rollout (quiet box).
 
-**R1 CAMPAIGN RUNNING** (background, resumable, PAUSE = touch mp/ev/runs/pairs_v2/PAUSE):
-`gen_pairs --run-dir mp/ev/runs/pairs_v2 --seeds default+random:3000 --seed-rng 42 --n-states 14
+**R1 CAMPAIGN RUNNING** (background, resumable, PAUSE = touch ev/runs/pairs_v2/PAUSE):
+`gen_pairs --run-dir ev/runs/pairs_v2 --seeds default+random:3000 --seed-rng 42 --n-states 14
 --n-worlds 8 --workers 16 --minutes 600 --aux --probe-jobs 25 --reps 4
 --per-kind {hand:5,nemesis:4,shop:2,pack:2,blind_select:1} --mix {close_call:.55,gve:.30,random:.15}`
 Projection ~46 pairs/min -> ~27k pairs / ~55k fresh-policy absolute rows with aux. Proc-rich slice seeds are
@@ -1759,7 +1759,7 @@ aux on minus pvp_margin_next, lam_rank 1.0) -> R3 eval battery -> compiled repor
 (CRN, n=42,468; direct audit n=341 agrees at 2.10x, rho 0.556) — the per-kind hand/nemesis weighting
 lifted it ABOVE the 2x bar** (uniform mix had measured 1.78x). Kinds: hand 15,620 + nemesis 12,496 = 66%;
 mix close_call 24,579 / random 17,655 / greedy_vs_extract 234 (thin as predicted — proc boards rare;
-78x the pilot's 3). Resolved 4.8% at 8 worlds. Results: mp/results/pairs_pairs_v2.json.
+78x the pilot's 3). Resolved 4.8% at 8 worlds. Results: results/pairs_pairs_v2.json.
 
 **R2 launched** (sequential GPU): arm A `v_v2` = 135k absolute rows (new 85k + old 51k, fingerprint any)
 + 42k pair shards (lam_rank 1.0, tau 0.05) + aux heads (all minus pvp_margin_next per W-AUX), ckpt every

@@ -3,7 +3,7 @@ workers.py — a resumable multiprocessing pool over PURE functions (Phase 5 rev
 
 Built for the label generator: thousands of independent jobs (one seed each) that need no
 network, no shared state and no lockstep — just CPU.  Nothing from Phase 5 rev 1's
-``mp/agent/parallel`` (shared-memory leaf transport to a batched evaluator) is needed here,
+``agent/parallel`` (shared-memory leaf transport to a batched evaluator) is needed here,
 so that package is left untouched (see TRAINV_NOTES.md).
 
     summary = run_pool(fn, jobs, n_workers=16, on_result=store, state_path=run/"pool.state",
@@ -28,7 +28,7 @@ so that package is left untouched (see TRAINV_NOTES.md).
 * A job that raises is logged, counted in ``failed`` and NOT marked done (``retry_failed``
   decides whether a later run retries it); the pool keeps going.
 
-``python mp/ev/workers.py --bench --workers 4`` runs a few seconds of dummy jobs and prints
+``python ev/workers.py --bench --workers 4`` runs a few seconds of dummy jobs and prints
 jobs/min and per-job latency.
 """
 from __future__ import annotations

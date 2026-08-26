@@ -1,8 +1,8 @@
 # PAIRS_NOTES — W-PAIRS: lever (b)'s data (Phase 5 rev 2, 2026-08-25)
 
-Files: `mp/ev/pairs.py` (new), `mp/ev/scripts/gen_pairs.py` (new driver), tests
-`mp/ev/tests/test_pairs.py` (30 tests, ~13 s), campaign outputs `mp/ev/runs/pairs_s1/`,
-results `mp/results/pairs_s1.json` + `mp/results/pairs_s1_diag_coupling.json`.
+Files: `ev/pairs.py` (new), `ev/scripts/gen_pairs.py` (new driver), tests
+`ev/tests/test_pairs.py` (30 tests, ~13 s), campaign outputs `ev/runs/pairs_s1/`,
+results `results/pairs_s1.json` + `results/pairs_s1_diag_coupling.json`.
 **Nothing owned by another workstream was touched** — `labels.py`, `dataset.py`,
 `workers.py`, `hand.py`, `player.py`, `train_v.py`, `gen_labels.py` are all read-only from
 here (the driver *imports* `gen_labels.parse_seeds`, the shared seed-spec parser).
@@ -169,7 +169,7 @@ mid-build"): same `obs_a__<key>` / `obs_b__<key>`, same typed scalar columns, `d
 `delta_ci` as top-level float32 arrays, and its blob column renamed to `pair_json` holding
 the full frozen record. Its `test_reads_pairs_py_shards_directly` calls the REAL
 `pairs.save_pair_shard`, and its `PairDataset.load` was pointed at this campaign's real
-`mp/ev/runs/pairs_s1/shards` as a final end-to-end check (§6).
+`ev/runs/pairs_s1/shards` as a final end-to-end check (§6).
 
 **Schema-collision notes for W-RANK** (frozen names kept, collisions documented, nothing
 renamed):
@@ -205,7 +205,7 @@ knobs that select its behaviour (`policy`, `budget`, `shop_tier`, `epsilon_rollo
 `has_extraction()`). Brief §2's requirement is "any change to the fast player changes the
 label/rollout policy" — hashing the source is the only way to get that automatically, and it
 means **W-EXTRACT landing flips the fingerprint by construction**. The old 51k corpus
-(`mp/ev/runs/labels_full*`) carries no such field at all, so "old policy" is identifiable by
+(`ev/runs/labels_full*`) carries no such field at all, so "old policy" is identifiable by
 its absence. Cached per process (`functools.lru_cache`) at first use, so a worker's
 fingerprint always describes the code that worker actually imported.
 
@@ -237,7 +237,7 @@ the two "unpaired" contrasts share world blocks and are correlated by exactly `�
 their spread is biased UP by the very covariance the pairing exploits — it would flatter the
 lever. `direct` uses the per-block means instead, which are genuinely independent.
 
-### Results — `mp/results/pairs_s1.json`, n = 1,301 pairs (`ev-fast-rules:07e21933f382`)
+### Results — `results/pairs_s1.json`, n = 1,301 pairs (`ev-fast-rules:07e21933f382`)
 
 | | CRN (n = 1,301) | direct (n = 54) |
 |---|---|---|
@@ -271,7 +271,7 @@ lever is not decaying with horizon; it is a per-state-kind effect.
 
 ### The two control measurements
 
-1. **Coupling order** (`mp/results/pairs_s1_diag_coupling.json`, 290 pairs on the same seed
+1. **Coupling order** (`results/pairs_s1_diag_coupling.json`, 290 pairs on the same seed
    list, `coupling=determinize_then_step`): **VRF 1.86×, ρ +0.504**; hand+nemesis 2.48×.
    Against the frozen order's 1.78× / 2.54×, that is inside the noise. **The frozen
    step-then-determinize order is NOT what is limiting the lever** — sharing the immediate
@@ -296,7 +296,7 @@ permanently; only the deck composition stays common. The remaining `ρ ≈ 0.2�
 the shared *pre-branch* run state, not shared future luck.
 
 A second, unavoidable factor: the label is **binary** (match win) at a full-match horizon.
-The lead's own pre-round measurement (`mp/results/rho_decay_*.json`) got ρ = 0.77–0.90 on
+The lead's own pre-round measurement (`results/rho_decay_*.json`) got ρ = 0.77–0.90 on
 *continuous* targets (log score, money, lives lost) at 1–8 blind horizons. Binarising a
 bivariate-normal pair at the median maps ρ → (2/π)·arcsin ρ, i.e. 0.87 → 0.67 — which is
 almost exactly the ρ = 0.63 measured here at hand states. **The hand-state number is
@@ -324,17 +324,17 @@ pair shard:
 
 ```bash
 # the proof campaign (resumable: re-run the same command; pause: touch <run-dir>/PAUSE)
-python mp/ev/scripts/gen_pairs.py --run-dir mp/ev/runs/pairs_s1 --seeds default+random:600 \
+python ev/scripts/gen_pairs.py --run-dir ev/runs/pairs_s1 --seeds default+random:600 \
     --n-states 6 --n-worlds 8 --workers 8 --probe-jobs 10 --reps 4 --flush-jobs 8 \
     --minutes 70 --name s1
 
 # the §4 coupling diagnostic (same knobs, the non-frozen coupling; NOT training data)
-python mp/ev/scripts/gen_pairs.py --run-dir mp/ev/runs/pairs_s1/diag_coupling \
+python ev/scripts/gen_pairs.py --run-dir ev/runs/pairs_s1/diag_coupling \
     --seeds default+random:600 --n-states 6 --n-worlds 8 --workers 8 --probe-jobs 0 \
     --minutes 15 --coupling determinize_then_step --name s1_diag_coupling
 ```
 
-**Training data is `mp/ev/runs/pairs_s1/shards` (pairs) + `.../abs_shards` (absolute rows),
+**Training data is `ev/runs/pairs_s1/shards` (pairs) + `.../abs_shards` (absolute rows),
 and nothing else under that tree.** `diag_coupling/` and `pre_extract/` are measurements,
 not training data, and they carry DIFFERENT `player_fingerprint`s (`…5667f3cc6ca8` and
 `…2caf82bf67cb` vs the campaign's `…07e21933f382`). `dataset.list_shards` on a directory
@@ -342,7 +342,7 @@ does not recurse, so pointing the trainer at the two paths above is already safe
 recursive glob (`pairs_s1/**/*.npz`) would silently mix three policies. W-RANK's
 `--pair-fingerprint-allow` is the belt to that braces.
 
-`mp/ev/runs/pairs_s1/pre_extract/` holds a first 12-minute burst run BEFORE W-EXTRACT landed
+`ev/runs/pairs_s1/pre_extract/` holds a first 12-minute burst run BEFORE W-EXTRACT landed
 (a different `player_fingerprint`, `close_call`/`random` only). Kept deliberately: it is the
 clean A/B on the same measurement with the old fast player, and its shards are readable by
 the same loaders. It is NOT part of the campaign's headline numbers.
@@ -351,7 +351,7 @@ the same loaders. It is NOT part of the campaign's headline numbers.
 
 ## 6. Measured
 
-### The proof campaign (`mp/ev/runs/pairs_s1/`, `mp/results/pairs_s1.json`)
+### The proof campaign (`ev/runs/pairs_s1/`, `results/pairs_s1.json`)
 
 **1,301 pairs + 2,602 absolute rows from 232 seeds**, 29 pair shards + 29 label shards,
 `n_worlds = 8`, `n_states = 6`, 8 workers, 0 failed jobs, 91 snapshots skipped (< 2 legal
@@ -411,13 +411,13 @@ against the 50/40/10 target. State kinds: hand 22.2 %, pack 20.9 %, shop 20.9 %,
 
 ### W-RANK interop, verified on real data
 
-`train_v.PairDataset.load("mp/ev/runs/pairs_s1/pre_extract/shards")` → 206 pairs, all
+`train_v.PairDataset.load("ev/runs/pairs_s1/pre_extract/shards")` → 206 pairs, all
 `obs_a`/`obs_b` keys, all 8 of its typed columns, `delta` as float32. W-RANK's trainer reads
 this campaign's shards unchanged.
 
 ### Tests
 
-`mp/ev/tests/test_pairs.py`: **31 tests, ~14 s**, all on the scripted policy / synthetic
+`ev/tests/test_pairs.py`: **31 tests, ~14 s**, all on the scripted policy / synthetic
 records except two EV-player integration tests. Coverage: action identity, the fingerprint
 (stability + config sensitivity + source sensitivity), the mix sequence with and without
 extraction, close-call/cascade/random selection, the extraction hook in all three shapes
@@ -426,7 +426,7 @@ hook, both couplings, the CRN plumbing (identical actions ⇒ identical worlds, 
 perspective, reproducibility, snapshot immutability, disjoint replicate blocks), the frozen
 schema key set, strict-JSON round trip, shard round trip, reconstruction from `meta`, the
 absolute rows loading through the unchanged `LabelDataset`, and `variance_report` /
-`mix_report` against hand arithmetic. Full suite `python -m pytest mp/ev` green.
+`mix_report` against hand arithmetic. Full suite `python -m pytest ev` green.
 
 ---
 

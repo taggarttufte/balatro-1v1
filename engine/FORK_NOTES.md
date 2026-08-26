@@ -1,4 +1,4 @@
-# mp/engine — Fork Notes
+# engine — Fork Notes
 
 **Created 2026-08-20 (Phase 0, Agent E).** Self-contained copy of the Balatro simulator
 for the multiplayer (MLB) line. Phase 1 threads keyed RNG through *this* copy; the
@@ -14,7 +14,7 @@ top-level `balatro_sim/` (BRL) is untouched.
 | `C:\Users\Taggart\projects\recovered\balatro-mcts` | `ee75d11` (master; `game.py` last touched by `63ef7ca`, 2026-07-30) | `master` | `clone()`, `legal_actions()`, `_consumable_target_actions()`, `JokerInstance.clone()`, three clone tests, `benchmarks/bench_clone_step.py` |
 
 The balatro-rl worktree was clean under `balatro_sim/` and `tests/` at copy time, so the
-copy equals the committed tree at `4411dbf`. Nothing outside `mp/engine/` was modified;
+copy equals the committed tree at `4411dbf`. Nothing outside `engine/` was modified;
 no git state was changed.
 
 **Pre-copy diff of the two engine trees** (`diff -rq`, excluding `__pycache__`/tests):
@@ -42,10 +42,10 @@ the fork is byte-identical to *both* for those files.
 ## 2. Layout
 
 ```
-mp/engine/
+engine/
 ├── __init__.py            package marker + orientation docstring
-├── pytest.ini             pythonpath = . ; testpaths = tests   (makes mp/engine the rootdir)
-├── conftest.py            puts mp/engine first on sys.path; RAISES if balatro_sim resolves elsewhere
+├── pytest.ini             pythonpath = . ; testpaths = tests   (makes engine the rootdir)
+├── conftest.py            puts engine first on sys.path; RAISES if balatro_sim resolves elsewhere
 ├── FORK_NOTES.md          this file
 ├── balatro_sim/           the engine fork (25 modules incl. jokers/)
 ├── benchmarks/
@@ -58,18 +58,18 @@ mp/engine/
 
 The two source test trees were kept as separate packages (`engine_tests`, `sim_tests`)
 so basenames cannot collide and module names cannot clash with the repo-root `tests`
-package. `mp/engine/tests/` deliberately has **no** `__init__.py`.
+package. `engine/tests/` deliberately has **no** `__init__.py`.
 
 ### Running
 ```
 # from the repo root (the intended invocation)
-python -m pytest mp/engine/tests -q
+python -m pytest engine/tests -q
 
-# from inside mp/engine (testpaths)
-cd mp/engine && python -m pytest -q
+# from inside engine (testpaths)
+cd engine && python -m pytest -q
 
 # the benchmark
-python mp/engine/benchmarks/bench_clone_step.py
+python engine/benchmarks/bench_clone_step.py
 ```
 `pytest-timeout` is not installed in this environment, so the suite was run without
 `--timeout`; the full suite takes ~7–13 s.
@@ -77,15 +77,15 @@ python mp/engine/benchmarks/bench_clone_step.py
 ### Why both `pytest.ini` and `conftest.py`
 pytest only loads `conftest.py` files at or below `confcutdir`, which defaults to the
 rootdir — and with no ini file the rootdir would be the *common ancestor of the
-arguments* (`mp/engine/tests`, or a single test file's directory). `mp/engine/pytest.ini`
-pins the rootdir to `mp/engine` for any invocation targeting a path under it, so the
+arguments* (`engine/tests`, or a single test file's directory). `engine/pytest.ini`
+pins the rootdir to `engine` for any invocation targeting a path under it, so the
 conftest always loads and `pythonpath = .` puts the fork first on `sys.path`. The conftest
 then re-asserts the path ordering and **fails collection with a `RuntimeError`** if
 `balatro_sim.__file__` is not the fork's — verified: pre-importing the BRL package and
 then invoking pytest on the fork's tests exits with code 4 and the "imported the wrong
 balatro_sim" message, instead of silently testing the wrong engine.
 
-Sibling invocations (`pytest mp/tests`, `pytest mp`) do not see `mp/engine/pytest.ini`
+Sibling invocations (`pytest tests`, `pytest mp`) do not see `engine/pytest.ini`
 because ini discovery walks *upward* from the arguments only.
 
 ---
@@ -93,8 +93,8 @@ because ini discovery walks *upward* from the arguments only.
 ## 3. What was ported from balatro-mcts
 
 Applied as patches (`diff -u` between the two repos' files, `patch --binary` because the
-whole tree is CRLF) so the port is exact. Post-patch, `mp/engine/balatro_sim/game.py` and
-`mp/engine/balatro_sim/jokers/base.py` are **byte-identical to the balatro-mcts files**.
+whole tree is CRLF) so the port is exact. Post-patch, `engine/balatro_sim/game.py` and
+`engine/balatro_sim/jokers/base.py` are **byte-identical to the balatro-mcts files**.
 
 | Symbol | Fork location | Notes |
 |---|---|---|
@@ -146,9 +146,9 @@ balatro-mcts. The other mcts test files (`test_gumbel.py`, `test_nn_policy.py`,
 
 | Where | Result | Notes |
 |---|---|---|
-| Source, in place (`balatro-rl`, `python -m pytest tests balatro_sim/tests`) | **825 passed, 3 skipped** (9.35 s) | run with `-p no:cacheprovider` and `PYTHONDONTWRITEBYTECODE=1` so nothing outside `mp/engine` was written |
-| Fork (`python -m pytest mp/engine/tests -q -x` from repo root) | **847 passed, 13 skipped, 0 failed** (13.35 s) | |
-| Fork, from inside `mp/engine` (`python -m pytest -q`) | 847 passed, 13 skipped | same |
+| Source, in place (`balatro-rl`, `python -m pytest tests balatro_sim/tests`) | **825 passed, 3 skipped** (9.35 s) | run with `-p no:cacheprovider` and `PYTHONDONTWRITEBYTECODE=1` so nothing outside `engine` was written |
+| Fork (`python -m pytest engine/tests -q -x` from repo root) | **847 passed, 13 skipped, 0 failed** (13.35 s) | |
+| Fork, from inside `engine` (`python -m pytest -q`) | 847 passed, 13 skipped | same |
 
 Reconciliation: 825 − 10 (`TestActionMasking`, now skipped) + 32 (three clone files) = 847.
 Skips: 3 pre-existing runtime skips in `engine_tests/test_rewards_v5.py:62` ("Could not
@@ -173,7 +173,7 @@ steps (random agents lose in the first blind), so it is noisier than the clone n
 
 ## 7. Known engine-level fidelity issues this fork INHERITS (not fixed here — Phase 1)
 
-Authoritative inventory: **`mp/docs/MP_UPDATE_LIST_2026-08.md` §1–§7.** Line numbers
+Authoritative inventory: **`docs/MP_UPDATE_LIST_2026-08.md` §1–§7.** Line numbers
 there refer to the source `game.py`; the port shifted `game.py` lines (+105 after line
 285, +257 after line 556). All other modules are unshifted. Fork-relative pointers:
 

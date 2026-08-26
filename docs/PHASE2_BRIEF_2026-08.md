@@ -7,8 +7,8 @@ and its Lua + lovely patches are the ground truth for every MLB rule. **Read the
 do not trust this brief over it.** Same rule as `_reference/`: port algorithms, never vendor
 or copy the mod's code into deliverables, never commit it.
 
-Phase 1 state at kickoff (all green, nothing committed): `pytest mp/engine/tests` 1441/10 skip/0;
-`pytest mp/tests` 393/2 xfail/0; `python -m mp.oracle.engine_parity --antes 1-8 --rerolls 5 --quiet`
+Phase 1 state at kickoff (all green, nothing committed): `pytest engine/tests` 1441/10 skip/0;
+`pytest tests` 393/2 xfail/0; `python -m oracle.engine_parity --antes 1-8 --rerolls 5 --quiet`
 126/126 exact. **Every workstream re-runs these before hand-off; they must stay green.**
 
 ---
@@ -103,7 +103,7 @@ every `..G.GAME.round_resets.ante` site that's patched). Shuffles: `nr`/`cashout
 = `ante .. blind_key .. blind_on_deck` under The Order. Boss: `'boss'..ante` under The Order (vanilla `'boss'`).
 ~~Seed gets a `*` prefix for display only.~~ **CORRECTION (W2, verified in LuaJIT):** the `*` prefix is applied
 BEFORE `hashed_seed`, so under The Order every stream is keyed on `'*'..seed` — a different universe, not a
-display change. Full authoritative key-site table: `mp/rng/NOTES_ORDER.md` §3 (supersedes DELEGATE_NOTES §3).
+display change. Full authoritative key-site table: `rng/NOTES_ORDER.md` §3 (supersedes DELEGATE_NOTES §3).
 Vouchers: §1.6 path. Keys NOT listed stay vanilla.
 
 ### 1.8 Opponent information available to a bot (for the PvP decision frame)
@@ -119,9 +119,9 @@ left (`enemyInfo`). Between blinds you see their location, lives, skips. Nothing
 | # | Workstream | Owns (create/modify) | Shared (Edit-only, re-read before each edit) |
 |---|---|---|---|
 | **W1** | MLB match rules + two-player lockstep coordinator | `engine/balatro_sim/mlb_match.py` (new), `engine/balatro_sim/mp_game.py` (retire or rewrite — V8-era, wrong rules), `engine/balatro_sim/env_mp.py`, `engine/tests/engine_tests/test_mlb_*.py`, `engine/MLB_NOTES.md` | `game.py` (nemesis blind type, PvP round-eval money, failed-blind-proceeds + life signal, comeback payout at cash-out, endless/no win_ante, Attrition bans → `run_state.banned_keys`), `constants.py` |
-| **W2** | The Order hook + MLB voucher path in the generation layer, oracle-verified | `rng/generate.py`, `rng/keys.py`, `mp/tests/test_the_order.py` (new), `rng/NOTES_ORDER.md`; may extend `tests/test_generate_oracle.py`'s `LuaGenOracle` | `game.py` one-liner: `_init_game_vars` sets `rs.key_scope = self.queue_scope` + a `ruleset`/`mlb` flag → `RunState` |
+| **W2** | The Order hook + MLB voucher path in the generation layer, oracle-verified | `rng/generate.py`, `rng/keys.py`, `tests/test_the_order.py` (new), `rng/NOTES_ORDER.md`; may extend `tests/test_generate_oracle.py`'s `LuaGenOracle` | `game.py` one-liner: `_init_game_vars` sets `rs.key_scope = self.queue_scope` + a `ruleset`/`mlb` flag → `RunState` |
 | **W3** | Decks (Red/Checkered/Plasma required, the rest where trivial) + stake catalogue (White verified) | `engine/balatro_sim/decks.py` (new), `engine/balatro_sim/stakes.py` (new), `scoring.py` (Plasma balance), `engine/tests/engine_tests/test_decks.py`, `test_stakes.py`, `engine/DECKS_NOTES.md` | `game.py` (deck/stake hooks at run start, Plasma blind ×2, Anaglyph Double Tag on boss defeat), `constants.py` |
-| **W4** | Phase 2 exit gate (runs AFTER W1+W2) | `mp/scripts/mlb_match_demo.py`, `mp/tests/test_mlb_match_gate.py`, additions to `tests/test_engine_invariants.py` | — |
+| **W4** | Phase 2 exit gate (runs AFTER W1+W2) | `scripts/mlb_match_demo.py`, `tests/test_mlb_match_gate.py`, additions to `tests/test_engine_invariants.py` | — |
 
 Sources for W3: `_reference/balatro_src/back.lua` (`Back:apply_to_run` 173-288, `Back:trigger_effect`),
 `game.lua:2018-2060` (stake modifiers), `functions/state_events.lua` (`G.FUNCS.evaluate_play` Plasma

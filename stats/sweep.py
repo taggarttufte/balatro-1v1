@@ -1,8 +1,8 @@
 """
 sweep.py -- the 126-seed decision-statistics sweep (Phase 5 rev 2, W4, gate 3).
 
-Drives a scripted player (``mp/scripts/mlb_match_demo.py::ScriptedPlayer`` -- the module
-``mp/eval/common.py::ScriptedPlayer`` itself re-exports, per that file's own docstring)
+Drives a scripted player (``scripts/mlb_match_demo.py::ScriptedPlayer`` -- the module
+``eval/common.py::ScriptedPlayer`` itself re-exports, per that file's own docstring)
 through ante 8 on each seed, calling ``decide.decision_table`` at EVERY shop visit and pack
 open, and aggregates the result by ante: P(hit) of a reroll, mean net EV of the best row, %
 of visits where the best row is ``leave``, interest-loss share of true cost, pack-open EV by
@@ -14,8 +14,8 @@ here is inherited from the parent process).
 
 Usage::
 
-    python mp/stats/sweep.py --out mp/results/stats_sweep_2026-08-23.json
-    python mp/stats/sweep.py --seeds 11111111,1558AXDL --processes 2 --out /tmp/smoke.json
+    python stats/sweep.py --out results/stats_sweep_2026-08-23.json
+    python stats/sweep.py --seeds 11111111,1558AXDL --processes 2 --out /tmp/smoke.json
 
 CAUTION (2026-08-23 lead note): do not run the full 126-seed / high-process-count sweep
 while the box is in interactive use -- smoke-test with ``--n-seeds`` / ``--seeds`` and a
@@ -32,8 +32,8 @@ from concurrent.futures import ProcessPoolExecutor, as_completed
 from pathlib import Path
 from typing import Optional
 
-_HERE = Path(__file__).resolve().parent           # mp/stats
-_MP_ROOT = _HERE.parent                             # mp/
+_HERE = Path(__file__).resolve().parent           # stats
+_MP_ROOT = _HERE.parent                             # repo root
 _SCRIPTS_DIR = _MP_ROOT / "scripts"
 _GROUND_TRUTH_DIR = _MP_ROOT / "oracle" / "ground_truth"
 _RESULTS_DIR = _MP_ROOT / "results"
@@ -42,7 +42,7 @@ for _p in (str(_MP_ROOT), str(_HERE), str(_SCRIPTS_DIR)):
     if _p not in sys.path:
         sys.path.insert(0, _p)
 
-import _bootstrap  # noqa: E402  (engine fork guard; also puts mp/agent on sys.path)
+import _bootstrap  # noqa: E402  (engine fork guard; also puts agent on sys.path)
 from _bootstrap import BalatroGame, State  # noqa: E402
 
 import decide  # noqa: E402
@@ -221,7 +221,7 @@ _PLAYER_KWARGS = dict(hand="greedy", rerolls_per_visit=1, buy_slot0=False,
 
 def _parse_player_spec(spec: str) -> dict:
     """``"hand=greedy,reroll=1,buy=0"`` -> ``ScriptedPlayer`` kwargs (same field aliases as
-    ``mp/eval/common.py::parse_scripted_spec``, reimplemented here to avoid importing the
+    ``eval/common.py::parse_scripted_spec``, reimplemented here to avoid importing the
     rest of that module's bootstrap for a sweep worker)."""
     import mlb_match_demo as D
     aliases = {"reroll": "rerolls_per_visit", "rerolls": "rerolls_per_visit",

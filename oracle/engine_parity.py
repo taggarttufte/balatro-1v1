@@ -1,20 +1,20 @@
 """
 End-to-end ENGINE-vs-ground-truth parity harness (Phase 1, workstream W8).
 
-Drives the REAL engine (``mp/engine/balatro_sim.BalatroGame`` through ``step()``), not
-``mp/rng/generate.py``, on each oracle seed with a scripted policy and diffs what the engine
+Drives the REAL engine (``engine/balatro_sim.BalatroGame`` through ``step()``), not
+``rng/generate.py``, on each oracle seed with a scripted policy and diffs what the engine
 SHOWS (shelf items + editions, pack contents, voucher, boss, tags) against
-``mp/oracle/ground_truth/<SEED>.json``.  Its sibling ``parity_check.py`` validates the
+``oracle/ground_truth/<SEED>.json``.  Its sibling ``parity_check.py`` validates the
 generation layer in isolation; this file validates the game-state *plumbing* around it
 (run start -> boss/voucher/tags, boss defeat -> next voucher, Cash Out -> tags/boss, shelf
 release on leave, reroll = queue advance, pack open/skip release) that neither Phase 0
 harness covers.
 
-    python -m mp.oracle.engine_parity --seeds 7I4M53DL,ALEEB --antes 1-3 --variant faithful
-    python -m mp.oracle.engine_parity --antes 1-8 --rerolls 5 --quiet
-    python -m mp.oracle.engine_parity --seeds ALEEB --reference generate --reroll-every-shop --buy-shelf
-    python -m mp.oracle.engine_parity --seeds ALEEB --buy-vouchers
-    python -m mp.oracle.engine_parity --probe            # report which target hooks the engine exposes
+    python -m oracle.engine_parity --seeds 7I4M53DL,ALEEB --antes 1-3 --variant faithful
+    python -m oracle.engine_parity --antes 1-8 --rerolls 5 --quiet
+    python -m oracle.engine_parity --seeds ALEEB --reference generate --reroll-every-shop --buy-shelf
+    python -m oracle.engine_parity --seeds ALEEB --buy-vouchers
+    python -m oracle.engine_parity --probe            # report which target hooks the engine exposes
 
 Scripted policy (``Policy``):
   * clear every blind (``debug_win_blind()`` if the engine has it, else the harness forces
@@ -34,7 +34,7 @@ history -- rerolls, purchases, pack opens -- so any policy can be compared, not 
 JSON corpus fixed).  ``--buy-vouchers`` uses the JSON's ``voucher_chain_if_bought`` branch.
 
 Exit code 0 when every seed is exact through the requested antes, 1 otherwise, 2 when the engine
-cannot even be driven (missing hooks -- see ``--probe`` and mp/tests/HARNESS_NOTES.md).
+cannot even be driven (missing hooks -- see ``--probe`` and tests/HARNESS_NOTES.md).
 """
 from __future__ import annotations
 
@@ -62,9 +62,9 @@ from rng import pools as P  # noqa: E402
 # ============================================================================ engine import
 
 def import_engine():
-    """Import the FORK under mp/engine (never the BRL package at the repo root).
+    """Import the FORK under engine (never any other ``balatro_sim`` on sys.path).
 
-    Mirrors mp/engine/conftest.py: puts mp/engine first on sys.path and refuses to run if a
+    Mirrors engine/conftest.py: puts engine first on sys.path and refuses to run if a
     different ``balatro_sim`` won."""
     if ENGINE_ROOT in sys.path:
         sys.path.remove(ENGINE_ROOT)
@@ -77,8 +77,8 @@ def import_engine():
             raise RuntimeError(
                 "a different balatro_sim is already imported in this process:\n"
                 f"  got:      {got}\n  expected: {want}\n"
-                "Run the harness in a fresh interpreter (python -m mp.oracle.engine_parity / "
-                "python -m pytest mp/tests)."
+                "Run the harness in a fresh interpreter (python -m oracle.engine_parity / "
+                "python -m pytest tests)."
             )
     import balatro_sim  # noqa: WPS433
     got = os.path.normcase(os.path.abspath(balatro_sim.__file__))
@@ -124,7 +124,7 @@ def probe_hooks(game_mod=None) -> dict:
         out["string_seed"] = f"raises {type(ex).__name__}: {ex}"
         g = game_mod.BalatroGame(seed=1)
     rs = getattr(g, "run_state", None)
-    # duck-typed: W2 may import the module as mp.rng.generate (a distinct class object)
+    # duck-typed: W2 may import the module as rng.generate (a distinct class object)
     out["run_state"] = rs is not None and all(hasattr(rs, a) for a in ("used_jokers", "acquire", "release_shop", "rng"))
     out["keyed_rng"] = bool(rs is not None and hasattr(rs, "rng") and hasattr(rs.rng, "pseudorandom")
                             and not hasattr(g, "rng"))
@@ -569,7 +569,7 @@ def replay_visits(seed: str, visits: list, deck: str = "b_red", stake: str = "st
 
     This is the reference for any policy the JSON corpus does not cover (purchases, rerolls at
     every visit, Showman, ...): the generation layer itself is proven against the Lua
-    (mp/tests/test_generate_oracle.py), so disagreement here is an engine plumbing bug."""
+    (tests/test_generate_oracle.py), so disagreement here is an engine plumbing bug."""
     st = GEN.RunState.for_stake(seed, stake=PC._STAKE_N.get(stake, 1))
     rs = GEN.start_run(st, deck)
     out: dict = {"seed": seed, "antes": {}}
@@ -725,12 +725,12 @@ def main(argv=None) -> int:
     try:
         game_mod = import_engine()
     except Exception as ex:
-        print(f"[engine] cannot import the mp/engine fork: {type(ex).__name__}: {ex}")
+        print(f"[engine] cannot import the engine fork: {type(ex).__name__}: {ex}")
         return 2
 
     if args.probe:
         hooks = probe_hooks(game_mod)
-        print("engine hook probe (target architecture, see mp/tests/HARNESS_NOTES.md):")
+        print("engine hook probe (target architecture, see tests/HARNESS_NOTES.md):")
         for name, desc, _ in HOOKS:
             v = hooks.get(name)
             mark = "ok " if v is True else "-- "

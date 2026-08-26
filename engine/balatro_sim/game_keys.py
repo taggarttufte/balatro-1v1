@@ -1,5 +1,5 @@
 """
-game_keys.py — the engine's view of `mp/rng/pools.py`, the single source of truth
+game_keys.py — the engine's view of `rng/pools.py`, the single source of truth
 for every game key / name / rarity / cost / eligibility flag.
 
 Phase 1 W1 (re-key): the engine speaks the game's own keys (`j_*`, `c_*`, `v_*`,
@@ -8,10 +8,11 @@ hand; every table is derived from `pools` at import time so the engine cannot
 drift from the oracle-derived catalogue again (before the re-key only 7/150
 jokers agreed with the game on key+rarity+cost).
 
-`pools` lives outside the engine package (mp/rng/pools.py). It is imported as
-`mp.rng.pools` when the repo root is on sys.path (the normal case: `mp` is a
-namespace package), otherwise loaded straight from its file path — it is pure
-data with no imports, so either route yields identical tables.
+`pools` lives outside the engine package (rng/pools.py). It is imported as
+`rng.pools` when the repo root is on sys.path (the normal case), otherwise the
+repo root is appended and the import retried, otherwise it is loaded straight
+from its file path — it is pure data with no imports, so every route yields
+identical tables.
 """
 from __future__ import annotations
 
@@ -19,21 +20,20 @@ import importlib.util
 import sys
 from pathlib import Path
 
-_MP_ROOT = Path(__file__).resolve().parents[2]        # .../mp
-_REPO_ROOT = _MP_ROOT.parent                           # .../balatro-rl
-_POOLS_FILE = _MP_ROOT / "rng" / "pools.py"
+_REPO_ROOT = Path(__file__).resolve().parents[2]       # repo root (engine/balatro_sim/..)
+_POOLS_FILE = _REPO_ROOT / "rng" / "pools.py"
 
 
 def _load_pools():
     try:
-        from mp.rng import pools as _p          # repo root on sys.path
+        from rng import pools as _p          # repo root on sys.path
         return _p
     except ImportError:
         pass
     if str(_REPO_ROOT) not in sys.path:
         sys.path.append(str(_REPO_ROOT))
         try:
-            from mp.rng import pools as _p
+            from rng import pools as _p
             return _p
         except ImportError:
             pass
@@ -46,15 +46,15 @@ def _load_pools():
 pools = _load_pools()
 
 def _load_gen():
-    """mp.rng.generate (RunState, PseudoRandom, create_card, ...) with the same fallbacks as pools."""
+    """rng.generate (RunState, PseudoRandom, create_card, ...) with the same fallbacks as pools."""
     try:
-        from mp.rng import generate as _g
+        from rng import generate as _g
         return _g
     except ImportError:
         pass
     if str(_REPO_ROOT) not in sys.path:
         sys.path.append(str(_REPO_ROOT))
-    from mp.rng import generate as _g
+    from rng import generate as _g
     return _g
 
 
@@ -62,12 +62,12 @@ gen = _load_gen()
 
 def _load_core():
     try:
-        from mp.rng import core as _c
+        from rng import core as _c
         return _c
     except ImportError:
         if str(_REPO_ROOT) not in sys.path:
             sys.path.append(str(_REPO_ROOT))
-        from mp.rng import core as _c
+        from rng import core as _c
         return _c
 
 

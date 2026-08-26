@@ -9,8 +9,8 @@ hooks in the same order.  Only the interleaving across agents changes, and nothi
 ``BalatroGame`` or a ``Player`` is shared between agents.
 
 No torch here: the populations are the scripted / random-legal adapters, so this file runs
-wherever the rest of ``mp/tournament`` does.  The MCTS side of the same claim (a lockstep
-``decide_many`` that batches leaves) is pinned in ``mp/agent/tests/test_parallel.py``.
+wherever the rest of ``tournament`` does.  The MCTS side of the same claim (a lockstep
+``decide_many`` that batches leaves) is pinned in ``agent/tests/test_parallel.py``.
 """
 import numpy as np
 import pytest
@@ -144,7 +144,7 @@ def _record_hooks(n, parallel: bool):
 
 
 def test_the_hooks_fire_the_same_way_in_both_paths():
-    """W3's ``mp/replay`` logger hangs off these three; a per-agent stream has to be the
+    """W3's ``replay`` logger hangs off these three; a per-agent stream has to be the
     same stream, and every agent must still be closed exactly once."""
     n = 6
     s1, d1, f1 = _record_hooks(n, parallel=False)
@@ -204,7 +204,7 @@ def test_subset_drivers_together_reproduce_one_driver():
 
 
 class _SplitDriver:
-    """The in-process shape of ``mp/agent``'s ``MPDriver``: fan every call out to the
+    """The in-process shape of ``agent``'s ``MPDriver``: fan every call out to the
     drivers that own the agents, merge the answers."""
 
     def __init__(self, drivers, n_agents):

@@ -11,9 +11,9 @@ Goal: confirm all the pipes connect. No claim about quality of play or convergen
 just that nothing crashes, losses are finite, the network's weights move, and a
 checkpoint can be written and read back.
 
-    python mp/agent/scripts/smoke_selfplay.py
-    python mp/agent/scripts/smoke_selfplay.py --device cuda
-    python mp/agent/scripts/smoke_selfplay.py --ruleset mlb --max-antes 3
+    python agent/scripts/smoke_selfplay.py
+    python agent/scripts/smoke_selfplay.py --device cuda
+    python agent/scripts/smoke_selfplay.py --ruleset mlb --max-antes 3
 """
 from __future__ import annotations
 import argparse

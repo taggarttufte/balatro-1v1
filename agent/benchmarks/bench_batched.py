@@ -13,9 +13,9 @@ Three tables, all on the same box, same state, same per-decision simulation budg
      wall clock at a fixed evidence level ("subtract"), or evidence at a fixed wall clock
      ("add").
 
-    python mp/agent/benchmarks/bench_batched.py                       # the full table
-    python mp/agent/benchmarks/bench_batched.py --sims 200 --k 1 8    # a quick pass
-    python mp/agent/benchmarks/bench_batched.py --only reuse
+    python agent/benchmarks/bench_batched.py                       # the full table
+    python agent/benchmarks/bench_batched.py --sims 200 --k 1 8    # a quick pass
+    python agent/benchmarks/bench_batched.py --only reuse
 
 The throughput columns come from an UNinstrumented run; the split comes from a second,
 instrumented one, normalised to its own total — the same protocol bench_search.py uses,

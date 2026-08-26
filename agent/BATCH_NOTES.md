@@ -2,7 +2,7 @@
 
 **Agent W3, 2026-08-22.** Deliverable: batched leaf evaluation across concurrent trees,
 tree reuse between decisions, benchmarks, tests, and the plug-in the tournament needs.
-Everything is under `mp/agent/`. `mp/engine/**` and `mp/rng/**` are untouched — verified
+Everything is under `agent/`. `engine/**` and `rng/**` are untouched — verified
 against `docs/phase3_frozen_snapshot.txt`: **41/41 frozen files identical** in size, mtime
 within the snapshot's 1-second rounding.
 
@@ -102,7 +102,7 @@ Three independent ways to fill a batch, and they compose:
 ### 2.1 Why within-tree batching was built even though the brief made it optional
 
 The brief said to do it "only if K=1 matters for the tournament player". It does:
-`mp/tournament/runner.py::_drive_to_next_nemesis` drives **one agent all the way to its
+`tournament/runner.py::_drive_to_next_nemesis` drives **one agent all the way to its
 Nemesis before touching the next one**, so as the runner is written today there is never
 more than one tree wanting a leaf. Cross-tree batching needs a runner change (§7); the
 within-tree path needs nothing but `leaf_batch=16` on the player, and it is the fastest
@@ -175,7 +175,7 @@ equality only for `UniformPolicy` (where it is guaranteed) and a total-variation
 Keep the chosen child's subtree as the next root **iff `game.state_signature()` on the
 live game equals the signature of the state that subtree was built from**. No partial
 credit, no salvage. The signature is the engine's own "two games with equal signatures
-produce identical futures" hook (`mp/engine/balatro_sim/game.py:894`), and it includes a
+produce identical futures" hook (`engine/balatro_sim/game.py:894`), and it includes a
 hash of the keyed RNG's entire position table.
 
 The expected signature is computed once per decision, post hoc: clone the game the search
@@ -460,18 +460,18 @@ Ranked list of what to attack next, with the evidence:
 Do **not** use K=100: it is slower than K=32 on both devices and costs ~1.5 GB of tree
 memory (15 MB per 500-simulation vanilla tree; a Nemesis tree is ~5x that).
 
-### 7.2 The `mp/tournament/players.py` diff (for the lead — W3 did not edit that file)
+### 7.2 The `tournament/players.py` diff (for the lead — W3 did not edit that file)
 
-Replace the `MCTSPlayer` placeholder with a factory. `mp/agent` goes on `sys.path` the same
-way `mp/tournament/bootstrap.py` already does it for `mp/engine`; the import is
-function-local so `mp.tournament` still imports without torch installed.
+Replace the `MCTSPlayer` placeholder with a factory. `agent` goes on `sys.path` the same
+way `tournament/bootstrap.py` already does it for `engine`; the import is
+function-local so `tournament` still imports without torch installed.
 
 ```diff
---- a/mp/tournament/players.py
-+++ b/mp/tournament/players.py
+--- a/tournament/players.py
++++ b/tournament/players.py
 @@
 -class MCTSPlayer:
--    """Placeholder.  W1 (agent fork, ``mp/agent/mcts``) and W3 (batched inference / tree
+-    """Placeholder.  W1 (agent fork, ``agent/mcts``) and W3 (batched inference / tree
 -    reuse) are concurrent workstreams building the search agent; ..."""
 -
 -    def __init__(self, *args, **kwargs):
@@ -484,7 +484,7 @@ function-local so `mp.tournament` still imports without torch installed.
 -        raise NotImplementedError("W1/W3 plug in here")
 +def MCTSPlayer(checkpoint=None, sims=100, device="cpu", seed=0, strategy="gumbel",
 +               reuse=True, leaf_batch=16, **kwargs):
-+    """The agent-layer MCTS player (`mp/agent/mcts/player.py`).  `checkpoint=None` gives
++    """The agent-layer MCTS player (`agent/mcts/player.py`).  `checkpoint=None` gives
 +    cold-start weights.  Returns a `Player`: `act(game) -> dict` (never None -- it returns
 +    ``{"type": "advance"}`` on a no-action state, like the other adapters here) + `reset()`."""
 +    import sys
@@ -522,7 +522,7 @@ Two contract details the runner relies on and this satisfies:
 To batch across agents the per-agent loop has to become a lockstep one:
 
 ```python
-group = BatchedMCTSPlayerGroup(n_agents, policy, config, reuse=True)   # from mp/agent
+group = BatchedMCTSPlayerGroup(n_agents, policy, config, reuse=True)   # from agent
 while any_alive:
     live = [g if needs_action(g) else None for g in games]
     for g, a in zip(games, group.act_many(live)):     # ONE forward pass per round
@@ -544,11 +544,11 @@ fixing the 436-actions-per-leaf cost is worth more than fixing the batch.
 
 **Needs engine change (frozen in Phase 3, worked around, none blocking):**
 
-* `mp/engine/balatro_sim/game.py` — `clone()` (69 us) plus `step()` (~0.08 ms averaged over
+* `engine/balatro_sim/game.py` — `clone()` (69 us) plus `step()` (~0.08 ms averaged over
   a descent, far more for a `play` that scores a full hand) are **50-66% of a batched
-  search** (table B): the throughput wall once the NN is batched. Nothing in `mp/agent` can
+  search** (table B): the throughput wall once the NN is batched. Nothing in `agent` can
   move it. If Phase 4 wants more simulations per second, this is where they are.
-* `mp/engine/balatro_sim/game.py:894` — `state_signature()` costs 42 us and blake2b-hashes
+* `engine/balatro_sim/game.py:894` — `state_signature()` costs 42 us and blake2b-hashes
   the whole RNG state. Tree reuse calls it twice per decision (0.2 ms, negligible), but
   anything wanting a *cheap* state identity — a signature per root edge inside the search,
   or a transposition table — would need a cheaper incremental version. Not needed for what
@@ -589,11 +589,11 @@ fixing the 436-actions-per-leaf cost is worth more than fixing the batch.
 
 | gate | result |
 |---|---|
-| `python -m pytest mp/agent/tests -q` | **131 passed / 0 failed** (85 from W1, +46 from W3) |
-| `python -m pytest mp/engine/tests -q` | **1609 passed / 10 skipped / 3 xfailed / 0 failed** — unchanged |
-| `python -m pytest mp/tests -q` | **1073 passed / 2 xfailed / 0 failed** — unchanged |
+| `python -m pytest agent/tests -q` | **131 passed / 0 failed** (85 from W1, +46 from W3) |
+| `python -m pytest engine/tests -q` | **1609 passed / 10 skipped / 3 xfailed / 0 failed** — unchanged |
+| `python -m pytest tests -q` | **1073 passed / 2 xfailed / 0 failed** — unchanged |
 | frozen-file check vs `docs/phase3_frozen_snapshot.txt` | **41/41** identical |
-| `python mp/agent/benchmarks/bench_batched.py` | the tables in §5 |
+| `python agent/benchmarks/bench_batched.py` | the tables in §5 |
 
 W3 test breakdown: `test_batched.py` 29 (policy equality, chunking, no-action leaves, K-tree
 equality for uniform and NN policies, heterogeneous budgets, early finish, virtual-loss
@@ -603,11 +603,11 @@ equivalence, keep/discard, budget modes, Gumbel-on-a-reused-root, noise).
 
 
 ```bash
-python -m pytest mp/agent/tests -q                       # 131 passed (85 W1 + 46 W3)
-python mp/agent/benchmarks/bench_batched.py              # the tables in §5
-python mp/agent/benchmarks/bench_batched.py --only reuse --reuse-decisions 30
-python mp/agent/benchmarks/bench_batched.py --ruleset mlb --nemesis --encoder mlb
-python mp/agent/benchmarks/bench_search.py --sims 500 --device cuda   # W1's, still valid
+python -m pytest agent/tests -q                       # 131 passed (85 W1 + 46 W3)
+python agent/benchmarks/bench_batched.py              # the tables in §5
+python agent/benchmarks/bench_batched.py --only reuse --reuse-decisions 30
+python agent/benchmarks/bench_batched.py --ruleset mlb --nemesis --encoder mlb
+python agent/benchmarks/bench_search.py --sims 500 --device cuda   # W1's, still valid
 ```
 
 ```python

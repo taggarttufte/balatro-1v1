@@ -1,26 +1,26 @@
 """
 h2h.py -- head-to-head evals, paired by seed, BOTH seatings per seed (Phase 5 rev 2, W6).
 
-    python mp/ev/h2h.py --a ev:fast --b ev:full --n-seeds 30 --procs 4 \
-        --out-json mp/results/h2h_ev_fast_vs_ev_full.json --out-md mp/results/h2h_ev_fast_vs_ev_full.md
+    python ev/h2h.py --a ev:fast --b ev:full --n-seeds 30 --procs 4 \
+        --out-json results/h2h_ev_fast_vs_ev_full.json --out-md results/h2h_ev_fast_vs_ev_full.md
 
 Player specs (``build_player``):
 
     ev:fast              EVPlayer(budget="fast")
     ev:full               EVPlayer(budget="full")
-    ev:full+stats         EVPlayer(budget="full", stats=mp/stats/decide.py)
+    ev:full+stats         EVPlayer(budget="full", stats=stats/decide.py)
     ev:full+Vleaf          EVPlayer(budget="full", value_fn=V, value_fn_leaf_only=True) via
                            MatchAwareEVPlayer -- V values the full-budget hand rollout's
                            LEAF only (SHOP/BOOSTER_OPEN/BLIND_SELECT keep the rules tier);
-                           V = mp/ev/runs/v_full_best/ckpt_0001000.pt (W-LEAF, Phase 5 rev 2
+                           V = ev/runs/v_full_best/ckpt_0001000.pt (W-LEAF, Phase 5 rev 2
                            V2 round) unless ``--checkpoint`` overrides it; the K=3 x 8-world
                            leaf resolution (EV_NOTES §8.3) applies automatically (hand.py)
     real1:det              the non-clairvoyant `real1` MCTS baseline
                            (mcts.determinize.make_determinized_player on
-                           mp/agent/runs/real1/latest.pt, real1.sh's Stage B search flags)
+                           agent/runs/real1/latest.pt, real1.sh's Stage B search flags)
     real1:clair             the SAME checkpoint, clairvoyant search (table-only baseline --
                            mirrors measure_clairvoyance.py's REAL1_FLAGS exactly)
-    scripted:<fields>      mp/scripts/mlb_match_demo.ScriptedPlayer via mp/eval/common.py's
+    scripted:<fields>      scripts/mlb_match_demo.ScriptedPlayer via eval/common.py's
                            existing spec parser (e.g. "scripted:hand=greedy,reroll=1")
 
 One seed -> TWO matches (A as player 0 / B as player 1, and the mirror), so seat bias
@@ -28,10 +28,10 @@ One seed -> TWO matches (A as player 0 / B as player 1, and the mirror), so seat
 shared-seed shop) cancels in the aggregate. A single worker job covers BOTH seatings of one
 seed (the checkpoint/tree for an MCTS player is built once per job, not per match) --
 ``--procs`` bounds concurrent worker processes via a spawn ``multiprocessing.Pool``, matching
-``mp/ev/gate_ev_player.py`` / ``mp/agent/scripts/measure_clairvoyance.py``'s pattern.
+``ev/gate_ev_player.py`` / ``agent/scripts/measure_clairvoyance.py``'s pattern.
 
 Output: JSON with every trial record + a summary (win rate + bootstrap CI via
-``mp/eval/common.bootstrap_ci``, mean final ante both sides, mean lives margin, Nemesis win
+``eval/common.bootstrap_ci``, mean final ante both sides, mean lives margin, Nemesis win
 rate, wall-clock per match), and a human-readable MD table. See ``ADVISOR_NOTES.md`` "H2H
 JSON schema" for the exact field list -- ``test_h2h.py`` pins it.
 """
@@ -46,7 +46,7 @@ import zlib
 from pathlib import Path
 from typing import Optional
 
-_HERE = Path(__file__).resolve().parent            # mp/ev
+_HERE = Path(__file__).resolve().parent            # ev
 _MP = _HERE.parent
 for _p in (str(_HERE), str(_MP), str(_MP / "eval"), str(_MP / "agent"), str(_MP / "stats")):
     if _p not in sys.path:
@@ -55,7 +55,7 @@ for _p in (str(_HERE), str(_MP), str(_MP / "eval"), str(_MP / "agent"), str(_MP 
 import _bootstrap  # noqa: E402,F401
 from _bootstrap import MLBMatch  # noqa: E402
 
-import common as C  # noqa: E402  (mp/eval/common.py: DEFAULT_SEEDS, bootstrap_ci, make_player_policy)
+import common as C  # noqa: E402  (eval/common.py: DEFAULT_SEEDS, bootstrap_ci, make_player_policy)
 
 __all__ = ["build_player", "run_h2h", "write_report", "REAL1_FLAGS", "REAL1_CKPT_DEFAULT"]
 
@@ -75,13 +75,13 @@ REAL1_FLAGS = dict(
 def _stable_seed(text: str) -> int:
     """A reproducible (across processes / runs / Python versions) int from ``text`` --
     ``hash(str)`` is per-process salted in CPython, so it cannot seed a worker deterministically
-    (matches the reasoning `mp/agent/mcts/determinize.py` gives for using `hashlib`/`crc32`
+    (matches the reasoning `agent/mcts/determinize.py` gives for using `hashlib`/`crc32`
     over `hash()`)."""
     return zlib.crc32(text.encode("utf-8"))
 
 
 def _decide_module():
-    import decide  # mp/stats/decide.py -- mp/stats is on sys.path (header block above)
+    import decide  # stats/decide.py -- stats is on sys.path (header block above)
     return decide
 
 
@@ -92,13 +92,13 @@ def build_player(spec: str, seed: int, *, sims: int = 40, checkpoint: Optional[s
     else ``None`` (scripted policies are already stateless closures)."""
     kind, _, body = spec.partition(":")
     if kind == "ev":
-        import player as P  # mp/ev/player.py, W3
+        import player as P  # ev/player.py, W3
         tokens = {t for t in body.split("+") if t}
         budget = "full" if "full" in tokens else "fast"
         stats = _decide_module() if "stats" in tokens else None
         if "Vleaf" in tokens:
             # W-LEAF: lever (c), V at the expectimax leaf ONLY -- via the existing
-            # MatchAwareEVPlayer wrapper (mp/ev/match_player.py, W5) so the opponent view V
+            # MatchAwareEVPlayer wrapper (ev/match_player.py, W5) so the opponent view V
             # sees is bound from the live match, not a bare clone.  `.policy()` gives the
             # (match, p, acts) -> action form `_one_worker_job` needs (NOT `C.adapt_player`,
             # which has no match to bind the opponent view from); the wrapper itself is the

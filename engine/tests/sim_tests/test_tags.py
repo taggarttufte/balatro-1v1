@@ -1,5 +1,5 @@
 """
-test_tags.py -- effects of all 24 Balatro tags (mp/engine/balatro_sim/tags.py) against a fake
+test_tags.py -- effects of all 24 Balatro tags (engine/balatro_sim/tags.py) against a fake
 TagContext, plus the ordering rules (Double Tag stacking, two Investment tags, Juggle
 stacking, one-pack-per-pass at blind select, per-shop guards) and a cross-check that the
 tag table equals rng/pools.py.
@@ -143,7 +143,7 @@ def _load_pools():
     mp_root = Path(__file__).resolve().parents[3]
     pools_py = mp_root / "rng" / "pools.py"
     if not pools_py.exists():
-        pytest.skip("mp/rng/pools.py not found at %s" % pools_py)
+        pytest.skip("rng/pools.py not found at %s" % pools_py)
     if str(mp_root) not in sys.path:
         sys.path.insert(0, str(mp_root))
     spec = importlib.util.spec_from_file_location("rng.pools", pools_py)

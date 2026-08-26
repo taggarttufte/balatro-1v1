@@ -1,4 +1,4 @@
-"""Keyed pseudorandom core for the mp/ Balatro engine.
+"""Keyed pseudorandom core for the Balatro MLB engine.
 
 Only the RNG *core* is re-exported here (owned by Agent A).  Sibling modules
 ``pools``, ``keys`` and ``generate`` are imported explicitly by their users so

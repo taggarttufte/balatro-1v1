@@ -1,14 +1,14 @@
 """
 _bootstrap.py — sys.path setup + fork guard for the scripts in this directory.
 
-`python mp/agent/scripts/<x>.py` puts THIS directory on sys.path[0], so every script can
+`python agent/scripts/<x>.py` puts THIS directory on sys.path[0], so every script can
 `import _bootstrap` as its first import and get:
 
-    mp/agent   on sys.path -> `import mcts`, `import train`
-    mp/engine  on sys.path -> `import balatro_sim`   (the FORK)
+    agent   on sys.path -> `import mcts`, `import train`
+    engine  on sys.path -> `import balatro_sim`   (the FORK)
 
 and a loud failure if something else on sys.path shadowed either. Same contract as
-mp/agent/conftest.py, which is what the test suite uses.
+agent/conftest.py, which is what the test suite uses.
 """
 from __future__ import annotations
 
@@ -32,7 +32,7 @@ def _assert_expected(module_name: str, expected: Path) -> None:
     if got != expected:
         raise RuntimeError(
             f"imported the wrong {module_name}:\n  got:      {got}\n  expected: {expected}\n"
-            "Run the script by path (`python mp/agent/scripts/<x>.py`) so this directory "
+            "Run the script by path (`python agent/scripts/<x>.py`) so this directory "
             "is sys.path[0]."
         )
 

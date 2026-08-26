@@ -7,7 +7,7 @@ built ENTIRELY through real engine/match APIs -- ``MLBMatch(seed=...)``, ``m.ste
 {"type": "play_blind"})`` to enter the hand-decision state, then direct attribute writes on
 the real ``BalatroGame`` (``.hand``, ``.deck``, ``.jokers``, card ``.seal`` / ``.enhancement``,
 ``.consumable_hand``, ``.current_blind.chips_target``) -- never a hand-forged legal-actions
-dict. This mirrors ``mp/ev/tests/test_extraction.py``'s own ``_set_hand`` / ``_jokers``
+dict. This mirrors ``ev/tests/test_extraction.py``'s own ``_set_hand`` / ``_jokers``
 helpers (W-EXTRACT's accepted pattern for constructed states: real ``JokerInstance``s, real
 ``Card`` objects pulled out of ``game.full_deck``, so the fixture survives any engine change
 that keeps those same attributes meaningful) and ``fixtures/bloodstone_vs_invisible.py``'s use
@@ -23,8 +23,8 @@ from __future__ import annotations
 import sys
 from pathlib import Path
 
-_HERE = Path(__file__).resolve().parent            # mp/ev/fixtures
-_EV = _HERE.parent                                  # mp/ev
+_HERE = Path(__file__).resolve().parent            # ev/fixtures
+_EV = _HERE.parent                                  # ev
 for _p in (str(_EV),):
     if _p not in sys.path:
         sys.path.insert(0, _p)

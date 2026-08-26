@@ -21,8 +21,8 @@ the moment the key exists.
 
 Runtime budget: < 2 min total (tiny states; probabilistic items retry over seeds).
 
-Run:  python -m pytest mp/tests/test_engine_reachability.py -q
-      python -m pytest mp/tests/test_engine_reachability.py -q -rx   # list the xfail reasons
+Run:  python -m pytest tests/test_engine_reachability.py -q
+      python -m pytest tests/test_engine_reachability.py -q -rx   # list the xfail reasons
 """
 from __future__ import annotations
 

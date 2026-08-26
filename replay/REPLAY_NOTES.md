@@ -1,23 +1,23 @@
 # REPLAY_NOTES — Phase 4 W3: trajectory logging + replay + tagging + viewer export
 
-**Agent W3, 2026-08-22.** Package: `mp/replay/**` (new). Engine-only (never imports `mp/agent`
-torch code or `mp/tournament`). `mp/engine/**`, `mp/rng/**`, `mp/agent/**`, `mp/tournament/**`,
-`mp/eval/**` were read, never edited. No engine bug was found (see "Needs-engine-change" at the
+**Agent W3, 2026-08-22.** Package: `replay/**` (new). Engine-only (never imports `agent`
+torch code or `tournament`). `engine/**`, `rng/**`, `agent/**`, `tournament/**`,
+`eval/**` were read, never edited. No engine bug was found (see "Needs-engine-change" at the
 end — empty, one design tradeoff noted instead).
 
 ## 0. File map
 
 ```
-mp/replay/
+replay/
   __init__.py         package docstring / marker
-  _bootstrap.py        sys.path + fork-guarded engine import (mirrors mp/tournament/bootstrap.py)
-  conftest.py           test bootstrap (mirrors mp/tournament/conftest.py)
+  _bootstrap.py        sys.path + fork-guarded engine import (mirrors tournament/bootstrap.py)
+  conftest.py           test bootstrap (mirrors tournament/conftest.py)
   _util.py              summarize(), sig_digest(), match_sig_digest(), apply_op(), ReplayMismatch
   log.py                TrajectoryLogger, MatchLogger
   replay.py             replay(), replay_match(), replay_line(), narrate(), verify_file()
   tags.py               tag_episode(), tag_match(), interest_score(), tag_file()
   export_viz.py         export_viz(), export_viz_match(), export_viz_to_file()
-  cli.py                python -m mp.replay.cli {show,verify,filter,stats,tag,export-viz}
+  cli.py                python -m replay.cli {show,verify,filter,stats,tag,export-viz}
   tests/
     _helpers.py          RandomLegalPlayer + run_logged_episode/run_logged_match (the hook
                           contract's own proof: these ARE the ≤3-line integration)
@@ -131,7 +131,7 @@ with no omissions. Replay re-runs `actions`/`ops` verbatim through the same engi
 skipping an internal step breaks index alignment between the logged line and what actually
 happened, and any recorded signature after that point will (correctly) fail to verify.
 
-### 2.1 `mp/agent/train/loop.py::ColdTrainer.run_episode` (read-only; W2 owns the real wiring)
+### 2.1 `agent/train/loop.py::ColdTrainer.run_episode` (read-only; W2 owns the real wiring)
 
 `run_episode` (loop.py:140) calls `self.agent.play_episode(game)`, which loops internally in
 `agent/train/agent.py::SelfPlayAgent.play_episode` (`legal = game.legal_actions()` at
@@ -140,18 +140,18 @@ that inner loop: `log.begin(game, meta={"ep": ep, "seed": episode_seed})` before
 `log.step(game, action_from_key(chosen))` right after agent.py:168's `game.step(...)`, and
 `log.end(game, outcome={"won": result.won, "final_ante": result.final_ante, "stop_reason":
 result.stop_reason})` after `play_episode` returns. `SelfPlayAgent` is W1/W2's package (torch);
-`mp/replay` is never imported from inside it — the CALLER (`run_episode`, or whatever W2's
+`replay` is never imported from inside it — the CALLER (`run_episode`, or whatever W2's
 tournament-driven loop replaces it with) constructs the logger and passes it in, or wraps the
 call the way `tests/_helpers.py::run_logged_episode` does.
 
-### 2.2 `mp/engine/balatro_sim/mlb_match.py::MLBMatch` (frozen; read-only)
+### 2.2 `engine/balatro_sim/mlb_match.py::MLBMatch` (frozen; read-only)
 
 `MLBMatch.step(player, action)` (mlb_match.py, `def step`) is the only place a match advances.
 Wrap it: `match.step(p, action); mlog.step(match, p, action)`, called from whatever drives the
 match (a training loop, `play_out`'s `policies[p](...)` driver, or a test). `match.signature()`
 already exists and is exactly what `match_sig_digest()` hashes.
 
-### 2.3 `mp/tournament/runner.py::Tournament` (frozen; read-only) — the one with a wrinkle
+### 2.3 `tournament/runner.py::Tournament` (frozen; read-only) — the one with a wrinkle
 
 The tournament drives N INDEPENDENT `BalatroGame`s (not an `MLBMatch`); life loss is decided
 externally by comparing all N agents' scores, then applied with a DIRECT `games[i].lose_life()`
@@ -175,26 +175,26 @@ call — not through `step()`. Concretely (line references as read 2026-08-22):
   loop and `end()`ed when that agent dies or the tournament ends — a "trajectory" here spans
   the WHOLE multi-ante tournament run for that agent, not one ante.
 
-W2 owns the actual edit (`mp/tournament/**` is frozen for W3); this is the wiring recipe for
+W2 owns the actual edit (`tournament/**` is frozen for W3); this is the wiring recipe for
 whoever lands it.
 
 ## 3. CLI
 
 ```
-python -m mp.replay.cli show <file> <idx>                    # narrate one line
-python -m mp.replay.cli verify <file>                          # replay every line, report mismatches
-python -m mp.replay.cli filter <file> --tag X [--min-interest F]
-python -m mp.replay.cli stats <file>                            # tag counts, ante histogram, skip rate
-python -m mp.replay.cli tag <file>                              # tag_file(): retag in place
-python -m mp.replay.cli export-viz <file> <idx> <out.json> [--player 0|1]
+python -m replay.cli show <file> <idx>                    # narrate one line
+python -m replay.cli verify <file>                          # replay every line, report mismatches
+python -m replay.cli filter <file> --tag X [--min-interest F]
+python -m replay.cli stats <file>                            # tag counts, ante histogram, skip rate
+python -m replay.cli tag <file>                              # tag_file(): retag in place
+python -m replay.cli export-viz <file> <idx> <out.json> [--player 0|1]
 ```
 
 `verify` exits 1 if any line fails to replay clean (a mismatch prints the line index and the
 `ReplayMismatch`). `filter`/`stats` treat a match line's tags as `p{0,1}:<tag>` so `--tag win`
-also matches `p0:win`/`p1:win`. Run from the repo root; `-m mp.replay.cli` works because `mp/`
+also matches `p0:win`/`p1:win`. Run from the repo root; `-m replay.cli` works because `mp/`
 has no `__init__.py` (an implicit namespace package under the repo-root cwd Python puts on
-`sys.path` for `-m`) while `mp/replay/` itself IS a regular package (`__init__.py` present) —
-same pattern `mp/oracle/engine_parity.py`'s own `python -m mp.oracle.engine_parity` usage line
+`sys.path` for `-m`) while `replay/` itself IS a regular package (`__init__.py` present) —
+same pattern `oracle/engine_parity.py`'s own `python -m oracle.engine_parity` usage line
 relies on.
 
 ## 4. Tag definitions (`tags.py`)
@@ -217,7 +217,8 @@ persisted sidecar counter.
 
 ## 5. Viz export coverage (`export_viz.py`)
 
-Confirmed against the shipped `viz/trajectory.json` + `viz/main.js` (repo root, read-only,
+Confirmed against the shipped `viz/trajectory.json` + `viz/main.js` (predecessor repo
+github.com/taggarttufte/balatro-rl, read-only,
 never modified): `{"seed", "outcome": {"ante","reward","steps","dollars","won"}, "episode_id",
 "trajectory": [...]}`, one `trajectory[i]` per action, holding the state BEFORE that action is
 applied (confirmed by inspecting the shipped file, not assumed).
@@ -361,10 +362,10 @@ blocker.
 
 | gate | result |
 |---|---|
-| `python -m pytest mp/replay/tests -q` | **82 passed** |
-| `python -m pytest mp/engine/tests -q` | **1614 passed / 10 skipped / 3 xfailed** (unchanged) |
-| `python -m pytest mp/tests -q` | **1073 passed / 2 xfailed** (unchanged) |
-| `python -m mp.replay.cli verify <a log this package produced>` | clean (manually exercised on episode + match logs over `7I4M53DL`/`ALEEB`, see the demo run in the session transcript) |
+| `python -m pytest replay/tests -q` | **82 passed** |
+| `python -m pytest engine/tests -q` | **1614 passed / 10 skipped / 3 xfailed** (unchanged) |
+| `python -m pytest tests -q` | **1073 passed / 2 xfailed** (unchanged) |
+| `python -m replay.cli verify <a log this package produced>` | clean (manually exercised on episode + match logs over `7I4M53DL`/`ALEEB`, see the demo run in the session transcript) |
 
 ## 9. Needs-engine-change
 

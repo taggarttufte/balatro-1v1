@@ -1,7 +1,7 @@
 """
-mp/eval/targets.py -- per-ante EXTERNAL Nemesis targets, ENGINE-ONLY dependencies (no torch,
-no mp.eval's heavier bootstrap chain -- mlb_match_demo / oracle.parity_check / rng.generate --
-so mp/agent can import this module directly without pulling any of that in).
+eval/targets.py -- per-ante EXTERNAL Nemesis targets, ENGINE-ONLY dependencies (no torch,
+no eval's heavier bootstrap chain -- mlb_match_demo / oracle.parity_check / rng.generate --
+so agent can import this module directly without pulling any of that in).
 
 Why this exists (Phase 4 brief S1 "W4"; CAMPAIGN_LOG.md's 2026-08-22 07:35 overnight
 readout): a solo MLB agent whose Nemesis is free (`pvp_solo=True`, no `set_pvp_info` ever
@@ -23,7 +23,7 @@ means every target here drops into `play_sp_mlb(target_fn=...)` and
 W2's `train_mlb.py --objective external` is expected to import from here.
 
 `vanilla_boss_target` / `vanilla_boss_target_fn` and `scaled_own_big_blind` are pure Python
-plus three tiny reads of `mp/engine/balatro_sim` (`constants.blind_base_chips`,
+plus three tiny reads of `engine/balatro_sim` (`constants.blind_base_chips`,
 `decks.deck_spec`, `stakes.stake_spec`) -- no other engine module, no numpy, no torch.
 `table_target` additionally reads a JSONL file (stdlib `json` only).
 """
@@ -37,22 +37,26 @@ from typing import Callable, Optional
 
 # ============================================================================ bootstrap
 #
-# mp/engine/** is FROZEN and only ever read here. A `balatro_sim` package ALSO lives at the
-# repo root (the BRL project's own, unrelated engine) -- it must never win an import race
-# against the mp/engine fork. `mp/eval/common.py` (and `mp/tournament/bootstrap.py`) guard
-# this the same way, through `oracle.engine_parity.import_engine()`; that entry point is NOT
-# used here on purpose -- it is a module-scope import of `mp.oracle.parity_check` +
-# `mp.rng.generate` / `mp.rng.pools`, which is exactly the "mp.eval heavy imports" this
-# module is supposed to avoid so `mp/agent` can import `targets.py` cheaply. The guard logic
+# engine/** is FROZEN and only ever read here. Any OTHER `balatro_sim` on sys.path -- the
+# predecessor repo's unrelated BRL engine was the original reason for this guard, and it
+# lived at that repo's root while this project was a subdirectory of it -- must never win
+# an import race against the engine fork. `eval/common.py` (and `tournament/bootstrap.py`)
+# guard this the same way, through `oracle.engine_parity.import_engine()`; that entry point
+# is NOT used here on purpose -- it is a module-scope import of `oracle.parity_check` +
+# `rng.generate` / `rng.pools`, which is exactly the "eval heavy imports" this
+# module is supposed to avoid so `agent` can import `targets.py` cheaply. The guard logic
 # below is the same check, reimplemented with zero extra imports.
+#
+# (See EVAL_NOTES 7b: `rng.pools` comes in transitively via `balatro_sim.game_keys` anyway;
+# what this module actually avoids is `oracle.parity_check` / `mlb_match_demo` / `torch`.)
 
-_HERE = Path(__file__).resolve().parent            # mp/eval
-_MP_ROOT = _HERE.parent                             # mp/
+_HERE = Path(__file__).resolve().parent            # eval
+_MP_ROOT = _HERE.parent                             # repo root
 _ENGINE_ROOT = _MP_ROOT / "engine"
 
 
 def _import_balatro_sim():
-    """Fork-guarded import of mp/engine's balatro_sim package. Puts mp/engine first on
+    """Fork-guarded import of engine's balatro_sim package. Puts engine first on
     sys.path, then either confirms an already-imported `balatro_sim` is the fork (a second
     call in the same process -- e.g. after `eval/common.py` already ran its own guarded
     import -- is a cheap no-op) or imports it fresh and checks its `__file__`."""
@@ -66,16 +70,16 @@ def _import_balatro_sim():
         got = os.path.normcase(os.path.abspath(getattr(already, "__file__", "") or ""))
         if got != want:
             raise RuntimeError(
-                "mp.eval.targets: a different balatro_sim is already imported in this "
+                "eval.targets: a different balatro_sim is already imported in this "
                 f"process:\n  got:      {got}\n  expected: {want}\n"
-                "Import mp.eval.targets before any other balatro_sim package, or run in a "
-                "fresh interpreter (python -m pytest mp/eval/tests / python -m mp.eval....)."
+                "Import eval.targets before any other balatro_sim package, or run in a "
+                "fresh interpreter (python -m pytest eval/tests / python -m eval....)."
             )
         return already
     import balatro_sim  # noqa: WPS433  (runtime import is the point)
     got = os.path.normcase(os.path.abspath(balatro_sim.__file__))
     if got != want:
-        raise RuntimeError(f"mp.eval.targets imported the wrong balatro_sim: {got} (expected {want})")
+        raise RuntimeError(f"eval.targets imported the wrong balatro_sim: {got} (expected {want})")
     return balatro_sim
 
 
@@ -153,7 +157,7 @@ def scaled_own_big_blind(k: float = 1.0) -> Callable:
     improves ante-to-ante faces a target that improves right along with it. `k=1.0` and this
     module's `scaled_own_big_blind` are numerically IDENTICAL to `common.own_big_blind_target`
     for the same `(game, big_blind)` input -- this is a deliberate duplication, not a
-    behavioural difference, so `mp/agent` never has to import `mp/eval/common.py`."""
+    behavioural difference, so `agent` never has to import `eval/common.py`."""
     def target(game, big_blind: Optional[dict]) -> int:
         return int(round(k * (big_blind or {}).get(game.ante, 0)))
     target.__name__ = f"scaled_own_big_blind(k={k})"
@@ -164,9 +168,9 @@ def scaled_own_big_blind(k: float = 1.0) -> Callable:
 
 def _load_ante_quantiles(path) -> dict:
     """``{ante: {quantile_str: value}}`` from a tournament run's ``summary.jsonl``
-    (``mp/tournament/runs/<run>/summary.jsonl``, `tournament.matrix.write_run`'s format:
+    (``tournament/runs/<run>/summary.jsonl``, `tournament.matrix.write_run`'s format:
     one JSON object per line, keys include ``ante`` and ``quantiles``) -- or a directory
-    containing one (``mp/results/<run>/`` works the same way if it holds a
+    containing one (``results/<run>/`` works the same way if it holds a
     ``summary.jsonl`` written by the same format)."""
     p = Path(path)
     if p.is_dir():
@@ -188,7 +192,7 @@ def _load_ante_quantiles(path) -> dict:
 
 def table_target(path, quantile: float = 0.5, fallback: str = "nearest_below") -> Callable:
     """A target read off a tournament run's per-ante score DISTRIBUTION
-    (``mp/tournament/runs/*/summary.jsonl`` / ``mp/results/*/summary.jsonl``, written by
+    (``tournament/runs/*/summary.jsonl`` / ``results/*/summary.jsonl``, written by
     ``tournament.matrix.write_run`` -- ``score_distribution``'s registered quantiles are
     ``0.0/0.1/0.25/0.5/0.75/0.9/1.0``). Median (``quantile=0.5``) by default.
 
@@ -234,7 +238,7 @@ TARGETS: dict = {
 
 def get_target(name: str, **kw) -> Callable:
     """Tiny registry -- ``get_target("vanilla_boss")``, ``get_target("own_big_blind",
-    k=1.5)``, ``get_target("table", path="mp/tournament/runs/foo", quantile=0.9)``. Every
+    k=1.5)``, ``get_target("table", path="tournament/runs/foo", quantile=0.9)``. Every
     returned callable follows the shared ``target_fn(game, big_blind=None) -> int``
     signature (see module docstring)."""
     if name not in TARGETS:

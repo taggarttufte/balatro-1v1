@@ -518,7 +518,7 @@ def test_featurize_actions_matches_per_action():
 # ── 8. The tournament plug-in ───────────────────────────────────────────────
 
 def test_make_player_is_a_tournament_shaped_player():
-    """`make_player()` is the whole `mp/tournament/players.py` diff: it must produce
+    """`make_player()` is the whole `tournament/players.py` diff: it must produce
     something whose `act(game)` is always steppable and which has `reset()`."""
     from mcts import make_player
 

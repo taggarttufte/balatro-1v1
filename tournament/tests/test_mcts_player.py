@@ -1,7 +1,7 @@
 """
 The `MCTSPlayer` plug-in (Phase 4 W2, BATCH_NOTES.md §7.2).
 
-`players.MCTSPlayer` is now a factory over `mp/agent/mcts/player.py::make_player`. What has
+`players.MCTSPlayer` is now a factory over `agent/mcts/player.py::make_player`. What has
 to hold is exactly the `Player` protocol the runner leans on:
 
   * `act(game)` returns a dict `game.step()` accepts, NEVER `None` — `_drive_to_next_nemesis`
@@ -11,7 +11,7 @@ to hold is exactly the `Player` protocol the runner leans on:
   * a whole tournament of them completes, produces one `AnteMatrix` per Nemesis ante, and
     the lives bookkeeping is the same as for any other player.
 
-These tests need torch. They skip (not fail) if it is absent, because `mp/tournament` is
+These tests need torch. They skip (not fail) if it is absent, because `tournament` is
 deliberately importable without it.
 """
 from __future__ import annotations

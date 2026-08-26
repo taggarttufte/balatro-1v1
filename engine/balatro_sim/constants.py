@@ -159,7 +159,7 @@ HAND_PAYOUT = 1
 
 # ════════════════════════════════════════════════════════════════════════════
 # Game-key catalogues (Phase 1 W1). Everything below is DERIVED from
-# mp/rng/pools.py via game_keys.py — do not hand-edit. Tags / decks / stakes
+# rng/pools.py via game_keys.py — do not hand-edit. Tags / decks / stakes
 # are catalogue-only here (no behaviour yet): W6 owns tag effects, W2 wires
 # decks/stakes into run setup.
 # ════════════════════════════════════════════════════════════════════════════
@@ -174,7 +174,7 @@ from .game_keys import (  # noqa: E402
 # Engine display name -> game key for the three card modifier families.
 # The engine keeps its short names ("Wild", "Foil", "Red") as the runtime
 # representation on Card; these maps are for anything that must talk to the
-# generation layer (mp/rng/generate.py) in game keys.
+# generation layer (rng/generate.py) in game keys.
 ENHANCEMENT_KEY = {
     "None": None, "Bonus": "m_bonus", "Mult": "m_mult", "Wild": "m_wild",
     "Glass": "m_glass", "Steel": "m_steel", "Stone": "m_stone", "Gold": "m_gold",
@@ -190,7 +190,7 @@ EDITION_FROM_KEY = {v: k for k, v in EDITION_KEY.items()}
 # ════════════════════════════════════════════════════════════════════════════
 # Major League Balatro (Phase 2 W1) — the Multiplayer mod's Attrition gamemode as
 # forced by the `majorleague` ruleset.  Ported from $MOD/gamemodes/attrition.lua
-# (bans) and $MOD/core.lua:169-203 (lobby defaults); see mp/engine/MLB_NOTES.md.
+# (bans) and $MOD/core.lua:169-203 (lobby defaults); see engine/MLB_NOTES.md.
 # ════════════════════════════════════════════════════════════════════════════
 MLB_NEMESIS_KEY = "bl_mp_nemesis"      # SMODS.Blind key, $MOD/objects/blinds/nemesis.lua
 MLB_NEMESIS_REWARD = 5                 # nemesis.lua: dollars = 5 (paid win OR lose, game.toml:149-152)

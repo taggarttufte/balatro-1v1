@@ -1,26 +1,26 @@
 # W8 harness notes — engine invariants, reachability, engine-vs-ground-truth
 
-**Owner:** P1-harness (W8). **Files:** `mp/tests/test_engine_invariants.py`,
-`mp/tests/test_engine_reachability.py`, `mp/oracle/engine_parity.py`, this file.
+**Owner:** P1-harness (W8). **Files:** `tests/test_engine_invariants.py`,
+`tests/test_engine_reachability.py`, `oracle/engine_parity.py`, this file.
 **Status 2026-08-21:** written against the *target* Phase-1 architecture; expected RED today.
 Goes green as W2 (delegate generation) / W3 (effect-roll keys) / W5 (bug sweep) land.
 
 ## How to run
 
 ```
-python -m pytest mp/tests -q                                  # everything under mp/tests (incl. Phase 0 oracles)
-python -m pytest mp/tests/test_engine_invariants.py -q
-python -m pytest mp/tests/test_engine_reachability.py -q -rx  # -rx lists the xfail reasons (= findings)
-python -m mp.oracle.engine_parity --probe                     # which target hooks the engine exposes
-python -m mp.oracle.engine_parity --seeds 7I4M53DL,ALEEB --antes 1-3          # engine vs JSON corpus
-python -m mp.oracle.engine_parity --antes 1-8 --rerolls 5 --quiet             # all 126 seeds
-python -m mp.oracle.engine_parity --seeds ALEEB --reference generate --reroll-every-shop --buy-shelf
-python -m mp.oracle.engine_parity --seeds ALEEB --buy-vouchers                # voucher_chain_if_bought branch
+python -m pytest tests -q                                  # everything under tests (incl. Phase 0 oracles)
+python -m pytest tests/test_engine_invariants.py -q
+python -m pytest tests/test_engine_reachability.py -q -rx  # -rx lists the xfail reasons (= findings)
+python -m oracle.engine_parity --probe                     # which target hooks the engine exposes
+python -m oracle.engine_parity --seeds 7I4M53DL,ALEEB --antes 1-3          # engine vs JSON corpus
+python -m oracle.engine_parity --antes 1-8 --rerolls 5 --quiet             # all 126 seeds
+python -m oracle.engine_parity --seeds ALEEB --reference generate --reroll-every-shop --buy-shelf
+python -m oracle.engine_parity --seeds ALEEB --buy-vouchers                # voucher_chain_if_bought branch
 ```
 
-All three files import the **fork** (`mp/engine/balatro_sim`) through `engine_parity.import_engine()`,
-which puts `mp/engine` first on `sys.path` and refuses to run if the repo-root BRL `balatro_sim` won
-(same guard as `mp/engine/conftest.py`). Run from the repo root; `mp/tests/conftest.py` puts `mp/`
+All three files import the **fork** (`engine/balatro_sim`) through `engine_parity.import_engine()`,
+which puts `engine` first on `sys.path` and refuses to run if the repo-root BRL `balatro_sim` won
+(same guard as `engine/conftest.py`). Run from the repo root; `tests/conftest.py` puts `mp/`
 on the path so `rng.*` / `oracle.*` import as top-level packages.
 
 ## Counts at hand-off (2026-08-21, after W1 re-key + W6 tags landed, before W2/W3)
@@ -30,7 +30,7 @@ on the path so `rng.*` / `oracle.*` import as top-level packages.
 | `test_engine_invariants.py` | 3 | 1 | 10 | 0.3 s |
 | `test_engine_reachability.py` | 185 | 4 | 46 | 1.0 s |
 | Phase 0 oracles (`test_rng_core`, `test_generate_oracle`) | 146 | 0 | 0 | 1.7 s |
-| **`python -m pytest mp/tests`** | **334** | **5** | **56** | 2.7 s |
+| **`python -m pytest tests`** | **334** | **5** | **56** | 2.7 s |
 | `engine_parity.py --antes 1-3` | 0/126 seeds exact (first mismatch: ante-1 voucher, then every shelf slot); `boss`/`tags` "not produced" | | | ~6 s |
 
 Every failure was checked to be an engine gap, not a harness bug (the probe was also checked to
@@ -38,13 +38,13 @@ Every failure was checked to be an engine gap, not a harness bug (the probe was 
 
 ## Engine hooks the harness needs (ONE list for W2 / W3 / W5)
 
-`python -m mp.oracle.engine_parity --probe` prints this list with ok/missing per hook. Names are
+`python -m oracle.engine_parity --probe` prints this list with ok/missing per hook. Names are
 the ones the harness reads; anything else is read through the public `step()` API.
 
 | # | hook | who | used by | status today |
 |---|---|---|---|---|
 | 1 | `BalatroGame(seed="7I4M53DL")` — Balatro seed string, normalised with `core.normalize_seed` (today `random.Random(str)` silently accepts it, so the probe says ok, but the streams are wrong) | W2 | all | accepted, not keyed |
-| 2 | `game.run_state` — `generate.RunState` kept in sync: `ante`, `used_jokers`/`owned_*` via `acquire`/`release_shop`/`release_pack`/`remove_owned`, `used_vouchers`, `showman`, rates (`joker_rate`, `edition_rate`, `shop_joker_max`, …), `hands_played`, `deck_enhancements`, `pool_flags`, `blind_tags`, `boss_blind`. Duck-typed (W2 may import it as `mp.rng.generate`). | W2 | invariants 2/4/5, reachability (Showman flag, voucher rates), parity | missing |
+| 2 | `game.run_state` — `generate.RunState` kept in sync: `ante`, `used_jokers`/`owned_*` via `acquire`/`release_shop`/`release_pack`/`remove_owned`, `used_vouchers`, `showman`, rates (`joker_rate`, `edition_rate`, `shop_joker_max`, …), `hands_played`, `deck_enhancements`, `pool_flags`, `blind_tags`, `boss_blind`. Duck-typed (W2 may import it as `rng.generate`). | W2 | invariants 2/4/5, reachability (Showman flag, voucher rates), parity | missing |
 | 3 | `game.run_state.rng` — `core.PseudoRandom`; **`game.rng` deleted** (probe flags `keyed_rng` only when `game.rng` is gone) | W3 | invariants 1 | missing |
 | 4 | `game.boss_blind` *or* `run_state.boss_blind` — this ante's boss, known at ante start (run start / Cash Out), not drawn in `_prepare_next_blind` | W2 | parity (`boss` field), invariants 1 | missing (harness falls back to `current_blind.boss_key` at the Boss blind) |
 | 5 | `game.blind_tags` *or* `run_state.blind_tags` — `{'Small': tag_key, 'Big': tag_key}` drawn at run start and Cash Out | W2 + W6 | parity (`tags`), invariants 1/4 | missing ("not produced") |

@@ -5,13 +5,13 @@ Three subcommands, all parallel over a spawn ``multiprocessing.Pool`` exactly li
 ``gate_ev_player.py`` / ``h2h.py`` (``--procs``, box-shared cap 8):
 
     # 1. find seeds whose ante-1/2 board actually HAS procs (the dev slice's seed choice)
-    python mp/ev/scripts/extract_dev_slice.py scan --seeds 126 --procs 8
+    python ev/scripts/extract_dev_slice.py scan --seeds 126 --procs 8
 
     # 2. the 12-seed dev slice: extraction ON vs OFF, same seeds, vanilla single-player
-    python mp/ev/scripts/extract_dev_slice.py slice --seeds <s1,s2,...> --procs 8
+    python ev/scripts/extract_dev_slice.py slice --seeds <s1,s2,...> --procs 8
 
     # 3. paired h2h, new-fast vs old-fast, both seatings per seed
-    python mp/ev/scripts/extract_dev_slice.py h2h --n-seeds 30 --procs 8 --max-steps 4000
+    python ev/scripts/extract_dev_slice.py h2h --n-seeds 30 --procs 8 --max-steps 4000
 
 "old fast" is the SAME player with ``HandConfig.extract=False`` â€” the only difference is
 this workstream's layer, so the comparison is exactly paired (same seeds, same shop rules,
@@ -29,7 +29,7 @@ import time
 from dataclasses import replace
 from pathlib import Path
 
-_HERE = Path(__file__).resolve().parent            # mp/ev/scripts
+_HERE = Path(__file__).resolve().parent            # ev/scripts
 _EV = _HERE.parent
 _MP = _EV.parent
 for _p in (str(_EV), str(_MP), str(_MP / "eval"), str(_MP / "agent")):

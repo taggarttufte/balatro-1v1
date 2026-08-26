@@ -11,12 +11,12 @@ Logging:
   - JSONL line per episode in <run-dir>/<run-name>.jsonl (full data for plotting)
   - Stdout summary every --log-every episodes (rolling stats over the recent window)
 
-Checkpointing (new in the mp/agent fork):
+Checkpointing (new in the agent fork):
   - Every --checkpoint-every episodes, and unconditionally at exit (deadline reached,
     Ctrl+C, or a fatal error), the run writes <run-dir>/<run-name>/ckpt_<ep>.pt plus
     <run-dir>/<run-name>/latest.pt. A checkpoint carries model + optimizer + counters +
     RNG states + config + replay buffer, so
-        python mp/agent/scripts/train_cold.py --resume <path> --minutes 30
+        python agent/scripts/train_cold.py --resume <path> --minutes 30
     continues the run bit-exactly on CPU (see AGENT_NOTES.md "Checkpointing").
   - --resume latest (or a directory) picks the newest checkpoint under it.
   - --no-checkpoint-buffer drops the replay buffer from the checkpoint: much smaller
@@ -32,8 +32,8 @@ balatro-mcts README planned to warm-start the value head from was lost (confirme
 means the value head is meaningless for many episodes; we expect mostly losses until it
 picks up gradations from the shaped z labels.
 
-    python mp/agent/scripts/train_cold.py --minutes 2 --device cuda --checkpoint-every 5
-    python mp/agent/scripts/train_cold.py --resume mp/agent/runs/<name>/latest.pt --minutes 2
+    python agent/scripts/train_cold.py --minutes 2 --device cuda --checkpoint-every 5
+    python agent/scripts/train_cold.py --resume agent/runs/<name>/latest.pt --minutes 2
 """
 from __future__ import annotations
 import argparse
@@ -218,7 +218,7 @@ MLB_REFUSAL = (
     "train_cold.py --ruleset mlb is the degenerate free-Nemesis objective: with "
     "pvp_solo=True the engine resolves the Nemesis at hand exhaustion at no cost, so the "
     "agent learns to skip every blind and coast (CAMPAIGN_LOG 2026-08-22 07:35 -- 2,072 "
-    "episodes, value-target sd collapsed to 0.07). Use: python mp/agent/scripts/train_mlb.py "
+    "episodes, value-target sd collapsed to 0.07). Use: python agent/scripts/train_mlb.py "
     "--objective external   (or --objective tournament), which makes the Nemesis cost a "
     "life. train_cold.py is for --ruleset vanilla."
 )
@@ -409,7 +409,7 @@ def main():
           f"{trainer.counters.errors} errors, {n_checkpoints} checkpoints) ===")
     print(f"log:        {log_path}")
     print(f"checkpoint: {run_dir / 'latest.pt'}")
-    print(f"resume:     python mp/agent/scripts/train_cold.py --resume {run_dir / 'latest.pt'} "
+    print(f"resume:     python agent/scripts/train_cold.py --resume {run_dir / 'latest.pt'} "
           f"--minutes <N> --device {cfg.device}")
     return 0
 

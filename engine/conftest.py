@@ -1,8 +1,8 @@
 """
-Test bootstrap for the mp/engine fork.
+Test bootstrap for the engine fork.
 
-Puts mp/engine at the front of sys.path so `import balatro_sim` resolves to the
-fork under mp/engine/balatro_sim, not the BRL package at the repo root (which
+Puts engine at the front of sys.path so `import balatro_sim` resolves to the
+fork under engine/balatro_sim, not any other ``balatro_sim`` on sys.path (which
 `python -m pytest` run from the repo root would otherwise put on sys.path via the
 cwd entry). pytest.ini's `pythonpath = .` does the same thing; this file is the
 belt to that suspenders and additionally fails loudly if the wrong package won.
@@ -26,12 +26,12 @@ def _assert_fork_is_the_one_imported() -> None:
     expected = _ENGINE_ROOT / "balatro_sim" / "__init__.py"
     if pkg_file != expected:
         raise RuntimeError(
-            "mp/engine tests imported the wrong balatro_sim:\n"
+            "engine tests imported the wrong balatro_sim:\n"
             f"  got:      {pkg_file}\n"
             f"  expected: {expected}\n"
             "Something earlier on sys.path (or an already-imported module) is "
-            "shadowing the fork. Run with `python -m pytest mp/engine/tests` "
-            "from the repo root or `pytest` from inside mp/engine."
+            "shadowing the fork. Run with `python -m pytest engine/tests` "
+            "from the repo root or `pytest` from inside engine."
         )
 
 

@@ -1,14 +1,14 @@
 """
 lockstep.py — one ``decide_many`` for a whole slice of the population.
 
-``mp/tournament/parallel.py::drive_many`` asks a callable for "an action for each of these
+``tournament/parallel.py::drive_many`` asks a callable for "an action for each of these
 agents, right now".  The default answer (``serial_decide``) asks each player in turn, which
 is what ``Tournament.run`` has always done and is why no two MCTS trees ever wanted a leaf
 at the same moment (BATCH_NOTES §7.3).  :class:`LockstepDecider` is the answer that batches:
 every agent's search descends to a leaf, all the leaves go to the net in one call, every
 tree backs up, repeat — ``mcts.BatchedSearch``'s contract exactly, and at ``leaf_batch=1``
 each tree's search is bit-identical to running it alone (BATCH_NOTES §3, pinned by
-``mp/agent/tests/test_batched.py``).
+``agent/tests/test_batched.py``).
 
 Why this is not ``BatchedMCTSPlayerGroup``
 -----------------------------------------

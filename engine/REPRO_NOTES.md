@@ -1,9 +1,9 @@
-# mp/engine — Reproducibility Notes (W7 / P1-repro, 2026-08-21)
+# engine — Reproducibility Notes (W7 / P1-repro, 2026-08-21)
 
 Scope: the env layer's *hypothetical* scoring — the "best possible hand" reward
 estimate in `env_v7` and the combo ranking in `env_sim` / `env_v5` — must have
 **zero** effect on game state and must be deterministic. Source of the bug
-inventory: `mp/docs/MP_UPDATE_LIST_2026-08.md` §3.
+inventory: `docs/MP_UPDATE_LIST_2026-08.md` §3.
 
 Files owned and changed: `balatro_sim/env_v7.py`, `env_sim.py`, `env_v5.py`,
 `card_selection.py`, new `tests/sim_tests/test_env_rng_isolation.py`, this file.
@@ -214,7 +214,7 @@ restored and verified byte-identical afterwards.
 
 ## 7. Suite counts
 
-`python -m pytest mp/engine/tests -q` from the repo root, 2026-08-21:
+`python -m pytest engine/tests -q` from the repo root, 2026-08-21:
 
 | When | Result |
 |---|---|

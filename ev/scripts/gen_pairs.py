@@ -1,10 +1,10 @@
 """
 gen_pairs.py — the PAIR campaign driver (Phase 5 rev 2, W-PAIRS; lever (b)'s data).
 
-    python mp/ev/scripts/gen_pairs.py --run-dir mp/ev/runs/pairs_s1 --seeds default+random:400 \
+    python ev/scripts/gen_pairs.py --run-dir ev/runs/pairs_s1 --seeds default+random:400 \
         --n-states 6 --n-worlds 8 --workers 8 --minutes 60 --name s1
-    touch mp/ev/runs/pairs_s1/PAUSE          # stops submitting; in-flight jobs finish; flush
-    python mp/ev/scripts/gen_pairs.py --run-dir mp/ev/runs/pairs_s1 --seeds default+random:400  # resumes
+    touch ev/runs/pairs_s1/PAUSE          # stops submitting; in-flight jobs finish; flush
+    python ev/scripts/gen_pairs.py --run-dir ev/runs/pairs_s1 --seeds default+random:400  # resumes
 
 Same worker-pool conventions as ``gen_labels.py`` (which is NOT touched): one pool job =
 one seed (``pairs.pair_job``), rows buffered in the main process and flushed every
@@ -22,7 +22,7 @@ Two shard streams per run dir:
 ``direct``), which costs R x the rollouts of a normal pair.
 
 Outputs: ``<run-dir>/gen.jsonl`` (config / flush / summary), console one line per flush,
-``mp/results/pairs_<name>.json`` (variance report, realised mix, throughput).
+``results/pairs_<name>.json`` (variance report, realised mix, throughput).
 """
 from __future__ import annotations
 
@@ -33,8 +33,8 @@ import time
 from datetime import datetime
 from pathlib import Path
 
-HERE = Path(__file__).resolve().parent          # mp/ev/scripts
-EV_ROOT = HERE.parent                            # mp/ev
+HERE = Path(__file__).resolve().parent          # ev/scripts
+EV_ROOT = HERE.parent                            # ev
 MP_ROOT = EV_ROOT.parent                         # mp
 for _p in (str(EV_ROOT), str(MP_ROOT)):
     if _p not in sys.path:

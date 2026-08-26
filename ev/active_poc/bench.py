@@ -1,6 +1,6 @@
 """bench.py — cost probe for the POC's two jobs, and the reconstruction pin.
 
-    python mp/ev/active_poc/bench.py --seeds 2 --n-probe 2
+    python ev/active_poc/bench.py --seeds 2 --n-probe 2
 
 Prints seconds per self-play, per rollout and per job, which is what sizes the pool and the
 arms (the whole POC is rollout-bound).  Also asserts the reproducibility contract that the

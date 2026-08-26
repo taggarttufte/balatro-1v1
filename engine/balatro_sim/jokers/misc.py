@@ -2,8 +2,8 @@
 misc.py — Remaining jokers: retrigger mechanics, hand eval flags,
           blueprint/brainstorm, economy specials, card/consumable creators.
 
-Keyed RNG (W3): every roll names the game's key (mp/rng/keys.py); every created
-card goes through mp/rng/generate.py via base.create_consumable / the
+Keyed RNG (W3): every roll names the game's key (rng/keys.py); every created
+card goes through rng/generate.py via base.create_consumable / the
 generate.* creators so the pool, dedupe (used_jokers) and edition streams are
 the real ones. Sentinel strings ("tarot", "common_joker", ...) are gone.
 """

@@ -7,11 +7,11 @@ across repeated ``Tournament`` runs without carrying state forward (the determin
 on this).  ``game`` is always a single ``BalatroGame`` (``ruleset="mlb"``) — the tournament
 runner drives N of these independently; a Player never sees another agent's game.
 
-Adapters here wrap ``mp/scripts/mlb_match_demo.py``'s ``ScriptedPlayer`` / ``make_policy``
+Adapters here wrap ``scripts/mlb_match_demo.py``'s ``ScriptedPlayer`` / ``make_policy``
 (imported, never copied, per the brief) and add a uniformly-random-legal player.  Both are
 dataclasses/objects so a heterogeneous population is just "many differently-parameterized
 instances" (design doc §6: the population must be heterogeneous or the N x N matrix
-degenerates).  ``MCTSPlayer`` is the agent-layer search player (``mp/agent/mcts``), wired in
+degenerates).  ``MCTSPlayer`` is the agent-layer search player (``agent/mcts``), wired in
 by Phase 4 W2 per BATCH_NOTES.md §7.2; it is a FACTORY whose ``mcts`` import is function-local,
 so this module still imports with no torch installed.
 """
@@ -111,13 +111,13 @@ class RandomLegalPlayer:
 
 def MCTSPlayer(checkpoint=None, sims=100, device="cpu", seed=0, strategy="gumbel",
                reuse=True, leaf_batch=16, **kwargs):
-    """The agent-layer MCTS player (``mp/agent/mcts/player.py``).  ``checkpoint=None`` gives
+    """The agent-layer MCTS player (``agent/mcts/player.py``).  ``checkpoint=None`` gives
     cold-start weights.  Returns a ``Player``: ``act(game) -> dict`` (never None -- it returns
     ``{"type": "advance"}`` on a no-action state, like the other adapters here) + ``reset()``.
 
     A factory, not a class, so this module still imports without torch installed: the
-    ``mcts`` import is function-local and ``mp/agent`` goes on ``sys.path`` the same way
-    ``bootstrap.py`` already does it for ``mp/engine``.  Defaults are BATCH_NOTES.md §7.1's
+    ``mcts`` import is function-local and ``agent`` goes on ``sys.path`` the same way
+    ``bootstrap.py`` already does it for ``engine``.  Defaults are BATCH_NOTES.md §7.1's
     recommendation for a runner that drives ONE agent at a time (``leaf_batch=16``,
     ``reuse=True``); a heterogeneous population is just several of these with different
     ``checkpoint`` / ``sims`` / ``seed``, exactly like the ``ScriptedPlayer`` specs above.

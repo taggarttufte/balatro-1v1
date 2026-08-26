@@ -1,18 +1,18 @@
 # TOURNAMENT_NOTES — Phase 3 W2: N-agent same-seed tournament runner + N x N matrix
 
-**Agent W2, 2026-08-21.** Deliverables: `mp/tournament/{bootstrap,players,runner,matrix,cli}.py`,
-`mp/tournament/conftest.py`, `mp/tournament/tests/` (31 tests), this note. `mp/engine/**` and
-`mp/rng/**` are untouched (read-only fork import via `bootstrap.py`); one engine gap was found
+**Agent W2, 2026-08-21.** Deliverables: `tournament/{bootstrap,players,runner,matrix,cli}.py`,
+`tournament/conftest.py`, `tournament/tests/` (31 tests), this note. `engine/**` and
+`rng/**` are untouched (read-only fork import via `bootstrap.py`); one engine gap was found
 and worked around here, not fixed there (§5).
 
 ## 0. Gates (final run, repo root, `python` = 3.13)
 
 | gate | result |
 |---|---|
-| `python -m pytest mp/tournament/tests -q` | **31 passed / 0 failed**, ~49 s |
-| `python -m pytest mp/engine/tests -q` | **1609 passed / 10 skipped / 3 xfailed / 0 failed** (unchanged) |
-| `python -m pytest mp/tests -q` | **1073 passed / 2 xfailed / 0 failed** (unchanged) |
-| `python -m mp.tournament.cli --seed 7I4M53DL --n 100 --life-rule none --max-ante 8` | runs, prints per-ante summary + wall clock (§4) |
+| `python -m pytest tournament/tests -q` | **31 passed / 0 failed**, ~49 s |
+| `python -m pytest engine/tests -q` | **1609 passed / 10 skipped / 3 xfailed / 0 failed** (unchanged) |
+| `python -m pytest tests -q` | **1073 passed / 2 xfailed / 0 failed** (unchanged) |
+| `python -m tournament.cli --seed 7I4M53DL --n 100 --life-rule none --max-ante 8` | runs, prints per-ante summary + wall clock (§4) |
 
 ## 1. Architecture
 
@@ -119,7 +119,7 @@ seconds) — this only matters if a future workload calls `Tournament` many time
 
 ## 5. Found, not fixed: an MLB gap in three boss-ability branches (needs engine change)
 
-**`mp/engine/balatro_sim/game.py:1551`, `:1579`, `:1591`** (the `bl_hook`, `bl_eye`, `bl_mouth`
+**`engine/balatro_sim/game.py:1551`, `:1579`, `:1591`** (the `bl_hook`, `bl_eye`, `bl_mouth`
 boss-ability "hand rejected" branches inside `_play_hand`): each hard-sets
 `self.state = State.GAME_OVER` the instant a rejected hand drives `hands_left` to 0, with
 **no check of `self.mlb`** — unlike every other hand-exhaustion path in the same file
@@ -137,7 +137,7 @@ actually drawn AND actually rejects a hand into exhaustion. Observed in ~1/100 a
 `ruleset="mlb"` — `State.GAME_OVER` with `lives > 0` (every other GAME_OVER path in the file
 is lives-gated) — and reproduces exactly what `_mlb_fail_round()` would have done, through
 the same public `lose_life()` hook the rest of this module already uses. Never edits engine
-files. `mp/engine` is frozen for Phase 3; this belongs on the lead's list for a real fix
+files. `engine` is frozen for Phase 3; this belongs on the lead's list for a real fix
 (replace the three raw `self.state = State.GAME_OVER` assignments with a call through
 `_mlb_fail_round`-equivalent logic, gated on `self.mlb`, matching the pattern already used
 everywhere else in the file).
@@ -214,7 +214,7 @@ A heterogeneous population sits an order of magnitude lower.
 
 ## 8. How the MCTS player will plug in (W1 / W3)
 
-`players.py` never imports `mp.agent` (owned by W1/W3, concurrent). Once that package exists:
+`players.py` never imports `agent` (owned by W1/W3, concurrent). Once that package exists:
 
 ```python
 class MCTSPlayer:
@@ -241,18 +241,18 @@ is the entire contract, and it is already satisfied by anything that can look at
 
 ## 9. File map
 
-- `mp/tournament/bootstrap.py` — sys.path + fork-guarded `import_engine()` (mirrors
+- `tournament/bootstrap.py` — sys.path + fork-guarded `import_engine()` (mirrors
   `oracle.engine_parity.import_engine`), re-exports `BalatroGame`, `State`,
   `MLB_STARTING_LIVES`, `MLB_PVP_START_ROUND`, `MLB_COMEBACK_PER_LIFE`, `mlb_match_demo`.
-- `mp/tournament/conftest.py` — pytest fork-guard, mirrors `mp/engine/conftest.py`.
-- `mp/tournament/players.py` — `Player` protocol, `ScriptedPlayerAdapter` /
+- `tournament/conftest.py` — pytest fork-guard, mirrors `engine/conftest.py`.
+- `tournament/players.py` — `Player` protocol, `ScriptedPlayerAdapter` /
   `RandomLegalPlayer` / `MCTSPlayer` placeholder, `default_population` /
   `identical_population` heterogeneity helpers.
-- `mp/tournament/runner.py` — `Tournament`, `TournamentResult`, fan-out functions +
+- `tournament/runner.py` — `Tournament`, `TournamentResult`, fan-out functions +
   benchmark, the per-agent drive loop, the engine-gap workaround, `_pairing`.
-- `mp/tournament/matrix.py` — `outcome_matrix`, `log_margin_matrix`, `population_rank`,
+- `tournament/matrix.py` — `outcome_matrix`, `log_margin_matrix`, `population_rank`,
   `score_distribution`, `tie_fraction`, `AnteMatrix`, `write_run`.
-- `mp/tournament/cli.py` — `python -m mp.tournament.cli ...`.
-- `mp/tournament/tests/` — `test_fanout.py`, `test_determinism.py`,
+- `tournament/cli.py` — `python -m tournament.cli ...`.
+- `tournament/tests/` — `test_fanout.py`, `test_determinism.py`,
   `test_matrix_properties.py`, `test_life_rules.py`, `test_heterogeneity.py`,
   `test_smoke_100.py`, `test_queue_alignment.py` (31 tests total).

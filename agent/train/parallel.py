@@ -88,7 +88,7 @@ def merge_trajectory_parts(target: Path, parts: list, delete: bool = True) -> in
     Workers cannot share an append handle safely across processes, so each writes
     ``trajectories.w<id>.jsonl`` and the generation ends by folding them in.  One episode
     is one line, so concatenation is the whole merge; line ORDER across workers is not part
-    of any contract (``mp/replay`` reads each line independently and each carries its own
+    of any contract (``replay`` reads each line independently and each carries its own
     agent index).  Returns the number of lines merged.
     """
     n = 0
@@ -245,7 +245,7 @@ class ParallelMLBTrainer(MLBTrainer):
                                            weights_path)
 
         seeds = [self._episode_seed() for _ in range(self.mlb.seeds_per_generation)]
-        tour_mod = tournament_module()                        # puts mp/ on sys.path
+        tour_mod = tournament_module()                        # puts the repo root on sys.path
         del tour_mod
 
         all_records: list = []

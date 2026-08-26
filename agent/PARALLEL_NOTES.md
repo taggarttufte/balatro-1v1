@@ -1,8 +1,8 @@
 # PARALLEL_NOTES — Phase 5 W1: multi-process self-play with a shared batched evaluator
 
 Built 2026-08-23 while `runs/real1` (Stage B, single process, one core) was live. Nothing
-here touched that run, and nothing here touches `mp/engine/**`, `mp/rng/**`, `mp/eval/**`
-or `mp/replay/**`.
+here touched that run, and nothing here touches `engine/**`, `rng/**`, `eval/**`
+or `replay/**`.
 
 ---
 
@@ -16,7 +16,7 @@ or `mp/replay/**`.
 | **Determinism** | results do not depend on the worker count — measured **exact** (matrices, lives, value targets, sample count) for 1 vs 4 workers with a real net. |
 | **Measured (≤4-worker smoke, N=8, sims 40, max_ante 4, CPU, *while `real1` held a core*)** | serial **229 sims/s** → 1 worker **268** (1.17×) → **4 workers 531 sims/s (2.32×)** |
 | **The real number** | not measured yet — one command, §7, for when the box is free. |
-| **Gates** | `mp/agent/tests` **337** (309 + 28), `mp/tournament/tests` **74** (57 + 17), `mp/replay/tests` + `mp/eval/tests` unchanged. |
+| **Gates** | `agent/tests` **337** (309 + 28), `tournament/tests` **74** (57 + 17), `replay/tests` + `eval/tests` unchanged. |
 
 ---
 
@@ -24,20 +24,20 @@ or `mp/replay/**`.
 
 | file | what |
 |---|---|
-| `mp/tournament/parallel.py` | `AgentDrive` / `drive_many` (the lockstep form of `_drive_to_next_nemesis`), the `TournamentDriver` protocol, `LocalDriver`, `ParallelTournament` |
-| `mp/agent/parallel/layout.py` | byte layout of one leaf in a shared-memory arena (+ the measurements that chose it) |
-| `mp/agent/parallel/channel.py` | arenas, the leaf queue, the reply pipes, the batching policy |
-| `mp/agent/parallel/leaf.py` | `LeafEncoder`: `encode_leaf` with **no net** |
-| `mp/agent/parallel/forward.py` | `forward_leaves`: the torch half, given already-encoded leaves |
-| `mp/agent/parallel/remote.py` | `RemotePolicy`: a `PolicyValueFn` whose net is in another process |
-| `mp/agent/parallel/evaluator.py` | `BatchEvaluator`: collect, batch per net, reply; `sync_weights` |
-| `mp/agent/parallel/lockstep.py` | `LockstepDecider`: one `decide_many` for a whole slice of the population |
-| `mp/agent/parallel/worker.py` | the worker process |
-| `mp/agent/parallel/pool.py` | `WorkerPool`, `MPDriver`, `partition_agents` |
-| `mp/agent/parallel/protocol.py` | the picklable messages |
-| `mp/agent/train/parallel.py` | `ParallelMLBTrainer` (subclass of `MLBTrainer`, one method overridden) |
-| `mp/agent/benchmarks/bench_parallel.py` | the throughput sweep — ONE command |
-| `mp/agent/tests/test_parallel.py` (28) · `mp/tournament/tests/test_parallel_runner.py` (17) | |
+| `tournament/parallel.py` | `AgentDrive` / `drive_many` (the lockstep form of `_drive_to_next_nemesis`), the `TournamentDriver` protocol, `LocalDriver`, `ParallelTournament` |
+| `agent/parallel/layout.py` | byte layout of one leaf in a shared-memory arena (+ the measurements that chose it) |
+| `agent/parallel/channel.py` | arenas, the leaf queue, the reply pipes, the batching policy |
+| `agent/parallel/leaf.py` | `LeafEncoder`: `encode_leaf` with **no net** |
+| `agent/parallel/forward.py` | `forward_leaves`: the torch half, given already-encoded leaves |
+| `agent/parallel/remote.py` | `RemotePolicy`: a `PolicyValueFn` whose net is in another process |
+| `agent/parallel/evaluator.py` | `BatchEvaluator`: collect, batch per net, reply; `sync_weights` |
+| `agent/parallel/lockstep.py` | `LockstepDecider`: one `decide_many` for a whole slice of the population |
+| `agent/parallel/worker.py` | the worker process |
+| `agent/parallel/pool.py` | `WorkerPool`, `MPDriver`, `partition_agents` |
+| `agent/parallel/protocol.py` | the picklable messages |
+| `agent/train/parallel.py` | `ParallelMLBTrainer` (subclass of `MLBTrainer`, one method overridden) |
+| `agent/benchmarks/bench_parallel.py` | the throughput sweep — ONE command |
+| `agent/tests/test_parallel.py` (28) · `tournament/tests/test_parallel_runner.py` (17) | |
 
 Edited (additively, defaults unchanged): `train/population.py` (`instantiate(..., policy_for=)`),
 `scripts/train_mlb.py` (`--workers`, `--evaluator-device`, `--evaluator-max-wait-ms`,
@@ -231,7 +231,7 @@ why §7's swap is described as a continuation rather than a seamless resume.
 ### The benchmark — ONE command, run it when the box is free
 
 ```
-python mp/agent/benchmarks/bench_parallel.py
+python agent/benchmarks/bench_parallel.py
 ```
 
 That sweeps **workers ∈ {1, 4, 8, 12, 16} × evaluator ∈ {cpu, cuda}** plus the serial
@@ -246,10 +246,10 @@ Useful variants:
 
 ```
 # add the control arm: no shared evaluator, every worker runs the net on its own core
-python mp/agent/benchmarks/bench_parallel.py --include-local
+python agent/benchmarks/bench_parallel.py --include-local
 
 # is CUDA worth it with a bigger batch?
-python mp/agent/benchmarks/bench_parallel.py --workers 8,16 --devices cuda --max-wait-ms 2
+python agent/benchmarks/bench_parallel.py --workers 8,16 --devices cuda --max-wait-ms 2
 ```
 
 It does not touch `runs/real1/`; the net is cold unless `--init <a copy of a checkpoint>`
@@ -295,16 +295,16 @@ a PAUSE and a resume with an extra flag.
 
 ```bash
 # 1. stop the single-process run at the end of the tournament in flight
-touch mp/agent/runs/real1/PAUSE
-#    wait for "=== Stopped (PAUSE) ..." in mp/agent/runs/real1.console.log
+touch agent/runs/real1/PAUSE
+#    wait for "=== Stopped (PAUSE) ..." in agent/runs/real1.console.log
 
 # 2. resume it on N cores.  Everything else comes back out of the checkpoint;
 #    --workers / --evaluator-device are the only additions.
-python mp/agent/scripts/train_mlb.py \
-    --resume mp/agent/runs/real1/latest.pt \
+python agent/scripts/train_mlb.py \
+    --resume agent/runs/real1/latest.pt \
     --minutes 2880 --device cpu \
     --workers 12 --evaluator-device cpu \
-    --run-dir mp/agent/runs
+    --run-dir agent/runs
 ```
 
 Notes on that command.
@@ -371,9 +371,9 @@ Notes on that command.
 
 | gate | result |
 |---|---|
-| `python -m pytest mp/agent/tests -q` | **337 passed** (309 at start + 28) |
-| `python -m pytest mp/tournament/tests -q` | **74 passed** (57 at start + 17) |
-| `python -m pytest mp/replay/tests mp/eval/tests -q` | unchanged (82 + 125) |
+| `python -m pytest agent/tests -q` | **337 passed** (309 at start + 28) |
+| `python -m pytest tournament/tests -q` | **74 passed** (57 at start + 17) |
+| `python -m pytest replay/tests eval/tests -q` | unchanged (82 + 125) |
 | `train_mlb.py --workers 2` end to end | 1 generation, checkpoint, trajectories merged ✅ |
 | PAUSE mid-generation with workers | drained after the tournament in flight, checkpointed, exit 0 ✅ |
 | parallel checkpoint → single-process `--resume` | generation 1 → 2, continued ✅ |

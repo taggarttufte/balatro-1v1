@@ -21,9 +21,9 @@ passed in: every helper here either calls a documented side-effect-free API or c
 
 State sources (``load_state_source(spec)``):
 
-  ``fixture:<name>``       -- a builder in ``mp/ev/fixtures/`` (``FIXTURES`` registry)
-  ``replay:<path>:<step>`` -- an ``mp/replay`` MatchLogger JSONL log, replayed to ``step`` ops
-                             in (this module's own driver -- only ``mp/replay``'s PUBLIC
+  ``fixture:<name>``       -- a builder in ``ev/fixtures/`` (``FIXTURES`` registry)
+  ``replay:<path>:<step>`` -- an ``replay`` MatchLogger JSONL log, replayed to ``step`` ops
+                             in (this module's own driver -- only ``replay``'s PUBLIC
                              ``load_line`` is used, never its private helpers)
   ``seed:<seed>:<step>``   -- a fresh ``MLBMatch(seed=...)`` re-driven ``step`` decisions by
                              fresh ``EVPlayer`` self-play (deterministic given seed + policy
@@ -36,7 +36,7 @@ import time
 from pathlib import Path
 from typing import Optional
 
-_HERE = Path(__file__).resolve().parent            # mp/ev
+_HERE = Path(__file__).resolve().parent            # ev
 _MP = _HERE.parent
 for _p in (str(_HERE), str(_MP), str(_MP / "eval"), str(_MP / "agent"), str(_MP / "stats")):
     if _p not in sys.path:
@@ -45,13 +45,13 @@ for _p in (str(_HERE), str(_MP), str(_MP / "eval"), str(_MP / "agent"), str(_MP 
 import _bootstrap  # noqa: E402,F401
 from _bootstrap import MLBMatch, State, MP_ROOT, game_keys  # noqa: E402
 
-import player as P  # noqa: E402  (mp/ev/player.py, W3)
-import labels  # noqa: E402       (mp/ev/labels.py, W5)
-import race as _race  # noqa: E402  (mp/ev/race.py, W5)
+import player as P  # noqa: E402  (ev/player.py, W3)
+import labels  # noqa: E402       (ev/labels.py, W5)
+import race as _race  # noqa: E402  (ev/race.py, W5)
 
-import decide  # noqa: E402  (mp/stats/decide.py, W4 -- mp/stats is on sys.path above)
+import decide  # noqa: E402  (stats/decide.py, W4 -- stats is on sys.path above)
 
-import mcts.encoder_v2 as encoder_v2  # noqa: E402  (mp/agent/mcts, W1)
+import mcts.encoder_v2 as encoder_v2  # noqa: E402  (agent/mcts, W1)
 import mcts.value_net as value_net  # noqa: E402
 
 __all__ = [
@@ -64,21 +64,21 @@ __all__ = [
 # =============================================================== state sources
 
 def _fixtures_registry() -> dict:
-    """The live ``fixtures.FIXTURES`` registry (``mp/ev/fixtures/__init__.py``), fetched
+    """The live ``fixtures.FIXTURES`` registry (``ev/fixtures/__init__.py``), fetched
     fresh on every call so a fixture added after import time is still picked up."""
     import fixtures as _fx
     return dict(_fx.FIXTURES)
 
 
 def _replay_to_step(path: str, step: int) -> MLBMatch:
-    """Reconstruct an ``MLBMatch`` from an ``mp/replay`` MatchLogger JSONL log (the FIRST
+    """Reconstruct an ``MLBMatch`` from an ``replay`` MatchLogger JSONL log (the FIRST
     ``kind == "match"`` line in the file) and replay its first ``step`` ops.  Uses only
-    ``mp/replay/replay.py``'s public ``load_line`` -- the "replay to a given step" driver is
-    this module's own (``mp/replay`` has no such entry point and this workstream does not
-    edit ``mp/replay``).  ``mp/replay`` is a real package (its modules use relative imports),
-    so it must be imported as ``replay.replay`` with ``mp/`` (not ``mp/replay/``) on
+    ``replay/replay.py``'s public ``load_line`` -- the "replay to a given step" driver is
+    this module's own (``replay`` has no such entry point and this workstream does not
+    edit ``replay``).  ``replay`` is a real package (its modules use relative imports),
+    so it must be imported as ``replay.replay`` with the repo root (not ``replay/``) on
     ``sys.path`` -- ``_MP`` already is (see the sys.path block above)."""
-    import replay.replay as _replay  # mp/replay/replay.py, imported as a package submodule
+    import replay.replay as _replay  # replay/replay.py, imported as a package submodule
 
     line = _replay.load_line(path, 0)
     if line.get("kind", "episode") != "match":
@@ -397,7 +397,7 @@ def advise(match: MLBMatch, player: int = 0, *, n_rollouts: int = 32, rollout_se
     value_fn_raw = None
     mp_player = None
     if checkpoint is not None:
-        import match_player as MP  # mp/ev/match_player.py, W5
+        import match_player as MP  # ev/match_player.py, W5
         net, encoder = MP.load_value(checkpoint)
         mp_player = MP.MatchAwareEVPlayer(net, encoder, budget=budget, seed=0)
         mp_player.bind(match, player)

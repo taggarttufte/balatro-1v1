@@ -85,7 +85,7 @@ from mcts.outcome import ExternalOutcome, MLBOutcome, is_stuck_state
 #: synthetic op a trajectory log records when a driver takes a life outside `game.step()`.
 OP_LOSE_LIFE = "__lose_life__"
 #: The solo external-target driver's OTHER out-of-band mutation: `game.set_pvp_info(score,
-#: hands)` (the `enemyInfo` relay that shows the agent what it has to beat). `mp/replay`
+#: hands)` (the `enemyInfo` relay that shows the agent what it has to beat). `replay`
 #: does not know this op yet — see TRAIN_NOTES §9 — so a solo trajectory logged WITH the
 #: relay on replays only up to its first Nemesis. `--no-pvp-relay` turns the relay off and
 #: makes solo logs fully verifiable; the tournament objective never relays at all
@@ -478,7 +478,7 @@ def run_tournament_generation(spec: TournamentSpec, members, players, encoder, *
     for si, seed in enumerate(spec.seeds):
         if stop_check is not None and stop_check():
             break            # PAUSE / SIGTERM: one tournament is the atomic unit of play
-        # ── W3 hook (mp/replay): ONE TrajectoryLogger per current-net agent. W3's logger
+        # ── W3 hook (replay): ONE TrajectoryLogger per current-net agent. W3's logger
         # is a one-`BalatroGame`-per-episode object, and a tournament is N games, so a
         # single logger cannot describe it. `Tournament.on_fanout` (added by W2 for exactly
         # this) hands over the games the instant they exist, which is the only moment
@@ -615,7 +615,7 @@ def _tournament_metrics(records, joker_sets, lives_lost, tie_fractions, antes_re
 # ═══════════════════════════════════════════════════════════ objective 2: external target
 
 def vanilla_boss_target(ante: int, deck: str = "b_red", stake: int = 1) -> int:
-    """FALLBACK for W4's `mp/eval/targets.py::vanilla_boss` — what a vanilla Boss blind
+    """FALLBACK for W4's `eval/targets.py::vanilla_boss` — what a vanilla Boss blind
     would have demanded at this ante, i.e. "score at least as much as the single-player
     game would have asked of you". Uses the engine's own `blind_base_chips` (blind_idx 2 =
     Boss) times the deck's `ante_scaling` (Plasma x2, `decks.py:56`, applied by the caller
@@ -654,7 +654,7 @@ def big_blind_floor(game) -> int:
 def load_target_fn(kind: str = "own_big_blind", deck: str = "b_red", stake: int = 1,
                    multiplier: float = 1.0, floor_frac: float = 1.0):
     """`(game) -> chip target`, W4's shared `target_fn(game, big_blind=None) -> int`
-    signature (`mp/eval/targets.py` module docstring). Prefers W4's registry — the
+    signature (`eval/targets.py` module docstring). Prefers W4's registry — the
     campaign's one table of per-ante Nemesis targets, including the `table` target derived
     from real tournament score distributions — and falls back to the local
     `vanilla_boss_target` above, which is the same formula from the same constants.
@@ -665,7 +665,7 @@ def load_target_fn(kind: str = "own_big_blind", deck: str = "b_red", stake: int 
     source = "selfplay.vanilla_boss_target"
     inner = None
     try:
-        tournament_module()                       # puts mp/ on sys.path
+        tournament_module()                       # puts the repo root on sys.path
         from eval import targets as _targets      # type: ignore  # noqa: WPS433
     except Exception:                             # noqa: BLE001 — W4 may not have landed
         _targets = None
@@ -675,7 +675,7 @@ def load_target_fn(kind: str = "own_big_blind", deck: str = "b_red", stake: int 
         for kwargs in ({"deck_key": deck, "stake": stake}, {}):
             try:
                 inner = _targets.get_target(kind, **kwargs)
-                source = f"mp/eval/targets.py::get_target({kind!r})"
+                source = f"eval/targets.py::get_target({kind!r})"
                 break
             except TypeError:
                 continue
@@ -781,7 +781,7 @@ def play_solo_external_episode(game: BalatroGame, player, encoder, target_fn, *,
     MLB-shaped outcome.
     """
     collector = SampleCollector(agent_idx, encoder, sample_fn=sample_fn)
-    log = traj_logger        # W3 `mp/replay`: logged HERE, after each step, not in the
+    log = traj_logger        # W3 `replay`: logged HERE, after each step, not in the
                              # record hook (which fires before the step). See REPLAY_NOTES §2.
     # The same no-progress guard the tournament runner carries, for the same frozen-engine
     # gap (a SHOP `use_consumable` that changes nothing — TRAIN_NOTES §9). A solo run wedges

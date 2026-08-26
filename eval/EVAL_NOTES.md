@@ -1,39 +1,39 @@
 # EVAL_NOTES — Phase 3 W4: eval harness + ρ-decay harness (2026-08-21/22)
 
-**Agent W4.** Files: `mp/eval/common.py` (shared bootstrap / drivers / stats), `mp/eval/eval_harness.py`,
-`mp/eval/rho_decay.py`, `mp/eval/conftest.py`, `mp/eval/tests/` (49 tests), `mp/results/*.json` (outputs),
-this note. `mp/engine/**` and `mp/rng/**` were only read, never edited. `mlb_match_demo.ScriptedPlayer` /
-`make_policy` / `greedy_hand` / `weakest_play` / `shelf_indices` are imported from `mp/scripts/`, not copied.
+**Agent W4.** Files: `eval/common.py` (shared bootstrap / drivers / stats), `eval/eval_harness.py`,
+`eval/rho_decay.py`, `eval/conftest.py`, `eval/tests/` (49 tests), `results/*.json` (outputs),
+this note. `engine/**` and `rng/**` were only read, never edited. `mlb_match_demo.ScriptedPlayer` /
+`make_policy` / `greedy_hand` / `weakest_play` / `shelf_indices` are imported from `scripts/`, not copied.
 
 ## 0. Gates (final run, repo root, `python` = 3.13)
 
 | gate | result |
 |---|---|
-| `python -m pytest mp/eval/tests -q` | **49 passed** (~30s) |
-| `python -m pytest mp/engine/tests -q` | **1609 passed / 10 skipped / 3 xfailed** — unchanged |
-| `python -m pytest mp/tests -q` | **1073 passed / 2 xfailed** — unchanged |
-| `python -m mp.eval.eval_harness --mode 1v1 --player ... --reference ... --out mp/results/demo_1v1.json` | OK, 126 seeds, 21.7s |
-| `python -m mp.eval.rho_decay --all --n-extra-seeds 24 --horizons 1,2,4,8 --n-boot 2000 --out-dir mp/results` | OK, 150 seeds × 3 perturbations, ~100s each |
+| `python -m pytest eval/tests -q` | **49 passed** (~30s) |
+| `python -m pytest engine/tests -q` | **1609 passed / 10 skipped / 3 xfailed** — unchanged |
+| `python -m pytest tests -q` | **1073 passed / 2 xfailed** — unchanged |
+| `python -m eval.eval_harness --mode 1v1 --player ... --reference ... --out results/demo_1v1.json` | OK, 126 seeds, 21.7s |
+| `python -m eval.rho_decay --all --n-extra-seeds 24 --horizons 1,2,4,8 --n-boot 2000 --out-dir results` | OK, 150 seeds × 3 perturbations, ~100s each |
 
 ## 1. How to run
 
 ```
 # eval harness (repo root)
-python -m mp.eval.eval_harness --mode sp_vanilla --player "scripted:hand=greedy,buy=1,pack=0" \
-    --out mp/results/my_report.json
-python -m mp.eval.eval_harness --mode sp_mlb --player "scripted:hand=greedy,reroll=1,buy=1" \
-    --max-antes 8 --target-k 1.0 --out mp/results/my_sp_mlb.json
-python -m mp.eval.eval_harness --mode 1v1 --player "scripted:hand=greedy,reroll=1,buy=1" \
-    --reference "scripted:hand=greedy,buy=1" --out mp/results/my_1v1.json
-python -m mp.eval.eval_harness --compare mp/results/a.json mp/results/b.json --out mp/results/cmp.json
+python -m eval.eval_harness --mode sp_vanilla --player "scripted:hand=greedy,buy=1,pack=0" \
+    --out results/my_report.json
+python -m eval.eval_harness --mode sp_mlb --player "scripted:hand=greedy,reroll=1,buy=1" \
+    --max-antes 8 --target-k 1.0 --out results/my_sp_mlb.json
+python -m eval.eval_harness --mode 1v1 --player "scripted:hand=greedy,reroll=1,buy=1" \
+    --reference "scripted:hand=greedy,buy=1" --out results/my_1v1.json
+python -m eval.eval_harness --compare results/a.json results/b.json --out results/cmp.json
 
 # ρ-decay (repo root)
-python -m mp.eval.rho_decay --perturbation buy_slot0 --horizons 1,2,4,8 --out mp/results/rho_decay_buy_slot0.json
-python -m mp.eval.rho_decay --all --n-extra-seeds 24 --out-dir mp/results   # all 3 perturbations, 150 seeds
-python -m mp.eval.rho_decay --list-perturbations
+python -m eval.rho_decay --perturbation buy_slot0 --horizons 1,2,4,8 --out results/rho_decay_buy_slot0.json
+python -m eval.rho_decay --all --n-extra-seeds 24 --out-dir results   # all 3 perturbations, 150 seeds
+python -m eval.rho_decay --list-perturbations
 
 # tests
-python -m pytest mp/eval/tests -q
+python -m pytest eval/tests -q
 ```
 
 `--player` / `--reference` take `scripted:<field>=<value>,...` (aliases: `reroll`→`rerolls_per_visit`,
@@ -119,7 +119,7 @@ paired-vs-unpaired variance-reduction factor (permutation method, §4).
 | **reroll_once** (redraw shelf) | 0.606 [0.445,0.739] n=149 VRF=2.53× | 0.669 [0.523,0.788] n=149 VRF=3.02× | 0.715 [0.608,0.798] n=149 VRF=3.50× | 0.728 [0.615,0.813] n=149 VRF=3.69× |
 
 Spearman tracks Pearson within ~0.02–0.05 at every cell (both in the raw JSON; not separately tabulated here).
-`money` and `lives_lost` correlations are in `mp/results/rho_decay_<perturbation>.json` per horizon
+`money` and `lives_lost` correlations are in `results/rho_decay_<perturbation>.json` per horizon
 (`per_horizon.<h>.metrics.{money,lives_lost}`); `money` starts lower than `log_score` at h=1 (the perturbation's
 direct effect) and converges toward `log_score`'s level by h=8 as continued shared buying re-absorbs the
 initial gap.
@@ -179,7 +179,7 @@ guessed, and probably understated for a policy that actually cares which joker i
 
 ## 7. Needs engine change (found, not fixed)
 
-**`mp/engine/balatro_sim/game.py:1546-1552, 1571-1580, 1582-1592`** (`bl_hook`, `bl_eye`, `bl_mouth` boss-ability
+**`engine/balatro_sim/game.py:1546-1552, 1571-1580, 1582-1592`** (`bl_hook`, `bl_eye`, `bl_mouth` boss-ability
 rejection branches inside `_play_hand`). Each sets `self.state = State.GAME_OVER` **unconditionally** on hand
 exhaustion (`if self.hands_left <= 0: self.state = State.GAME_OVER`), several lines BEFORE the main scoring
 path's mlb-aware branch at line ~1712-1717 (`elif self.hands_left <= 0: if self.mlb: self._mlb_fail_round()
@@ -193,9 +193,31 @@ these three bosses. Found via `rho_decay`'s synthetic seed `BP49PU2Y` (ante-1 bo
 horizon — confirmed as `n=149` vs. `n=150` for `reroll_once` in §5, the one perturbation where this particular
 seed's random reroll landed the run on one of these three bosses before ante 2). `play_sp_mlb`'s return now
 also carries `ended_early_engine_gap: bool` (`game.state == GAME_OVER and game.lives > 0` at return time) so a
-report can distinguish this from a genuine 0-lives loss. **Not fixed** — `mp/engine` is frozen for Phase 3;
+report can distinguish this from a genuine 0-lives loss. **Not fixed** — `engine` is frozen for Phase 3;
 this is a work-around, not a patch. Affected 1/150 seeds in the real run (0.7%); harmless to the measurement
 because it is excluded, not silently miscounted.
+
+### 7b. `targets.py`'s "engine-only deps" test was a false pass (found 2026-08-26, repo split)
+
+`test_targets_module_avoids_heavy_mp_eval_imports_when_imported_alone` asserted that importing
+`targets.py` alone never pulls in `['mlb_match_demo', 'oracle.parity_check', 'rng.generate',
+'rng.pools', 'torch']`. The last four names were checked, but the first three of those never
+*could* match: while this project lived under `mp/`, the rng modules were imported as
+`mp.rng.generate` / `mp.rng.pools`, so the literal strings `rng.generate` / `rng.pools` were
+absent from `sys.modules` no matter what. Promoting the packages to the repo root renamed them
+and the assertion failed for the first time.
+
+**The underlying dependency is unchanged and was always there:** `engine/balatro_sim/game_keys.py`
+derives every key/name/rarity/cost table from `pools` at import time, so `rng.pools` (and, via
+`_load_gen`, `rng.generate`) is pulled in by *any* import of the engine fork — `targets.py`
+cannot avoid it without avoiding `balatro_sim`. Both are pure-Python data modules: no torch, no
+numpy. The claim that actually matters — no `mlb_match_demo`, no `oracle.parity_check`, no
+`torch` — **still holds and is verified** (re-checked from the new root: heavy hits `[]`).
+
+**Not fixed:** the test now names only the genuinely-heavy modules and asserts the transitive
+`rng.pools` import *explicitly*, so the real dependency stays visible rather than being deleted
+from the list. Whether `targets.py` should be made engine-table-free is a design question for
+the owner, not a mechanical repo-split change.
 
 ## 8. Caveats
 
@@ -219,8 +241,8 @@ because it is excluded, not silently miscounted.
 
 ## 9. What W1's checkpoint player must provide
 
-`mp.eval.common.Player`: an object with `.act(game: balatro_sim.game.BalatroGame) -> dict` (one of
-`game.legal_actions()`). Wire it into `mp.eval.common.parse_player_spec` (currently `"checkpoint:<path>"` raises
+`eval.common.Player`: an object with `.act(game: balatro_sim.game.BalatroGame) -> dict` (one of
+`game.legal_actions()`). Wire it into `eval.common.parse_player_spec` (currently `"checkpoint:<path>"` raises
 `NotImplementedError` with this exact interface in the message) so `--player checkpoint:<path>` resolves to a
 real player; `adapt_player(player)` already converts any such object into the `(match_or_shim, player_idx,
 legal_actions) -> action` signature every driver in `common.py` and `MLBMatch.play_out` expect — no other
@@ -230,37 +252,37 @@ nothing in this harness assumes the player is a `ScriptedPlayer` beyond that one
 
 ## 10. File map
 
-- `mp/eval/common.py` — bootstrap (fork-guarded import of `mp/engine`), `Player` protocol + spec parsing,
+- `eval/common.py` — bootstrap (fork-guarded import of `engine`), `Player` protocol + spec parsing,
   `SoloShim` (drives a lone `BalatroGame` through `mlb_match_demo`'s policy signature), `play_sp_vanilla` /
   `play_sp_mlb` / `play_1v1` drivers, `play_arm_to_horizons` (paired-arm horizon driver for rho_decay), target
   functions, pure-python bootstrap/correlation statistics, `sample_size_per_arm`.
-- `mp/eval/eval_harness.py` — CLI + `evaluate()` / `compare()`.
-- `mp/eval/rho_decay.py` — CLI + `PERTURBATIONS`, `_wrap_perturbation`, `make_perturbed_game`, `measure_rho`.
-- `mp/eval/conftest.py` — fork-guard bootstrap for `mp/eval/tests`.
-- `mp/eval/tests/test_common.py`, `test_eval_harness.py`, `test_rho_decay.py` — 49 tests.
-- `mp/results/demo_1v1.json`, `rho_decay_buy_slot0.json`, `rho_decay_reroll_once.json`,
+- `eval/eval_harness.py` — CLI + `evaluate()` / `compare()`.
+- `eval/rho_decay.py` — CLI + `PERTURBATIONS`, `_wrap_perturbation`, `make_perturbed_game`, `measure_rho`.
+- `eval/conftest.py` — fork-guard bootstrap for `eval/tests`.
+- `eval/tests/test_common.py`, `test_eval_harness.py`, `test_rho_decay.py` — 49 tests.
+- `results/demo_1v1.json`, `rho_decay_buy_slot0.json`, `rho_decay_reroll_once.json`,
   `rho_decay_skip_small.json` — the real runs behind §5.
 
 ---
 
 # Phase 4 — W4: transfer-spread harness + external Nemesis targets (2026-08-22)
 
-**Agent W4.** New: `mp/eval/targets.py`, `mp/eval/transfer_spread.py`, `mp/eval/tests/test_targets.py` (57
-tests), `mp/eval/tests/test_transfer_spread.py` (19 tests). `mp/results/transfer_spread_{greedy,
-greedy_reroll1_buy1,weak}.{json,md}` (the real runs behind S15). `mp/engine/**`, `mp/rng/**`, `mp/agent/**`,
-`mp/tournament/**`, `mp/replay/**` only read, never edited (frozen for this agent per the brief). The `W2 owns
+**Agent W4.** New: `eval/targets.py`, `eval/transfer_spread.py`, `eval/tests/test_targets.py` (57
+tests), `eval/tests/test_transfer_spread.py` (19 tests). `results/transfer_spread_{greedy,
+greedy_reroll1_buy1,weak}.{json,md}` (the real runs behind S15). `engine/**`, `rng/**`, `agent/**`,
+`tournament/**`, `replay/**` only read, never edited (frozen for this agent per the brief). The `W2 owns
 tournament/runner.py cleanup` item from the Phase 4 brief is NOT this agent's — confirmed untouched.
 
 ## 11. Gates (final run, repo root, `python` = 3.13)
 
 | gate | result |
 |---|---|
-| `python -m pytest mp/eval/tests -q` | **125 passed** (49 Phase-3 + 76 new: 57 targets + 19 transfer_spread) |
-| `python -m pytest mp/engine/tests -q` | **1614 passed / 10 skipped / 3 xfailed** — unchanged |
-| `python -m pytest mp/tests -q` | **1073 passed / 2 xfailed** — unchanged |
-| `python -m mp.eval.transfer_spread --player ... --mode both --out mp/results/transfer_spread_<name>.json` | ran for real, 3 player specs, ~5-7 min each (below) |
+| `python -m pytest eval/tests -q` | **125 passed** (49 Phase-3 + 76 new: 57 targets + 19 transfer_spread) |
+| `python -m pytest engine/tests -q` | **1614 passed / 10 skipped / 3 xfailed** — unchanged |
+| `python -m pytest tests -q` | **1073 passed / 2 xfailed** — unchanged |
+| `python -m eval.transfer_spread --player ... --mode both --out results/transfer_spread_<name>.json` | ran for real, 3 player specs, ~5-7 min each (below) |
 
-## 12. `targets.py` — API (for W2's `--objective external` / `mp.agent`)
+## 12. `targets.py` — API (for W2's `--objective external` / `agent`)
 
 Engine-only deps (`balatro_sim.constants.blind_base_chips`, `.decks.deck_spec`, `.stakes.stake_spec` — no
 `mlb_match_demo`, no `oracle.parity_check`, no `rng.generate`/`rng.pools`, no torch; verified by a
@@ -289,11 +311,11 @@ Nemesis hook (or `mcts.outcome.ExternalOutcome.from_margin`, which is already th
   the Nemesis (the 07:35 overnight finding this whole module exists to fix).
 - **`scaled_own_big_blind(k=1.0) -> Callable`** — W4-Phase-3's "mirror Nemesis" (`eval/common.py::
   own_big_blind_target`), DUPLICATED here (not imported — that would pull `common.py`'s heavy chain into
-  `mp/agent`) with zero extra deps; numerically identical to `common.own_big_blind_target` for the same input
+  `agent`) with zero extra deps; numerically identical to `common.own_big_blind_target` for the same input
   (pinned by test).
 - **`table_target(path, quantile=0.5, fallback="nearest_below") -> Callable`** — reads a tournament run's
-  per-ante score DISTRIBUTION off `summary.jsonl` (`tournament.matrix.write_run`'s format — `mp/tournament/
-  runs/*/` or any directory holding one, e.g. under `mp/results/`); median by default, any of
+  per-ante score DISTRIBUTION off `summary.jsonl` (`tournament.matrix.write_run`'s format — `tournament/
+  runs/*/` or any directory holding one, e.g. under `results/`); median by default, any of
   `score_distribution`'s quantiles (0.0/0.1/0.25/0.5/0.75/0.9/1.0) configurable. An ante missing from the table
   (a run that never reached it) falls back to the nearest tabulated ante <= the requested one (a conservative
   UNDER-estimate, since targets only grow with ante) unless `fallback="error"`. Exercised end-to-end against a
@@ -396,19 +418,19 @@ may be doing the work.
 
 **Verdict: `env_v7._finish_step`'s `R_BLIND_BASE * (9 - ante)` reward (`env_v7.py:120` `R_BLIND_BASE = 1.0`,
 `:455` `def _finish_step`, `:479` `blind_reward = R_BLIND_BASE * (9 - self._prev_ante)`) is unreachable from
-every path `mp/agent` (the Phase 3/4 MCTS training stack) drives — confirmed by exhaustive grep for
-`BalatroV7Env(` / `env_v7` / `.step_hand(` / `.step_phase(` across `mp/agent/**`, `mp/tournament/**`,
-`mp/eval/**`, `mp/replay/**`: the only construction of a real `BalatroV7Env` anywhere in that tree is
+every path `agent` (the Phase 3/4 MCTS training stack) drives — confirmed by exhaustive grep for
+`BalatroV7Env(` / `env_v7` / `.step_hand(` / `.step_phase(` across `agent/**`, `tournament/**`,
+`eval/**`, `replay/**`: the only construction of a real `BalatroV7Env` anywhere in that tree is
 `agent/tests/test_nn_policy.py:96`'s `test_encoder_matches_env_v7`, which calls `env.reset()` ONLY (never
 `.step()`/`.step_hand()`/`.step_phase()`) to compare `_encode_obs`'s bytes against `mcts/encoder.py`'s
 reimplementation. `mcts/encoder.py:44` imports `BalatroV7Env` purely to steal its UNBOUND `_encode_obs` method
 (`:59` `_v7_encode = BalatroV7Env._encode_obs`), called through a `_GameOnly` shim (`:51`) that exposes only
-`.game` — no `BalatroV7Env` instance is ever constructed on that path, so `_finish_step` cannot run. `mp/agent`'s
+`.game` — no `BalatroV7Env` instance is ever constructed on that path, so `_finish_step` cannot run. `agent`'s
 actual outcome signal is exclusively `mcts.outcome.OutcomeFn` (`VanillaOutcome` / `MLBOutcome` / `ExternalOutcome`
 — `agent/mcts/outcome.py`), which never reads any env's `.reward`.
 
-**If any MLB path DOES consume it, precisely**: yes, one does, but it is NOT an `mp/agent` training path —
-`mp/engine/balatro_sim/env_mp.py`'s `MultiplayerBalatroEnv` / `_PlayerEnvProxy` (a pre-Phase-3, engine-layer
+**If any MLB path DOES consume it, precisely**: yes, one does, but it is NOT an `agent` training path —
+`engine/balatro_sim/env_mp.py`'s `MultiplayerBalatroEnv` / `_PlayerEnvProxy` (a pre-Phase-3, engine-layer
 self-play environment built directly on `MLBMatch`, predating the MCTS rewrite). `_PlayerEnvProxy.__init__`
 (`env_mp.py:80-81`) builds `self._v7 = BalatroV7Env.__new__(BalatroV7Env)` bound to a REAL live game, and its
 `step_hand`/`step_phase` (`:145-147`) delegate straight to `self._v7.step_hand`/`step_phase` — which DO run
@@ -417,17 +439,17 @@ endless MLB match exactly as `engine/MLB_NOTES.md` S5 already flags ("V7 heurist
 harmless for now") and `agent/AGENT_NOTES.md` S8 independently notes. Within the `mp/` subproject, `env_mp.py`
 is exercised ONLY by engine-layer tests (`engine/tests/engine_tests/test_env_mp.py`, already counted in the
 1614/10/3/0 gate) — grep confirms zero references to `env_mp` / `MultiplayerBalatroEnv` anywhere under
-`mp/agent/**` outside doc comments (`AGENT_NOTES.md`, `SETENC_NOTES.md`, a naming-convention comment in
+`agent/**` outside doc comments (`AGENT_NOTES.md`, `SETENC_NOTES.md`, a naming-convention comment in
 `encoder_set.py:588`). The repo-ROOT `train_v8.py` (a different, legacy BRL-project script, outside `mp/`
 entirely, unrelated to this campaign by design — `CAMPAIGN_LOG.md`'s locked parameters) also constructs
 `MultiplayerBalatroEnv` for real; that is out of scope for this audit and for Phase 4's training stack. **Net:
-no code change needed for Phase 4 — nothing `train_mlb.py` / `mp/agent/train/**` will drive touches this
-reward path.** If a future workstream ever wires training through `env_mp.py` instead of `mp/agent`'s MCTS
+no code change needed for Phase 4 — nothing `train_mlb.py` / `agent/train/**` will drive touches this
+reward path.** If a future workstream ever wires training through `env_mp.py` instead of `agent`'s MCTS
 stack, this reward becomes live again and would need fixing (or replacing with an `OutcomeFn`) first.
 
 ## 15. Caveats / needs-engine-change (this agent)
 
-- No engine change needed or requested this phase — `mp/engine`/`mp/rng` were read-only. `targets.py`'s one
+- No engine change needed or requested this phase — `engine`/`rng` were read-only. `targets.py`'s one
   documented gap (`bl_needle`'s 0.5x boss multiplier not reproducible without a seed) is a design limitation of
   a seed-free function, not an engine bug.
 - `transfer_spread.py`'s tournament mode defaults to 16 seeds (not the full 126+) purely for wall-clock reasons
@@ -439,20 +461,20 @@ stack, this reward becomes live again and would need fixing (or replacing with a
   `scripted:hand=weak` as the "worst baseline" analog for solo mode; tournament mode's background population
   (`default_population`) already includes `RandomLegalPlayer` instances (1/3 of it) in every cell regardless.
 - `MCTSPlayer` (`tournament/players.py`) is no longer the Phase-3 placeholder as of this run — a concurrent
-  workstream wired it to a real factory over `mp/agent/mcts` mid-Phase-4. `transfer_spread.py`'s
+  workstream wired it to a real factory over `agent/mcts` mid-Phase-4. `transfer_spread.py`'s
   `_build_tournament_player` already passes a `"checkpoint:<path>"` spec through to it (`"checkpoint:"` with no
   path -> `checkpoint=None` -> cold-start weights, useful as an untrained-net transfer-spread baseline); not
   exercised on a REAL trained checkpoint this phase (none existed yet at hand-off time).
-- Integration point for W2: `mp/agent/mcts/outcome.py`'s `ExternalOutcome.from_margin(margin_fn, scale=1.0)` is
+- Integration point for W2: `agent/mcts/outcome.py`'s `ExternalOutcome.from_margin(margin_fn, scale=1.0)` is
   already built for exactly this hook (its own docstring: "the W2 / W4 hook") — `margin_fn` can be built from
   any `targets.get_target(...)` call plus `game.chips_scored`.
 
 ## 16. File map (this agent, Phase 4)
 
-- `mp/eval/targets.py` — `vanilla_boss_target`, `vanilla_boss_target_fn`, `scaled_own_big_blind`,
+- `eval/targets.py` — `vanilla_boss_target`, `vanilla_boss_target_fn`, `scaled_own_big_blind`,
   `table_target`, `get_target`/`TARGETS` registry. Engine-only deps, own fork-guard.
-- `mp/eval/transfer_spread.py` — `solo_cell`, `tournament_cell`, `_cross_cell_bootstrap`, `evaluate_player`,
-  `to_markdown`, CLI (`python -m mp.eval.transfer_spread`).
-- `mp/eval/tests/test_targets.py` (57), `mp/eval/tests/test_transfer_spread.py` (19).
-- `mp/results/transfer_spread_greedy.{json,md}`, `transfer_spread_greedy_reroll1_buy1.{json,md}`,
+- `eval/transfer_spread.py` — `solo_cell`, `tournament_cell`, `_cross_cell_bootstrap`, `evaluate_player`,
+  `to_markdown`, CLI (`python -m eval.transfer_spread`).
+- `eval/tests/test_targets.py` (57), `eval/tests/test_transfer_spread.py` (19).
+- `results/transfer_spread_greedy.{json,md}`, `transfer_spread_greedy_reroll1_buy1.{json,md}`,
   `transfer_spread_weak.{json,md}` — the real runs behind S13.

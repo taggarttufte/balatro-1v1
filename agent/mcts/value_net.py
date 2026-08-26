@@ -23,7 +23,7 @@ observation (`encoder_v2.SetEncoderV2`). Phase 5 W1, 2026-08-23.
 Derived from `model_set.SetPolicyValueNet` (same per-item encoders, same attention block,
 same masked pooling, same bit-exact checkpoint conventions) with the policy head removed,
 the blind-offer set added, and the trunk / item widths raised to land at ≈ 5.0M params
-(Tagg's call, STATE_SPEC_v1 §Net). Nothing here imports `mp/ev` or `mp/stats`.
+(Tagg's call, STATE_SPEC_v1 §Net). Nothing here imports `ev` or `stats`.
 
 Pad-invariance: padded rows are excluded from the attention (`key_padding_mask`) and from
 both poolings, and the global token keeps every attention row non-empty, so appending
@@ -67,7 +67,8 @@ from .model_set import ResidualBlock, _CardEncoder, _ix, _masked_max, _masked_me
 
 SET_NAMES_V2 = ("hand", "jokers", "consumables", "shelf", "packs", "blinds")
 
-VALUE_CHECKPOINT_KIND = "mp/agent value_net"
+VALUE_CHECKPOINT_KIND = "mp/agent value_net"   # on-disk format tag, frozen: existing .pt files
+                                               # carry it and load rejects mismatches. Not a path.
 VALUE_CHECKPOINT_VERSION = 1
 
 

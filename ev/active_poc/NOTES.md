@@ -8,7 +8,7 @@ active-learning style) buy more V quality than uniform sampling?
 strictly as libraries and are **not modified** — the only files this workstream touched are
 the ones listed below. Nothing is committed.
 
-Results: `mp/results/active_poc_2026-08-25.md` / `.json`.
+Results: `results/active_poc_2026-08-25.md` / `.json`.
 
 **Answer, in one line.** A qualified no at this scale: both active rules beat uniform
 nominally (1.2–1.4x BCE per label) but neither significantly over 6 paired seeds (t = −1.29,
@@ -41,19 +41,19 @@ the thin tail by itself.
 | `gen_arms.py` | stage 4 CLI: label the UNION of the arms (8 workers, resumable) |
 | `stage_final.py` | stage 5 CLI: retrain per arm over paired seeds, evaluate, emit the results JSON |
 | `report.py` | results JSON → the markdown write-up |
-| `tests/test_active_poc.py` | 16 tests, ~6 s (`python -m pytest mp/ev/active_poc/tests -q` from `mp/ev`) |
+| `tests/test_active_poc.py` | 16 tests, ~6 s (`python -m pytest ev/active_poc/tests -q` from `ev`) |
 
-Run dirs live under `mp/ev/runs/active_poc/` (gitignored by `mp/.gitignore`'s `runs/`+`*.pt`).
+Run dirs live under `ev/runs/active_poc/` (gitignored by `.gitignore`'s `runs/`+`*.pt`).
 
 ### The pipeline, end to end
 
 ```bash
-python mp/ev/active_poc/gen_pool.py    --seeds 600 --workers 8 --n-probe 2 --minutes 52
-python mp/ev/active_poc/stage_base.py                        # GPU, ~3 min
-python mp/ev/active_poc/stage_select.py --arm-states 1200    # GPU, ~2 min
-python mp/ev/active_poc/gen_arms.py    --workers 8 --minutes 70
-python mp/ev/active_poc/stage_final.py --seeds 6 --arm-only-seeds 3
-python mp/ev/active_poc/report.py
+python ev/active_poc/gen_pool.py    --seeds 600 --workers 8 --n-probe 2 --minutes 52
+python ev/active_poc/stage_base.py                        # GPU, ~3 min
+python ev/active_poc/stage_select.py --arm-states 1200    # GPU, ~2 min
+python ev/active_poc/gen_arms.py    --workers 8 --minutes 70
+python ev/active_poc/stage_final.py --seeds 6 --arm-only-seeds 3
+python ev/active_poc/report.py
 ```
 
 Stages 1 and 4 are resumable (re-run the same command; `touch <run-dir>/PAUSE` to stop) and
@@ -80,7 +80,7 @@ per state and both rows come free; a per-row selector would "buy" a row whose pa
 not pay for. Each state's score is the mean of its two perspectives' scores.
 
 **Candidate pool uses the corpus config verbatim.** `jobs.CORPUS_CONFIG` is
-`mp/results/labels_full.json`'s `config` copied field for field (EV player, `budget=fast`,
+`results/labels_full.json`'s `config` copied field for field (EV player, `budget=fast`,
 `shop_tier=rules`, `epsilon_selfplay=0.1`, `epsilon_rollout=0.02`, `n_states=12`, `max_ante=12`,
 Red deck, stake 1, 4 lives). This consistency is load-bearing: the arms must differ only in
 WHICH states were chosen, never in how the states were generated or how they were labelled.
@@ -136,13 +136,13 @@ favour a treatment.
 
 | deviation | rationale |
 |---|---|
-| brief read as `mp/docs/PHASE5_BRIEF_2026-08.md` | `PHASE5_V2_BRIEF_2026-08.md` does not exist on `mp/campaign` |
+| brief read as `docs/PHASE5_BRIEF_2026-08.md` | `PHASE5_V2_BRIEF_2026-08.md` does not exist on `mp/campaign` |
 | worktree branch reset to `mp/campaign` | the worktree was created from `main` (59588ba), which predates `mp/`; the tree was clean, and only this throwaway worktree branch moved |
 | arm = ~1,200 states = ~2,400 **rows** | the brief says both "~3k states each" and "a ~3k addition [to] ~12k rows"; rows is the reading consistent with the base-corpus framing, and states are what the budget is actually spent on |
 | 6 paired training seeds per arm, not 1 | seed noise (0.0055 BCE) is the same size as the whole effect; see §1 |
 | candidate pool 600 seeds (~7.2k states), not ~20k | the pool's cost is entirely the error proxy's 2 rollouts per state; ~20k states would have been ~2 h on its own. 1,200 of ~7.2k is a 17% selection rate, which is contrast enough |
 | base corpus read from the MAIN checkout's `runs/labels_full/shards` | run dirs are gitignored, so they do not exist in this worktree; the shards are static, read-only data (12 MB), and copying them would have bought nothing |
-| tests live in `mp/ev/active_poc/tests/`, not `mp/ev/tests/` | `mp/ev/pytest.ini` has `testpaths = tests`, so the existing W5 gate collects exactly what it did before and this POC cannot perturb another workstream's suite |
+| tests live in `ev/active_poc/tests/`, not `ev/tests/` | `ev/pytest.ini` has `testpaths = tests`, so the existing W5 gate collects exactly what it did before and this POC cannot perturb another workstream's suite |
 | `arm_job` given the RAW seed string, rows keyed by the canonical one | see §3 |
 
 ---

@@ -18,7 +18,7 @@ exposed as explicit ``RunState`` methods for the engine to call.
 
 Quick demo::
 
-    python -m mp.rng.generate EXAMPLE1
+    python -m rng.generate EXAMPLE1
 """
 
 from __future__ import annotations
@@ -52,9 +52,9 @@ UNAVAILABLE = "UNAVAILABLE"
 
 def _require_deps() -> None:
     if PseudoRandom is None:
-        raise ImportError("mp.rng.core (Agent A) is not importable: %r" % (_CORE_IMPORT_ERROR,))
+        raise ImportError("rng.core (Agent A) is not importable: %r" % (_CORE_IMPORT_ERROR,))
     if P is None:
-        raise ImportError("mp.rng.pools (Agent B) is not importable: %r" % (_POOLS_IMPORT_ERROR,))
+        raise ImportError("rng.pools (Agent B) is not importable: %r" % (_POOLS_IMPORT_ERROR,))
 
 
 # ----------------------------------------------------------------------------------------
@@ -301,7 +301,7 @@ class Keys:
 # LuaJIT 2.0.5 (``lua51.dll`` next to Balatro.exe; ``jit.version`` reports "LuaJIT 2.0.5") whose
 # string hash is fixed, so the order below is stable across processes (verified 5/5 runs by
 # executing the verbatim ``hands = {...}`` constructor inside that DLL via ctypes -- see
-# mp/tests/test_generate_oracle.py::test_hands_pairs_order_matches_game_dll).  lupa's LuaJIT 2.1
+# tests/test_generate_oracle.py::test_hands_pairs_order_matches_game_dll).  lupa's LuaJIT 2.1
 # randomises its string-hash seed per VM (LUAJIT_SECURITY_STRHASH) and yields a different,
 # rotating order, so it cannot be used to check this constant.
 #

@@ -1,7 +1,7 @@
 """
 w0_smoke_report.py — read the W0 smoke arms and print the comparison table.
 
-    python mp/agent/scripts/w0_smoke_report.py [run-dir] [prefix]
+    python agent/scripts/w0_smoke_report.py [run-dir] [prefix]
 
 One row per `<run-dir>/<prefix>*/` that holds a `*.jsonl`:
 
@@ -54,7 +54,7 @@ def summarise(name: str, eps: list[dict], wall: float) -> dict:
 
 
 def main() -> int:
-    root = Path(sys.argv[1] if len(sys.argv) > 1 else "mp/agent/runs")
+    root = Path(sys.argv[1] if len(sys.argv) > 1 else "agent/runs")
     prefix = sys.argv[2] if len(sys.argv) > 2 else "w0_"
     rows = []
     for d in sorted(root.glob(prefix + "*")):

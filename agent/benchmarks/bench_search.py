@@ -8,9 +8,9 @@ This is the BASELINE W3 measures against. It reports, per (policy, strategy):
     NN / sim / other where the time actually goes, by instrumenting the two hot calls
                      (`MCTS._evaluate_leaf` and `BalatroGame.clone`/`step`)
 
-    python mp/agent/benchmarks/bench_search.py
-    python mp/agent/benchmarks/bench_search.py --device cuda --sims 500
-    python mp/agent/benchmarks/bench_search.py --ruleset mlb --nemesis
+    python agent/benchmarks/bench_search.py
+    python agent/benchmarks/bench_search.py --device cuda --sims 500
+    python agent/benchmarks/bench_search.py --ruleset mlb --nemesis
 
 The split is measured by monkey-patching wrappers around the two seams for the duration
 of one timed run, so the "other" bucket is genuinely Python overhead (PUCT selection,

@@ -11,8 +11,8 @@ Measures the array payload of one training sample over 200 real states, in four 
 and the per-leaf CPU cost of the two featurizers, since that is the other thing the set
 encoding changes.
 
-    python mp/agent/benchmarks/bench_sample_size.py
-    python mp/agent/benchmarks/bench_sample_size.py --checkpoint mp/agent/runs/overnight_2026-08-22/ckpt_002072.pt
+    python agent/benchmarks/bench_sample_size.py
+    python agent/benchmarks/bench_sample_size.py --checkpoint agent/runs/overnight_2026-08-22/ckpt_002072.pt
 
 With `--checkpoint`, the 200 states are walked under that checkpoint's own priors
 (argmax, no search) instead of a uniform random policy — the same seeds either way.

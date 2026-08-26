@@ -1,7 +1,7 @@
 # Oracle sources, provenance and caveats
 
 Built 2026-08-21 (Agent D, Phase 0).  Target game: **Balatro 1.0.1o** (local Steam install, Lua
-extracted to `mp/_reference/balatro_src/`, gitignored).  Machine: Windows 11, Node v24.13.0,
+extracted to `_reference/balatro_src/`, gitignored).  Machine: Windows 11, Node v24.13.0,
 npm 11.6.2, Python 3.13.5.  No C/C++ toolchain (no gcc / cl / cmake), so the OpenCL and C++ code
 bases were used as reference only.
 
@@ -14,17 +14,17 @@ bases were used as reference only.
 | 3 | **balatrohq.com/tools/seed-analyzer/** | third-party web analyzer | client-side JS; only its example seed **ALEEB** is server-rendered -- transcribed and checked: agrees on ante 1 (boss, voucher, tags, 8 queue items, 4 packs incl. standard-card enhancements/editions, Soul->Canio/Triboulet) and on the "ante 4 = Blank voucher" claim.  Prose claims for OG4YQPSI / 2K9H9HN / 7LB2WVPK also verified (below). |
 | 4 | **Immolate** (MathIsFun0/Immolate @ `26f41efc`) -- OpenCL | reference only | not runnable here (no OpenCL toolchain) |
 | 5 | **balatro-seed-finder** (izanagi1995 @ `b3a112f8`) -- C++ CPU port | reference only | needs a C++ compiler; none available |
-| 6 | **Agent C's port** `mp/rng/generate.py` (independent port from the game Lua) | consumer / corroboration | via `parity_check.py` adapter: **126/126 seeds exact through ante 8** against the game-faithful variant |
+| 6 | **Agent C's port** `rng/generate.py` (independent port from the game Lua) | consumer / corroboration | via `parity_check.py` adapter: **126/126 seeds exact through ante 8** against the game-faithful variant |
 
-All clones live in `mp/oracle/blueprint_runner/vendor/` (gitignored via `blueprint_runner/.gitignore`);
+All clones live in `oracle/blueprint_runner/vendor/` (gitignored via `blueprint_runner/.gitignore`);
 `setup.ps1` re-creates them at the pinned commits.  Raw analyzer dumps are in
 `blueprint_runner/_raw/` (gitignored, 73 MB, regenerable).
 
 ## Exact commands
 
 ```powershell
-powershell -ExecutionPolicy Bypass -File mp/oracle/blueprint_runner/setup.ps1     # clone + npm ci
-cd mp/oracle/blueprint_runner/vendor/Blueprint
+powershell -ExecutionPolicy Bypass -File oracle/blueprint_runner/setup.ps1     # clone + npm ci
+cd oracle/blueprint_runner/vendor/Blueprint
 $env:BLUEPRINT_COMMIT = (git rev-parse HEAD)
 npx vite-node ../../check_fixtures.ts                                              # 5961/5961 fields match Blueprint's Immolate fixtures
 npx vite-node ../../run_blueprint.ts          -- --seed-file ../../seeds.txt --antes 8 --cards 50 --buy-vouchers --out ../../_raw
@@ -34,8 +34,8 @@ node run_thesoul.js --seed-file seeds.txt --antes 8 --cards 50 --out _raw
 cd ..
 python build_ground_truth.py                   # -> ground_truth/<SEED>.json (+ cross-checks, variants)
 cd ../..
-python -m mp.oracle.parity_check --validate-only
-python -m mp.oracle.parity_check --antes 1-3 [--variant faithful] [--seeds A,B]
+python -m oracle.parity_check --validate-only
+python -m oracle.parity_check --antes 1-3 [--variant faithful] [--seeds A,B]
 ```
 
 Settings used everywhere: Red Deck, White Stake, fully unlocked profile, analyzer version flag

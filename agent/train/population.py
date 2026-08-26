@@ -55,12 +55,12 @@ import numpy as np
 
 
 def tournament_module():
-    """`mp/tournament` as an importable package. `mp/tournament/bootstrap.py` puts `mp/` and
-    `mp/scripts` on `sys.path` itself and imports the frozen engine through
+    """`tournament` as an importable package. `tournament/bootstrap.py` puts the repo root and
+    `scripts` on `sys.path` itself and imports the frozen engine through
     `oracle.engine_parity.import_engine()`, which refuses to run against a different
-    `balatro_sim` — since `_bootstrap.py` / `conftest.py` already put `mp/engine` first,
+    `balatro_sim` — since `_bootstrap.py` / `conftest.py` already put `engine` first,
     that check confirms the fork rather than fighting it."""
-    mp_root = str(Path(__file__).resolve().parents[2])       # mp/
+    mp_root = str(Path(__file__).resolve().parents[2])       # repo root
     if mp_root not in sys.path:
         sys.path.append(mp_root)
     import tournament                                        # noqa: WPS433
@@ -236,7 +236,7 @@ class SkipCap:
     Big blind, so skipping is genuinely optimal against ANY population — scripted anchors
     included — and the policy converges on 97-99% skip before it ever learns to play a hand.
     The cap is a training-time constraint on the CANDIDATE SET, not an engine rule (real MLB
-    lets you skip both blinds and `mp/engine` is frozen), and it is annealed away
+    lets you skip both blinds and `engine` is frozen), and it is annealed away
     (`--skip-cap-anneal`) so the final policy is trained under the real rules.
     """
 
@@ -287,7 +287,7 @@ def instantiate(members: Sequence[PopulationMember], live_policy, *,
     pointed at the shared evaluator; `live_policy` is then unused and may be `None`.
     Scripted anchors never reach it. Default `None` = the behaviour above, unchanged.
 
-    Import is function-local: `mp/agent/train` must stay importable without dragging the
+    Import is function-local: `agent/train` must stay importable without dragging the
     whole search stack in at module scope (`train` is imported by `mcts.load_policy`).
     """
     from mcts import MCTSConfig, MCTSPlayer, load_policy

@@ -1,6 +1,6 @@
 """gen_pool.py — the candidate pool: fresh self-play states, encoded, with a cheap probe label.
 
-    python mp/ev/active_poc/gen_pool.py --run-dir mp/ev/runs/active_poc/pool \
+    python ev/active_poc/gen_pool.py --run-dir ev/runs/active_poc/pool \
         --seeds 600 --workers 8 --n-probe 2 --minutes 50
 
 One job = one FRESH seed (``active_poc.jobs.pool_job``): the same self-play + stratified
@@ -49,7 +49,7 @@ def corpus_seeds() -> list:
 
 def build_parser() -> argparse.ArgumentParser:
     ap = argparse.ArgumentParser(description=__doc__.split("\n\n")[0])
-    ap.add_argument("--run-dir", default="mp/ev/runs/active_poc/pool")
+    ap.add_argument("--run-dir", default="ev/runs/active_poc/pool")
     ap.add_argument("--seeds", type=int, default=600, help="number of FRESH seeds")
     ap.add_argument("--seed-rng", type=int, default=20260825)
     ap.add_argument("--n-probe", type=int, default=2, help="rollouts for the cheap probe label")

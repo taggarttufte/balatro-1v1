@@ -1,7 +1,7 @@
 """
-mp/eval/eval_harness.py -- evaluate a Player over a fixed seed list in three modes and produce
+eval/eval_harness.py -- evaluate a Player over a fixed seed list in three modes and produce
 a JSON report with bootstrap CIs; ``--compare`` gives a paired-by-seed difference with CI
-(common random numbers -- see mp/eval/EVAL_NOTES.md).
+(common random numbers -- see eval/EVAL_NOTES.md).
 
 Modes:
   sp_vanilla  BalatroGame(ruleset="vanilla") to GAME_OVER.  win / furthest blind / final ante /
@@ -14,14 +14,14 @@ Modes:
               the engine's own server rule).  win rate / lives margin / per-Nemesis log-score
               margin.
 
-    python -m mp.eval.eval_harness --mode sp_vanilla --player scripted:hand=greedy,buy=1,pack=0 \\
-        --out mp/results/demo_vanilla.json
-    python -m mp.eval.eval_harness --mode sp_mlb --player scripted:reroll=1,buy=1 \\
-        --out mp/results/demo_sp_mlb.json
-    python -m mp.eval.eval_harness --mode 1v1 --player scripted:reroll=1,buy=1 \\
-        --reference scripted:hand=weak --out mp/results/demo_1v1.json
-    python -m mp.eval.eval_harness --compare mp/results/a.json mp/results/b.json \\
-        --out mp/results/compare_a_b.json
+    python -m eval.eval_harness --mode sp_vanilla --player scripted:hand=greedy,buy=1,pack=0 \\
+        --out results/demo_vanilla.json
+    python -m eval.eval_harness --mode sp_mlb --player scripted:reroll=1,buy=1 \\
+        --out results/demo_sp_mlb.json
+    python -m eval.eval_harness --mode 1v1 --player scripted:reroll=1,buy=1 \\
+        --reference scripted:hand=weak --out results/demo_1v1.json
+    python -m eval.eval_harness --compare results/a.json results/b.json \\
+        --out results/compare_a_b.json
 """
 from __future__ import annotations
 

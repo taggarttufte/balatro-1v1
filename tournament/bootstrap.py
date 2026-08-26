@@ -1,14 +1,14 @@
 """
-bootstrap.py — sys.path plumbing shared by every mp/tournament module.
+bootstrap.py — sys.path plumbing shared by every tournament module.
 
-Puts mp/ and mp/scripts on sys.path and imports the FROZEN mp/engine fork through
+Puts the repo root and scripts on sys.path and imports the FROZEN engine fork through
 ``oracle.engine_parity.import_engine()`` — the same fork-guarded entry point
-``mp/scripts/mlb_match_demo.py`` and ``mp/tests/test_mlb_match_gate.py`` use, so a second
+``scripts/mlb_match_demo.py`` and ``tests/test_mlb_match_gate.py`` use, so a second
 ``import_engine()`` call inside ``mlb_match_demo`` (which it does at its own module scope)
 is a no-op that confirms the same module, never a second copy.
 
-mp/engine/** and mp/rng/** are FROZEN for Phase 3: this file only arranges imports so the
-rest of mp/tournament can do ``from .bootstrap import BalatroGame, State, mlb_match_demo``
+engine/** and rng/** are FROZEN for Phase 3: this file only arranges imports so the
+rest of tournament can do ``from .bootstrap import BalatroGame, State, mlb_match_demo``
 etc.  Nothing here edits engine or rng code.
 """
 from __future__ import annotations
@@ -16,8 +16,8 @@ from __future__ import annotations
 import os
 import sys
 
-HERE = os.path.dirname(os.path.abspath(__file__))            # mp/tournament
-MP_ROOT = os.path.dirname(HERE)                               # mp/
+HERE = os.path.dirname(os.path.abspath(__file__))            # tournament
+MP_ROOT = os.path.dirname(HERE)                               # repo root
 ENGINE_ROOT = os.path.join(MP_ROOT, "engine")
 SCRIPTS_ROOT = os.path.join(MP_ROOT, "scripts")
 

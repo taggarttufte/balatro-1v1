@@ -1,6 +1,6 @@
 """gen_arms.py — label the UNION of the three arms' selected states with the standard pipeline.
 
-    python mp/ev/active_poc/gen_arms.py --workers 8 --minutes 95
+    python ev/active_poc/gen_arms.py --workers 8 --minutes 95
 
 One job = one seed carrying all of that seed's selected states (``active_poc.jobs.arm_job``):
 ``labels.sample_states`` re-derives the snapshots, and each selected state is labelled by
@@ -43,9 +43,9 @@ PAUSE_FILE = "PAUSE"
 
 def build_parser() -> argparse.ArgumentParser:
     ap = argparse.ArgumentParser(description=__doc__.split("\n\n")[0])
-    ap.add_argument("--out", default="mp/ev/runs/active_poc")
-    ap.add_argument("--run-dir", default="mp/ev/runs/active_poc/arms")
-    ap.add_argument("--pool-done", default="mp/ev/runs/active_poc/pool/done.ids",
+    ap.add_argument("--out", default="ev/runs/active_poc")
+    ap.add_argument("--run-dir", default="ev/runs/active_poc/arms")
+    ap.add_argument("--pool-done", default="ev/runs/active_poc/pool/done.ids",
                     help="the pool's job ids = the RAW seed strings (see the canonicalisation note)")
     ap.add_argument("--workers", type=int, default=8)
     ap.add_argument("--minutes", type=float, default=None)

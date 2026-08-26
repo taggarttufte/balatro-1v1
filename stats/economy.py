@@ -1,6 +1,6 @@
 """
 economy.py -- interest arithmetic and true-cost-of-spending for the W4 decision-statistics
-module (Phase 5 rev 2, mp/docs/PHASE5_BRIEF_2026-08.md).
+module (Phase 5 rev 2, docs/PHASE5_BRIEF_2026-08.md).
 
 The game's interest rule (``constants.INTEREST_RATE`` / ``game.interest_cap``, ported from
 ``evaluate_round``, game.py:1911): every shop payout, you earn ``$1`` per ``$5`` held
@@ -16,7 +16,7 @@ from __future__ import annotations
 
 from dataclasses import dataclass
 
-import _bootstrap  # noqa: F401  (sys.path + fork-guard; see mp/stats/_bootstrap.py)
+import _bootstrap  # noqa: F401  (sys.path + fork-guard; see stats/_bootstrap.py)
 from balatro_sim.constants import INTEREST_RATE
 
 
@@ -56,7 +56,7 @@ def shops_remaining(game, horizon_rounds: int | None = None) -> int:
     2010), so the blind about to be selected is ``blind_idx + 1`` and the shops remaining
     through ante 8 are the ones after it and every later blind.
 
-    ``horizon_rounds``, if given, overrides this with a flat count (mp/ev/player.py and the
+    ``horizon_rounds``, if given, overrides this with a flat count (ev/player.py and the
     advisor may want a shorter look-ahead than "to ante 8").  MLB is endless past ante 8;
     "to ante 8" is a documented truncation, not a claim the run stops there.
     """

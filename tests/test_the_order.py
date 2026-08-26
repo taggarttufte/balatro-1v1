@@ -4,7 +4,7 @@ game's own Lua WITH the BalatroMultiplayer mod's patches applied, executing in L
 
 How the Lua side is built (nothing from the mod is copied into this repo):
 
-* the vanilla reference (``mp/_reference/balatro_src``) is loaded exactly as
+* the vanilla reference (``_reference/balatro_src``) is loaded exactly as
   ``test_generate_oracle.LuaGenOracle`` does, but its text is first run through the mod's
   ``lovely/TheOrder.toml`` pattern patches (read from the installed mod at test time and
   applied with lovely's line-match + indent rule).  The two shuffle sites and the two
@@ -62,7 +62,7 @@ def _mod_available() -> bool:
 
 pytestmark = pytest.mark.skipif(
     not (base._lupa_available() and base._sources_available() and _mod_available()),
-    reason="needs lupa (LuaJIT 2.1), mp/_reference/balatro_src and the installed Multiplayer mod "
+    reason="needs lupa (LuaJIT 2.1), _reference/balatro_src and the installed Multiplayer mod "
            "(set BALATRO_MP_MOD_DIR)",
 )
 

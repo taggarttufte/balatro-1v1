@@ -2,7 +2,7 @@
 shop.py — Shop shelf, pricing, buy/sell logic and booster-pack contents.
 
 Phase 1 W2: the engine no longer generates anything itself.  Every shelf
-card, voucher, booster slot and pack card comes from ``mp/rng/generate.py``
+card, voucher, booster slot and pack card comes from ``rng/generate.py``
 (oracle-verified against the game's Lua executing in LuaJIT) driven through
 ``game.run_state`` (``generate.RunState``):
 
@@ -22,7 +22,7 @@ sell/use.  ``BalatroGame._sync_run_state`` additionally rebuilds the ownership
 view from the game's own collections before every generation call, so the
 incremental bookkeeping can never drift from what the game actually holds.
 
-Prices come from ``mp/rng/pools.py`` (per-card costs); edition markups are
+Prices come from ``rng/pools.py`` (per-card costs); edition markups are
 the game's ``extra_cost`` (foil +2, holo +3, polychrome +5, negative +5);
 discounts follow ``Card:set_cost`` (``floor((cost+0.5)*(100-d)/100)``, min
 1); couponed cards (Uncommon/Rare/edition/Coupon tags) cost 0.
@@ -335,7 +335,7 @@ def generate_shop(game: "BalatroGame") -> list[ShopItem]:
 
 
 def _random_consumable_item(game: "BalatroGame") -> ShopItem:   # pragma: no cover - legacy name
-    raise NotImplementedError("shop generation is delegated to mp.rng.generate (W2)")
+    raise NotImplementedError("shop generation is delegated to rng.generate (W2)")
 
 
 # ════════════════════════════════════════════════════════════════════════════

@@ -8,7 +8,7 @@ tie as "no lives lost, both keep playing" without the server's exhaustion/early-
 logic, paid comeback money to the PvP loser immediately instead of at the next Cash Out
 (``4 x cumulative lives lost``), and needed a "revive" hack because the underlying games
 could not lose a blind and go on.  All of that is now native to ``BalatroGame`` with
-``ruleset="mlb"`` plus ``MLBMatch`` (see ``mp/engine/MLB_NOTES.md``).
+``ruleset="mlb"`` plus ``MLBMatch`` (see ``engine/MLB_NOTES.md``).
 
 Kept as an import shim so old call sites fail loudly with a pointer rather than silently
 running the wrong rules.
@@ -23,5 +23,5 @@ __all__ = ["MLBMatch", "MLBMatchState", "DEFAULT_LIVES", "COMEBACK_MONEY_PER_LIF
 def MultiplayerBalatro(*args, **kwargs):
     raise ImportError(
         "balatro_sim.mp_game.MultiplayerBalatro was retired in Phase 2 (wrong rules); "
-        "use balatro_sim.mlb_match.MLBMatch (see mp/engine/MLB_NOTES.md)."
+        "use balatro_sim.mlb_match.MLBMatch (see engine/MLB_NOTES.md)."
     )

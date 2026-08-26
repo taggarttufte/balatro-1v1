@@ -7,9 +7,9 @@ entries: build-complete + first-results).
 
 ## 0. Why — the measured failure this round attacks
 
-From the 2026-08-24 results (all in `mp/results/`, commits `20e1ad0`/`8c99909`):
+From the 2026-08-24 results (all in `results/`, commits `20e1ad0`/`8c99909`):
 
-* V (5M, keeper `mp/ev/runs/v_full_best/ckpt_0001000.pt`) is a well-calibrated match-win
+* V (5M, keeper `ev/runs/v_full_best/ckpt_0001000.pt`) is a well-calibrated match-win
   predictor: held-out Brier 0.060 / AUC 0.784 / ECE 0.021 on 51,024 labels.
 * **argmax-V as a policy loses to the rules player 2/60.** Per-action EV gaps (≪ 0.05) sit
   below the label noise (mean CI ±0.24 at `n_rollouts=8`). Absolute labels cannot resolve
@@ -55,8 +55,8 @@ deck-fixing + econ-joker income the extra hands buy.
 ## 2. Common ground rules
 
 * Repo: `C:\Users\Taggart\projects\balatro-rl`, all work under `mp/`, branch `mp/campaign`.
-* Tests: `python -m pytest mp/ev` (pytest.ini there), engine suites must stay green if you
-  touch `mp/engine`. Run what you touch.
+* Tests: `python -m pytest ev` (pytest.ini there), engine suites must stay green if you
+  touch `engine`. Run what you touch.
 * **Do not commit. Do not touch files owned by another workstream** (ownership below);
   additive needs elsewhere → document in your NOTES file and stop at the interface.
 * Each workstream writes/extends its NOTES file (named per section) in the same style as
@@ -69,16 +69,16 @@ deck-fixing + econ-joker income the extra hands buy.
   real1:det 57/58; argmax-V 2/60; stats 8/60.
 * Label-policy versioning: any change to the fast player changes the label/rollout policy.
   New shards MUST carry `player_fingerprint` (see §5). The 51k corpus
-  (`mp/ev/runs/labels_full*`) is OLD-policy: usable for absolute-BCE pretraining, never
+  (`ev/runs/labels_full*`) is OLD-policy: usable for absolute-BCE pretraining, never
   silently mixed — the trainer must be able to filter by fingerprint.
 
 ## 3. W-EXTRACT (strong) — the extraction layer in the analytic player
 
-Owns: `mp/ev/hand.py`, `mp/ev/player.py` (candidates/objective/keep-value paths),
-`mp/engine/` fixes for proc fidelity, `ev/EXTRACT_NOTES.md`, tests.
+Owns: `ev/hand.py`, `ev/player.py` (candidates/objective/keep-value paths),
+`engine/` fixes for proc fidelity, `ev/EXTRACT_NOTES.md`, tests.
 
 1. **Engine fidelity first.** For each §1 proc: verify the engine implements it and fires
-   on its real per-key RNG stream, against the Lua reference in `mp/_reference/balatro_src/`
+   on its real per-key RNG stream, against the Lua reference in `_reference/balatro_src/`
    (READ-ONLY, gitignored, never vendor/quote at length). Fix + test what's wrong or
    missing (the Phase-1 pattern: cite the Lua file:line in the test docstring).
    `engine_parity`/`parity_check` 126/126 must hold after any engine change.
@@ -99,7 +99,7 @@ Owns: `mp/ev/hand.py`, `mp/ev/player.py` (candidates/objective/keep-value paths)
    lines that draw toward them count the expected improvement (via the existing targets/
    hypergeometric machinery) as extraction value. Keep it first-order; document what you
    don't model.
-6. **Gates:** (a) 126-seed official gate `python mp/ev/gate_ev_player.py --procs 8` — ante-1
+6. **Gates:** (a) 126-seed official gate `python ev/gate_ev_player.py --procs 8` — ante-1
    ≥ 95% both budgets (no regression); (b) a 12-seed extraction dev slice (pick seeds whose
    ante-1/2 decks+jokers contain procs; document them): mean end-of-ante-2 money and
    tarots-used strictly up vs pre-change player, blinds lost not up; (c) unit tests for each
@@ -108,10 +108,10 @@ Owns: `mp/ev/hand.py`, `mp/ev/player.py` (candidates/objective/keep-value paths)
 
 ## 4. W-LEAF (sonnet, runs in a git worktree — lead merges) — lever (c)
 
-Owns (in its worktree): `mp/ev/hand.py` value_fn path + `mp/ev/player.py` full-budget
+Owns (in its worktree): `ev/hand.py` value_fn path + `ev/player.py` full-budget
 config, h2h driver invocations, `ev/LEAF_NOTES.md`.
 
-1. Wire keeper V (`mp/ev/runs/v_full_best/ckpt_0001000.pt`) into the full budget via the
+1. Wire keeper V (`ev/runs/v_full_best/ckpt_0001000.pt`) into the full budget via the
    existing `MatchAwareEVPlayer`/`value_fn` plumbing (fix-pass semantics: exceptions
    propagate; ROUND_EVAL advanced so V sees the shop; GAME_OVER=0).
 2. Implement EV_NOTES §8.3: with `value_fn` set, K=3 candidates × 8 worlds (flag-driven,
@@ -128,8 +128,8 @@ is what (b)'s retrained V plugs into.
 
 ## 5. W-PAIRS (strong) — lever (b) data
 
-Owns: `mp/ev/pairs.py` (new), additions to the worker-pool entry points, small proof
-campaign outputs under `mp/ev/runs/pairs_s1/`, `ev/PAIRS_NOTES.md`, tests.
+Owns: `ev/pairs.py` (new), additions to the worker-pool entry points, small proof
+campaign outputs under `ev/runs/pairs_s1/`, `ev/PAIRS_NOTES.md`, tests.
 Coordinates by SCHEMA ONLY with W-RANK (schema frozen below — implement it exactly; if it
 collides with an existing convention, document, don't rename).
 
@@ -158,7 +158,7 @@ collides with an existing convention, document, don't rename).
 
 ## 6. W-RANK (sonnet) — lever (b) loss
 
-Owns: `mp/ev/train_v.py` additions, `ev/RANK_NOTES.md`, tests. Codes against §5's frozen
+Owns: `ev/train_v.py` additions, `ev/RANK_NOTES.md`, tests. Codes against §5's frozen
 schema (synthesize fixture shards for tests; do not wait for W-PAIRS).
 
 1. Loss = BCE(absolute rows) + `lam_rank` · pairwise logistic on
@@ -180,7 +180,7 @@ Owns: fixture states + advisor integration + `ev/PROBE_NOTES.md`.
 Tagg's scenarios as named advisor fixtures (like `fixture:bloodstone_vs_invisible`):
 purple-seal discard, Faceless + 3 faces, Business-Card board, Reserved Parking hold,
 gold-seal weak-play, tarot-targeting cycle — each with a matched control where greedy is
-right (low P(clear) or no procs). `python mp/ev/cli.py advise fixture:<name>` must render
+right (low P(clear) or no procs). `python ev/cli.py advise fixture:<name>` must render
 the extraction lines with their EV decomposition. Regression tests pin the qualitative
 ordering (extract > clear-now in the sandbag fixtures, reversed in controls).
 

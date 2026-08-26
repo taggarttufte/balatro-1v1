@@ -5,7 +5,7 @@ so the POC never has to materialise its arm corpora as shards or touch the train
 data path.  Every run in the POC uses ``RECIPE`` verbatim — only ``seed``, ``run_dir`` and
 the training set differ, which is what makes the three-arm comparison a comparison of DATA.
 
-Regime: the known-good full-corpus run (``mp/ev/runs/v_full_best``) bottomed out on held-out
+Regime: the known-good full-corpus run (``ev/runs/v_full_best``) bottomed out on held-out
 BCE at step 1250 / epoch 7 of a cosine-to-2000 schedule at 45.9k rows.  At 12k rows the
 step count that corresponds to is re-derived here by a probe run (``derive_regime``) rather
 than assumed, and the resulting ``S*`` is then FIXED for every ensemble and arm run so that

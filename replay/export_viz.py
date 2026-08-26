@@ -1,7 +1,8 @@
 """
 export_viz.py — best-effort export of a logged line into the ``trajectory.json`` shape the
-V7-era ``viz/`` app (repo root, READ-ONLY, never modified here) renders.  Confirmed against
-the shipped ``viz/trajectory.json`` + ``viz/main.js`` (2026-08-22):
+V7-era ``viz/`` app renders.  That app lives in the predecessor repo
+(https://github.com/taggarttufte/balatro-rl); nothing here reads it -- only its JSON shape
+is targeted.  Confirmed against the shipped ``viz/trajectory.json`` + ``viz/main.js`` (2026-08-22):
 
     {"seed": ..., "outcome": {"ante", "reward", "steps", "dollars", "won"},
      "episode_id": ..., "trajectory": [ ...one entry per action, PRE-action state... ]}
@@ -196,9 +197,9 @@ def export_viz_match(line: dict, player: int, episode_id: int = 0) -> dict:
 
 def export_viz_to_file(line: dict, path: str, episode_id: int = 0,
                         player: Optional[int] = None) -> dict:
-    """Write the export to ``path`` (the shape ``viz/index.html`` loads as
-    ``trajectory.json`` -- see mp/replay/REPLAY_NOTES.md for how to point the old viewer at
-    it; ``viz/`` itself is never modified by this package)."""
+    """Write the export to ``path`` (the shape the predecessor repo's ``viz/index.html`` loads as
+    ``trajectory.json`` -- see replay/REPLAY_NOTES.md for how to point the old viewer at
+    it; that app is never modified by this package)."""
     if line.get("kind") == "match":
         p = 0 if player is None else player
         doc = export_viz_match(line, p, episode_id=episode_id)

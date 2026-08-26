@@ -1,9 +1,9 @@
-"""Tests for mp/eval/transfer_spread.py: determinism, JSON-schema round-trip, the
+"""Tests for eval/transfer_spread.py: determinism, JSON-schema round-trip, the
 identical-cell sanity case (spread CI must contain 0 when a player is evaluated against
 itself across three cells wired to the SAME deck), and the checkpoint-spec passthrough.
 Kept to small seed counts / n_agents / max_antes / n_boot to stay fast -- the real,
-full-size run is `python -m mp.eval.transfer_spread` (see EVAL_NOTES.md Phase 4 for the
-numbers). Run: python -m pytest mp/eval/tests -q (repo root)."""
+full-size run is `python -m eval.transfer_spread` (see EVAL_NOTES.md Phase 4 for the
+numbers). Run: python -m pytest eval/tests -q (repo root)."""
 from __future__ import annotations
 
 import json
@@ -192,7 +192,7 @@ def test_build_tournament_player_scripted():
 
 def test_build_tournament_player_checkpoint_bogus_path_is_not_swallowed_as_not_implemented():
     """MCTSPlayer is no longer the Phase-3 placeholder (the agent workstream wired it up
-    concurrently -- tournament.players.MCTSPlayer is now a real factory over mp/agent/mcts).
+    concurrently -- tournament.players.MCTSPlayer is now a real factory over agent/mcts).
     A bogus, nonexistent checkpoint path must raise the REAL underlying error (a file-load
     failure), never this module's NotImplementedError fallback -- _build_tournament_player
     only intercepts NotImplementedError, by design, so a real error is never masked."""

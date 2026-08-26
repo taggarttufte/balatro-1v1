@@ -1,10 +1,10 @@
-# Reproduce the vendored analyzers used to build mp/oracle/ground_truth (pinned commits).
+# Reproduce the vendored analyzers used to build oracle/ground_truth (pinned commits).
 # vendor/ is gitignored (see .gitignore here) -- never commit the clones.
 #
-#   powershell -ExecutionPolicy Bypass -File mp/oracle/blueprint_runner/setup.ps1
+#   powershell -ExecutionPolicy Bypass -File oracle/blueprint_runner/setup.ps1
 #
 # Requires: git, node >= 20, npm.  Then:
-#   cd mp/oracle/blueprint_runner/vendor/Blueprint
+#   cd oracle/blueprint_runner/vendor/Blueprint
 #   $env:BLUEPRINT_COMMIT = (git rev-parse HEAD)
 #   npx vite-node ../../run_blueprint.ts          -- --seed-file ../../seeds.txt --antes 8 --cards 50 --buy-vouchers --out ../../_raw
 #   npx vite-node ../../run_blueprint_faithful.ts -- --seed-file ../../seeds.txt --antes 8 --cards 50 --out ../../_raw

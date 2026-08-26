@@ -1,7 +1,7 @@
 # TAGS_NOTES.md -- skip-blind Tags: module contract for W2
 
 Owner: P1-tags (W6). Files: `balatro_sim/tags.py`, `tests/sim_tests/test_tags.py`, this note.
-Source of truth: `mp/_reference/balatro_src/tag.lua` (`Tag:apply_to_run`, lines 115-468) plus
+Source of truth: `_reference/balatro_src/tag.lua` (`Tag:apply_to_run`, lines 115-468) plus
 the call sites listed under "When to call what". Nothing in `game.py`/`shop.py` was touched;
 `_skip_blind` still pays its flat +$5 until W2 wires this in.
 
@@ -182,7 +182,7 @@ Pack keys: `tag_charm -> p_arcana_mega_1`, `tag_meteor -> p_celestial_mega_1`,
 
 ## 6. Tests
 
-`python -m pytest mp/engine/tests/sim_tests/test_tags.py -q` -> **124 passed** (0.13 s).
+`python -m pytest engine/tests/sim_tests/test_tags.py -q` -> **124 passed** (0.13 s).
 Coverage: every tag at least once (24 parametrised `consumed_at` + 24 `wrong_trigger_never_consumes`
 + per-tag effect tests), all six Economy boundaries, Top-up slot rules, Rare nope + scan
 continuation, edition-tag ordering, one-pack-per-pass, Boss-chains-into-next, two Boss Tags,

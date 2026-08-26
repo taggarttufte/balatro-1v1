@@ -2,14 +2,14 @@
 
 **Agent W2, 2026-08-22.** Deliverable: the training loop whose objective is not degenerate.
 
-New: `mp/agent/train/{selfplay.py, population.py}`, `mp/agent/scripts/{train_mlb.py,
-smoke_3way.sh, smoke_3way_report.py}`, `mp/agent/tests/test_train_mlb.py` (69 tests), this
-file. Edited: `mp/agent/mcts/player.py` (an additive `record_hook` + `legal_filter` +
-`batch_leaf_eval`, and a real bug in `make_player`), `mp/tournament/players.py` (the
-`MCTSPlayer` factory, BATCH_NOTES §7.2 applied), `mp/tournament/runner.py` (dead Phase 3
+New: `agent/train/{selfplay.py, population.py}`, `agent/scripts/{train_mlb.py,
+smoke_3way.sh, smoke_3way_report.py}`, `agent/tests/test_train_mlb.py` (69 tests), this
+file. Edited: `agent/mcts/player.py` (an additive `record_hook` + `legal_filter` +
+`batch_leaf_eval`, and a real bug in `make_player`), `tournament/players.py` (the
+`MCTSPlayer` factory, BATCH_NOTES §7.2 applied), `tournament/runner.py` (dead Phase 3
 workaround removed; a no-progress guard; `on_fanout` / `on_step` / `on_agent_done` for W3's
 replay logging) plus four new tournament test files (25 tests).
-**`mp/engine/**`, `mp/rng/**` and `mp/eval/**` untouched.**
+**`engine/**`, `rng/**` and `eval/**` untouched.**
 
 ---
 
@@ -100,9 +100,9 @@ that is still an opponent.
 Nemesis auto-resolves at hand exhaustion with **no life lost** (`game.py::end_pvp`), so the
 driver compares `chips_scored` to an external per-ante target and calls the same public
 `game.lose_life()` hook the tournament runner uses. Targets come from **W4's
-`mp/eval/targets.py`** through its shared `target_fn(game, big_blind=None) -> int` signature;
+`eval/targets.py`** through its shared `target_fn(game, big_blind=None) -> int` signature;
 `selfplay.vanilla_boss_target` is a local fallback with the same formula from the same engine
-constants, kept so the module works if `mp/eval` is ever absent. `load_target_fn` returns the
+constants, kept so the module works if `eval` is ever absent. `load_target_fn` returns the
 source string and the run log records it — a run trained against a different target table is
 a different experiment.
 
@@ -141,7 +141,7 @@ tournament is the real objective**, and this is exactly why.
 
 ## 2. How samples are collected without owning the play loop
 
-`mp/tournament/runner.py` drives the games; the players are handed to it. So collection rides
+`tournament/runner.py` drives the games; the players are handed to it. So collection rides
 on an **additive** `record_hook` on `mcts.MCTSPlayer` (`None` by default, and free when
 unset — no dict is built, no extra `legal_actions()` call is made). Every decision hands back
 a `mcts.Decision` (live game, legal actions, their keys, root visit counts, chosen key) and
@@ -174,9 +174,9 @@ proposition instead of a 1.9 GB one.
 
 ## 3. `MCTSPlayer` in the tournament, and what was removed
 
-`mp/tournament/players.py::MCTSPlayer` is now BATCH_NOTES §7.2's factory verbatim: a
-function, not a class, so `mp.tournament` still imports with no torch installed, and
-`mp/agent` goes on `sys.path` the way `bootstrap.py` already does it for `mp/engine`.
+`tournament/players.py::MCTSPlayer` is now BATCH_NOTES §7.2's factory verbatim: a
+function, not a class, so `tournament` still imports with no torch installed, and
+`agent` goes on `sys.path` the way `bootstrap.py` already does it for `engine`.
 Defaults are §7.1's recommendation — `leaf_batch=16, reuse=True` — because the runner drives
 one agent at a time, so K is 1 no matter what the player does.
 
@@ -292,7 +292,7 @@ Two 30-minute runs on CUDA (RTX 3080 Ti), both `--n-agents 16 --seeds-per-gen 2
 --max-ante 4 --sims 40 --device cuda`, `mlb` encoder, 2.41 M-parameter net, subsampled
 `Sample` v2. Both include a `PAUSE` mid-flight and a `--resume`. **0 errors in either.**
 
-### 7.1 `p4w2_gate` — no anchors (`mp/agent/runs/p4w2_gate/`)
+### 7.1 `p4w2_gate` — no anchors (`agent/runs/p4w2_gate/`)
 
 10 generations, 288 agent-runs, 32.6 min (25.9 min → `PAUSE` → resumed for 6.7 min),
 11 checkpoints.
@@ -412,13 +412,13 @@ is `GAME_OVER`.
 ### Stage A — vanilla warm-up (4-6 h)
 
 ```
-python mp/agent/scripts/train_cold.py \
+python agent/scripts/train_cold.py \
     --minutes 300 --device cuda \
     --ruleset vanilla --encoder mlb \
     --sims 40 --max-decisions 1500 \
     --batch-size 32 --lr 1e-3 --buffer-capacity 20000 \
     --checkpoint-every 200 --keep-checkpoints 6 \
-    --run-dir mp/agent/runs --run-name real1_stageA
+    --run-dir agent/runs --run-name real1_stageA
 ```
 
 Measured: **64.6 episodes/min** on CUDA (10-minute run, 644 episodes, 0 errors), so 300
@@ -433,9 +433,9 @@ the net, is what clears a first blind) and say so.
 ### Stage B — the tournament run (24-48 h)
 
 ```
-python mp/agent/scripts/train_mlb.py \
+python agent/scripts/train_mlb.py \
     --minutes 2880 --device cuda \
-    --init mp/agent/runs/real1_stageA/latest.pt \
+    --init agent/runs/real1_stageA/latest.pt \
     --encoder mlb \
     --objective tournament \
     --n-agents 16 --m-current 8 --anchors 0.25 --p-history 4 \
@@ -448,12 +448,12 @@ python mp/agent/scripts/train_mlb.py \
     --checkpoint-every 1 --keep-checkpoints 12 \
     --log-trajectories --sig-every 50 \
     --deck b_red --stake 1 \
-    --run-dir mp/agent/runs --run-name real1
+    --run-dir agent/runs --run-name real1
 ```
 
 Red deck, White stake, ante-8 horizon. Pause it whenever the machine is wanted:
-`touch mp/agent/runs/real1/PAUSE`; resume with
-`python mp/agent/scripts/train_mlb.py --resume mp/agent/runs/real1/latest.pt --minutes <N> --device cuda`.
+`touch agent/runs/real1/PAUSE`; resume with
+`python agent/scripts/train_mlb.py --resume agent/runs/real1/latest.pt --minutes <N> --device cuda`.
 
 **Expected throughput** (measured at `--max-ante 8`, N=16, `mlb` encoder, CUDA):
 
@@ -508,7 +508,7 @@ adjust `--max-skips-per-ante` here before launching 24 hours of GPU.
 
 ### Needs engine change (frozen — worked around, not patched)
 
-**`mp/engine/balatro_sim/game.py:1433` + `:1854` — a legal action that changes nothing, in
+**`engine/balatro_sim/game.py:1433` + `:1854` — a legal action that changes nothing, in
 the SHOP.** `legal_actions()`'s SHOP branch enumerates card-targeting `use_consumable`
 actions against `self.hand`, which in the SHOP still holds the **previous blind's** cards
 (nothing clears it at `_end_round`), and `_use_consumable` silently returns without consuming
@@ -533,11 +533,11 @@ driver carries the same guard (an episode was observed spending all 400 of its d
 one ante-1 shop), and `--max-samples-per-agent` (default 2 000) is the second line of defence
 on the buffer.
 
-**`mp/engine/balatro_sim/game.py:894` `state_signature()` at 42 µs.** Fine at the driver
+**`engine/balatro_sim/game.py:894` `state_signature()` at 42 µs.** Fine at the driver
 level (once per step, dwarfed by the search) but it is the reason the guard is a *driver*
 feature and not a per-edge check inside the search. Already flagged by W3 in BATCH_NOTES §8.
 
-**`mp/replay/_util.py::apply_op` has no `__set_pvp_info__` (needs a W3 change, 3 lines).**
+**`replay/_util.py::apply_op` has no `__set_pvp_info__` (needs a W3 change, 3 lines).**
 The solo external-target driver calls `game.set_pvp_info(target, hands)` so the agent can see
 what it has to beat; that mutates `pvp_opponent_score`, `pvp_opponent_hands` and the blind's
 `chips_target`, all of which `state_signature()` covers, and replay has no way to reproduce
@@ -625,7 +625,7 @@ worker count is not in it**, so a run can be paused and resumed across the seam 
 direction:
 
     touch <run dir>/PAUSE
-    python mp/agent/scripts/train_mlb.py --resume <run dir>/latest.pt --minutes <N>         --device cpu --workers 12 --evaluator-device cpu
+    python agent/scripts/train_mlb.py --resume <run dir>/latest.pt --minutes <N>         --device cpu --workers 12 --evaluator-device cpu
 
 Everything else -- encoder, sims, budgets, skip cap and its anneal, W0's lambda and its
 clear-rate EMA, the opponent history, the buffer, the optimizer moments, the generation

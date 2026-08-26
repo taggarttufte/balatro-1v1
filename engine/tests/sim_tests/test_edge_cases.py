@@ -914,7 +914,7 @@ class TestGameStateTransitions:
 
 @pytest.mark.skip(
     reason="needs get_action_mask from the top-level BRL training script train_sim.py "
-           "(imports torch; not part of the mp/engine fork). Kept for parity with the "
+           "(imports torch; not part of the engine fork). Kept for parity with the "
            "source suite -- unskip if an engine-local action mask lands."
 )
 class TestActionMasking:

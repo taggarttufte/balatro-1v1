@@ -5,7 +5,7 @@ determinize.py — Phase 5 W2: a non-clairvoyant MCTS player, built without touc
 The problem (PHASE5_BRIEF_2026-08.md §0): every `real1` decision came from a search
 whose simulations cloned the TRUE game (`BalatroGame.clone()`, which copies the keyed
 RNG and draw-pile order verbatim) — every simulated future saw the actual future draws,
-reroll results, pack contents and probability rolls. `mp/engine/balatro_sim/game.py`'s
+reroll results, pack contents and probability rolls. `engine/balatro_sim/game.py`'s
 new `clone_determinized(seed)` fixes the primitive (observed state stays bit-identical;
 the draw pile is reshuffled and the keyed RNG is reseeded); this module wires it into
 MCTS.
@@ -69,7 +69,7 @@ def seed_stream(base_seed: "int | None") -> Iterator[int]:
     """An endless generator of ints for `clone_determinized(seed=...)`. Deterministic
     (and therefore reproducible across two runs) given `base_seed`; genuinely fresh
     (`secrets`) when `base_seed is None`, exactly like `clone_determinized(seed=None)`
-    itself. A tiny counter-based LCG, not `random.Random` — `mp/engine` forbids the
+    itself. A tiny counter-based LCG, not `random.Random` — `engine` forbids the
     stdlib `random` module inside `balatro_sim/` (`test_no_random_module_in_engine`),
     and this module intentionally mirrors that discipline even though it lives outside
     the guarded tree, so every draw in the whole determinize path stays traceable to one
@@ -119,7 +119,7 @@ class DeterminizedMCTSPlayer:
     """Wraps an `MCTSPlayer` so its search runs against sampled worlds instead of the
     true future. Same minimal `Player` protocol as every other player in this repo
     (`act(game) -> action | None`, `reset()`) — a drop-in substitute for
-    `mp/tournament`/`mp/eval` drivers and for `mcts.player.MCTSPlayer` itself.
+    `tournament`/`eval` drivers and for `mcts.player.MCTSPlayer` itself.
 
     `determinize_seed`: seeds the internal `seed_stream` that feeds every
     `clone_determinized` call this player makes, across its whole lifetime (every

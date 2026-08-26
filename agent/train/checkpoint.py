@@ -38,7 +38,9 @@ CHECKPOINT_VERSION = 2
 #: — they are necessarily flat-encoder checkpoints, and the two new keys read as absent —
 #: so the Phase 3 runs under `agent/runs/` remain usable.
 SUPPORTED_CHECKPOINT_VERSIONS = (1, 2)
-CHECKPOINT_KIND = "mp/agent train_cold"
+CHECKPOINT_KIND = "mp/agent train_cold"   # on-disk format tag, frozen: every existing .pt
+                                          # carries it and load_checkpoint() rejects mismatches.
+                                          # Not a path — do not "fix" the mp/ prefix.
 
 
 # ── Global RNG states ───────────────────────────────────────────────────────────

@@ -1,20 +1,20 @@
 # PROBE_NOTES -- W-PROBE: acceptance fixtures for the extraction/sandbag layer
 (Phase 5 rev 2, 2026-08-25)
 
-Owns: `mp/ev/fixtures/{purple_seal_discard,faceless_discard,business_card_board,
+Owns: `ev/fixtures/{purple_seal_discard,faceless_discard,business_card_board,
 reserved_parking_hold,gold_seal_weak_play,tarot_target_cycle,_probe_common}.py`, the additive
-registration in `mp/ev/fixtures/__init__.py` (12 new entries, `bloodstone_vs_invisible` and
-its own registration untouched), `mp/ev/tests/test_probe_fixtures.py` (49 tests), this file.
-`mp/ev/hand.py`, `mp/ev/player.py`, `mp/ev/pairs.py` are read-only here -- everything below is
+registration in `ev/fixtures/__init__.py` (12 new entries, `bloodstone_vs_invisible` and
+its own registration untouched), `ev/tests/test_probe_fixtures.py` (49 tests), this file.
+`ev/hand.py`, `ev/player.py`, `ev/pairs.py` are read-only here -- everything below is
 a report on W-EXTRACT's layer (`EXTRACT_NOTES.md`), not a change to it.
 
 ```
-python mp/ev/cli.py advise fixture:purple_seal_discard         --player 0
-python mp/ev/cli.py advise fixture:purple_seal_discard_control --player 0
+python ev/cli.py advise fixture:purple_seal_discard         --player 0
+python ev/cli.py advise fixture:purple_seal_discard_control --player 0
 ... (same for faceless_discard, business_card_board, reserved_parking_hold,
      gold_seal_weak_play, tarot_target_cycle -- each with a _control twin)
-python -m pytest mp/ev/tests/test_probe_fixtures.py -q     # 49 passed
-python -m pytest mp/ev -q                                  # 254 passed (whole-package, this
+python -m pytest ev/tests/test_probe_fixtures.py -q     # 49 passed
+python -m pytest ev -q                                  # 254 passed (whole-package, this
                                                              # workstream's scope is green)
 ```
 
@@ -29,7 +29,7 @@ pulls the named `(rank, suit)` cards out of `game.full_deck` -- the same objects
 scoring/discard/round-end code paths, not a parallel model of them), `game.jokers`
 (`_probe_common.set_jokers`, real `JokerInstance`s), individual `Card.seal` /
 `Card.enhancement`, `game.consumable_hand`, and `game.current_blind.chips_target`. This is
-exactly `mp/ev/tests/test_extraction.py`'s own `_set_hand` / `_jokers` idiom (W-EXTRACT's
+exactly `ev/tests/test_extraction.py`'s own `_set_hand` / `_jokers` idiom (W-EXTRACT's
 accepted pattern for constructed states), just wrapped in an `MLBMatch` because the advisor's
 `fixture:<name>` state source needs one. No self-play means no RNG stream is consumed before
 the hand-edits, so every fixture is trivially deterministic (`m1.signature() ==
@@ -185,11 +185,11 @@ error in this workstream.
 
 ## 4. Test counts / file inventory
 
-* New: `mp/ev/fixtures/_probe_common.py`, `mp/ev/fixtures/{purple_seal_discard,
+* New: `ev/fixtures/_probe_common.py`, `ev/fixtures/{purple_seal_discard,
   faceless_discard, business_card_board, reserved_parking_hold, gold_seal_weak_play,
-  tarot_target_cycle}.py`, `mp/ev/tests/test_probe_fixtures.py` (49 tests), this file.
+  tarot_target_cycle}.py`, `ev/tests/test_probe_fixtures.py` (49 tests), this file.
 * Edited (additive only, 12 new dict entries + imports, `bloodstone_vs_invisible`'s own line
-  untouched): `mp/ev/fixtures/__init__.py`.
-* `python -m pytest mp/ev/tests/test_probe_fixtures.py -q` -- 49 passed.
-* `python -m pytest mp/ev -q` -- 254 passed (whole package, run after this workstream's
+  untouched): `ev/fixtures/__init__.py`.
+* `python -m pytest ev/tests/test_probe_fixtures.py -q` -- 49 passed.
+* `python -m pytest ev -q` -- 254 passed (whole package, run after this workstream's
   changes; no failures attributable to this workstream or observed from any other).

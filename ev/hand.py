@@ -60,7 +60,7 @@ from typing import Callable, Optional
 
 import numpy as np
 
-import _bootstrap  # noqa: F401  (fork guard: the mp/engine balatro_sim)
+import _bootstrap  # noqa: F401  (fork guard: the engine balatro_sim)
 from _bootstrap import State
 from balatro_sim.card_selection import HypotheticalScorer
 from balatro_sim.constants import HAND_BASE, HAND_LEVEL_CHIPS, HAND_LEVEL_MULT, RANK_CHIPS

@@ -4,8 +4,8 @@
 warm-up produce a *learnable value target*, and the search-side candidate mask that goes
 with it.
 
-New: `mp/agent/mcts/heuristic.py`, `mp/agent/tests/test_heuristic_prior.py` (38 tests),
-`mp/agent/scripts/w0_smoke_report.py`, `mp/agent/runs/w0_smoke.sh` + `w0_smoke2.sh`, this file.
+New: `agent/mcts/heuristic.py`, `agent/tests/test_heuristic_prior.py` (38 tests),
+`agent/scripts/w0_smoke_report.py`, `agent/runs/w0_smoke.sh` + `w0_smoke2.sh`, this file.
 Edited: `mcts/search.py` (`MCTSConfig` gains five inert-by-default fields; `MCTS` gains
 `heuristic_lambda` + `_shape_priors`, called from the one existing expansion seam),
 `mcts/player.py` (`MCTSPlayer.heuristic_prior` / `set_heuristic_prior`; `make_player`
@@ -13,7 +13,7 @@ kwargs), `mcts/__init__.py` (exports), `train/loop.py` (`TrainConfig` knobs, the
 the clear-rate EMA, the checkpoint payload, two new log fields), `train/population.py`
 (`instantiate` passes the prior to every net seat), `train/selfplay.py` (`MLBTrainer`
 anneals it per generation), `scripts/train_cold.py` + `scripts/train_mlb.py` (flags).
-**`mp/engine/**`, `mp/rng/**`, `mp/tournament/**`, `mp/eval/**`, `mp/replay/**`
+**`engine/**`, `rng/**`, `tournament/**`, `eval/**`, `replay/**`
 untouched.**
 
 ---
@@ -134,16 +134,16 @@ the prior instead of the net. Scripted anchors are unaffected (they never search
 that drives `--skip-cap-anneal-clear-rate`, so the two training-time crutches come off
 together, and `h_lambda` is logged next to `skip_cap` in the generation line.
 
-`mp/eval`'s `checkpoint:<path>,k=v` spec needs no change: it forwards unknown `k=v` pairs
+`eval`'s `checkpoint:<path>,k=v` spec needs no change: it forwards unknown `k=v` pairs
 straight to `make_player`, so
 `checkpoint:runs/real1_stageA/latest.pt,sims=40,heuristic_prior=0.1,max_hand_candidates=32`
 already works (the string `"0.1"` is coerced by `MCTS.heuristic_weight`).
 
 ## 4. The 10-minute gate smoke
 
-`bash mp/agent/runs/w0_smoke.sh 10` (arms A-E) and `w0_smoke2.sh 10` (F-I) — all
+`bash agent/runs/w0_smoke.sh 10` (arms A-E) and `w0_smoke2.sh 10` (F-I) — all
 `--ruleset vanilla --encoder set --device cpu`, run in parallel with 4 torch threads each
-on the 32-core box. `python mp/agent/scripts/w0_smoke_report.py` prints the table.
+on the 32-core box. `python agent/scripts/w0_smoke_report.py` prints the table.
 
 | arm | what | eps | ep/min | **clear%** | mean ante | mean len | **v-loss** |
 |---|---|---|---|---|---|---|---|
@@ -214,7 +214,7 @@ the agent survives further. Samples per minute are roughly flat.
 ### Stage A — vanilla warm-up (replaces TRAIN_NOTES §8's Stage A)
 
 ```
-python mp/agent/scripts/train_cold.py \
+python agent/scripts/train_cold.py \
     --minutes 300 --device cpu \
     --ruleset vanilla --encoder set \
     --sims 40 --max-decisions 1500 \
@@ -223,7 +223,7 @@ python mp/agent/scripts/train_cold.py \
     --heuristic-prior-anneal clear:0.6 --heuristic-prior-floor 0.1 \
     --batch-size 32 --lr 1e-3 --buffer-capacity 20000 \
     --checkpoint-every 200 --keep-checkpoints 6 \
-    --run-dir mp/agent/runs --run-name real1_stageA
+    --run-dir agent/runs --run-name real1_stageA
 ```
 
 `clear:0.6` holds lambda at 0.8 until the net starts clearing ante 1 on its own and walks
@@ -315,9 +315,9 @@ Watch `h_lambda` next to `skip_cap` in the generation line; if `tie_fraction` cl
 ## 7. Gates
 
 ```
-python -m pytest mp/agent/tests -q                                    # 309 (271 + 38)
-python -m pytest mp/tournament/tests mp/eval/tests mp/replay/tests -q # 264 (57/125/82)
+python -m pytest agent/tests -q                                    # 309 (271 + 38)
+python -m pytest tournament/tests eval/tests replay/tests -q # 264 (57/125/82)
 ```
 
-`mp/engine/**`, `mp/rng/**`, `mp/tournament/**`, `mp/eval/**`, `mp/replay/**` were not
+`engine/**`, `rng/**`, `tournament/**`, `eval/**`, `replay/**` were not
 edited. No engine change is needed.

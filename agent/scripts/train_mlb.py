@@ -1,7 +1,7 @@
 """
 train_mlb.py — generation-based training against an objective that costs something.
 
-    python mp/agent/scripts/train_mlb.py --minutes 30 --device cuda \
+    python agent/scripts/train_mlb.py --minutes 30 --device cuda \
         --n-agents 16 --seeds-per-gen 2 --max-ante 4 --sims 40
 
 Why this script exists (CAMPAIGN_LOG 2026-08-22 07:35): `train_cold --ruleset mlb` learns
@@ -13,7 +13,7 @@ about the pipeline was broken; the objective was.
 Two objectives replace it (`--objective`):
 
   tournament  (default, the real one)  Each generation runs `--seeds-per-gen` tournaments
-              of `--n-agents` agents on ONE seed each (`mp/tournament`), with the population
+              of `--n-agents` agents on ONE seed each (`tournament`), with the population
               built from the current net (several root-noise seeds and search budgets) plus
               the last `--p-history` checkpoints. At every Nemesis the N x N matrix ranks
               the population; a current-net agent's value target is its rank at the NEXT
@@ -21,7 +21,7 @@ Two objectives replace it (`--objective`):
               Only current-net agents produce samples.
 
   external    Solo episodes against an external per-ante chip target (W4's
-              `mp/eval/targets.py` when present, else the identical local formula). The
+              `eval/targets.py` when present, else the identical local formula). The
               driver charges the life the engine will not: score below target at the
               Nemesis -> `game.lose_life()`. Cheap sanity objective, not the real one.
 
@@ -33,7 +33,7 @@ The loop checks between tournaments (and between episodes under `--objective ext
 finishes the one in flight, trains on what it collected, writes a checkpoint, prints the
 exact resume command and exits 0. Ctrl+C and SIGTERM take the same path. Resume with
 
-    python mp/agent/scripts/train_mlb.py --resume <run-dir>/latest.pt --minutes <N>
+    python agent/scripts/train_mlb.py --resume <run-dir>/latest.pt --minutes <N>
 
 which restores the net, the optimizer moments, the replay buffer, the numpy/torch/python
 RNG states, the generation counter AND the opponent-checkpoint history — a resumed
@@ -45,7 +45,7 @@ generation (every metric in `GenerationMetrics` plus the population summary), on
 `checkpoint` line per checkpoint, one `summary` line at exit. Console prints one line per
 generation and shouts if the value-target sd falls under 0.15.
 
-See `mp/agent/TRAIN_NOTES.md` for the gate run, the metric definitions and the command for
+See `agent/TRAIN_NOTES.md` for the gate run, the metric definitions and the command for
 the first real run.
 """
 from __future__ import annotations
@@ -80,7 +80,7 @@ def fmt_secs(s: float) -> str:
 
 
 def make_trajectory_logger(run_dir: Path, enabled: bool, sig_every: int = 50):
-    """W3 hook (`mp/replay`, REPLAY_NOTES 2). Returns `(factory, note)` where `factory(seed)`
+    """W3 hook (`replay`, REPLAY_NOTES 2). Returns `(factory, note)` where `factory(seed)`
     is a fresh `TrajectoryLogger` - one per AGENT per tournament, because W3's logger holds
     exactly one open episode and a tournament is N independent games.
 
@@ -88,13 +88,13 @@ def make_trajectory_logger(run_dir: Path, enabled: bool, sig_every: int = 50):
     under 2% at 50 (W3's measurement), and the training loop cares about episodes per minute.
     Replay still verifies every 50th step plus the final state.
 
-    If `mp/replay` is missing the run says so once and continues - logging is not the job.
+    If `replay` is missing the run says so once and continues - logging is not the job.
     """
     if not enabled:
         return None, "disabled"
     try:
         from train.selfplay import tournament_module
-        tournament_module()                                   # puts mp/ on sys.path
+        tournament_module()                                   # puts the repo root on sys.path
         from replay.log import TrajectoryLogger               # type: ignore  # noqa: WPS433
     except Exception as e:                                    # noqa: BLE001
         return None, f"unavailable ({type(e).__name__}: {e})"
@@ -198,7 +198,7 @@ def build_parser() -> argparse.ArgumentParser:
                     help="--objective external: solo episodes per generation")
     ap.add_argument("--target-kind", default="own_big_blind",
                     choices=["own_big_blind", "vanilla_boss", "table"],
-                    help="--objective external: which target from mp/eval/targets.py. "
+                    help="--objective external: which target from eval/targets.py. "
                          "own_big_blind mirrors the agent's own Big blind (~50/50 by "
                          "construction); vanilla_boss is a FIXED bar a cold net cannot "
                          "reach, which collapses the value target -- see TRAIN_NOTES sec.9")
@@ -262,7 +262,7 @@ def build_parser() -> argparse.ArgumentParser:
     ap.add_argument("--save-matrices", action="store_true",
                     help="write each tournament's per-ante .npz matrices under the run dir")
     ap.add_argument("--log-trajectories", action="store_true",
-                    help="log every episode through W3's mp/replay TrajectoryLogger")
+                    help="log every episode through W3's replay TrajectoryLogger")
     ap.add_argument("--sig-every", type=int, default=50,
                     help="trajectory signature checkpoint interval; 10 costs 25-35%% of "
                          "wall clock, 50 costs <2%%")
@@ -601,7 +601,7 @@ def main() -> int:
           "final_checkpoint": str(final)})
     log_file.close()
 
-    resume_cmd = (f"python mp/agent/scripts/train_mlb.py --resume {run_dir / 'latest.pt'} "
+    resume_cmd = (f"python agent/scripts/train_mlb.py --resume {run_dir / 'latest.pt'} "
                   f"--minutes <N> --device {cfg.device}")
     print()
     print(f"=== Stopped ({why}) after {fmt_secs(elapsed)} - "

@@ -1,6 +1,6 @@
 """stage_base.py — base corpus, training regime, and the 3-member scoring ensemble.
 
-    python mp/ev/active_poc/stage_base.py --corpus <labels_full/shards> --out mp/ev/runs/active_poc
+    python ev/active_poc/stage_base.py --corpus <labels_full/shards> --out ev/runs/active_poc
 
 1. Split the existing 51k corpus by the STANDARD seed-hash rule -> the full evaluation
    holdout (never trained on) and the training side.
@@ -39,7 +39,7 @@ DEFAULT_CORPUS = str(Path(__file__).resolve().parents[1] / "runs" / "labels_full
 def build_parser() -> argparse.ArgumentParser:
     ap = argparse.ArgumentParser(description=__doc__.split("\n\n")[0])
     ap.add_argument("--corpus", default=DEFAULT_CORPUS, help="labels_full shards (read-only)")
-    ap.add_argument("--out", default="mp/ev/runs/active_poc")
+    ap.add_argument("--out", default="ev/runs/active_poc")
     ap.add_argument("--base-frac", type=float, default=C.DEFAULT_BASE_FRAC)
     ap.add_argument("--probe-steps", type=int, default=800)
     ap.add_argument("--ensemble", type=int, default=3)

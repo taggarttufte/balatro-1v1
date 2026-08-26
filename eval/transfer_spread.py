@@ -1,5 +1,5 @@
 """
-mp/eval/transfer_spread.py -- Phase 4 exit-gate item 4 / the campaign's DECISION GATE
+eval/transfer_spread.py -- Phase 4 exit-gate item 4 / the campaign's DECISION GATE
 (MP_SELFPLAY_ASSESSMENT_2026-08.md's "layer 1" transfer prior; MP_CAMPAIGN_PLAN_2026-08.md's
 Phase 4: "Run ... the three-deck transfer spread (Red / Checkered / Plasma at White stake).
 That's the decision gate from the assessment -- if a Red-trained policy collapses on Plasma,
@@ -58,12 +58,12 @@ the resulting range/variance on every replicate -- this is what answers "does th
 measured reflect a real deck effect, or seed noise," not just "what is the spread." See
 `_cross_cell_bootstrap`.
 
-    python -m mp.eval.transfer_spread --player "scripted:hand=greedy,reroll=1,buy=1" \\
-        --mode both --out mp/results/transfer_spread_greedy_reroll1_buy1.json
-    python -m mp.eval.transfer_spread --player "scripted:hand=greedy" --mode solo \\
-        --n-extra-seeds 24 --out mp/results/transfer_spread_greedy.json
-    python -m mp.eval.transfer_spread --player "scripted:hand=greedy" --mode tournament \\
-        --tournament-n-seeds 16 --out mp/results/transfer_spread_greedy_tournament.json
+    python -m eval.transfer_spread --player "scripted:hand=greedy,reroll=1,buy=1" \\
+        --mode both --out results/transfer_spread_greedy_reroll1_buy1.json
+    python -m eval.transfer_spread --player "scripted:hand=greedy" --mode solo \\
+        --n-extra-seeds 24 --out results/transfer_spread_greedy.json
+    python -m eval.transfer_spread --player "scripted:hand=greedy" --mode tournament \\
+        --tournament-n-seeds 16 --out results/transfer_spread_greedy_tournament.json
 """
 from __future__ import annotations
 
@@ -77,8 +77,8 @@ import time
 from pathlib import Path
 from typing import Optional, Sequence
 
-_HERE = Path(__file__).resolve().parent      # mp/eval
-_MP_ROOT = _HERE.parent                       # mp/
+_HERE = Path(__file__).resolve().parent      # eval
+_MP_ROOT = _HERE.parent                       # repo root
 for _p in (str(_MP_ROOT), str(_HERE)):
     if _p not in sys.path:
         sys.path.insert(0, _p)
@@ -109,7 +109,7 @@ def _build_tournament_player(player_spec: str):
     `ScriptedPlayerAdapter`. ``"checkpoint:<path>"`` is passed through to
     `MCTSPlayer(checkpoint=<path>)` -- if the agent workstream has wired it up by hand-off
     this just works (confirmed already live: `tournament.players.MCTSPlayer` is now a real
-    factory over `mp/agent/mcts`, not the Phase-3 placeholder); ``"checkpoint:"`` with no
+    factory over `agent/mcts`, not the Phase-3 placeholder); ``"checkpoint:"`` with no
     path gives `checkpoint=None` (cold-start weights, per `MCTSPlayer`'s own docstring) --
     useful for evaluating an untrained net's transfer spread as a baseline. If a future
     rollback ever reintroduces the placeholder (`NotImplementedError` unconditionally,

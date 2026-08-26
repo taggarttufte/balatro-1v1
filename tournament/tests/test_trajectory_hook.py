@@ -1,5 +1,5 @@
 """
-`Tournament`'s trajectory hooks (Phase 4 W2, for W3's `mp/replay`; REPLAY_NOTES.md §2.3).
+`Tournament`'s trajectory hooks (Phase 4 W2, for W3's `replay`; REPLAY_NOTES.md §2.3).
 
 The runner is the only place that knows every mutation an agent's game undergoes:
 the agent's own actions, the no-progress guard's forced action, `_cash_out`'s advance, and
@@ -42,14 +42,14 @@ def _run(n=4, life_rule="median", max_ante=4, **hooks):
 
 
 def test_op_lose_life_matches_the_replay_packages_constant():
-    """Duplicated as a literal so `mp/tournament` keeps no dependency on `mp/replay`; if the
+    """Duplicated as a literal so `tournament` keeps no dependency on `replay`; if the
     two ever drift, every tournament trajectory silently stops replaying."""
     import sys
     from pathlib import Path
     mp_root = str(Path(__file__).resolve().parents[2])
     if mp_root not in sys.path:
         sys.path.insert(0, mp_root)
-    util = pytest.importorskip("replay._util", reason="W3's mp/replay has not landed")
+    util = pytest.importorskip("replay._util", reason="W3's replay has not landed")
     assert OP_LOSE_LIFE == util.OP_LOSE_LIFE
 
 
@@ -125,7 +125,7 @@ def test_replays_a_logged_tournament(tmp_path):
     mp_root = str(Path(__file__).resolve().parents[2])
     if mp_root not in sys.path:
         sys.path.insert(0, mp_root)
-    log_mod = pytest.importorskip("replay.log", reason="W3's mp/replay has not landed")
+    log_mod = pytest.importorskip("replay.log", reason="W3's replay has not landed")
     replay_mod = pytest.importorskip("replay.replay")
 
     path = tmp_path / "tournament.jsonl"

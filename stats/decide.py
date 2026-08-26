@@ -1,12 +1,12 @@
 """
 decide.py -- the decision table: one Row per legal SHOP / BOOSTER_OPEN action, with
 P(hit), true cost (incl. interest loss), urgency and net EV (Phase 5 rev 2, W4;
-mp/docs/PHASE5_BRIEF_2026-08.md §2 interface, §3 gate 3).
+docs/PHASE5_BRIEF_2026-08.md §2 interface, §3 gate 3).
 
 ``decision_table(game) -> list[Row]`` is the entire public surface W3's ``EVPlayer``
-(``mp/ev/player.py``) and W6's advisor need. Everything is read-only on ``game`` -- every
+(``ev/player.py``) and W6's advisor need. Everything is read-only on ``game`` -- every
 number is either a pure read of scalar state (``economy.py``), a call into
-``mp.rng.generate.get_current_pool`` with an explicit (non-rolled) rarity (``hit.py``, zero
+``rng.generate.get_current_pool`` with an explicit (non-rolled) rarity (``hit.py``, zero
 RNG consumed), or a dry run through a PRIVATE clone of ``game.run_state.rng``
 (``hit.sample_hand_scores`` / ``hit.joker_hit_value``, same pattern as
 ``card_selection.HypotheticalScorer``). ``tests/test_side_effect_free.py`` pins

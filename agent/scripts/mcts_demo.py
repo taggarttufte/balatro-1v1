@@ -3,11 +3,11 @@ mcts_demo.py — run MCTS on a real Balatro state with either UniformPolicy or a
 freshly-init NNPolicy, and report sims/sec.
 
 Usage:
-    python mp/agent/scripts/mcts_demo.py                       # uniform policy (default)
-    python mp/agent/scripts/mcts_demo.py --policy nn           # neural net (random init)
-    python mp/agent/scripts/mcts_demo.py --policy both --strategy both
-    python mp/agent/scripts/mcts_demo.py --policy nn --device cuda
-    python mp/agent/scripts/mcts_demo.py --ruleset mlb --nemesis  # MLB Nemesis state
+    python agent/scripts/mcts_demo.py                       # uniform policy (default)
+    python agent/scripts/mcts_demo.py --policy nn           # neural net (random init)
+    python agent/scripts/mcts_demo.py --policy both --strategy both
+    python agent/scripts/mcts_demo.py --policy nn --device cuda
+    python agent/scripts/mcts_demo.py --ruleset mlb --nemesis  # MLB Nemesis state
 
 Goal: confirm the search loop is correct end-to-end on the fork engine and measure the
 per-sim cost of NN inference vs uniform. `--repeat N` averages N timed runs (the first

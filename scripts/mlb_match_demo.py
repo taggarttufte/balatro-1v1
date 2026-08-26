@@ -3,15 +3,15 @@ mlb_match_demo.py -- play a full Major League Balatro match between two scripted
 ONE seed through ``MLBMatch`` (the engine's two-player coordinator) and print a readable trace.
 
 Phase 2 W4 (exit gate, 2026-08-21).  This module is also the driver behind
-``mp/tests/test_mlb_match_gate.py``: ``ScriptedPlayer`` / ``make_policy`` are the players,
+``tests/test_mlb_match_gate.py``: ``ScriptedPlayer`` / ``make_policy`` are the players,
 ``MatchRecorder`` drives a match step by step and records every gate-relevant event (lives,
 cash-out money, Nemesis verdicts, shop visits with shelf / voucher / packs and a snapshot of
 the keyed RNG at entry and exit), and ``diff_rng`` / ``classify_key`` / ``key_position`` are
-the queue-alignment tools (NOTES: mp/tests/GATE_NOTES.md).
+the queue-alignment tools (NOTES: tests/GATE_NOTES.md).
 
-    python mp/scripts/mlb_match_demo.py --seed 7I4M53DL
-    python mp/scripts/mlb_match_demo.py --seed 7I4M53DL --deck b_plasma --max-antes 6 --json trace.json
-    python mp/scripts/mlb_match_demo.py --seed ALEEB --quiet        # summary only
+    python scripts/mlb_match_demo.py --seed 7I4M53DL
+    python scripts/mlb_match_demo.py --seed 7I4M53DL --deck b_plasma --max-antes 6 --json trace.json
+    python scripts/mlb_match_demo.py --seed ALEEB --quiet        # summary only
 
 Players (they deliberately differ so the queue-alignment diff has something to explain):
   P1 "opener"  -- greedy best-hand player; never rerolls; opens pack slot 0 at every shop and
@@ -39,7 +39,7 @@ if MP_ROOT not in sys.path:
 from oracle.engine_parity import import_engine, item_from_engine  # noqa: E402
 from rng import core as RCORE  # noqa: E402
 
-GM = import_engine()                         # the mp/engine fork (refuses the BRL package)
+GM = import_engine()                         # the engine fork (refuses the BRL package)
 from balatro_sim.mlb_match import MLBMatch  # noqa: E402
 from balatro_sim.game import State  # noqa: E402
 from balatro_sim.hand_eval import evaluate_hand  # noqa: E402

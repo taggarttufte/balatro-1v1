@@ -16,7 +16,7 @@ BLIND_SELECT or SHOP state at ante 4 or 5, then hand-edits the halted match:
 
     **Engine caveat (read the code before trusting this "combo"):** Blueprint only forwards
     ``pre_score`` / ``on_score_card`` / ``on_held_card`` / ``on_hand_scored`` to its target
-    (``mp/engine/balatro_sim/jokers/misc.py::_Blueprint``). Invisible Joker implements
+    (``engine/balatro_sim/jokers/misc.py::_Blueprint``). Invisible Joker implements
     exactly TWO hooks -- ``on_round_end`` (its own rounds-survived counter) and ``on_sell``
     (the duplicate-a-random-joker effect) -- NEITHER of which Blueprint forwards. So in this
     engine (and in real Balatro: Invisible's ability is not a scoring trigger), **Blueprint
@@ -37,8 +37,8 @@ from __future__ import annotations
 import sys
 from pathlib import Path
 
-_HERE = Path(__file__).resolve().parent            # mp/ev/fixtures
-_EV = _HERE.parent                                  # mp/ev
+_HERE = Path(__file__).resolve().parent            # ev/fixtures
+_EV = _HERE.parent                                  # ev
 for _p in (str(_EV),):
     if _p not in sys.path:
         sys.path.insert(0, _p)
@@ -46,7 +46,7 @@ for _p in (str(_EV),):
 import _bootstrap  # noqa: E402,F401
 from _bootstrap import MLBMatch, State  # noqa: E402
 
-import player as P  # noqa: E402  (mp/ev/player.py, W3)
+import player as P  # noqa: E402  (ev/player.py, W3)
 
 __all__ = ["FIXTURE_SEED", "TARGET_ANTES", "TARGET_STATES", "build", "lean_suit"]
 

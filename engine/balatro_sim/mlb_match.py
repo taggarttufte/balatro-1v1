@@ -3,7 +3,7 @@ mlb_match.py — Major League Balatro: two ``BalatroGame``s on ONE seed in ante 
 
 Phase 2 W1 (2026-08-21).  Rules are ported from the installed BalatroMultiplayer mod
 (v0.5.2, ``$MOD``) and its server (``BalatroMultiplayerAPI-Server/src/actionHandlers.ts``,
-``src/Client.ts``); every rule's source line is listed in ``mp/engine/MLB_NOTES.md``.
+``src/Client.ts``); every rule's source line is listed in ``engine/MLB_NOTES.md``.
 Nothing here copies mod code.
 
 The split of responsibilities mirrors the real system:
@@ -132,7 +132,7 @@ class MLBMatch:
         # Phase 5 W1 (additive): the SAME Nemeses with the rest of the public record —
         # (ante, loser|None, score0, score1, hands_played0, hands_played1, early_end).
         # `pvp_log`'s 4-tuple is unpacked as exactly four by frozen readers
-        # (mp/replay/replay.py, mp/eval/common.py), so it is left untouched.
+        # (replay/replay.py, eval/common.py), so it is left untouched.
         self.pvp_detail: list = []
         self.econ: list = [PlayerEcon(), PlayerEcon()]   # public shop economics per player
         self._lives_seen: list = [lives, lives]          # for last_life_loss_ante (sync)

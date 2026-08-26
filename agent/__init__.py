@@ -1,8 +1,8 @@
 """
-mp/agent — AlphaZero-style MCTS agent layer for the MP (Major League Balatro) line.
+agent — AlphaZero-style MCTS agent layer for the MP (Major League Balatro) line.
 
 Forked 2026-08-21 from ``C:/Users/Taggart/projects/recovered/balatro-mcts`` @ ``ee75d11``
-(read-only source) and re-targeted onto the frozen fork engine in ``mp/engine``.
+(read-only source) and re-targeted onto the frozen fork engine in ``engine``.
 
 Contents:
     mcts/        search core: action keys, node, encoder, action features, model,
@@ -18,6 +18,6 @@ Contents:
                  the throughput benchmark and the swap procedure for a live run
 
 This directory is a sys.path root, not an importable package path: put it AND
-``mp/engine`` on sys.path and import ``mcts`` / ``train`` / ``balatro_sim`` top-level
+``engine`` on sys.path and import ``mcts`` / ``train`` / ``balatro_sim`` top-level
 (pytest.ini + conftest.py do this for the suite; scripts/_bootstrap.py for the scripts).
 """

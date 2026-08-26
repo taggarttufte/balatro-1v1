@@ -122,7 +122,7 @@ def test_decision_table_deterministic_across_calls():
 
 def test_decision_table_timing_sanity():
     """Fast in-suite check (small N); the >=300-state gate-3 benchmark lives in
-    STATS_NOTES.md (produced by mp/stats/bench_decide.py, not run on every ``pytest``)."""
+    STATS_NOTES.md (produced by stats/bench_decide.py, not run on every ``pytest``)."""
     states = []
     for seed in ("11111111", "1558AXDL", "15H9Z3IY", "1KV4W6YS", "1MD1YZ9T"):
         states.extend(_collect_states(seed, max_states=6))

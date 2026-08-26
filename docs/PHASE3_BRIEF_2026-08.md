@@ -5,9 +5,9 @@ check confirmed in the live game (`CAMPAIGN_LOG.md` "PHASE 2 COMPLETE" + "Tagg L
 is *infrastructure*: nothing here has an oracle, so the verification is "it runs end-to-end, the numbers
 are reproducible, and the tests pin the contract". Expect more lead review and less unattended chug.
 
-State at kickoff (nothing committed): `pytest mp/engine/tests` **1609 / 10 skip / 3 xfail / 0 fail**;
-`pytest mp/tests` **1073 / 2 xfail / 0**; `engine_parity --antes 1-8` and `parity_check --antes 1-8 --variant
-faithful` **126/126**. These must stay green at every hand-off. The engine is `mp/engine/balatro_sim`
+State at kickoff (nothing committed): `pytest engine/tests` **1609 / 10 skip / 3 xfail / 0 fail**;
+`pytest tests` **1073 / 2 xfail / 0**; `engine_parity --antes 1-8` and `parity_check --antes 1-8 --variant
+faithful` **126/126**. These must stay green at every hand-off. The engine is `engine/balatro_sim`
 (`BalatroGame(seed, deck_key=, stake=, ruleset="vanilla"|"mlb")`, `clone()`, `legal_actions()`,
 `state_signature()`; MLB single-player hooks `lose_life` / `set_pvp_info` / `end_pvp`, `State.PVP_WAIT`,
 `BlindInfo.is_pvp` — see `engine/MLB_NOTES.md`). Two-player lockstep = `engine/balatro_sim/mlb_match.py`.
@@ -15,7 +15,7 @@ Exit-gate driver = `scripts/mlb_match_demo.py` (`ScriptedPlayer`, `MatchRecorder
 
 ## 0. Decisions made by the lead
 
-1. **The MCTS agent layer is FORKED into `mp/agent/`.** Source: `C:/Users/Taggart/projects/recovered/balatro-mcts/`
+1. **The MCTS agent layer is FORKED into `agent/`.** Source: `C:/Users/Taggart/projects/recovered/balatro-mcts/`
    (`mcts/`, `train/`, `scripts/train_cold.py`, `scripts/smoke_selfplay.py`, `scripts/mcts_demo.py`, its tests;
    ~1.9k lines, git `ee75d11`). That repo is **read-only for this campaign** — do not edit it, do not commit to it.
    Its encoder/action-features are written against the OLD engine (pre-rekey catalogue keys, 434-dim obs); they
@@ -38,19 +38,19 @@ Exit-gate driver = `scripts/mlb_match_demo.py` (`ScriptedPlayer`, `MatchRecorder
 
 | # | Workstream | Model | Owns | Depends on |
 |---|---|---|---|---|
-| **W1** | Agent-layer fork + sync + **checkpointing** | strong | `mp/agent/**` (new package: `mcts/`, `train/`, `scripts/`, `tests/`), `mp/agent/AGENT_NOTES.md` | — |
-| **W2** | **N-agent same-seed runner + N×N matrix** | sonnet | `mp/tournament/**` (new: `runner.py`, `matrix.py`, `players.py`, `cli.py`, `tests/`), `mp/tournament/TOURNAMENT_NOTES.md` | engine only |
-| **W3** | **Batched NN inference + tree reuse** | strong | `mp/agent/mcts/batched.py`, `mp/agent/mcts/reuse.py` (or in-place edits to `search.py`/`policy.py` once W1 hands off), `mp/agent/benchmarks/`, `mp/agent/BATCH_NOTES.md` | **W1** |
-| **W4** | **Eval harness + ρ-decay harness** (+ first scripted-player ρ numbers) | sonnet | `mp/eval/**` (new: `eval_harness.py`, `rho_decay.py`, `tests/`), `mp/eval/EVAL_NOTES.md`, `mp/results/` (new; JSON/CSV outputs only) | engine + `scripts/mlb_match_demo.py`'s players |
+| **W1** | Agent-layer fork + sync + **checkpointing** | strong | `agent/**` (new package: `mcts/`, `train/`, `scripts/`, `tests/`), `agent/AGENT_NOTES.md` | — |
+| **W2** | **N-agent same-seed runner + N×N matrix** | sonnet | `tournament/**` (new: `runner.py`, `matrix.py`, `players.py`, `cli.py`, `tests/`), `tournament/TOURNAMENT_NOTES.md` | engine only |
+| **W3** | **Batched NN inference + tree reuse** | strong | `agent/mcts/batched.py`, `agent/mcts/reuse.py` (or in-place edits to `search.py`/`policy.py` once W1 hands off), `agent/benchmarks/`, `agent/BATCH_NOTES.md` | **W1** |
+| **W4** | **Eval harness + ρ-decay harness** (+ first scripted-player ρ numbers) | sonnet | `eval/**` (new: `eval_harness.py`, `rho_decay.py`, `tests/`), `eval/EVAL_NOTES.md`, `results/` (new; JSON/CSV outputs only) | engine + `scripts/mlb_match_demo.py`'s players |
 
-Shared files: **none by design.** `mp/engine/**` and `mp/rng/**` are FROZEN in Phase 3 — if you need an engine
+Shared files: **none by design.** `engine/**` and `rng/**` are FROZEN in Phase 3 — if you need an engine
 change, write it up in your notes as "needs engine change: file:line, why" and work around it. The lead decides.
 
 ### W1 — Agent-layer fork + sync + checkpointing (strong model)
 
-- Fork `balatro-mcts` `mcts/`, `train/`, the three scripts and their tests into `mp/agent/` with provenance
+- Fork `balatro-mcts` `mcts/`, `train/`, the three scripts and their tests into `agent/` with provenance
   (`AGENT_NOTES.md` §0: source commit, file map, what changed and why). Standalone `pytest.ini`/`conftest.py`
-  following `mp/engine/conftest.py`'s pattern (must import the FORK engine, raise if the BRL package wins).
+  following `engine/conftest.py`'s pattern (must import the FORK engine, raise if the BRL package wins).
 - Re-target to the fork engine: encoder → reuse `env_v7`'s 447-dim encoding (don't maintain a second copy;
   if the MCTS obs must differ, subclass/extend, and say why); action features → game keys; `legal_actions()`
   is already the fork's. `PolicyValueNet` trunk is V7-shaped — keep the architecture but drop every "loads V7
@@ -74,7 +74,7 @@ change, write it up in your notes as "needs engine change: file:line, why" and w
 
 ### W2 — N-agent same-seed runner + N×N matrix (Sonnet)
 
-- `mp/tournament/runner.py`: `Tournament(seed, n_agents, players, deck_key, stake, life_rule, max_ante)` —
+- `tournament/runner.py`: `Tournament(seed, n_agents, players, deck_key, stake, life_rule, max_ante)` —
   N independent `BalatroGame(seed, ruleset="mlb")` instances stepped by their `Player` in **ante lockstep**:
   everyone plays Small/Big (own shops, rerolls, skips), then at the Nemesis every agent plays to exhaustion
   (decision 0.2), scores are collected, the matrix is extracted, lives applied per `life_rule` (0.3), dead
@@ -82,13 +82,13 @@ change, write it up in your notes as "needs engine change: file:line, why" and w
   `life_rule="none"`, and to last-agent-standing under `"paired"`) in reasonable time with scripted players —
   report wall clock. Use `clone()` of a single post-start game to fan out N copies if that's faster than N
   constructions (measure; both must give identical `state_signature()`).
-- `mp/tournament/matrix.py`: from N final scores at one Nemesis → N×N outcome matrix (+1/0/−1 with tie=0),
+- `tournament/matrix.py`: from N final scores at one Nemesis → N×N outcome matrix (+1/0/−1 with tie=0),
   N×N log-score margin matrix, population rank per agent, per-ante score distribution (quantiles) — this IS
   "layer 1" from the assessment. Serialize per ante to `.npz` + a JSONL summary. 4,950 comparisons from 100
   agents; it's a sort, not a sim.
-- `mp/tournament/players.py`: the `Player` protocol (`act(game) -> action`) + adapters for
+- `tournament/players.py`: the `Player` protocol (`act(game) -> action`) + adapters for
   `scripts/mlb_match_demo.ScriptedPlayer` and a random-legal player; leave a clearly-marked slot for an MCTS
-  player (W1/W3 will plug in — do not import `mp/agent`).
+  player (W1/W3 will plug in — do not import `agent`).
 - Heterogeneity hook: the population must be heterogeneous or the matrix degenerates (design doc §6). Support
   per-agent player objects with different parameters; log a degeneracy metric (fraction of exact ties per
   Nemesis) so a collapsed population is visible.
@@ -115,13 +115,13 @@ change, write it up in your notes as "needs engine change: file:line, why" and w
 
 ### W4 — Eval harness + ρ-decay harness (Sonnet)
 
-- `mp/eval/eval_harness.py`: evaluate a `Player` (scripted now; checkpoint later via a `--player` loader that
+- `eval/eval_harness.py`: evaluate a `Player` (scripted now; checkpoint later via a `--player` loader that
   W1 will document) over a fixed seed list (default: the 126 ground-truth seeds) in three modes — SP vanilla
   (win rate / furthest blind / final ante), SP-MLB solo (furthest ante, lives lost, money curve), **1v1 MLB via
   `MLBMatch` vs a reference player** (win rate, mean lives margin, per-Nemesis log-score margin) — with
-  bootstrap CIs, a JSON report in `mp/results/`, and a `--compare a.json b.json` that reports the paired
+  bootstrap CIs, a JSON report in `results/`, and a `--compare a.json b.json` that reports the paired
   difference with CI (paired by seed — that's the whole point of common random numbers).
-- `mp/eval/rho_decay.py`: the design doc §1 experiment. Paired arms on one seed, diverging at a chosen decision
+- `eval/rho_decay.py`: the design doc §1 experiment. Paired arms on one seed, diverging at a chosen decision
   (e.g. ante-1 first shop: arm A buys shelf slot 0, arm B doesn't; make the perturbation pluggable), then both
   arms play the same scripted policy forward. Outcome variables at horizons h = 1, 2, 4, 8 antes: log-score at
   the Nemesis h antes later (play-to-exhaustion, like W2), money, lives. Compute ρ(h) = corr(outcome_A,
@@ -139,7 +139,7 @@ change, write it up in your notes as "needs engine change: file:line, why" and w
 2. `train_cold` (forked) saves checkpoints and reloads; the round-trip test passes.
 3. Batched inference + tree reuse benchmarked with numbers; correctness tests pass.
 4. Eval harness produces a paired-comparison report; ρ(h) measured at h = 1/2/4/8 with scripted players.
-5. All Phase 0-2 gates still green; `mp/engine/**` and `mp/rng/**` unchanged (`git diff --stat` on those paths
+5. All Phase 0-2 gates still green; `engine/**` and `rng/**` unchanged (`git diff --stat` on those paths
    is empty relative to the Phase 2 close — the lead will check by mtime since nothing is committed).
 
 ## 3. Things only Tagg can do

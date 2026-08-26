@@ -10,14 +10,14 @@ evaluated entirely under that cheat.
 
 | file | what |
 |---|---|
-| `mp/engine/balatro_sim/game.py` | `BalatroGame.clone_determinized(seed)` + private helper `_local_shuffle` |
-| `mp/engine/balatro_sim/mlb_match.py` | `MLBMatch.clone_determinized(seed)` |
-| `mp/engine/tests/engine_tests/test_determinize.py` | 33 invariant tests (engine-level) |
-| `mp/agent/mcts/determinize.py` | `DeterminizedMCTSPlayer`, `make_determinized_player`, `make_determinizing_view`, `seed_stream` |
-| `mp/agent/tests/test_determinize_player.py` | 24 tests (agent-level wrapper) |
-| `mp/agent/scripts/measure_clairvoyance.py` | the gate-1 measurement (outcome + disagreement tables) |
-| `mp/results/clairvoyance_smoke.{json,md}` | 2-seed, sims=8 smoke run (pipeline proof, NOT the gate-1 number — see §5) |
-| `mp/results/clairvoyance_2026-08-23.{json,md}` | **not yet produced** — the real 30-seed/sims=40 run; command in §6 |
+| `engine/balatro_sim/game.py` | `BalatroGame.clone_determinized(seed)` + private helper `_local_shuffle` |
+| `engine/balatro_sim/mlb_match.py` | `MLBMatch.clone_determinized(seed)` |
+| `engine/tests/engine_tests/test_determinize.py` | 33 invariant tests (engine-level) |
+| `agent/mcts/determinize.py` | `DeterminizedMCTSPlayer`, `make_determinized_player`, `make_determinizing_view`, `seed_stream` |
+| `agent/tests/test_determinize_player.py` | 24 tests (agent-level wrapper) |
+| `agent/scripts/measure_clairvoyance.py` | the gate-1 measurement (outcome + disagreement tables) |
+| `results/clairvoyance_smoke.{json,md}` | 2-seed, sims=8 smoke run (pipeline proof, NOT the gate-1 number — see §5) |
+| `results/clairvoyance_2026-08-23.{json,md}` | **not yet produced** — the real 30-seed/sims=40 run; command in §6 |
 
 ## 1. Semantics of `clone_determinized`
 
@@ -122,11 +122,11 @@ is roughly constant across state richness, so richer states (bigger jokers/shop 
 which cost more in `clone()` itself) get a *better* ratio — the states MCTS actually
 searches from mid-game are closer to the SHOP row than the bare fresh-game row.
 
-## 5. Measurement method (`mp/agent/scripts/measure_clairvoyance.py`)
+## 5. Measurement method (`agent/scripts/measure_clairvoyance.py`)
 
 Both arms use `real1.sh`'s Stage B search hyperparameters exactly (`encoder=set`,
 `strategy=gumbel`, `heuristic_prior=0.4`, `heuristic_tau=0.35`, `max_hand_candidates=32`,
-`reuse=True`) loaded via `mcts.player.make_player` against `mp/agent/runs/real1/latest.pt`
+`reuse=True`) loaded via `mcts.player.make_player` against `agent/runs/real1/latest.pt`
 — the ONLY variable between arms is what the search's clones can see.
 
 * **Clairvoyant arm**: plain `MCTSPlayer` (unmodified).
@@ -140,7 +140,7 @@ Both arms use `real1.sh`'s Stage B search hyperparameters exactly (`encoder=set`
   implemented and exposed via `--determinize-mode`.
 * **(a) Outcome table**: both players play an INDEPENDENT full vanilla game (max ante
   8, i.e. to natural `GAME_OVER`) on the same seed; paired-by-seed bootstrap CI
-  (`mp/eval/common.py::paired_bootstrap_ci`, imported read-only) on final ante, ante-
+  (`eval/common.py::paired_bootstrap_ci`, imported read-only) on final ante, ante-
   1/2/3 clear rate, blinds cleared, final $, mean s/decision.
 * **(b) Disagreement table**: drive the CLAIRVOYANT trajectory (its own actual
   choices); at every REAL decision (>1 legal action — forced/single-legal states are
@@ -168,7 +168,7 @@ astronomically unlikely hash coincidence) and reported honestly via
 
 ## 6. Results
 
-**`mp/results/clairvoyance_smoke.{json,md}`** — 2 seeds (`11111111`, `1558AXDL`),
+**`results/clairvoyance_smoke.{json,md}`** — 2 seeds (`11111111`, `1558AXDL`),
 `sims=8` (NOT the trained 40 — reduced purely for a fast pipeline check),
 `--processes 2`, `determinize_mode=per_sim`, `n_boot=200`. Wall clock: 157s for the
 pool (i.e. ~157s for the slower of the 2 parallel single-seed workers — each seed does
@@ -188,7 +188,7 @@ gate-1 question.
 **The real 30-seed / sims=40 measurement has NOT been run.** Per the lead's explicit
 instruction (2026-08-23, mid-session — Tagg was actively using the machine), only the
 2-seed/sims=8/2-process smoke above was run; the full job is left for the lead to
-launch when the box is idle. `mp/results/clairvoyance_2026-08-23.{json,md}` do not yet
+launch when the box is idle. `results/clairvoyance_2026-08-23.{json,md}` do not yet
 exist.
 
 **Wall-clock projection (rough — extrapolated from the sims=8 smoke, treat as a planning
@@ -208,12 +208,12 @@ processes and a hard wall-clock watch; fall back only if it's clearly over budge
 ## 7. Exact command for the lead to run later
 
 ```
-python mp/agent/scripts/measure_clairvoyance.py \
-    --checkpoint mp/agent/runs/real1/latest.pt \
+python agent/scripts/measure_clairvoyance.py \
+    --checkpoint agent/runs/real1/latest.pt \
     --n-seeds 30 --sims 40 --processes 30 --determinize-mode per_sim \
     --determinize-seed-base 0 --max-steps 20000 --n-boot 2000 \
-    --out-json mp/results/clairvoyance_2026-08-23.json \
-    --out-md   mp/results/clairvoyance_2026-08-23.md
+    --out-json results/clairvoyance_2026-08-23.json \
+    --out-md   results/clairvoyance_2026-08-23.md
 ```
 
 `--determinize-seed-base 0` makes the whole run reproducible (rerun = identical numbers);
@@ -231,7 +231,7 @@ that in by hand after reading the numbers, the script does not editorialize).
    `clone_determinized` directly, never chains through a plain clone), but worth knowing
    if W3/W5's rollout code ever clones a determinized game further and checks the flag.
 2. The clairvoyance measurement script is new infrastructure under
-   `mp/agent/scripts/`, not explicitly named in the brief's ownership table — flagging in
+   `agent/scripts/`, not explicitly named in the brief's ownership table — flagging in
    case another workstream also wants a script there; no filename collision as of this
    writing.
 3. Real `clairvoyance_2026-08-23.{json,md}` still need the actual 30-seed run (§6/§7)

@@ -1,12 +1,12 @@
 """
-_bootstrap.py — sys.path plumbing + fork-guarded engine import shared by every mp/replay
-module.  Mirrors mp/tournament/bootstrap.py: puts mp/ on sys.path and imports the FROZEN
-mp/engine fork through ``oracle.engine_parity.import_engine()`` (the same entry point
-mp/tournament, mp/eval and mp/tests use), so a second call anywhere else in the process is a
+_bootstrap.py — sys.path plumbing + fork-guarded engine import shared by every replay
+module.  Mirrors tournament/bootstrap.py: puts the repo root on sys.path and imports the FROZEN
+engine fork through ``oracle.engine_parity.import_engine()`` (the same entry point
+tournament, eval and tests use), so a second call anywhere else in the process is a
 no-op that confirms the same module, never a second copy.
 
-mp/replay never imports mp/agent (no torch) or mp/tournament -- this file only reaches into
-mp/engine (frozen, read-only) and mp/rng (frozen, read-only, via oracle.engine_parity's own
+replay never imports agent (no torch) or tournament -- this file only reaches into
+engine (frozen, read-only) and rng (frozen, read-only, via oracle.engine_parity's own
 imports).  Nothing here edits engine or rng code.
 """
 from __future__ import annotations
@@ -14,9 +14,8 @@ from __future__ import annotations
 import os
 import sys
 
-HERE = os.path.dirname(os.path.abspath(__file__))            # mp/replay
-MP_ROOT = os.path.dirname(HERE)                               # mp/
-
+HERE = os.path.dirname(os.path.abspath(__file__))            # replay
+MP_ROOT = os.path.dirname(HERE)                               # repo root
 if MP_ROOT not in sys.path:
     sys.path.insert(0, MP_ROOT)
 

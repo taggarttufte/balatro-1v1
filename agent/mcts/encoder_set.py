@@ -197,7 +197,7 @@ SHELF_NUM_DIM = 12
 PACK_CAT_DIM = 2        # set, edition
 PACK_NUM_DIM = 8
 
-# Numeric joker-state keys worth their own feature (grep over mp/engine/balatro_sim/jokers:
+# Numeric joker-state keys worth their own feature (grep over engine/balatro_sim/jokers:
 # these are the ones that actually scale). Everything else numeric is summed into the
 # catch-all so an unlisted scaling joker is not flat.
 _JOKER_STATE_KEYS = ("mult", "chips", "xmult", "mult_mult", "sell_value",

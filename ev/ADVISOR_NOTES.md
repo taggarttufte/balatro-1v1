@@ -1,28 +1,28 @@
 # ADVISOR_NOTES -- W6: the snapshot advisor CLI + head-to-head evals (Phase 5 rev 2, 2026-08-23)
 
-Owner: W6. Implements `mp/docs/PHASE5_BRIEF_2026-08.md` row W6 / interface section 2 / gate 5.
+Owner: W6. Implements `docs/PHASE5_BRIEF_2026-08.md` row W6 / interface section 2 / gate 5.
 Files: `advisor.py` (the report), `cli.py` (`advise` subcommand), `h2h.py` (head-to-head
 driver + CLI), `fixtures/bloodstone_vs_invisible.py` (Tagg's acceptance-test state),
 `tests/test_advisor.py` / `tests/test_h2h.py` (20 tests), results
-`mp/results/advisor_bloodstone_vs_invisible_2026-08-23.md`,
-`mp/results/h2h_smoke_ev_fast_vs_ev_full.{json,md}`,
-`mp/results/h2h_smoke_ev_fast_vs_real1_det.{json,md}`. Nothing outside `mp/ev/advisor.py`,
-`mp/ev/cli.py`, `mp/ev/h2h.py`, `mp/ev/fixtures/**`, `mp/ev/tests/test_{advisor,h2h}.py`,
-`mp/ev/ADVISOR_NOTES.md` and `mp/results/{advisor_*,h2h_*}` was touched; every other file
-under `mp/ev/` (W3/W5), `mp/stats/**` (W4), `mp/agent/**` (W1/W2), `mp/engine/**`, `mp/rng/**`,
-`mp/eval/**` is read-only -- including `mp/ev/match_player.py`, a W5 file that landed mid-
+`results/advisor_bloodstone_vs_invisible_2026-08-23.md`,
+`results/h2h_smoke_ev_fast_vs_ev_full.{json,md}`,
+`results/h2h_smoke_ev_fast_vs_real1_det.{json,md}`. Nothing outside `ev/advisor.py`,
+`ev/cli.py`, `ev/h2h.py`, `ev/fixtures/**`, `ev/tests/test_{advisor,h2h}.py`,
+`ev/ADVISOR_NOTES.md` and `results/{advisor_*,h2h_*}` was touched; every other file
+under `ev/` (W3/W5), `stats/**` (W4), `agent/**` (W1/W2), `engine/**`, `rng/**`,
+`eval/**` is read-only -- including `ev/match_player.py`, a W5 file that landed mid-
 session and turned out to be exactly the opponent-aware-V hook this workstream needed
 (section 1 / section 6 explain the wiring; it is imported, never edited).
 
 ## 0. TL;DR
 
 ```
-python mp/ev/cli.py advise fixture:bloodstone_vs_invisible --player 0 --rollouts 32
-python mp/ev/cli.py advise replay:<path/to/match.jsonl>:<step> --player 1 --checkpoint <ckpt>
-python mp/ev/cli.py advise seed:11111111:120 --player 0
+python ev/cli.py advise fixture:bloodstone_vs_invisible --player 0 --rollouts 32
+python ev/cli.py advise replay:<path/to/match.jsonl>:<step> --player 1 --checkpoint <ckpt>
+python ev/cli.py advise seed:11111111:120 --player 0
 
-python mp/ev/h2h.py --a ev:fast --b ev:full --n-seeds 2 --procs 2 \
-    --out-json mp/results/h2h_smoke.json --out-md mp/results/h2h_smoke.md
+python ev/h2h.py --a ev:fast --b ev:full --n-seeds 2 --procs 2 \
+    --out-json results/h2h_smoke.json --out-md results/h2h_smoke.md
 ```
 
 ## 1. The advisor report -- what each section is and how it's computed
@@ -107,7 +107,7 @@ checkpoint, top_n) -> str`. Four sections, in order:
    game reaches `ante in (4, 5)` at a `BLIND_SELECT` or `SHOP` state. In practice this lands
    at ante 4 SHOP (right after the ante-4 Nemesis) within under a second of wall clock.
 2. **Player 0 -> Bloodstone + a Hearts-leaning deck.** `debug_add_joker("j_bloodstone")`
-   (`j_bloodstone`: `mp/engine/balatro_sim/jokers/mult.py::_Bloodstone`, 1/2 chance of x1.5
+   (`j_bloodstone`: `engine/balatro_sim/jokers/mult.py::_Bloodstone`, 1/2 chance of x1.5
    Mult per scored Heart). The "Hearts-leaning deck" is `lean_suit(g0, "Hearts", 0.5)`: a
    **fixture-only shortcut**, NOT a real tarot effect -- it directly retints plain
    (non-Stone) `full_deck` cards to `Hearts` until >= 50% of the 52(+)-card collection is
@@ -127,7 +127,7 @@ checkpoint, top_n) -> str`. Four sections, in order:
    **Read the engine before trusting this "combo" (this is the honest finding the brief asked
    for, not swept under the rug)**: `_Blueprint` forwards exactly four hooks to its target --
    `pre_score`, `on_score_card`, `on_held_card`, `on_hand_scored`
-   (`mp/engine/balatro_sim/jokers/misc.py::_Blueprint`). `_InvisibleJoker` implements exactly
+   (`engine/balatro_sim/jokers/misc.py::_Blueprint`). `_InvisibleJoker` implements exactly
    TWO hooks -- `on_round_end` (its own rounds-survived counter) and `on_sell` (the
    duplicate-a-random-other-joker effect) -- and NEITHER is in Blueprint's forwarded set.
    **Blueprint positioned on Invisible is therefore a no-op at scoring time in this engine**:
@@ -190,9 +190,9 @@ built them; raise `--procs` once that constraint is lifted).
 player beat the trained-but-clairvoyant-search baseline played honestly" question:
 
 ```
-python mp/ev/h2h.py --a ev:full+stats --b real1:det --sims 40 --n-seeds 30 --procs 4 \
-    --out-json mp/results/h2h_ev_full_stats_vs_real1_det_30seeds.json \
-    --out-md   mp/results/h2h_ev_full_stats_vs_real1_det_30seeds.md
+python ev/h2h.py --a ev:full+stats --b real1:det --sims 40 --n-seeds 30 --procs 4 \
+    --out-json results/h2h_ev_full_stats_vs_real1_det_30seeds.json \
+    --out-md   results/h2h_ev_full_stats_vs_real1_det_30seeds.md
 ```
 
 Projection: the smoke used `ev:fast` (not `ev:full+stats`) and `--sims 16` (not real1.sh's own
@@ -209,9 +209,9 @@ at these exact settings (mean 17.2 s/match, worst observed single seed-job ~41 s
 time for its 2 seatings):
 
 ```
-python mp/ev/h2h.py --a ev:fast --b ev:full --n-seeds 30 --procs 4 \
-    --out-json mp/results/h2h_ev_fast_vs_ev_full_30seeds.json \
-    --out-md   mp/results/h2h_ev_fast_vs_ev_full_30seeds.md
+python ev/h2h.py --a ev:fast --b ev:full --n-seeds 30 --procs 4 \
+    --out-json results/h2h_ev_fast_vs_ev_full_30seeds.json \
+    --out-md   results/h2h_ev_fast_vs_ev_full_30seeds.md
 ```
 
 Projection: 30 seeds / 4 procs = 8 batches x ~40 s worst-case per-seed-job ~= **~5-6
@@ -222,9 +222,9 @@ cost (the dominant cost in (ii)'s smoke), so expect somewhat more than (ii) but 
 (the OTHER side wasn't free in (ii) either -- `ev:full` was already the slow side there):
 
 ```
-python mp/ev/h2h.py --a ev:full+stats --b ev:full --n-seeds 30 --procs 4 \
-    --out-json mp/results/h2h_ev_full_stats_vs_ev_full_30seeds.json \
-    --out-md   mp/results/h2h_ev_full_stats_vs_ev_full_30seeds.md
+python ev/h2h.py --a ev:full+stats --b ev:full --n-seeds 30 --procs 4 \
+    --out-json results/h2h_ev_full_stats_vs_ev_full_30seeds.json \
+    --out-md   results/h2h_ev_full_stats_vs_ev_full_30seeds.md
 ```
 
 Projection: ~1.5-2x of (ii)'s per-match cost ~= **~8-12 minutes**.
@@ -247,7 +247,7 @@ projection.
   `+`, so `ev:fast+stats` also works even though the brief only names `full+stats`);
   `real1:det` (`mcts.determinize.make_determinized_player`, the non-clairvoyant baseline) /
   `real1:clair` (`mcts.player.make_player`, clairvoyant, table-only per the brief);
-  `scripted:<fields>` (reuses `mp/eval/common.py::make_player_policy` verbatim -- no
+  `scripted:<fields>` (reuses `eval/common.py::make_player_policy` verbatim -- no
   reimplementation). Both `real1:*` specs use exactly `measure_clairvoyance.py`'s
   `REAL1_FLAGS` (`encoder=set, strategy=gumbel, heuristic_prior=0.4, heuristic_tau=0.35,
   max_hand_candidates=32, heuristic_exact_top=8, heuristic_discard_bias=1.0`) so a `real1:det`
@@ -262,7 +262,7 @@ projection.
   a_win (bool|None), lives_a, lives_b, lives_margin_a, final_ante_a, final_ante_b,
   final_money_a, final_money_b, nem_wins_a, nem_wins_b, nem_total`. `summary`: `n_trials,
   n_decided, a_wins, b_wins, undecided, win_rate_a ({point,lo,hi,n} via
-  mp/eval/common.bootstrap_ci), mean_final_ante_a, mean_final_ante_b, mean_lives_margin_a,
+  eval/common.bootstrap_ci), mean_final_ante_a, mean_final_ante_b, mean_lives_margin_a,
   nemesis_win_rate_a, mean_seconds_per_match`.
 - **Undecided matches**: if `play_out` hits `--max-steps` before either side reaches 0 lives,
   `done=False`, `a_win=None`, and the trial is excluded from `win_rate_a` (`n_decided` /
@@ -278,13 +278,13 @@ projection.
    `test_advisor_with_checkpoint_is_opponent_aware_and_v_guided` against a tiny (~26k param,
    untrained) throwaway checkpoint built in the test itself -- the WIRING is real-net-tested,
    the NUMBERS are not (an untrained net's output is meaningless by construction). Once W5
-   trains a real one, run `python mp/ev/cli.py advise fixture:bloodstone_vs_invisible
+   trains a real one, run `python ev/cli.py advise fixture:bloodstone_vs_invisible
    --player 0 --checkpoint <ckpt>` and confirm the V line + V-guided ranked table print
    sensibly before trusting the NUMBERS.
 2. **The opponent-visibility gap this section originally flagged is fixed**: an earlier draft
    of `advisor.py` wrapped `value_net.make_value_fn`'s two-argument `fn(game, opp)` down to a
    bare one-argument lambda for `EVPlayer`, which meant V never saw the true opponent while
-   ranking shop/pack/blind candidates. `mp/ev/match_player.py` (W5, landed mid-session) turned
+   ranking shop/pack/blind candidates. `ev/match_player.py` (W5, landed mid-session) turned
    out to be exactly the hook needed -- `MatchAwareEVPlayer` binds a mutable opponent view into
    a bound `value_fn` closure and refreshes it from the live match before every decision.
    `advisor.py` now builds one `MatchAwareEVPlayer` per `--checkpoint` call and threads it
@@ -293,31 +293,31 @@ projection.
 3. **`race.p_win`'s single shared ante clock** (section 1, point 2's "race" bullet) is a
    documented approximation already noted in `race.py` itself; the advisor inherits it
    unchanged.
-4. **`h2h.py`'s `real1:*` specs need `mp/agent/runs/real1/latest.pt`** to exist (it does, 230
+4. **`h2h.py`'s `real1:*` specs need `agent/runs/real1/latest.pt`** to exist (it does, 230
    MB, from the 106-gen Phase 4 run) -- both smokes in this doc actually loaded and drove it.
-5. `mp/ev/tests` was at 96 passing before this workstream's additions (92 in the brief's
+5. `ev/tests` was at 96 passing before this workstream's additions (92 in the brief's
    snapshot + 4 more from a concurrent W5 change mid-session); this workstream added 20
    (14 `test_advisor.py` + 6 `test_h2h.py`) for **116 passing, 0 failing**, run whole
-   (`python -m pytest mp/ev/tests -q`). No flakiness observed; W5's files were not
+   (`python -m pytest ev/tests -q`). No flakiness observed; W5's files were not
    touched.
 
 ## 7. State-source spec reference
 
 - `fixture:<name>` -- `fixtures.FIXTURES[<name>]()`. Only `bloodstone_vs_invisible` is
   registered; add more builders + register them in `fixtures/__init__.py`'s `FIXTURES` dict.
-- `replay:<path>:<step>` -- an `mp/replay` `MatchLogger` JSONL log (first `kind=="match"`
+- `replay:<path>:<step>` -- an `replay` `MatchLogger` JSONL log (first `kind=="match"`
   line), replayed through its first `<step>` ops via a fresh `MLBMatch` (this module's own
-  driver -- `mp/replay` has no "replay to a given step" entry point and this workstream does
-  not edit `mp/replay`; only its PUBLIC `replay.load_line` is used). `<step>` beyond the
+  driver -- `replay` has no "replay to a given step" entry point and this workstream does
+  not edit `replay`; only its PUBLIC `replay.load_line` is used). `<step>` beyond the
   logged op count clamps to the end. Parsed with `rest.rpartition(":")` (not `partition`) so a
   Windows path's own drive-letter colon (`C:\...`) is not mistaken for the step separator.
 - `seed:<seed>:<step>` -- a fresh `MLBMatch(seed=...)` re-driven `<step>` decisions by two
   fresh `EVPlayer(budget=..., epsilon=0)` (deterministic given `seed` + `--policy-seed` +
   `--drive-budget`).
 
-`mp/replay` is a real Python package (its modules use relative imports, e.g. `from ._util
+`replay` is a real Python package (its modules use relative imports, e.g. `from ._util
 import ...`), so it must be imported as `replay.replay` / `replay.log` with `mp/` (not
-`mp/replay/`) on `sys.path` -- importing `mp/replay/replay.py` directly as a bare top-level
+`replay/`) on `sys.path` -- importing `replay/replay.py` directly as a bare top-level
 module raises `ImportError: attempted relative import with no known parent package`. This
 tripped both `advisor._replay_to_step` and `test_advisor.py`'s own log-writing helper during
 development; both are fixed to import via the package.

@@ -3,8 +3,8 @@ smoke_3way_report.py — read the JSONL of `smoke_3way.sh`'s runs and print the 
 table TRAIN_NOTES.md §7.3 wants: skip rate, blind-clear rate, value-target sd, and the
 current net's mean rank against the scripted anchors, for each lever.
 
-    python mp/agent/scripts/smoke_3way_report.py [--runs mp/agent/runs] [--tag 3way]
-    python mp/agent/scripts/smoke_3way_report.py --names p4w2_gate2 p4w2_smoke_a
+    python agent/scripts/smoke_3way_report.py [--runs agent/runs] [--tag 3way]
+    python agent/scripts/smoke_3way_report.py --names p4w2_gate2 p4w2_smoke_a
 
 The last-generation row is what the levers are judged on, but every generation is printed:
 five generations is a small sample and a trend that reverses matters more than any single
@@ -74,7 +74,7 @@ def report(name: str, label: str, rows: list[dict]) -> None:
 
 def main() -> int:
     ap = argparse.ArgumentParser()
-    ap.add_argument("--runs", default="mp/agent/runs")
+    ap.add_argument("--runs", default="agent/runs")
     ap.add_argument("--tag", default="3way")
     ap.add_argument("--names", nargs="*", default=None,
                     help="explicit run directory names instead of <tag>_a/b/c")

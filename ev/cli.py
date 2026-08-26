@@ -1,12 +1,12 @@
 """
 cli.py -- the advisor CLI (Phase 5 rev 2, W6).
 
-    python mp/ev/cli.py advise fixture:bloodstone_vs_invisible --player 0
-    python mp/ev/cli.py advise fixture:bloodstone_vs_invisible --player 1 --rollouts 32
-    python mp/ev/cli.py advise replay:mp/replay/some_match.jsonl:40 --player 0
-    python mp/ev/cli.py advise seed:11111111:120 --player 1 --checkpoint mp/agent/runs/v1/latest.pt
+    python ev/cli.py advise fixture:bloodstone_vs_invisible --player 0
+    python ev/cli.py advise fixture:bloodstone_vs_invisible --player 1 --rollouts 32
+    python ev/cli.py advise replay:replay/some_match.jsonl:40 --player 0
+    python ev/cli.py advise seed:11111111:120 --player 1 --checkpoint agent/runs/v1/latest.pt
 
-See ``mp/ev/advisor.py`` for what each section means and ``mp/ev/ADVISOR_NOTES.md`` for the
+See ``ev/advisor.py`` for what each section means and ``ev/ADVISOR_NOTES.md`` for the
 full writeup (how each of the three P(win) numbers is computed, the fixture's construction).
 """
 from __future__ import annotations
@@ -16,7 +16,7 @@ import sys
 import time
 from pathlib import Path
 
-_HERE = Path(__file__).resolve().parent            # mp/ev
+_HERE = Path(__file__).resolve().parent            # ev
 _MP = _HERE.parent
 for _p in (str(_HERE), str(_MP), str(_MP / "eval"), str(_MP / "agent"), str(_MP / "stats")):
     if _p not in sys.path:

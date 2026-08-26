@@ -7,7 +7,7 @@ Tag on ``eval`` after a boss, Plasma's ``final_scoring_step`` balance).  The dec
 ``game.lua:627-641`` (``pools.BACKS``), and ``Game:start_run`` applies the deck AFTER the
 stake modifiers (game.lua:2050-2058).
 
-Division of labour with the generation layer (``mp/rng/generate.py``, NOT owned here):
+Division of labour with the generation layer (``rng/generate.py``, NOT owned here):
 
 * ``generate.apply_deck`` / ``build_starting_deck`` already handle everything that changes
   which RNG calls happen: deck vouchers into ``used_vouchers`` (+ shop rates / shelf size),

@@ -7,7 +7,7 @@ After a decision, the subtree under the chosen action is exactly the search's be
 about the state the game is *about to be in*. Keeping it means the next search starts
 with N simulations of evidence instead of zero. It is only sound if the state the subtree
 was built from IS the state the game actually reached, and the engine gives us the exact
-test for that: `BalatroGame.state_signature()` (`mp/engine/balatro_sim/game.py:894` —
+test for that: `BalatroGame.state_signature()` (`engine/balatro_sim/game.py:894` —
 "two games with equal signatures produce identical futures"; it covers the keyed RNG's
 full position table).
 

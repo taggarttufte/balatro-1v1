@@ -1,10 +1,10 @@
 # EV_NOTES — W3: the analytic hand player and `EVPlayer` (Phase 5 rev 2, 2026-08-23)
 
-Files: `mp/ev/hand.py` (analytic hand EV, two budgets), `mp/ev/player.py` (`EVPlayer`, every
-state), `mp/ev/sampling.py` (draw-world sampling), `mp/ev/gate_ev_player.py` (gate 2, one
-command), tests `mp/ev/tests/test_hand.py` / `test_player.py` / `test_sampling.py` (47 tests),
-results `mp/results/ev_player_gate_2026-08-23.{md,json}`.  Nothing outside `mp/ev/` and
-`mp/results/` was touched; `mp/engine/**`, `mp/eval/**`, `mp/agent/**` are read only.
+Files: `ev/hand.py` (analytic hand EV, two budgets), `ev/player.py` (`EVPlayer`, every
+state), `ev/sampling.py` (draw-world sampling), `ev/gate_ev_player.py` (gate 2, one
+command), tests `ev/tests/test_hand.py` / `test_player.py` / `test_sampling.py` (47 tests),
+results `results/ev_player_gate_2026-08-23.{md,json}`.  Nothing outside `ev/` and
+`results/` was touched; `engine/**`, `eval/**`, `agent/**` are read only.
 
 ## 0. Headline (12-seed subset, 4 processes — the lead runs the 126; §8b fix-pass
 numbers supersede the timing columns: fast hand 3.2 ms mean / 9.0 p95, shop 5 ms under load)
@@ -19,7 +19,7 @@ Three more 12-seed slices during development (seeds 24–35, 36–47, 60–71, 9
 ante-1 clear 100%, 92%, 92%, 92%; greedy 25–50%.  Draw-order invariance 72/72 states per
 budget; one `MLBMatch` EV-vs-EV finishes (ante 7, 4 Nemeses, 7 s).  Full gate:
 
-    python mp/ev/gate_ev_player.py --procs 16        # 126 seeds x 3 players, ~4 min on 16 cores
+    python ev/gate_ev_player.py --procs 16        # 126 seeds x 3 players, ~4 min on 16 cores
 
 ## 1. The fast budget — what is exact, what is approximated
 

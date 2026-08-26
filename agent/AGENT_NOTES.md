@@ -1,9 +1,9 @@
 # AGENT_NOTES — Phase 3 W1: agent-layer fork + sync + checkpointing
 
-**Agent W1, 2026-08-21.** Deliverable: `mp/agent/**` — the MCTS agent layer forked from
-`balatro-mcts` and re-targeted onto the frozen `mp/engine` fork, plus checkpointing, a
-batchable policy/value interface for W3, and MLB awareness. Nothing under `mp/engine/**`
-or `mp/rng/**` was touched (verified against `docs/phase3_frozen_snapshot.txt`: all 41
+**Agent W1, 2026-08-21.** Deliverable: `agent/**` — the MCTS agent layer forked from
+`balatro-mcts` and re-targeted onto the frozen `engine` fork, plus checkpointing, a
+batchable policy/value interface for W3, and MLB awareness. Nothing under `engine/**`
+or `rng/**` was touched (verified against `docs/phase3_frozen_snapshot.txt`: all 41
 frozen files byte-size identical, mtimes within the snapshot's 1-second rounding).
 
 ---
@@ -13,7 +13,7 @@ frozen files byte-size identical, mtimes within the snapshot's 1-second rounding
 | Source | Commit | What was taken |
 |---|---|---|
 | `C:/Users/Taggart/projects/recovered/balatro-mcts` | `ee75d11` (master) | `mcts/` (7 modules), `train/` (4), `scripts/` (3), the three MCTS test files |
-| `mp/engine` (this repo, FROZEN) | Phase 2 close | `balatro_sim` engine, `env_v7._encode_obs`, `legal_actions()`, MLB hooks |
+| `engine` (this repo, FROZEN) | Phase 2 close | `balatro_sim` engine, `env_v7._encode_obs`, `legal_actions()`, MLB hooks |
 
 The source repo is **read-only for this campaign**: nothing was edited or committed
 there. It was executed once, read-only with `PYTHONDONTWRITEBYTECODE=1`, to get an
@@ -21,7 +21,7 @@ apples-to-apples sims/sec baseline on this box (§6); `git status` there is stil
 
 ### File map
 
-| `mp/agent/…` | Source | State |
+| `agent/…` | Source | State |
 |---|---|---|
 | `mcts/action.py` | `mcts/action.py` | +`reroll_boss` documented (falls through the arg-free tail unchanged) |
 | `mcts/node.py` | `mcts/node.py` | +`stop_reason`; `is_terminal` now means "descent stops" (game over OR no legal actions) |
@@ -50,14 +50,14 @@ apples-to-apples sims/sec baseline on this box (§6); `git status` there is stil
 | `tests/test_mlb_agent.py` | — | **new** — MLB smoke, `PVP_WAIT`, endless-outcome |
 
 **Not forked:** `balatro_sim/tests/test_clone*.py` (3 files, 32 tests) — they are engine
-tests and already live in `mp/engine/tests/sim_tests/`, adapted to the fork (Phase 0
+tests and already live in `engine/tests/sim_tests/`, adapted to the fork (Phase 0
 FORK_NOTES §4). `balatro_sim/tests/test_edge_cases.py`'s `TestActionMasking` (the
 historical "8 failures") is **already resolved** in the fork: it needs the repo-root
 `train_sim` module, and Phase 0 skipped it with a reason. It is an engine test, not an
 agent test — nothing to do here. `test_hand_eval.py` / `test_scoring.py` likewise.
 
 Historical count reconciliation: the source repo's 66 = 32 clone tests (now in
-`mp/engine/tests`) + 34 MCTS/train tests. The re-targeted MCTS/train tests are 56 here
+`engine/tests`) + 34 MCTS/train tests. The re-targeted MCTS/train tests are 56 here
 (the originals plus the fork-specific cases), and the suite totals **85**.
 
 ---
@@ -65,27 +65,27 @@ Historical count reconciliation: the source repo's 66 = 32 clone tests (now in
 ## 1. Layout and how to run
 
 ```
-mp/agent/
-├── pytest.ini      pythonpath = . ../engine ; testpaths = tests   (rootdir = mp/agent)
-├── conftest.py     puts mp/agent + mp/engine first on sys.path; RAISES if the wrong
+agent/
+├── pytest.ini      pythonpath = . ../engine ; testpaths = tests   (rootdir = agent)
+├── conftest.py     puts agent + engine first on sys.path; RAISES if the wrong
 │                   balatro_sim / mcts / train wins
 ├── mcts/  train/  scripts/  benchmarks/  tests/
-└── runs/           training runs + checkpoints (gitignored: `agent/runs/` in mp/.gitignore)
+└── runs/           training runs + checkpoints (gitignored: `agent/runs/` in .gitignore)
 ```
 
 ```bash
 # from the repo root
-python -m pytest mp/agent/tests -q                       # 85 passed
-python mp/agent/scripts/mcts_demo.py --policy both --strategy both --sims 100 500 2000
-python mp/agent/scripts/smoke_selfplay.py --device cuda
-python mp/agent/scripts/train_cold.py --minutes 2 --device cuda --checkpoint-every 25
-python mp/agent/scripts/train_cold.py --resume mp/agent/runs/<name>/latest.pt --minutes 2
-python mp/agent/benchmarks/bench_search.py --sims 500 --device cuda
+python -m pytest agent/tests -q                       # 85 passed
+python agent/scripts/mcts_demo.py --policy both --strategy both --sims 100 500 2000
+python agent/scripts/smoke_selfplay.py --device cuda
+python agent/scripts/train_cold.py --minutes 2 --device cuda --checkpoint-every 25
+python agent/scripts/train_cold.py --resume agent/runs/<name>/latest.pt --minutes 2
+python agent/benchmarks/bench_search.py --sims 500 --device cuda
 ```
 
-`mcts` and `train` are top-level packages reached by putting `mp/agent` on `sys.path`,
-exactly as `balatro_sim` is reached through `mp/engine` — same pattern as
-`mp/engine/pytest.ini` + `conftest.py`, for the same reason (`pytest mp/agent/tests` from
+`mcts` and `train` are top-level packages reached by putting `agent` on `sys.path`,
+exactly as `balatro_sim` is reached through `engine` — same pattern as
+`engine/pytest.ini` + `conftest.py`, for the same reason (`pytest agent/tests` from
 the repo root would otherwise put the repo root's cwd entry first and import the BRL
 `balatro_sim`). The guard is asserted twice: at conftest import and again in
 `tests/test_action_space.py::test_imports_resolve_to_the_fork`. Scripts get the same
@@ -122,7 +122,7 @@ into the other.
 
 ### 2.2 Action features — 44 → 56, 12 → 13 types
 
-The fork's `legal_actions()` (`mp/engine/balatro_sim/game.py:1342`) emits `reroll_boss`
+The fork's `legal_actions()` (`engine/balatro_sim/game.py:1342`) emits `reroll_boss`
 (Directors Cut / Retcon voucher), which the original's 12-type vocabulary would have
 featurized as the all-zero "unknown" row. Worse, the original's slot bounds were the V7
 action space (8 hand slots, 2 consumables, 7 shop, 5 jokers) and out-of-range indices
@@ -287,7 +287,7 @@ that is the higher-value direction, see 4.4.
 (PUCT over `node.children`, a dict with up to ~436 entries) → `game.step(action_from_key(k))`
 → stop checks (`outcome.is_terminal` / `outcome.is_stuck`, both O(1) state comparisons —
 deliberately NOT `legal_actions()`, which is the combinatorial enumeration) → `_expand`.
-Per simulation: one `root_game.clone()` (~63 µs, `mp/engine/FORK_NOTES.md` §6), a few
+Per simulation: one `root_game.clone()` (~63 µs, `engine/FORK_NOTES.md` §6), a few
 `step()`s (~27 µs each), one leaf evaluation.
 
 **Tree reuse note (your (b)):** the engine is stochastic through keyed RNG, so a subtree is
@@ -369,9 +369,9 @@ different-machine number, not a regression.
 
 | gate | result |
 |---|---|
-| `python -m pytest mp/agent/tests -q` | **85 passed / 0 failed** (26 s) |
-| `python -m pytest mp/engine/tests -q` | **1609 passed / 10 skipped / 3 xfailed / 0 failed** — unchanged |
-| `python -m pytest mp/tests -q` | **1073 passed / 2 xfailed / 0 failed** — unchanged |
+| `python -m pytest agent/tests -q` | **85 passed / 0 failed** (26 s) |
+| `python -m pytest engine/tests -q` | **1609 passed / 10 skipped / 3 xfailed / 0 failed** — unchanged |
+| `python -m pytest tests -q` | **1073 passed / 2 xfailed / 0 failed** — unchanged |
 | frozen-file check vs `docs/phase3_frozen_snapshot.txt` | 41/41 identical size, mtime within the snapshot's 1 s rounding |
 | `mcts_demo.py` sims/sec | §4.4 |
 | `smoke_selfplay.py --device cuda` | OK — 11-decision episode, finite losses, weights moved, checkpoint round-tripped |
@@ -386,7 +386,7 @@ Agent-suite breakdown: `test_nn_policy` 27, `test_train` 21, `test_checkpoint` 1
 ## 7. The 2-minute CUDA run
 
 ```
-python mp/agent/scripts/train_cold.py --minutes 2 --device cuda --sims 30 \
+python agent/scripts/train_cold.py --minutes 2 --device cuda --sims 30 \
        --checkpoint-every 25 --log-every 25 --run-name cuda_smoke
 ```
 
@@ -402,7 +402,7 @@ Checkpoints: numbered `ckpt_NNNNNN.pt` **28.9 MB** (weights + Adam, no buffer), 
 Then, immediately after:
 
 ```
-python mp/agent/scripts/train_cold.py --resume mp/agent/runs/cuda_smoke/latest.pt \
+python agent/scripts/train_cold.py --resume agent/runs/cuda_smoke/latest.pt \
        --minutes 1 --device cuda
 ```
 
@@ -419,14 +419,14 @@ checkpoints + `latest.pt` (195.5 MB) + the JSONL log, whose `kind: "config"` lin
 
 **Needs engine change (none blocking, all worked around):**
 
-* `mp/engine/balatro_sim/env_v7.py:702` — the observation encodes only the first
+* `engine/balatro_sim/env_v7.py:702` — the observation encodes only the first
   **8 hand slots** and **5 joker slots**, but the fork's `hand_size` and `joker_slots` both
   grow past those bounds in real play. A 9th card in hand is invisible to the value/policy
   net while being a perfectly legal `play` target. The *action* features handle it (§2.2);
   the observation cannot without changing `OBS_DIM`, and env_v7 is frozen in Phase 3.
   Worth widening in Phase 4 (it also changes the checkpoint format, so do it before a long
   training run, not after).
-* `mp/engine/balatro_sim/env_v7.py` `_finish_step` pays `R_BLIND_BASE * (9 - ante)`, which
+* `engine/balatro_sim/env_v7.py` `_finish_step` pays `R_BLIND_BASE * (9 - ante)`, which
   goes negative past ante 8 under endless MLB (already logged in `MLB_NOTES.md` §5). The
   agent does not use env_v7's reward — it uses `OutcomeFn` — so this only matters if
   someone drives the agent through `BalatroV7Env`/`env_mp`.

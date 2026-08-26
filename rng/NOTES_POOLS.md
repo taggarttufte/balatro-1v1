@@ -1,12 +1,12 @@
 # NOTES_POOLS — Balatro 1.0.1o item pools, ordering, and keys
 
-Agent B deliverable notes for `mp/rng/pools.py` and `mp/rng/keys.py`. Source: the game Lua
+Agent B deliverable notes for `rng/pools.py` and `rng/keys.py`. Source: the game Lua
 extracted from the local `Balatro.exe` (1.0.1o-FULL). Line numbers refer to the files under
-`mp/_reference/balatro_src/` unless marked NOT EXTRACTED.
+`_reference/balatro_src/` unless marked NOT EXTRACTED.
 
 ## 0. Reference extraction gap (action for the lead)
 
-`mp/_reference/balatro_src/` holds 15 of the 32 Lua files in the exe. Missing and relevant:
+`_reference/balatro_src/` holds 15 of the 32 Lua files in the exe. Missing and relevant:
 
 | file | why it matters |
 |---|---|
@@ -375,13 +375,13 @@ walk over 32 centers (Mega packs 0.25/0.15/0.07, Buffoon 0.6, Spectral 0.3).
 
 ## 5. Files
 
-* `mp/rng/pools.py` (generated data). Top-level names: `JOKERS`, `JOKERS_BY_RARITY`,
+* `rng/pools.py` (generated data). Top-level names: `JOKERS`, `JOKERS_BY_RARITY`,
   `JOKER_POOL_RARITY_1..4`, `TAROTS`, `PLANETS`, `SPECTRALS`, `VOUCHERS`, `VOUCHER_REQUIRES`,
   `BOOSTERS`, `BOOSTER_TOTAL_WEIGHT`, `ENHANCEMENTS`, `EDITIONS` (+ poll thresholds), `SEALS`,
   `BLINDS`, `BOSS_BLINDS[_REGULAR|_SHOWDOWN]`, `BOSS_KEYS_ALPHA`, `TAGS`, `BACKS`, `BACK_CHALLENGE`,
   `STAKES`, `PLAYING_CARDS`, `PLAYING_CARD_KEYS`, `POKER_HANDS`, `HANDLIST`, `POOL_KEYS`,
   `EMPTY_POOL_FALLBACK`, `JOKER_RARITY_THRESHOLDS`, `SHOP_RATES_DEFAULT`, `SOUL_THRESHOLD`,
   `STICKER_THRESHOLDS`, `P_LOCKED_DEFAULT`, `pool(name)`.
-* `mp/rng/keys.py`: 77 key records (`KEYS`, `KEY_BY_NAME`), `KEY_APPENDS` (26), `FORCED_RARITY`,
+* `rng/keys.py`: 77 key records (`KEYS`, `KEY_BY_NAME`), `KEY_APPENDS` (26), `FORCED_RARITY`,
   helpers `rarity_key`, `pool_key`, `resample_key`, `rarity_from_poll`, plus `RUN_START_SEQUENCE`,
   `ROUND_END_SEQUENCE`, `UNSEEDED_GAMEPLAY`.

@@ -2,7 +2,7 @@
 chips.py — Flat chip bonus jokers (plus the jokers that historically lived here).
 
 Every probability roll uses the game's key string through prob_roll(ctx, key, odds)
-— see mp/rng/keys.py and EFFECTS_NOTES.md for the table.
+— see rng/keys.py and EFFECTS_NOTES.md for the table.
 """
 from .base import (
     JOKER_REGISTRY, ScoreContext, prob_roll, rng_of, has_consumable_room, create_consumable,

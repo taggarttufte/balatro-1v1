@@ -1,5 +1,5 @@
-"""Unit tests for mp/eval/common.py: player-spec parsing, the solo-driving shim, statistics
-helpers, and the phantom-Nemesis target functions.  Run: python -m pytest mp/eval/tests -q
+"""Unit tests for eval/common.py: player-spec parsing, the solo-driving shim, statistics
+helpers, and the phantom-Nemesis target functions.  Run: python -m pytest eval/tests -q
 (repo root)."""
 from __future__ import annotations
 
@@ -33,7 +33,7 @@ def test_scripted_spec_unknown_field_raises():
 
 
 def test_checkpoint_spec_builds_an_mp_agent_player():
-    """Phase 4 close: ``checkpoint:`` wires to ``mp/agent``'s ``make_player``. A missing path
+    """Phase 4 close: ``checkpoint:`` wires to ``agent``'s ``make_player``. A missing path
     surfaces as the loader's own error (FileNotFoundError), not NotImplementedError; an empty
     path gives a cold-start player that satisfies the ``Player`` protocol."""
     pytest.importorskip("torch")

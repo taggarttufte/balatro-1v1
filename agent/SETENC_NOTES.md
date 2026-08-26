@@ -1,8 +1,8 @@
 # SETENC_NOTES — Phase 4 W1: set-based encoder + set action features + `Sample` v2
 
-**Agent W1, 2026-08-22.** Deliverable: `mp/agent/mcts/{encoder_set.py, model_set.py,
-action_features_set.py}`, `mp/agent/train/sample.py`, the `--encoder set` wiring, tests, and
-this file. `mp/engine/**`, `mp/rng/**`, `mp/tournament/**`, `mp/eval/**` are read-only for me.
+**Agent W1, 2026-08-22.** Deliverable: `agent/mcts/{encoder_set.py, model_set.py,
+action_features_set.py}`, `agent/train/sample.py`, the `--encoder set` wiring, tests, and
+this file. `engine/**`, `rng/**`, `tournament/**`, `eval/**` are read-only for me.
 
 ---
 
@@ -94,7 +94,7 @@ set encoder; `mcts.player.load_policy(checkpoint, device, batched, encoder)` pic
 one off the checkpoint's recorded encoder with no caller change. `MCTSPlayer`,
 `BatchedMCTSPlayerGroup`, `MCTS`, `BatchedSearch`, `TreeCache` are untouched and encoder-blind.
 
-### 0.5 `Sample` v2 — `mp/agent/train/sample.py`
+### 0.5 `Sample` v2 — `agent/train/sample.py`
 
 ```python
 @dataclass
@@ -538,13 +538,13 @@ negatives, not a bigger k.
 | `train/loop.py` | `TrainConfig.encoder` accepts `"set"`; `+ k_unvisited`, `+ subsample`; net/policy/builder selection |
 | `train/checkpoint.py` | `CHECKPOINT_VERSION` 1 → **2**; `net_kind` + `encoder_caps` recorded and checked |
 | `scripts/train_cold.py` | `--encoder set`, `--k-unvisited`, `--no-subsample`, `--set-res-blocks`, `--value-activation`; **refuses `--ruleset mlb`** (follow-up 3) |
-| `scripts/eval_checkpoint.py` | **new** — an `mp/eval`-schema JSON report for a checkpoint player (`mp/eval` is frozen and its `checkpoint:` spec raises `NotImplementedError` by design) |
+| `scripts/eval_checkpoint.py` | **new** — an `eval`-schema JSON report for a checkpoint player (`eval` is frozen and its `checkpoint:` spec raises `NotImplementedError` by design) |
 | `benchmarks/bench_sample_size.py` | **new** — the §4.1 tables |
 | `benchmarks/bench_set_vs_flat.py` | **new** — the §6.2 throughput table (one command, prints the `--device` recommendation) |
 | `tests/_states.py` | **new** — the 200-state fixture (§6.1) |
 | `tests/test_set_encoder.py` (30), `tests/test_sample_v2.py` (23), `tests/test_followups.py` (18) | **new** |
 | `tests/test_checkpoint.py` | the one Phase 3 test that pinned `version == 1` now pins `CHECKPOINT_VERSION` and checks the two new keys |
-| **W2's files** (`train/selfplay.py`, `population.py`, `scripts/train_mlb.py`, `mp/tournament/**`) | **untouched by W1.** W2 had already put `"set"` in `train_mlb.py --encoder` and wired `sample_fn = ColdTrainer.sample_builder`, so `train_mlb --encoder set --objective external` works with no further edit. |
+| **W2's files** (`train/selfplay.py`, `population.py`, `scripts/train_mlb.py`, `tournament/**`) | **untouched by W1.** W2 had already put `"set"` in `train_mlb.py --encoder` and wired `sample_fn = ColdTrainer.sample_builder`, so `train_mlb --encoder set --objective external` works with no further edit. |
 
 **The serial flat path is byte-identical.** `tests/test_batched.py::
 test_serial_search_matches_the_pre_w3_implementation` and the whole Phase 3 suite still pass
@@ -592,7 +592,7 @@ the action set is large.
 > command re-runs all four cells and prints the `--device` recommendation:
 >
 > ```
-> python mp/agent/benchmarks/bench_set_vs_flat.py
+> python agent/benchmarks/bench_set_vs_flat.py
 > ```
 >
 > **This is the number that decides `--device` for the first long run.** Both nets were
@@ -617,13 +617,13 @@ Both nets are FASTER ON CPU than on CUDA at this scale — the Phase 3 finding
 
 | gate | result |
 |---|---|
-| `pytest mp/agent/tests` | **270 passed / 1 failed** after the §8 follow-ups — the one failure is W2/W3's replay test, see §8.4 (was 253/0 at the first hand-off; 131 at Phase 3 close; W1 adds 71 tests in total, W2 the rest) |
-| `pytest mp/engine/tests` | **1614 passed / 10 skipped / 3 xfailed / 0 failed** — unchanged |
-| `pytest mp/tests` | **1073 passed / 2 xfailed / 0 failed** — unchanged |
-| `pytest mp/tournament/tests mp/eval/tests` | **181 passed / 0 failed** (80 at Phase 3 close; the additions are W2's and W4's) |
+| `pytest agent/tests` | **270 passed / 1 failed** after the §8 follow-ups — the one failure is W2/W3's replay test, see §8.4 (was 253/0 at the first hand-off; 131 at Phase 3 close; W1 adds 71 tests in total, W2 the rest) |
+| `pytest engine/tests` | **1614 passed / 10 skipped / 3 xfailed / 0 failed** — unchanged |
+| `pytest tests` | **1073 passed / 2 xfailed / 0 failed** — unchanged |
+| `pytest tournament/tests eval/tests` | **181 passed / 0 failed** (80 at Phase 3 close; the additions are W2's and W4's) |
 
 W1's own tests: `test_set_encoder.py` **30**, `test_sample_v2.py` **23**, `test_followups.py` **18**. Nothing under
-`mp/engine/**`, `mp/rng/**`, `mp/tournament/**` or `mp/eval/**` was edited.
+`engine/**`, `rng/**`, `tournament/**` or `eval/**` was edited.
 
 ### 7.2 Paired 10-minute comparison
 
@@ -631,18 +631,18 @@ W1's own tests: `test_set_encoder.py` **30**, `test_sample_v2.py` **23**, `test_
 (degenerate, free-Nemesis) `MLBOutcome` the brief allowed as a fallback:
 
 ```
-python mp/agent/scripts/train_mlb.py --minutes 10 --objective external --device cuda        --sims 40 --encoder {v7|set} --seed 0 --run-name w1_cmp_{v7|set}
+python agent/scripts/train_mlb.py --minutes 10 --objective external --device cuda        --sims 40 --encoder {v7|set} --seed 0 --run-name w1_cmp_{v7|set}
 ```
 
 Then each run's `latest.pt` on the same 60 ground-truth seeds, and the frozen harness's own
 paired-by-seed `--compare`:
 
 ```
-python mp/agent/scripts/eval_checkpoint.py --checkpoint mp/agent/runs/w1_cmp_{ENC}/latest.pt        --mode sp_mlb --n-seeds 60 --sims 20 --max-antes 4 --max-steps 1500 --threads 1        --device cpu --out mp/results/w1_cmp_{ENC}.json
-python -m mp.eval.eval_harness --compare mp/results/w1_cmp_set.json        mp/results/w1_cmp_v7.json --out mp/results/w1_cmp_set_vs_v7.json
+python agent/scripts/eval_checkpoint.py --checkpoint agent/runs/w1_cmp_{ENC}/latest.pt        --mode sp_mlb --n-seeds 60 --sims 20 --max-antes 4 --max-steps 1500 --threads 1        --device cpu --out results/w1_cmp_{ENC}.json
+python -m eval.eval_harness --compare results/w1_cmp_set.json        results/w1_cmp_v7.json --out results/w1_cmp_set_vs_v7.json
 ```
 
-**Training (`mp/agent/runs/w1_cmp_{v7,set}/`)**
+**Training (`agent/runs/w1_cmp_{v7,set}/`)**
 
 | | flat `v7` | **set** |
 |---|---|---|
@@ -689,8 +689,8 @@ things make this a shakedown rather than a result, all of them reportable:
    30 minutes of wall clock on this box (~12 threads spinning over a 2M-param net evaluated
    one leaf at a time) and made an unbounded 126-seed eval take over 40 minutes.
 
-Reports: `mp/results/w1_cmp_v7.json`, `mp/results/w1_cmp_set.json`,
-`mp/results/w1_cmp_set_vs_v7.json`.
+Reports: `results/w1_cmp_v7.json`, `results/w1_cmp_set.json`,
+`results/w1_cmp_set_vs_v7.json`.
 
 ### 7.3 Found, not fixed
 
@@ -704,7 +704,7 @@ and a search issues many small batches. The transfer half of this I did fix (pac
 the kernel half has now landed too (§8 follow-up 1): the five card fields share one
 offset-indexed table, edition/rarity/kind/set share a second, and all four game-key lookups
 became one gather — ~25 embedding kernels down to 7, param count 1 793 268 → 1 793 536.
-**The re-measurement is pending (machine in use): `python mp/agent/benchmarks/bench_set_vs_flat.py`.** Until it
+**The re-measurement is pending (machine in use): `python agent/benchmarks/bench_set_vs_flat.py`.** Until it
 is run, assume the pre-merge finding still stands: **both nets are faster on CPU than on
 CUDA at this scale** (the Phase 3 finding, AGENT_NOTES §4.4), so a self-play-bound run
 should not assume `--device cuda` is the fast choice.
@@ -728,11 +728,11 @@ the ruleset from the file), pointing at `train_mlb.py --objective external`. The
 CLI-only: `ColdTrainer(ruleset="mlb")` stays available to W2's `MLBTrainer` and to the tests,
 which drive it behind a non-degenerate outcome.
 
-**4. `mp/eval/common.py::parse_player_spec` still raises `NotImplementedError` for
+**4. `eval/common.py::parse_player_spec` still raises `NotImplementedError` for
 `checkpoint:`.** Its own docstring says W1 owns the loader; `mcts.player.load_policy(path)`
 and `make_player(path)` now exist and satisfy the `Player` protocol it describes, so the
 wiring is a three-line change in a file that is frozen for me. `scripts/eval_checkpoint.py`
-works around it by importing `mp/eval/common.py`'s drivers directly and emitting the
+works around it by importing `eval/common.py`'s drivers directly and emitting the
 harness's own JSON schema. **W4 (or the lead at phase close) should land the three lines**;
 `eval_checkpoint.py` can then be deleted or kept as the batching-aware entry point.
 
@@ -757,7 +757,7 @@ first guesses, not a sweep. (The unbounded value head that was listed here is **
 ## 8. Follow-ups (2026-08-22, lead-requested, before the first long run)
 
 Three changes the lead pulled forward out of §7.3 so they land before a run rather than
-during one. `mp/agent/tests/test_followups.py` (**18 tests**) covers all three.
+during one. `agent/tests/test_followups.py` (**18 tests**) covers all three.
 
 ### 8.1 Merged categorical embedding tables
 
@@ -780,7 +780,7 @@ pooling regardless, and "unknown" is a real value for a face-down card.
 
 **Params 1 793 268 → 1 793 536** (+268). Checkpoints from before this change cannot load into
 the new net (the tables have different shapes) — which is why the lead wanted it now.
-**Throughput re-measurement is PENDING (machine in use): `python mp/agent/benchmarks/bench_set_vs_flat.py`** and it is
+**Throughput re-measurement is PENDING (machine in use): `python agent/benchmarks/bench_set_vs_flat.py`** and it is
 what should decide `--device` for the first long run.
 
 ### 8.2 Bounded value heads on BOTH nets
@@ -825,8 +825,8 @@ unchanged.
 
 ### 8.4 One failing test, and it is not W1's
 
-`mp/agent/tests/test_train_mlb.py::test_logged_tournament_trajectories_replay_exactly`
-(W2's test, failing inside W3's `mp/replay/replay.py:87`):
+`agent/tests/test_train_mlb.py::test_logged_tournament_trajectories_replay_exactly`
+(W2's test, failing inside W3's `replay/replay.py:87`):
 
 ```
 replay._util.ReplayMismatch: replay divergence at step 40
@@ -840,7 +840,7 @@ follow-ups. `replay.apply_op` is a straight `game.step(action)` replay compared 
 digest of `game.state_signature()`, so a divergence means the recorded action list is not
 sufficient to reproduce the live state across a `pick_booster` — i.e. something mutated the
 game outside the logged ops around the booster, or the logged indices are pre-pick while the
-engine shrinks `booster_choices` between picks. `mp/replay/**` is W3's and the tournament
+engine shrinks `booster_choices` between picks. `replay/**` is W3's and the tournament
 logging hook is W2's; flagged, not touched.
 
-The other **270 tests** in `mp/agent/tests` pass.
+The other **270 tests** in `agent/tests` pass.

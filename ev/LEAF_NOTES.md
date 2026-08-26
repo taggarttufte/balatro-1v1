@@ -1,30 +1,30 @@
 # LEAF_NOTES — W-LEAF: V at the expectimax leaf (Phase 5 rev 2, V2 round, 2026-08-24/25)
 
-Owner: W-LEAF. Implements `mp/docs/PHASE5_V2_BRIEF_2026-08.md` section 4, lever (c). Files
-touched: `mp/ev/hand.py` (the K=3x8-world value_fn default, additive), `mp/ev/player.py`
-(`EVPlayer.value_fn_leaf_only`, additive), `mp/ev/match_player.py` (one-line passthrough of
-the same flag, additive), `mp/ev/h2h.py` (`ev:full+Vleaf` player spec, additive),
-`mp/ev/tests/test_{hand,player,h2h}.py` (+7 tests), results
-`mp/results/h2h_ev_full_vleaf_vs_ev_full_30seeds.{json,md}`,
-`mp/results/h2h_ev_full_vleaf_vs_real1_det_30seeds.{json,md}`. Did not touch `mp/engine/**`,
-`mp/agent/**` (besides copying the pre-existing, gitignored `real1` checkpoint into this
-worktree so `real1:det` has something to load), `mp/stats/**`.
+Owner: W-LEAF. Implements `docs/PHASE5_V2_BRIEF_2026-08.md` section 4, lever (c). Files
+touched: `ev/hand.py` (the K=3x8-world value_fn default, additive), `ev/player.py`
+(`EVPlayer.value_fn_leaf_only`, additive), `ev/match_player.py` (one-line passthrough of
+the same flag, additive), `ev/h2h.py` (`ev:full+Vleaf` player spec, additive),
+`ev/tests/test_{hand,player,h2h}.py` (+7 tests), results
+`results/h2h_ev_full_vleaf_vs_ev_full_30seeds.{json,md}`,
+`results/h2h_ev_full_vleaf_vs_real1_det_30seeds.{json,md}`. Did not touch `engine/**`,
+`agent/**` (besides copying the pre-existing, gitignored `real1` checkpoint into this
+worktree so `real1:det` has something to load), `stats/**`.
 
 ## 0. TL;DR
 
 ```
-python mp/ev/h2h.py --a "ev:full+Vleaf" --b "ev:full"    --n-seeds 30 --procs 8 --max-steps 4000 \
-    --out-json mp/results/h2h_ev_full_vleaf_vs_ev_full_30seeds.json \
-    --out-md   mp/results/h2h_ev_full_vleaf_vs_ev_full_30seeds.md
+python ev/h2h.py --a "ev:full+Vleaf" --b "ev:full"    --n-seeds 30 --procs 8 --max-steps 4000 \
+    --out-json results/h2h_ev_full_vleaf_vs_ev_full_30seeds.json \
+    --out-md   results/h2h_ev_full_vleaf_vs_ev_full_30seeds.md
 
-python mp/ev/h2h.py --a "ev:full+Vleaf" --b "real1:det"  --n-seeds 30 --procs 8 --max-steps 4000 \
-    --out-json mp/results/h2h_ev_full_vleaf_vs_real1_det_30seeds.json \
-    --out-md   mp/results/h2h_ev_full_vleaf_vs_real1_det_30seeds.md
+python ev/h2h.py --a "ev:full+Vleaf" --b "real1:det"  --n-seeds 30 --procs 8 --max-steps 4000 \
+    --out-json results/h2h_ev_full_vleaf_vs_real1_det_30seeds.json \
+    --out-md   results/h2h_ev_full_vleaf_vs_real1_det_30seeds.md
 ```
 
-The keeper checkpoint `mp/ev/runs/v_full_best/ckpt_0001000.pt` (gitignored, ~57 MB) had to be
+The keeper checkpoint `ev/runs/v_full_best/ckpt_0001000.pt` (gitignored, ~57 MB) had to be
 copied into this worktree from the shared checkout before anything below could run — a fresh
-`git worktree` does not carry gitignored files. Same for `mp/agent/runs/real1/latest.pt`
+`git worktree` does not carry gitignored files. Same for `agent/runs/real1/latest.pt`
 (~220 MB), needed by `real1:det`.
 
 ## 1. Wiring
@@ -87,7 +87,7 @@ value_fn_leaf_only=True)`. Returns `obj.policy()` (not `common.adapt_player(obj)
 generic adapter has no match to bind V's opponent view from; only `.policy()`'s per-seat
 closures call `.refresh()` from the live match before every decision, which is what makes V
 opponent-aware at all — see ADVISOR_NOTES.md §1 point 2 for why this distinction exists).
-`VLEAF_CKPT_DEFAULT = mp/ev/runs/v_full_best/ckpt_0001000.pt`, overridable with `--checkpoint`
+`VLEAF_CKPT_DEFAULT = ev/runs/v_full_best/ckpt_0001000.pt`, overridable with `--checkpoint`
 (shared with `real1:*`'s override — fine in practice since no h2h run here needs both
 overridden at once).
 
@@ -136,7 +136,7 @@ records (including `nem_wins_a/b`, `final_money_a/b`) in the `.json` files.
 
 ### (i) `ev:full+Vleaf` vs `ev:full` — the lever-c read
 
-`mp/results/h2h_ev_full_vleaf_vs_ev_full_30seeds.{json,md}`. Wall clock 337.6 s (8 procs,
+`results/h2h_ev_full_vleaf_vs_ev_full_30seeds.{json,md}`. Wall clock 337.6 s (8 procs,
 mean 38.1 s/match).
 
 | | value |
@@ -157,10 +157,10 @@ the full-budget hand player once the SHOP/BLIND_SELECT contamination from §1.2 
 ### (ii) `ev:full+Vleaf` vs `real1:det` — no-regression check (baseline: plain `ev:full` beat
 `real1:det` 57/58, i.e. 98.3%)
 
-`mp/results/h2h_ev_full_vleaf_vs_real1_det_30seeds.{json,md}`. Wall clock 1103.4 s / 18.4 min
+`results/h2h_ev_full_vleaf_vs_real1_det_30seeds.{json,md}`. Wall clock 1103.4 s / 18.4 min
 (8 procs, mean 72.9 s/match) — noticeably slower than (i)'s 5.6 min at the same settings; the
 box had two OTHER workstreams' 8-worker jobs running concurrently for most of this run
-(`mp/ev/scripts/gen_pairs.py` and `mp/ev/active_poc/gen_pool.py`, confirmed by command line,
+(`ev/scripts/gen_pairs.py` and `ev/active_poc/gen_pool.py`, confirmed by command line,
 not touched), so this real1:det side (MCTS, `sims=40`) likely paid real contention cost on
 top of its own per-decision search cost. Noted for the lead: this run alone slightly
 overshot the brief's "~15 min of full-box load" guidance for a live-box run, not because 8
@@ -241,20 +241,20 @@ argmax-V-as-a-policy plausibly also bites the leaf, at K=3 candidates and only 8
    verbatim, but required to isolate lever (c) from the brief's own already-measured
    "argmax-V-as-a-policy loses 2/60" finding (section 0); without it the h2h numbers would
    have measured the wrong thing (confirmed by the first, discarded pilot run).
-2. **`mp/ev/match_player.py` touched** (one line: a passthrough kwarg) — not in this
+2. **`ev/match_player.py` touched** (one line: a passthrough kwarg) — not in this
    workstream's listed ownership (`hand.py` + `player.py` + h2h invocations), but nobody in
    this round owns it either, and the alternative (reaching into `MatchAwareEVPlayer._kw`
    from `h2h.py` post-construction) was strictly worse engineering for a one-line, additive,
    default-off change.
-3. **`mp/ev/h2h.py` touched** (new `Vleaf` token in `build_player`, module docstring) — the
+3. **`ev/h2h.py` touched** (new `Vleaf` token in `build_player`, module docstring) — the
    brief lists "h2h driver invocations" under this workstream's ownership, which I read as
    "you may extend the spec parser you invoke," since no current-round workstream owns
    `h2h.py` and the brief's own naming (`ev:full+Vleaf`) presupposes the token exists.
 4. **Per-decision cost measured at 163 ms mean, not verified ≤ 100 ms** — see §2. Implemented
    K=3x8 exactly as specified rather than shrinking it to hit the number; flagged the real
    fix (batch V's leaf calls) as follow-up work, out of scope for an additive round.
-5. **Copied two gitignored checkpoints into the worktree** (`mp/ev/runs/v_full_best/
-   ckpt_0001000.pt`, `mp/agent/runs/real1/latest.pt`) — a fresh git worktree has no
+5. **Copied two gitignored checkpoints into the worktree** (`ev/runs/v_full_best/
+   ckpt_0001000.pt`, `agent/runs/real1/latest.pt`) — a fresh git worktree has no
    gitignored files; without them neither `ev:full+Vleaf` nor `real1:det` had anything to
    load. Not part of the diff (gitignored), noted here for the lead's awareness.
 6. **This worktree's branch was `worktree-agent-a47b08572107492ed` off `main`, not
@@ -272,7 +272,7 @@ argmax-V-as-a-policy plausibly also bites the leaf, at K=3 candidates and only 8
 
 ## 6. Tests
 
-`python -m pytest mp/ev` — 128 passed (122 pre-existing baseline on this branch tip + 6 new:
+`python -m pytest ev` — 128 passed (122 pre-existing baseline on this branch tip + 6 new:
 3 in `test_hand.py`, 1 in `test_player.py`, 2 in `test_h2h.py`). Two of the six
 (`test_build_player_ev_vleaf_spec`, `test_vleaf_match_aware_player_acts_on_a_real_hand_state`
 in `test_h2h.py`) are `@pytest.mark.skipif`-guarded on the gitignored V checkpoint's

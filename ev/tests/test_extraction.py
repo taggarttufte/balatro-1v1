@@ -4,8 +4,8 @@ and the engine-fidelity fixes it rests on.
 Two halves:
 
 * **engine fidelity** — each money/extraction proc against the Lua reference in
-  ``mp/_reference/balatro_src/`` (cited file:line in every docstring).  These drive the real
-  ``BalatroGame``; ``mp/engine/tests`` + ``engine_parity`` stay green alongside them.
+  ``_reference/balatro_src/`` (cited file:line in every docstring).  These drive the real
+  ``BalatroGame``; ``engine/tests`` + ``engine_parity`` stay green alongside them.
 * **the EV layer** — ``HandAnalysis.extraction_ev`` per proc against hand-computed dollars,
   the keep/junk-value split, the tail-DP safety gate and the candidate lines it unlocks.
 """

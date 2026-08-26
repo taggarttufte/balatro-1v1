@@ -10,7 +10,7 @@ the pin that stops the two drifting apart again:
   * the fork's game keys (`j_*`, `c_*`, `v_*`, `bl_*`) are what the encoder reads
 
 Also asserts the fork guard: `balatro_sim`, `mcts` and `train` must resolve inside
-mp/engine and mp/agent, never to the repo-root BRL package.
+engine and agent, never to any other ``balatro_sim`` on sys.path.
 """
 from __future__ import annotations
 

@@ -13,9 +13,9 @@ No mod/server code is copied anywhere; everything is a port.
 
 | gate | result |
 |---|---|
-| `python -m pytest mp/engine/tests -q` | **1609 passed / 10 skipped / 3 xfailed / 0 failed** (floor after W3 was 1584; −62 retired V8-era MP tests, +89 new, the rest W2/W3 additions landing in the same tree) |
-| `python -m pytest mp/tests -q` | **544 passed / 2 xfailed / 0 failed** (W2's `test_the_order.py` was red mid-session while they edited `generate.py`; green at hand-off) |
-| `python -m mp.oracle.engine_parity --antes 1-8 --rerolls 5 --quiet` | **126/126 EXACT through ante 8** (vanilla byte-identical) |
+| `python -m pytest engine/tests -q` | **1609 passed / 10 skipped / 3 xfailed / 0 failed** (floor after W3 was 1584; −62 retired V8-era MP tests, +89 new, the rest W2/W3 additions landing in the same tree) |
+| `python -m pytest tests -q` | **544 passed / 2 xfailed / 0 failed** (W2's `test_the_order.py` was red mid-session while they edited `generate.py`; green at hand-off) |
+| `python -m oracle.engine_parity --antes 1-8 --rerolls 5 --quiet` | **126/126 EXACT through ante 8** (vanilla byte-identical) |
 
 ## 1. Architecture
 
@@ -153,10 +153,10 @@ verdict).  The engine mirrors that split:
 
 ```
 cd C:/Users/Taggart/projects/balatro-rl
-python -m pytest mp/engine/tests/engine_tests/test_mlb_match.py mp/engine/tests/engine_tests/test_env_mp.py -q   # 89, ~1.5 s
-python -m pytest mp/engine/tests -q                                  # full engine suite
-python -m pytest mp/tests -q
-python -m mp.oracle.engine_parity --antes 1-8 --rerolls 5 --quiet
+python -m pytest engine/tests/engine_tests/test_mlb_match.py engine/tests/engine_tests/test_env_mp.py -q   # 89, ~1.5 s
+python -m pytest engine/tests -q                                  # full engine suite
+python -m pytest tests -q
+python -m oracle.engine_parity --antes 1-8 --rerolls 5 --quiet
 ```
 Retired: `tests/engine_tests/test_mp_game.py`, `tests/engine_tests/test_mp_integration.py` (V8
 rules).  `mp_game.MultiplayerBalatro` raises `ImportError` with a pointer.

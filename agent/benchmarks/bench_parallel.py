@@ -3,7 +3,7 @@ bench_parallel.py — how much does the box actually give us?
 
 ONE command, run it when the machine is free:
 
-    python mp/agent/benchmarks/bench_parallel.py
+    python agent/benchmarks/bench_parallel.py
 
 It plays ONE generation of the real run's Stage B configuration (N=16 agents, 8 current +
 4 scripted anchors + 4 past-self seats, set encoder, 40 sims, W0's heuristic prior on,

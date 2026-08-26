@@ -2,7 +2,7 @@
 
 Inventory built by grepping ``pseudoseed(``, ``pseudorandom(``, ``pseudorandom_element(`` and
 ``pseudoshuffle(`` across ALL 32 Lua files inside Balatro.exe (1.0.1o-FULL), not just the
-subset extracted to ``mp/_reference/balatro_src/``.  Sites in ``functions/UI_definitions.lua``
+subset extracted to ``_reference/balatro_src/``.  Sites in ``functions/UI_definitions.lua``
 are NOT in that extracted subset (see NOTES_POOLS.md, "Reference extraction gap").
 
 How a key becomes a number (misc_functions.lua:297-319)

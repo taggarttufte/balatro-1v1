@@ -321,7 +321,7 @@ def test_vanilla_boss_target_is_the_engine_formula_and_rises_with_the_ante():
 
 
 def test_load_target_fn_reports_which_table_it_used_and_matches_the_engine():
-    """W4's `mp/eval/targets.py` is the campaign's table; the local fallback is the same
+    """W4's `eval/targets.py` is the campaign's table; the local fallback is the same
     formula. Whichever is in play, `target_fn(game)` is W4's shared signature and the
     number must be the vanilla Boss amount for that ante."""
     fn, source = load_target_fn("vanilla_boss", deck="b_red", stake=1, floor_frac=0)
@@ -651,8 +651,8 @@ def test_prune_never_deletes_a_checkpoint_the_population_is_still_playing(cli, t
 # ══════════════════════════════════════════════════════════════ W3 trajectory logging
 
 def _replay_pkg():
-    tournament_module()                      # puts mp/ on sys.path
-    return pytest.importorskip("replay.log", reason="W3's mp/replay has not landed")
+    tournament_module()                      # puts the repo root on sys.path
+    return pytest.importorskip("replay.log", reason="W3's replay has not landed")
 
 
 def test_tournament_generation_logs_one_trajectory_per_agent(tmp_path):

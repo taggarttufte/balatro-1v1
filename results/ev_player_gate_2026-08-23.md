@@ -1,6 +1,6 @@
 # EV player gate 2 — 2026-08-23
 
-`python mp/ev/gate_ev_player.py --procs 16`
+`python ev/gate_ev_player.py --procs 16`
 
 Seeds: 126 of 126 ground-truth seeds (offset 0); vanilla ruleset, Red deck, White stake; 16 processes; wall 46 s.
 

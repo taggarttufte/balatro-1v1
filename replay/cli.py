@@ -1,15 +1,15 @@
 """
-cli.py — command-line entry points for mp/replay.
+cli.py — command-line entry points for replay.
 
-    python -m mp.replay.cli show <file> <idx>                  # narrate one line
-    python -m mp.replay.cli verify <file>                       # replay every line, report mismatches
-    python -m mp.replay.cli filter <file> --tag X [--min-interest F]
-    python -m mp.replay.cli stats <file>                        # tag counts, skip rate, ante histogram
-    python -m mp.replay.cli tag <file>                          # tag_file() in place
-    python -m mp.replay.cli export-viz <file> <idx> <out.json> [--player 0|1]
+    python -m replay.cli show <file> <idx>                  # narrate one line
+    python -m replay.cli verify <file>                       # replay every line, report mismatches
+    python -m replay.cli filter <file> --tag X [--min-interest F]
+    python -m replay.cli stats <file>                        # tag counts, skip rate, ante histogram
+    python -m replay.cli tag <file>                          # tag_file() in place
+    python -m replay.cli export-viz <file> <idx> <out.json> [--player 0|1]
 
-Run from the repo root (``mp/`` need not be a package -- see REPLAY_NOTES.md "how tests /
-CLI resolve the engine"); ``python -m mp.replay.cli`` works because Python adds the repo
+Run from the repo root (it need not be a package -- see REPLAY_NOTES.md "how tests /
+CLI resolve the engine"); ``python -m replay.cli`` works because Python adds the repo
 root to sys.path for ``-m`` invocations and ``_bootstrap.py`` takes it from there.
 """
 from __future__ import annotations
@@ -138,7 +138,7 @@ def _cmd_export_viz(args) -> int:
 
 
 def build_parser() -> argparse.ArgumentParser:
-    p = argparse.ArgumentParser(prog="python -m mp.replay.cli")
+    p = argparse.ArgumentParser(prog="python -m replay.cli")
     sub = p.add_subparsers(dest="cmd", required=True)
 
     p_show = sub.add_parser("show", help="narrate one logged line")

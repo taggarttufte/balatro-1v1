@@ -1,13 +1,13 @@
 """
-Convert raw analyzer dumps (mp/oracle/blueprint_runner/_raw/<SEED>.{blueprint,thesoul}.json)
-into mp/oracle/ground_truth/<SEED>.json in the schema described by mp/oracle/schema.md.
+Convert raw analyzer dumps (oracle/blueprint_runner/_raw/<SEED>.{blueprint,thesoul}.json)
+into oracle/ground_truth/<SEED>.json in the schema described by oracle/schema.md.
 
 Primary source = Blueprint (TypeScript port).  TheSoul (WASM build of the C++ Immolate) is
 an independent implementation; every field it produces is compared and the verdict is stored
 in `source.cross_checks.thesoul_wasm`.  A hand-transcribed third-party datum (balatrohq's
 server-rendered analysis of ALEEB) is checked when the seed matches.
 
-    python mp/oracle/build_ground_truth.py [--raw DIR] [--out DIR] [--seeds A,B]
+    python oracle/build_ground_truth.py [--raw DIR] [--out DIR] [--seeds A,B]
 """
 from __future__ import annotations
 
@@ -177,7 +177,7 @@ def convert_blueprint(raw: dict) -> dict:
             "primary_detail": {
                 "repo": "https://github.com/miaklwalker/Blueprint",
                 "commit": raw.get("blueprint_commit"),
-                "driver": "mp/oracle/blueprint_runner/run_blueprint.ts",
+                "driver": "oracle/blueprint_runner/run_blueprint.ts",
                 "generated_at": raw.get("generated_at"),
             },
             "cross_checks": {},
@@ -247,7 +247,7 @@ def cross_check_thesoul(gt: dict, ts: dict) -> dict:
             cmp(f"ante{a_str}.pack[{pi}].ncards", len(gp["cards"]), len(tp["cards"]))
     return {
         "source": "TheSoul WASM (SpectralPack/TheSoul immolate.wasm, C++ Immolate by MathIsFun0)",
-        "driver": "mp/oracle/blueprint_runner/run_thesoul.js (fresh-run locks, fully unlocked profile)",
+        "driver": "oracle/blueprint_runner/run_thesoul.js (fresh-run locks, fully unlocked profile)",
         "fields_compared": n,
         "status": "agree" if not mism else "DISAGREE",
         "mismatches": mism[:50],
@@ -306,7 +306,7 @@ def faithful_variant(gt: dict, fr: dict) -> dict:
                 "contain a displayed card.  Published analyzers omit this.  Primary items that change "
                 "carry `analyzer_gap`; apply `overrides` (path -> value) to obtain the faithful sequence. "
                 "Boss/voucher/tags/pack kinds never differ.  Policy: packs opened at the visit, before any reroll.",
-        "driver": "mp/oracle/blueprint_runner/run_blueprint_faithful.ts",
+        "driver": "oracle/blueprint_runner/run_blueprint_faithful.ts",
         "generated_at": fr.get("generated_at"),
         "fields_differing": len(overrides),
         "reasons": reasons,

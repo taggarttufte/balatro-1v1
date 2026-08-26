@@ -1,15 +1,15 @@
 """
-mp/eval/common.py -- shared bootstrap, player-spec parsing, solo/1v1 drivers and statistics
+eval/common.py -- shared bootstrap, player-spec parsing, solo/1v1 drivers and statistics
 helpers for the Phase 3 W4 eval harness (``eval_harness.py``) and rho-decay harness
-(``rho_decay.py``).  See mp/eval/EVAL_NOTES.md.
+(``rho_decay.py``).  See eval/EVAL_NOTES.md.
 
-Imports the mp/engine fork (never a different ``balatro_sim``) through the SAME pattern as
-``mp/tests/test_mlb_match_gate.py``: put ``mp/`` and ``mp/scripts`` on ``sys.path``, then
-``oracle.engine_parity.import_engine()`` puts ``mp/engine`` first and refuses a shadowing
+Imports the engine fork (never a different ``balatro_sim``) through the SAME pattern as
+``tests/test_mlb_match_gate.py``: put the repo root and ``scripts`` on ``sys.path``, then
+``oracle.engine_parity.import_engine()`` puts ``engine`` first and refuses a shadowing
 package.  ``mlb_match_demo`` (``ScriptedPlayer`` / ``make_policy`` / ``greedy_hand`` /
 ``weakest_play`` / ``shelf_indices``) is IMPORTED, not copied, per the Phase 3 brief.
 
-``mp/engine/**`` and ``mp/rng/**`` are frozen and never edited by this package -- every
+``engine/**`` and ``rng/**`` are frozen and never edited by this package -- every
 driver here works entirely through the engine's existing public entry points
 (``BalatroGame.step`` / ``set_pvp_info`` / ``lose_life`` / ``legal_actions`` / ``clone``,
 ``MLBMatch.step`` / ``play_out``).
@@ -26,15 +26,15 @@ from typing import Callable, Optional, Sequence
 
 # ============================================================================ bootstrap
 
-_HERE = Path(__file__).resolve().parent            # mp/eval
-MP_ROOT = _HERE.parent                              # mp/
+_HERE = Path(__file__).resolve().parent            # eval
+MP_ROOT = _HERE.parent                              # repo root
 for _p in (str(MP_ROOT), str(MP_ROOT / "scripts")):
     if _p not in sys.path:
         sys.path.insert(0, _p)
 
 from oracle.engine_parity import import_engine, item_from_engine  # noqa: E402
 
-GM = import_engine()                                # the mp/engine fork (refuses the BRL package)
+GM = import_engine()                                # the engine fork (refuses the BRL package)
 
 import mlb_match_demo as D                          # noqa: E402  (ScriptedPlayer, make_policy, ...)
 from balatro_sim.game import BalatroGame, State      # noqa: E402
@@ -68,7 +68,7 @@ _BLIND_ORDER = {"Small": 0, "Big": 1, "Boss": 2}
 
 class Player:
     """Interface a trained/checkpointed player must satisfy so this harness can evaluate it
-    once W1 (``mp/agent``) lands a checkpoint loader.  NOT implemented here.
+    once W1 (``agent``) lands a checkpoint loader.  NOT implemented here.
 
         class MyCheckpointPlayer(Player):
             def act(self, game: "BalatroGame") -> dict:
@@ -135,13 +135,13 @@ def parse_scripted_spec(body: str, name: Optional[str] = None) -> "ScriptedPlaye
 def parse_player_spec(spec: str):
     """``"scripted:<fields>"`` -> ``(label, ScriptedPlayer)``.  ``"checkpoint:<path>"`` raises
     ``NotImplementedError`` documenting the interface W1's checkpoint loader must provide
-    (see ``Player`` above) -- ``mp/agent`` is out of scope for this package."""
+    (see ``Player`` above) -- ``agent`` is out of scope for this package."""
     kind, _, body = spec.partition(":")
     kind = kind.strip().lower()
     if kind == "scripted":
         return spec, parse_scripted_spec(body, name=spec)
     if kind == "checkpoint":
-        # Phase 4 close (lead): `mp/agent` now provides `make_player(checkpoint, ...)` which
+        # Phase 4 close (lead): `agent` now provides `make_player(checkpoint, ...)` which
         # returns an object with `.act(game) -> dict` + `.reset()` -- exactly `Player`.
         # Body is "<path>[,sims=N,device=cpu,...]"; the import is lazy (needs torch).
         import sys
@@ -316,7 +316,7 @@ def play_sp_mlb(seed: str, policy_fn, deck_key: str = "b_red", stake=1, lives: i
 def play_1v1(seed: str, policy_a, policy_b, deck_key: str = "b_red", stake=1,
              lives: int = MLB_STARTING_LIVES, max_steps: int = 200_000) -> dict:
     """Full MLB match through ``MLBMatch`` (canonical alternation, Nemesis-to-exhaustion is
-    already the engine's server rule -- see mp/engine/MLB_NOTES.md)."""
+    already the engine's server rule -- see engine/MLB_NOTES.md)."""
     m = MLBMatch(seed=seed, deck_key=deck_key, stake=stake, lives=lives)
     m.play_out([policy_a, policy_b], max_steps=max_steps)
     g0, g1 = m.games

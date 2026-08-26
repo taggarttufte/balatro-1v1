@@ -1,12 +1,12 @@
 # RNG core — port notes (Agent A, Phase 0)
 
-**Status 2026-08-21: bit-exact.** `mp/rng/core.py` + `mp/rng/luajit_random.py` reproduce
+**Status 2026-08-21: bit-exact.** `rng/core.py` + `rng/luajit_random.py` reproduce
 Balatro 1.0.1o's `pseudohash` / `pseudoseed` / `pseudorandom` / `pseudorandom_element` /
 `pseudoshuffle` **and** LuaJIT 2.1's `math.randomseed` / `math.random`, validated against the
 game's own Lua executing inside LuaJIT (`lupa`). Every compared value is a 64-bit IEEE
 pattern — no tolerances anywhere.
 
-Test run: `python -m pytest mp/tests/test_rng_core.py` → **17 passed** (live oracle);
+Test run: `python -m pytest tests/test_rng_core.py` → **17 passed** (live oracle);
 `MP_RNG_NO_ORACLE=1` (cached fixture only) → 14 passed, 3 skipped (the live-only tests).
 
 ---
@@ -30,7 +30,7 @@ Test run: `python -m pytest mp/tests/test_rng_core.py` → **17 passed** (live o
 | `LuaJITRandom()` default state | `lj_prng.h:lj_prng_seed_fixed` | = `seed(0.0)`; our `seed(0.0)` reproduces LuaJIT's four hard-coded constants exactly |
 
 Nothing from the Lua or LuaJIT sources is vendored; the test harness extracts the five
-Balatro functions from `mp/_reference/` at test time (gitignored) and falls back to the
+Balatro functions from `_reference/` at test time (gitignored) and falls back to the
 cached fixture when that directory or `lupa` is absent.
 
 ### Self-check that the LuaJIT port is the real algorithm
@@ -64,10 +64,10 @@ trailing space, case variants) × 3 successive draws, recording per draw: post-L
 | `string.format("%.13f", x)` string + `tonumber` back | 5,000 cached + 80,000 live | equal |
 | NaN ("toxic") per-key state, 3 draws | live only | equal |
 
-Cached fixture: `mp/tests/fixtures/rng_ground_truth.json` (2.3 MB, LuaJIT 2.1.1774896198 x64
+Cached fixture: `tests/fixtures/rng_ground_truth.json` (2.3 MB, LuaJIT 2.1.1774896198 x64
 Windows). `test_cache_matches_live_if_both_available` diffs live vs cache every run, so a
 lupa/LuaJIT upgrade or game-source change cannot drift silently.
-Regenerate: `python mp/tests/test_rng_core.py --regen`.
+Regenerate: `python tests/test_rng_core.py --regen`.
 
 ---
 
@@ -209,5 +209,5 @@ seed float in place of the key string, mirroring how the Lua passes `pseudoseed(
   TW223 + π/e seeding and match the game, so I expect no surprise, but it is unverified here.
 * Ties in `table.sort` (Lua's sort is unstable) can only matter if two pool entries share a
   `sort_id`/key, which the game's data does not do — Agent B should keep that invariant.
-* `mp/` has no `__init__.py`; tests put `mp/` on `sys.path` (`tests/conftest.py`) and the
+* `mp/` has no `__init__.py`; tests put the repo root on `sys.path` (`tests/conftest.py`) and the
   package uses relative imports, so `from rng.core import …` works from anywhere under `mp/`.

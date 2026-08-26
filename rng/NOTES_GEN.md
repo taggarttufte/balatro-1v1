@@ -9,7 +9,7 @@ truth has to contain to close each gap.
 * `generate.py` imports cleanly against the real `core.py` (Agent A) and `pools.py` (Agent B).
   No local stubs remain; both imports are still wrapped in `try/except` so the module imports
   even if a sibling breaks (you get a clear `ImportError` at first use instead).
-* `python -m mp.rng.generate EXAMPLE1 2` runs end-to-end: run start (boss, voucher, tags,
+* `python -m rng.generate EXAMPLE1 2` runs end-to-end: run start (boss, voucher, tags,
   shuffled deck, idol/mail/ancient/castle), 3 shops per ante with a reroll, both packs opened,
   ante transition.
 * `keys.py` (Agent B) arrived after my `Keys` class was written; the two agree on every
@@ -18,7 +18,7 @@ truth has to contain to close each gap.
 
 ### Oracle result (the important part)
 
-`mp/tests/test_generate_oracle.py` (promoted from my scratchpad harness; follows Agent A's
+`tests/test_generate_oracle.py` (promoted from my scratchpad harness; follows Agent A's
 conventions: `jit.off()`, no FFI punning, nothing but strings/ints/bools across the boundary, Lua
 sliced from `_reference` at test time with boundary-line assertions, clean skip without lupa)
 loads the *real* Lua generation functions verbatim into LuaJIT 2.1 and drives them and
@@ -30,7 +30,7 @@ loads the *real* Lua generation functions verbatim into LuaJIT 2.1 and drives th
 | Judgement, Soul x2, Wraith, Riff-raff x2, Top-up, Emperor x2, High Priestess, Sixth Sense, 8 Ball + Purple Seal (shared `8ba`), Rare/Uncommon Tag cards, Voucher Tag x2 (shelf exclusion), Aura x3, Erratic deck, idol/mail/anc/cas | 20 | **0 mismatches** |
 | `pairs(G.GAME.hands)` order (To Do List / Orbital) inside the game's own `lua51.dll` | 3 fresh VMs | identical, equals `HANDS_PAIRS_ORDER` |
 
-Suite: `python -m pytest mp/tests -q` -> **146 passed** (17 Agent A + 129 here) in ~2 s. A
+Suite: `python -m pytest tests -q` -> **146 passed** (17 Agent A + 129 here) in ~2 s. A
 deliberate perturbation of one key (`edi...`) produces mismatches, so the comparison is live.
 
 The only difference ever seen was the `p_buffoon_normal_1` vs `_2` art suffix of the forced
@@ -157,7 +157,7 @@ for the same seeds is the cheapest second oracle for everything in this table ex
 
 ## 7. Coordinator decisions (closed)
 
-1. Harness promoted to `mp/tests/test_generate_oracle.py` (done).
+1. Harness promoted to `tests/test_generate_oracle.py` (done).
 2. `pairs(G.GAME.hands)` order dumped from the game's own DLL and recorded as
    `generate.HANDS_PAIRS_ORDER` with a DLL-backed assertion test (done).
 3. MLB `banned_keys`: out of scope; `RunState.banned_keys` is the hook (TODO comment in

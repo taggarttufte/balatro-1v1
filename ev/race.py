@@ -50,7 +50,7 @@ from typing import Callable, Optional, Sequence, Union
 try:                                                    # the engine's blind target table
     from balatro_sim.constants import blind_base_chips as _blind_base_chips   # type: ignore
 except Exception:                                       # pragma: no cover — standalone import
-    import _bootstrap  # noqa: F401  (puts mp/engine on sys.path, fork-guarded)
+    import _bootstrap  # noqa: F401  (puts engine on sys.path, fork-guarded)
     from balatro_sim.constants import blind_base_chips as _blind_base_chips   # type: ignore
 
 __all__ = [

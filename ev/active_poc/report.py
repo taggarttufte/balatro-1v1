@@ -1,6 +1,6 @@
-"""report.py — turn the results JSON into mp/results/active_poc_<date>.md.
+"""report.py — turn the results JSON into results/active_poc_<date>.md.
 
-    python mp/ev/active_poc/report.py --json mp/results/active_poc_2026-08-25.json
+    python ev/active_poc/report.py --json results/active_poc_2026-08-25.json
 
 Kept separate from ``stage_final`` so the write-up can be regenerated from the numbers
 without retraining anything.  Every figure in the markdown comes from the JSON; the prose
@@ -38,7 +38,7 @@ def sign(x, n=4):
 
 def main(argv=None) -> int:
     ap = argparse.ArgumentParser(description=__doc__.split("\n\n")[0])
-    ap.add_argument("--json", default="mp/results/active_poc_2026-08-25.json")
+    ap.add_argument("--json", default="results/active_poc_2026-08-25.json")
     ap.add_argument("--out", default=None)
     args = ap.parse_args(argv)
     src = Path(args.json)

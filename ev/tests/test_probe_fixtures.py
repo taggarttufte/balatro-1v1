@@ -10,10 +10,10 @@ per-fixture ordering assertions read the SAME ``hand.rank_hand_actions`` ranking
 (``ev:fast``) advisor uses -- exactly what ``EVPlayer.explain`` and hence the advisor CLI's
 "Ranked actions" table print.
 
-Own only: this file, ``mp/ev/fixtures/{purple_seal_discard,faceless_discard,
+Own only: this file, ``ev/fixtures/{purple_seal_discard,faceless_discard,
 business_card_board,reserved_parking_hold,gold_seal_weak_play,tarot_target_cycle,
 _probe_common}.py``, the additive registration in ``fixtures/__init__.py``, and
-``mp/ev/PROBE_NOTES.md``.  ``hand.py`` / ``player.py`` / ``pairs.py`` are read-only here.
+``ev/PROBE_NOTES.md``.  ``hand.py`` / ``player.py`` / ``pairs.py`` are read-only here.
 """
 from __future__ import annotations
 
@@ -196,7 +196,7 @@ def test_safety_gate_is_off_at_a_nemesis_even_with_procs_present():
 
 @pytest.mark.parametrize("name", [n for n, _, _ in SCENARIOS] + ["tarot_target_cycle"])
 def test_advisor_renders_the_extraction_line_with_its_money_decomposition(name):
-    """``python mp/ev/cli.py advise fixture:<name>`` must show the extraction line among the
+    """``python ev/cli.py advise fixture:<name>`` must show the extraction line among the
     ranked actions with its dollar decomposition -- brief section 7's literal ask. This goes
     through ``advisor.advise`` (not ``hand.py`` directly), i.e. the actual CLI path: state
     source loading, ``EVPlayer.explain`` (rules tier, no checkpoint), the money-decomposition

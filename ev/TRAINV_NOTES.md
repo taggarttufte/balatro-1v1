@@ -10,15 +10,15 @@ appended below when the lead gives the go.
 
 | file | what |
 |---|---|
-| `mp/ev/race.py` | the lives-race calculator: `p_win`, `curve_from_history`, `Curve`, `race_table` |
-| `mp/ev/labels.py` | snapshots (`sample_states`), rollouts (`rollout`), labels (`label_state`, `label_both`), the pool job (`label_job`) |
-| `mp/ev/dataset.py` | label shards (`.npz`), `LabelDataset`, split-by-seed, batches, summary |
-| `mp/ev/workers.py` | resumable spawn pool over pure functions (`run_pool`), PAUSE file, `--bench` |
-| `mp/ev/train_v.py` | V trainer (`VTrainer`, `run`, CLI), metrics, checkpoints, PAUSE/resume, `.DONE` |
-| `mp/ev/scripts/gen_labels.py` | the label campaign driver (seeds → jobs → shards → `mp/results/labels_<name>.json`) |
-| `mp/ev/tests/test_{race,labels,workers,train_v}.py` | 44 tests, ~21 s |
+| `ev/race.py` | the lives-race calculator: `p_win`, `curve_from_history`, `Curve`, `race_table` |
+| `ev/labels.py` | snapshots (`sample_states`), rollouts (`rollout`), labels (`label_state`, `label_both`), the pool job (`label_job`) |
+| `ev/dataset.py` | label shards (`.npz`), `LabelDataset`, split-by-seed, batches, summary |
+| `ev/workers.py` | resumable spawn pool over pure functions (`run_pool`), PAUSE file, `--bench` |
+| `ev/train_v.py` | V trainer (`VTrainer`, `run`, CLI), metrics, checkpoints, PAUSE/resume, `.DONE` |
+| `ev/scripts/gen_labels.py` | the label campaign driver (seeds → jobs → shards → `results/labels_<name>.json`) |
+| `ev/tests/test_{race,labels,workers,train_v}.py` | 44 tests, ~21 s |
 
-Run dirs live under `mp/ev/runs/` (gitignored by `mp/.gitignore`'s `runs/` + `*.pt`).  Shards go
+Run dirs live under `ev/runs/` (gitignored by `.gitignore`'s `runs/` + `*.pt`).  Shards go
 under the run dir too (`<run>/shards/*.npz`), so nothing large is ever staged.
 
 ---
@@ -104,7 +104,7 @@ scripted fallback + encoder v2, 4 workers: **~500 labels/min**, 101 ms/rollout, 
 per rollout (scripted players die at ante 2–3), policy = 76 % of rollout time.  The EV-player
 numbers are Stage 2.
 
-**Phase-5 rev-1 `mp/agent/parallel/**` + `train/parallel.py`: kept, untouched.**  Label
+**Phase-5 rev-1 `agent/parallel/**` + `train/parallel.py`: kept, untouched.**  Label
 rollouts carry no net (the rollout policy is analytic), so its shared-memory leaf transport is
 irrelevant here; deleting it is a separate decision for the lead (its 28 + 17 tests still pass
 in their own suites).
@@ -113,7 +113,7 @@ in their own suites).
 
 ## 4. The trainer
 
-`python mp/ev/train_v.py --shards <dir|glob…> --run-dir mp/ev/runs/<name> [--max-steps N]
+`python ev/train_v.py --shards <dir|glob…> --run-dir ev/runs/<name> [--max-steps N]
 [--minutes M] [--device cuda]`; `--resume <run-dir|ckpt> [--max-steps N …]` (only explicitly
 given flags override the checkpoint's config).
 
@@ -178,7 +178,7 @@ Clairvoyance guard note (W2 gotcha): the guard never reads `game.determinized`/`
 (which do not survive a later plain `.clone()`) — `rollout()` calls `clone_determinized`
 itself and flags from that call, plus an assert on the fresh clones.
 
-### 5.2 The small label set (`mp/results/labels_s2_small.json`)
+### 5.2 The small label set (`results/labels_s2_small.json`)
 
 `gen_labels.py`, seeds `default+random:400`, 4 workers, 58-min cap → **1,152 labels** (48
 seeds x 12 snapshots x 2 perspectives, n_rollouts 8) at **20.1 labels/min** incl. 12.5 %
@@ -206,19 +206,19 @@ fingerprint) — and pinned by `test_train_v.py` for the continuation.
 
 ### 5.4 End-to-end match play
 
-`mp/ev/match_player.py::MatchAwareEVPlayer(net, encoder, ...)` — binds a mutable
+`ev/match_player.py::MatchAwareEVPlayer(net, encoder, ...)` — binds a mutable
 `opponent_view(match, player)` into the `value_fn(game)` closure and refreshes it from the
 live match before every `act` (all clones evaluated during one decision share that view).
 `.policy()` gives the `(match, p, acts)` form for `play_out`/`play_1v1`; single-state V
 latency 4.2 ms CPU (2 threads) / 13.7 ms CUDA (launch-bound).
-`mp/ev/scripts/tournament_v.py`: paired by seed, both seat orders per seed, pool-parallel,
-resumable, Wilson 95% CI → `mp/results/tournament_v_<name>.json`.  Both policies are wrapped
+`ev/scripts/tournament_v.py`: paired by seed, both seat orders per seed, pool-parallel,
+resumable, Wilson 95% CI → `results/tournament_v_<name>.json`.  Both policies are wrapped
 in the same `_Guard` — the first smoke hit a V-tier shop loop (W3's `_rank_with_value` has no
 anti-cycling): seed 1KV4W6YS burned 40k steps / 637k V calls / 35 min before the step cap;
 with the guard the same seed finishes in 5 s with ONE intervention (`guard_forced` is in
 every match record).
 
-### 5.5 Smoke tournament (6 seeds x 2 seats, `mp/results/tournament_v_v_s2_smoke.json`)
+### 5.5 Smoke tournament (6 seeds x 2 seats, `results/tournament_v_v_s2_smoke.json`)
 
 `EVPlayer(value_fn=V @ step 4532)` vs `EVPlayer(value_fn=None)`: **V won 0/12** (Wilson 95%
 [0%, 24%]), 0 V errors, ~600–1,000 V calls per match.  NO CLAIM intended or possible: a
@@ -231,11 +231,11 @@ The full-scale question is (iii) in §6.
 ```bash
 # (i) ≥ 50k labels, 16 workers, ~9 h (measured 22.6 labels/min at 4 workers -> ~90/min at 16;
 #     2,126 seeds x 24 labels = ~51k; resumable: same command; pause: touch <run-dir>/PAUSE)
-python mp/ev/scripts/gen_labels.py --run-dir mp/ev/runs/labels_full     --seeds default+random:2000 --workers 16 --policy ev --budget fast --shop-tier rules     --encoder v2 --n-states 12 --n-rollouts 8 --flush-jobs 32 --symmetry-jobs 24 --name full
+python ev/scripts/gen_labels.py --run-dir ev/runs/labels_full     --seeds default+random:2000 --workers 16 --policy ev --budget fast --shop-tier rules     --encoder v2 --n-states 12 --n-rollouts 8 --flush-jobs 32 --symmetry-jobs 24 --name full
 
 # (ii) V on the full set (~50k rows, ~100 epochs; ~25 min GPU after the one-off warmup)
-python mp/ev/train_v.py --shards mp/ev/runs/labels_full/shards --run-dir mp/ev/runs/v_full     --model set_value_net --max-steps 20000 --batch-size 256 --lr 3e-4 --warmup-steps 500     --eval-every 500 --checkpoint-every 2000 --device cuda --holdout-frac 0.1 --torch-threads 8
+python ev/train_v.py --shards ev/runs/labels_full/shards --run-dir ev/runs/v_full     --model set_value_net --max-steps 20000 --batch-size 256 --lr 3e-4 --warmup-steps 500     --eval-every 500 --checkpoint-every 2000 --device cuda --holdout-frac 0.1 --torch-threads 8
 
 # (iii) the 30-seed paired tournament (60 matches; ~10 min at 16 workers, ~35 min at 4)
-python mp/ev/scripts/tournament_v.py --checkpoint mp/ev/runs/v_full/latest.pt     --seeds default:30 --workers 16 --threads 1 --name v_full
+python ev/scripts/tournament_v.py --checkpoint ev/runs/v_full/latest.pt     --seeds default:30 --workers 16 --threads 1 --name v_full
 ```

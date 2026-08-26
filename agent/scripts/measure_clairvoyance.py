@@ -5,13 +5,13 @@ future.
 Phase 4's MCTS (`mcts/search.py` + `mcts/player.py::MCTSPlayer`) is CLAIRVOYANT: every
 simulation clones the true game (`BalatroGame.clone()`), which copies the keyed RNG and
 draw-pile order verbatim, so every simulated future saw the actual future draws, reroll
-results, pack contents and probability rolls. `mp/engine/balatro_sim/game.py`'s
+results, pack contents and probability rolls. `engine/balatro_sim/game.py`'s
 `clone_determinized(seed)` (DETERMINIZE_NOTES.md) fixes the primitive; `mcts/determinize.py`
 wires it into a `DeterminizedMCTSPlayer` without touching search.py/player.py.
 
 This script measures the gap on `real1/latest.pt` (106-gen MCTS checkpoint, the baseline
 Phase 5 replaces) with the exact search hyperparameters it was TRAINED with
-(`mp/agent/runs/real1.sh` Stage B: sims=40, encoder=set, heuristic_prior=0.4,
+(`agent/runs/real1.sh` Stage B: sims=40, encoder=set, heuristic_prior=0.4,
 heuristic_tau=0.35, max_hand_candidates=32, strategy=gumbel):
 
   (a) OUTCOME table: the clairvoyant player and the determinized player each play an
@@ -31,16 +31,16 @@ outcome games + the disagreement walk, so a worker's checkpoint load is amortise
 worker pins `torch.set_num_threads(1)` (eval_checkpoint.py's finding: an unpinned
 single-leaf net actively hurts on a box running many workers).
 
-    python mp/agent/scripts/measure_clairvoyance.py \\
-        --checkpoint mp/agent/runs/real1/latest.pt \\
+    python agent/scripts/measure_clairvoyance.py \\
+        --checkpoint agent/runs/real1/latest.pt \\
         --n-seeds 30 --sims 40 --processes 16 \\
-        --out-json mp/results/clairvoyance_2026-08-23.json \\
-        --out-md   mp/results/clairvoyance_2026-08-23.md
+        --out-json results/clairvoyance_2026-08-23.json \\
+        --out-md   results/clairvoyance_2026-08-23.md
 
 Smoke test (fast, proves the pipeline without the full job):
 
-    python mp/agent/scripts/measure_clairvoyance.py --n-seeds 2 --sims 8 --processes 2 \\
-        --out-json mp/results/clairvoyance_smoke.json --out-md mp/results/clairvoyance_smoke.md
+    python agent/scripts/measure_clairvoyance.py --n-seeds 2 --sims 8 --processes 2 \\
+        --out-json results/clairvoyance_smoke.json --out-md results/clairvoyance_smoke.md
 """
 from __future__ import annotations
 
@@ -54,13 +54,13 @@ import time
 from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
-import _bootstrap  # noqa: E402,F401  (sys.path + fork guard: mp/agent, mp/engine)
+import _bootstrap  # noqa: E402,F401  (sys.path + fork guard: agent, engine)
 
 _MP_ROOT = Path(__file__).resolve().parents[2]
 if str(_MP_ROOT / "eval") not in sys.path:
     sys.path.insert(0, str(_MP_ROOT / "eval"))
 
-import common as C  # noqa: E402  (mp/eval/common.py — read-only: DEFAULT_SEEDS, bootstrap_ci)
+import common as C  # noqa: E402  (eval/common.py — read-only: DEFAULT_SEEDS, bootstrap_ci)
 
 REAL1_FLAGS = dict(
     encoder="set", strategy="gumbel", heuristic_prior=0.4, heuristic_tau=0.35,

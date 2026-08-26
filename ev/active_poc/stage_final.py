@@ -1,6 +1,6 @@
 """stage_final.py — retrain one V per arm (several paired seeds), evaluate, write the results.
 
-    python mp/ev/active_poc/stage_final.py --seeds 5 --arm-only-seeds 3
+    python ev/active_poc/stage_final.py --seeds 5 --arm-only-seeds 3
 
 Each arm trains on ``base-12k + that arm's rows`` with the recipe and step count fixed by
 ``stage_base`` (``S*``), identical across arms; only the added rows differ.
@@ -47,13 +47,13 @@ METRICS = ("bce", "brier", "auc", "ece")
 
 def build_parser() -> argparse.ArgumentParser:
     ap = argparse.ArgumentParser(description=__doc__.split("\n\n")[0])
-    ap.add_argument("--out", default="mp/ev/runs/active_poc")
-    ap.add_argument("--arm-shards", default="mp/ev/runs/active_poc/arms/shards")
+    ap.add_argument("--out", default="ev/runs/active_poc")
+    ap.add_argument("--arm-shards", default="ev/runs/active_poc/arms/shards")
     ap.add_argument("--seeds", type=int, default=5, help="paired training seeds per arm")
     ap.add_argument("--seed0", type=int, default=201)
     ap.add_argument("--arm-only-seeds", type=int, default=3)
-    ap.add_argument("--pool-shards", default="mp/ev/runs/active_poc/pool/shards")
-    ap.add_argument("--results", default="mp/results/active_poc_2026-08-25")
+    ap.add_argument("--pool-shards", default="ev/runs/active_poc/pool/shards")
+    ap.add_argument("--results", default="results/active_poc_2026-08-25")
     return ap
 
 

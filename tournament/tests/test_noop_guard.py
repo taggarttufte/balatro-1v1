@@ -8,7 +8,7 @@ Found while running the first MCTS-vs-MCTS tournaments: `game.py`'s SHOP branch 
 legal action that leaves the game bit-identical, i.e. an infinite loop for any agent that
 likes it.  One MCTS agent burned the whole 20 000-step `max_steps_per_drive` budget in a
 single shop; under a different noise seed the same pathology cost 55 s of a 60 s generation
-and 14 338 training samples.  `mp/engine` is frozen — see `mp/agent/TRAIN_NOTES.md`
+and 14 338 training samples.  `engine` is frozen — see `agent/TRAIN_NOTES.md`
 "needs engine change" — so the driver breaks the loop instead.
 
 The guard must (a) rescue a wedged agent, (b) be invisible to every agent that makes

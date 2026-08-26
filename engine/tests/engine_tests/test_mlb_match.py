@@ -1,6 +1,6 @@
 """Phase 2 W1 — Major League Balatro rules (brief §1.1-1.5) and the two-player lockstep
 coordinator (``balatro_sim.mlb_match.MLBMatch``).  Every rule is pinned to the mod /
-server source in ``mp/engine/MLB_NOTES.md``."""
+server source in ``engine/MLB_NOTES.md``."""
 from __future__ import annotations
 
 import random

@@ -1,6 +1,6 @@
 # STATS_NOTES — W4 decision-statistics module (Phase 5 rev 2)
 
-Owner: W4. Implements `mp/docs/PHASE5_BRIEF_2026-08.md` row W4 / interface §2 / gate 3.
+Owner: W4. Implements `docs/PHASE5_BRIEF_2026-08.md` row W4 / interface §2 / gate 3.
 Files: `decide.py` (the table), `hit.py` (hit valuation + P(hit)), `economy.py` (interest /
 true cost), `urgency.py`, `sweep.py` (126-seed CLI), `bench_decide.py` (gate-3 timing
 benchmark), `tests/test_*.py`.
@@ -67,7 +67,7 @@ tables"):
 
 ## 2. P(hit) — exact from the generator's pools (`hit.py`)
 
-`mp/rng/generate.get_current_pool(state, _type, _rarity, ante)` is the SAME function the
+`rng/generate.get_current_pool(state, _type, _rarity, ante)` is the SAME function the
 game's shop/pack generation calls — importing it via `balatro_sim.game_keys.gen` (the module
 instance the engine is already wired against, never a second copy) means "the generator's own
 API" is used, not a reimplementation. Its only RNG read is the joker rarity roll, which an
@@ -133,14 +133,14 @@ gap 0.017, well inside sampling noise).
   reused directly, because it scores `game.hand`, and in `SHOP`/`BOOSTER_OPEN` that list
   still holds the PREVIOUS blind's cards — game.py:1431-1435 says so explicitly).
 - `life_pressure = clip01((4 − lives) / 4)` under MLB (0 otherwise) — losing ANY blind costs a
-  life under MLB (not Nemesis-only; `mp/eval/common.py::play_sp_mlb`'s own comment says so),
+  life under MLB (not Nemesis-only; `eval/common.py::play_sp_mlb`'s own comment says so),
   so life pressure is not gated on the next blind being a Nemesis.
 - `nemesis_bonus = 1.0` iff the next blind is a Nemesis (small top-up, since the Nemesis
   target itself is already folded into the horizon via `next_blind_chip_target`'s proxy —
   see below).
 - **MLB Nemesis target proxy**: the real target is the opponent's live score, unknowable from
   the shop. `next_blind_chip_target` falls back to the vanilla boss-blind chip formula at that
-  ante — the same "external, calibration-free" idea `mp/eval/common.py::
+  ante — the same "external, calibration-free" idea `eval/common.py::
   external_vanilla_big_blind_target` uses. Documented approximation, not a claim of accuracy.
 - **Known gap**: `next_blind_info`'s stale-blind_idx correction assumes `BOOSTER_OPEN` was
   entered from `SHOP`. A tag-triggered pack opened at `BLIND_SELECT` (Charm/Meteor/Ethereal/
@@ -230,13 +230,13 @@ game state next.)
 coincidence — Buffoon (Joker) packs are the only ones with a non-trivial threshold and they
 show real sampling variation matching the analytic number within a few points.
 
-Reproduce: `python -m pytest mp/stats/tests/test_phit_validation.py -q` (small N=150/state,
+Reproduce: `python -m pytest stats/tests/test_phit_validation.py -q` (small N=150/state,
 CI-fast); the 500-trial numbers above came from ad hoc scripts (not committed — see §8) run
 single-process per the lead's 2026-08-23 resource note.
 
 ### 6.2 Gate-3 timing benchmark
 
-`python mp/stats/bench_decide.py --n-states 320` — 320 REAL `SHOP`/`BOOSTER_OPEN` states from
+`python stats/bench_decide.py --n-states 320` — 320 REAL `SHOP`/`BOOSTER_OPEN` states from
 scripted-player runs across all 126 ground-truth seeds (8 states/seed until the quota fills):
 
 ```
@@ -249,12 +249,12 @@ without needing the full 320-state / 126-seed drive.)
 
 ### 6.3 Test suite
 
-`python -m pytest mp/stats/tests -q` → **50 passed in 0.88s** (well under the 60s gate).
+`python -m pytest stats/tests -q` → **50 passed in 0.88s** (well under the 60s gate).
 
 ## 7. Sweep headline (SMOKE SCALE ONLY — see §9 for the real command)
 
 Per the lead's 2026-08-23 resource note, the box was in interactive use, so only a
-**6-seed, 4-process smoke test** was run (`mp/results/stats_sweep_2026-08-23_smoke.{json,md}`)
+**6-seed, 4-process smoke test** was run (`results/stats_sweep_2026-08-23_smoke.{json,md}`)
 to validate `sweep.py` itself, not to produce the real headline numbers. 6 seeds × up to 3
 antes-worth of visits reached (the scripted player is slow to clear later antes) = 38 visits,
 0 errors, 0.7s wall with 4 workers.
@@ -303,7 +303,7 @@ request if the lead wants to re-run at a larger N.
 ## 9. The real 126-seed sweep — exact command for the lead
 
 ```
-python mp/stats/sweep.py --out mp/results/stats_sweep_2026-08-23.json --processes 16
+python stats/sweep.py --out results/stats_sweep_2026-08-23.json --processes 16
 ```
 
 (`--processes` up to ~28 is reasonable on this 32-core box when idle; the smoke test above
