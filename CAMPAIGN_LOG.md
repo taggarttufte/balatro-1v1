@@ -1837,3 +1837,22 @@ new root: **3,758 tests / 0 failures, engine_parity AND parity_check 126/126 thr
 ground-truth `driver` provenance fields preserved; one false-passing eval test surfaced by the rename
 (EVAL_NOTES §7b). The predecessor repo stays intact and archived as the historical artifact —
 the July-2026 audit that links the two projects is copied into docs/ with provenance.
+
+### 2026-08-26 (night) — OVERNIGHT LAUNCH: all four items (Tagg approved the full menu)
+
+1. **pairs_v3_hires campaign RUNNING** (14 workers, 640 min, resumable): n_worlds **24** (3x cost,
+   ~sqrt(3) CI shrink -> attacks the 4.8% resolution floor), close_call-heavy mix .70/.20/.10,
+   per-kind hand 5 / nemesis 4 / shop 1, aux on, probe-jobs 20 x reps 3. Run dir ev/runs/pairs_v3_hires.
+2. **Ranking-loss sweep RUNNING** (ev/scripts/sweep_rank.py, NEW driver, smoke-tested): 13 configs
+   (lam_rank .3/1/3/10, tau .02/.05/.10, cap 2/4/8, noaux, auxw.3, newonly, lam3+tau.02, pairbatch256),
+   3,000 steps each on the 42k-pair corpus, ckpt by (pair_acc, brier), scored by 30-seed tournament vs
+   rules at 8 workers. ~8 min/config train (measured) -> done by ~morning. Out: results/sweep_rank_2026-08-26.{json,md}.
+3. **transfer_spread RUNNING with ev:fast** — `ev:` player spec ADDED to eval/common.parse_player_spec
+   (additive; eval suite 125 green). rho-with-EV DEFERRED: rho_decay hard-codes its scripted BASE_SPEC
+   (perturbation design), needs a real harness extension — queued.
+4. **W-PVP build agent RUNNING** (opus): mod-source check -> flag-gated trailer-compelled turn protocol
+   (canonical default byte-identical + parity must hold) -> level-1 react-to-revealed-score Nemesis
+   objective + leader PASS -> extraction gate amended to decided-race-only at Nemesis -> protocol
+   ON-vs-OFF h2h + level-1-vs-level-0 h2h at <=6 procs. No commits; lead verifies AM.
+Morning runbook: verify W-PVP + commit; retrain on pairs_v2+v3_hires with sweep-best config; tournament
++ h2h battery; compile.

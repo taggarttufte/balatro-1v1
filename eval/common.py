@@ -156,7 +156,25 @@ def parse_player_spec(spec: str):
             k, _, v = o.partition("=")
             kw[k.strip()] = int(v) if v.strip().lstrip("-").isdigit() else v.strip()
         return spec, make_player(checkpoint=(path or None), **kw)
-    raise ValueError(f"unknown player spec kind {kind!r} in {spec!r} (want 'scripted:' or 'checkpoint:')")
+    if kind == "ev":
+        # "ev:fast" / "ev:full" [,epsilon=0.02,seed=0] -- the analytic EV player (ev/player.py).
+        # Same lazy sys.path pattern as `checkpoint:` above; EVPlayer already satisfies the
+        # Player protocol (.act(game) -> dict, .reset()).
+        import sys
+        from pathlib import Path
+        ev_root = str(Path(__file__).resolve().parents[1] / "ev")
+        if ev_root not in sys.path:
+            sys.path.insert(0, ev_root)
+        from player import EVPlayer                       # noqa: E402
+        budget, *opts = [x.strip() for x in body.split(",")]
+        kw = {"budget": budget or "fast", "epsilon": 0.0, "seed": 0}
+        for o in opts:
+            k, _, v = o.partition("=")
+            k = k.strip()
+            v = v.strip()
+            kw[k] = float(v) if k == "epsilon" else (int(v) if v.lstrip("-").isdigit() else v)
+        return spec, EVPlayer(**kw)
+    raise ValueError(f"unknown player spec kind {kind!r} in {spec!r} (want 'scripted:', 'checkpoint:' or 'ev:')")
 
 
 def make_player_policy(spec: str):
