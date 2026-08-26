@@ -1,8 +1,15 @@
-# mp/ — Balatro Multiplayer (MLB): bit-exact engine, oracle, and an analytic EV player
+# balatro-1v1 — Balatro Multiplayer (MLB): bit-exact engine, oracle, and an analytic EV player
 
-**This is the active research program in this repository (2026-08 →).** The top-level
-`README.md` describes the 2025 – 2026-04 PPO line (BRL), which a July-2026 self-audit found
-confounded; that story is kept intact because the audit is part of the record.
+**This is the active research program (2026-08 →).** It began as a subdirectory of its
+predecessor and was split out into its own repository once it outgrew that arrangement; the
+history here is the subproject's own commits, unmodified.
+
+The predecessor — the 2025 – 2026-04 PPO line (BRL) — lives intact and archived at
+**[github.com/taggarttufte/balatro-rl](https://github.com/taggarttufte/balatro-rl)**. A
+July-2026 self-audit run from *this* project found that line confounded; the old repo is kept
+as-is rather than corrected, because the audit that overturned it is part of the record. That
+audit is the link between the two, and a verbatim copy of it is
+[`docs/SIM_AUDIT_2026-07-29.md`](docs/SIM_AUDIT_2026-07-29.md).
 
 Start here, then read [`CAMPAIGN_LOG.md`](CAMPAIGN_LOG.md) — a dated, agent-by-agent log of
 every phase, every gate, and every number, including the ones that went the wrong way.
@@ -14,7 +21,7 @@ every phase, every gate, and every number, including the ones that went the wron
 **A self-audit reopened a concluded project.** The BRL line was declared finished in April
 2026 at a 2.35% solo win rate, with the stated conclusion that shaped-reward PPO had hit a
 structural search ceiling. A mechanics audit against the game's wiki in July 2026
-([`results/SIM_AUDIT_2026-07-29.md`](../results/SIM_AUDIT_2026-07-29.md)) found the simulator
+([`docs/SIM_AUDIT_2026-07-29.md`](docs/SIM_AUDIT_2026-07-29.md)) found the simulator
 wrong in ways that change what optimal play *is* — no money for beating a blind, the deck
 reset to vanilla every blind so deck-building was impossible, joker order not affecting
 scoring so every logged score was inflated, and the "exploration failure" the retrospective
@@ -111,15 +118,42 @@ running.
 
 | | |
 |---|---|
-| Strongest player in the repo | the **analytic EV player** (`mp/ev/`) — no network, no search |
+| Strongest player in the repo | the **analytic EV player** (`ev/`) — no network, no search |
 | Baseline | `real1` MCTS, 106 generations — **must be cited determinized**; clairvoyant numbers are not evidence |
 | Learned V | 5M params, trained on 51k labels; **not yet a policy** (argmax-V 2/60 vs rules) |
 | V-v2 round | **complete 2026-08-26**: 42,468 counterfactual pairs (realized VRF 2.08×); argmax-V vs rules **2/60 → 12/60**, with a same-data no-pairs control staying at 2/60 — the gain is the ranking loss, not the data. V at the expectimax leaf remains a null (24/60) |
-| Full-run wins | the 126-seed gate's `won` metric: **1.6%** [0.0, 4.0], rising to **3.2%** with the extraction layer. (The top-level README's reference points: skilled human ≈ 70%, random < 0.01%) |
+| Full-run wins | the 126-seed gate's `won` metric: **1.6%** [0.0, 4.0], rising to **3.2%** with the extraction layer. (The predecessor repo's README reference points: skilled human ≈ 70%, random < 0.01%) |
 
-Nothing in this directory claims a strong Balatro player. The strongest claim here is about
+Nothing here claims a strong Balatro player. The strongest claim here is about
 **measurement**: the engine is bit-exact against the real game's RNG on 126 seeds through ante 8,
 and every player is evaluated without access to the future.
+
+---
+
+## Running the suites and gates
+
+All commands run **from the repository root**. Each package carries its own `pytest.ini`
+(`pythonpath` + `testpaths`), so targeting a path under it makes that package the rootdir and
+loads its fork guard — no `pip install`, no `PYTHONPATH`, no editable install required.
+
+```bash
+python -m pytest engine/tests -q     # 1,651 passed, 10 skipped, 3 xfailed   (~24 s)
+python -m pytest tests -q            # 1,073 passed, 2 xfailed               (~36 s)
+python -m pytest ev -q               #   307 passed                          (~85 s)
+python -m pytest agent/tests -q      #   396 passed                          (~119 s)
+python -m pytest eval -q             #   125 passed                          (~61 s)
+python -m pytest tournament -q       #    74 passed                          (~62 s)
+python -m pytest replay -q           #    82 passed                          (~2 s)
+python -m pytest stats -q            #    50 passed                          (~1 s)
+
+# the parity gate — the headline claim
+python -m oracle.engine_parity --antes 1-8 --rerolls 5 --quiet   # 126/126 exact through ante 8
+python -m oracle.parity_check  --antes 1-8 --variant faithful    # 126/126 exact through ante 8
+```
+
+The engine tests need no game install; the RNG oracle tests fall back to a cached fixture
+(`MP_RNG_NO_ORACLE=1` forces it). `_reference/` and `oracle/blueprint_runner/vendor/` are
+gitignored, so a clean clone skips the tests that need them, with a reason.
 
 ---
 
@@ -127,39 +161,39 @@ and every player is evaluated without access to the future.
 
 Every headline claim, the file that holds its evidence, and the command that regenerates it.
 Numbers are quoted exactly as committed. Rows marked 🔒 need a checkpoint that is **gitignored**
-(`mp/agent/runs/real1/latest.pt`, `mp/ev/runs/v_full_best/ckpt_0001000.pt`) — the command is
+(`agent/runs/real1/latest.pt`, `ev/runs/v_full_best/ckpt_0001000.pt`) — the command is
 correct but reproducing the number from a clean clone means retraining first.
 
 | Claim | Evidence | Repro |
 |---|---|---|
-| RNG core is bit-exact vs LuaJIT: 68,640 chain values, 0 mismatches; `seed(0.0)` reproduces LuaJIT's fixed constants | [`rng/NOTES_CORE.md`](rng/NOTES_CORE.md) | `python -m pytest mp/tests/test_rng_core.py` (17 tests; needs `lupa` + the game install. `MP_RNG_NO_ORACLE=1` → 14 pass / 3 skip off the cached 2.3 MB fixture) |
-| Generation layer matches the real Lua: 0 mismatches over 30 seeds × 7 scenarios × 3 antes | [`rng/NOTES_GEN.md`](rng/NOTES_GEN.md), [`rng/GENERATION_SPEC.md`](rng/GENERATION_SPEC.md) | `python -m pytest mp/tests/test_generate_oracle.py` |
-| Corpus is exact vs two independent analyzers: 126 seeds, antes 1–8, ~2,970 fields/seed | [`oracle/SOURCES.md`](oracle/SOURCES.md), [`oracle/ground_truth/`](oracle/ground_truth/) | `python -m mp.oracle.parity_check --antes 1-8 --variant faithful` → **126/126** |
+| RNG core is bit-exact vs LuaJIT: 68,640 chain values, 0 mismatches; `seed(0.0)` reproduces LuaJIT's fixed constants | [`rng/NOTES_CORE.md`](rng/NOTES_CORE.md) | `python -m pytest tests/test_rng_core.py` (17 tests; needs `lupa` + the game install. `MP_RNG_NO_ORACLE=1` → 14 pass / 3 skip off the cached 2.3 MB fixture) |
+| Generation layer matches the real Lua: 0 mismatches over 30 seeds × 7 scenarios × 3 antes | [`rng/NOTES_GEN.md`](rng/NOTES_GEN.md), [`rng/GENERATION_SPEC.md`](rng/GENERATION_SPEC.md) | `python -m pytest tests/test_generate_oracle.py` |
+| Corpus is exact vs two independent analyzers: 126 seeds, antes 1–8, ~2,970 fields/seed | [`oracle/SOURCES.md`](oracle/SOURCES.md), [`oracle/ground_truth/`](oracle/ground_truth/) | `python -m oracle.parity_check --antes 1-8 --variant faithful` → **126/126** |
 | Every published analyzer omits the `used_jokers` rule: 953 fields differ corpus-wide (222 same-shop dups, 319 pack/shelf collisions, 412 downstream shifts); analyzer-as-published scores 16/126 through ante 3 | [`CAMPAIGN_LOG.md`](CAMPAIGN_LOG.md) § Phase 0 Agent D | same command, `--variant` toggles the rule |
 | The rule is confirmed against the **running game** (seed `7I4M53DL`: Arcana 3rd card = The Lovers; buy+sell Hierophant → it returns as the 3rd card) | [`CAMPAIGN_LOG.md`](CAMPAIGN_LOG.md) § 2026-08-21 Tagg live checks | manual, 2 minutes in-game — the procedure is in that entry |
-| The engine reproduces 126 real seeds exactly through ante 8 (from 0/126 before delegation) | [`engine/DELEGATE_NOTES.md`](engine/DELEGATE_NOTES.md), [`engine/SWEEP_NOTES.md`](engine/SWEEP_NOTES.md) | `python -m mp.oracle.engine_parity --antes 1-8 --rerolls 5 --quiet` → **126/126** |
-| Engine suite **1,651** tests green (847 at Phase-1 kickoff); rng + generation oracle + invariants + reachability suite **1,073** green | [`CAMPAIGN_LOG.md`](CAMPAIGN_LOG.md) § 2026-08-25 landings | `python -m pytest mp/engine/tests -q` · `python -m pytest mp/tests -q` |
-| Same-seed two-player queue alignment: 0 unexplained RNG-position differences over 30 matches; SHARED + VOUCHER + UNKNOWN keys all 0 | [`tests/GATE_NOTES.md`](tests/GATE_NOTES.md) | `python -m pytest mp/tests/test_mlb_match_gate.py -q` (507 tests, ~27 s) |
-| ρ(h) is **flat, not decaying** (design doc guessed 0.3–0.5 by h=4–8): buy_slot0 0.876 → 0.870, skip_small 0.805 → 0.772, reroll_once 0.606 → 0.728 from h=1 to h=8; paired-seed VRF 2.5–10× at every horizon | [`results/rho_decay_*.json`](results/), [`eval/EVAL_NOTES.md`](eval/EVAL_NOTES.md) | `python mp/eval/rho_decay.py --all --n-extra-seeds 24` (150 seeds × 3 perturbations, n_boot 2000) |
-| The NN was never the MCTS wall: batching cuts the forward pass 26× (1.25 → 0.048 ms/leaf) but only 1.4× end-to-end (531 → 761 sims/s, K=32 CUDA); ~59% of time is `clone()` + `step()` | [`agent/BATCH_NOTES.md`](agent/BATCH_NOTES.md) | `python mp/agent/benchmarks/bench_batched.py` |
-| Cold MCTS cannot clear ante 1: 4,350 episodes → 46 clears (1.0%), value loss 0.0008; raising to 200 sims cleared 0/53 | [`CAMPAIGN_LOG.md`](CAMPAIGN_LOG.md) § 2026-08-22 19:30, [`agent/PRIOR_NOTES.md`](agent/PRIOR_NOTES.md) § 0 | the baseline arm of the row below: `python mp/agent/scripts/train_cold.py --minutes 10 --device cpu --ruleset vanilla --encoder set --sims 40 --heuristic-prior 0 --max-hand-candidates 0 --run-dir mp/agent/runs --run-name w0_cold` |
-| A heuristic hand prior fixes the constant-target failure: ante-1 clear 0.0% → **15.7%** (λ 0.8, τ 0.35, K 32), value loss 0.0023 → 0.0251; the **top-K mask alone does nothing** (0.4%); more sims still does not help (80 sims → 6.9%) | [`agent/PRIOR_NOTES.md`](agent/PRIOR_NOTES.md) § 4 (full 9-arm table), § 5 (the settings) | one arm: `python mp/agent/scripts/train_cold.py --minutes 10 --device cpu --ruleset vanilla --encoder set --sims 40 --heuristic-prior 0.8 --heuristic-tau 0.35 --max-hand-candidates 32 --run-dir mp/agent/runs --run-name w0_armF` (baseline = same command with `--heuristic-prior 0 --max-hand-candidates 0`), then `python mp/agent/scripts/w0_smoke_report.py mp/agent/runs w0_` |
-| 🔒 **Clairvoyance:** the same 106-generation checkpoint drops from 63.3% → 33.3% ante-1 clear and 2.60 → 1.83 mean final ante when denied the future; agreement with its own clairvoyant trajectory is 10.5% on `play`, **0.7% on `discard`**, 82.0% on `skip_blind`, 77.6% on `leave_shop` | [`results/clairvoyance_2026-08-23.md`](results/clairvoyance_2026-08-23.md) | `python mp/agent/scripts/measure_clairvoyance.py --checkpoint mp/agent/runs/real1/latest.pt --n-seeds 30 --sims 40 --processes 10 --determinize-mode per_sim --determinize-seed-base 0 --max-steps 20000 --n-boot 2000 --out-json mp/results/clairvoyance_2026-08-23.json --out-md mp/results/clairvoyance_2026-08-23.md` (the committed run used `--processes 30`; 10 is the safe ceiling for torch-loading pools on a 47 GB box) |
-| **Analytic EV player, 126 seeds:** ante-1 clear fast **95.2%** [91.3, 98.4] / full **96.0%** [92.1, 99.2] / scripted greedy **31.7%** [23.8, 39.7]; mean final ante 4.69 / 4.91 / 1.32; hand decision 4.60 ms / 76.52 ms / 2.45 ms | [`results/ev_player_gate_2026-08-23.md`](results/ev_player_gate_2026-08-23.md), [`ev/EV_NOTES.md`](ev/EV_NOTES.md) | `python mp/ev/gate_ev_player.py --procs 16` (~4 min on 16 cores) |
+| The engine reproduces 126 real seeds exactly through ante 8 (from 0/126 before delegation) | [`engine/DELEGATE_NOTES.md`](engine/DELEGATE_NOTES.md), [`engine/SWEEP_NOTES.md`](engine/SWEEP_NOTES.md) | `python -m oracle.engine_parity --antes 1-8 --rerolls 5 --quiet` → **126/126** |
+| Engine suite **1,651** tests green (847 at Phase-1 kickoff); rng + generation oracle + invariants + reachability suite **1,073** green | [`CAMPAIGN_LOG.md`](CAMPAIGN_LOG.md) § 2026-08-25 landings | `python -m pytest engine/tests -q` · `python -m pytest tests -q` |
+| Same-seed two-player queue alignment: 0 unexplained RNG-position differences over 30 matches; SHARED + VOUCHER + UNKNOWN keys all 0 | [`tests/GATE_NOTES.md`](tests/GATE_NOTES.md) | `python -m pytest tests/test_mlb_match_gate.py -q` (507 tests, ~27 s) |
+| ρ(h) is **flat, not decaying** (design doc guessed 0.3–0.5 by h=4–8): buy_slot0 0.876 → 0.870, skip_small 0.805 → 0.772, reroll_once 0.606 → 0.728 from h=1 to h=8; paired-seed VRF 2.5–10× at every horizon | [`results/rho_decay_*.json`](results/), [`eval/EVAL_NOTES.md`](eval/EVAL_NOTES.md) | `python eval/rho_decay.py --all --n-extra-seeds 24` (150 seeds × 3 perturbations, n_boot 2000) |
+| The NN was never the MCTS wall: batching cuts the forward pass 26× (1.25 → 0.048 ms/leaf) but only 1.4× end-to-end (531 → 761 sims/s, K=32 CUDA); ~59% of time is `clone()` + `step()` | [`agent/BATCH_NOTES.md`](agent/BATCH_NOTES.md) | `python agent/benchmarks/bench_batched.py` |
+| Cold MCTS cannot clear ante 1: 4,350 episodes → 46 clears (1.0%), value loss 0.0008; raising to 200 sims cleared 0/53 | [`CAMPAIGN_LOG.md`](CAMPAIGN_LOG.md) § 2026-08-22 19:30, [`agent/PRIOR_NOTES.md`](agent/PRIOR_NOTES.md) § 0 | the baseline arm of the row below: `python agent/scripts/train_cold.py --minutes 10 --device cpu --ruleset vanilla --encoder set --sims 40 --heuristic-prior 0 --max-hand-candidates 0 --run-dir agent/runs --run-name w0_cold` |
+| A heuristic hand prior fixes the constant-target failure: ante-1 clear 0.0% → **15.7%** (λ 0.8, τ 0.35, K 32), value loss 0.0023 → 0.0251; the **top-K mask alone does nothing** (0.4%); more sims still does not help (80 sims → 6.9%) | [`agent/PRIOR_NOTES.md`](agent/PRIOR_NOTES.md) § 4 (full 9-arm table), § 5 (the settings) | one arm: `python agent/scripts/train_cold.py --minutes 10 --device cpu --ruleset vanilla --encoder set --sims 40 --heuristic-prior 0.8 --heuristic-tau 0.35 --max-hand-candidates 32 --run-dir agent/runs --run-name w0_armF` (baseline = same command with `--heuristic-prior 0 --max-hand-candidates 0`), then `python agent/scripts/w0_smoke_report.py agent/runs w0_` |
+| 🔒 **Clairvoyance:** the same 106-generation checkpoint drops from 63.3% → 33.3% ante-1 clear and 2.60 → 1.83 mean final ante when denied the future; agreement with its own clairvoyant trajectory is 10.5% on `play`, **0.7% on `discard`**, 82.0% on `skip_blind`, 77.6% on `leave_shop` | [`results/clairvoyance_2026-08-23.md`](results/clairvoyance_2026-08-23.md) | `python agent/scripts/measure_clairvoyance.py --checkpoint agent/runs/real1/latest.pt --n-seeds 30 --sims 40 --processes 10 --determinize-mode per_sim --determinize-seed-base 0 --max-steps 20000 --n-boot 2000 --out-json results/clairvoyance_2026-08-23.json --out-md results/clairvoyance_2026-08-23.md` (the committed run used `--processes 30`; 10 is the safe ceiling for torch-loading pools on a 47 GB box) |
+| **Analytic EV player, 126 seeds:** ante-1 clear fast **95.2%** [91.3, 98.4] / full **96.0%** [92.1, 99.2] / scripted greedy **31.7%** [23.8, 39.7]; mean final ante 4.69 / 4.91 / 1.32; hand decision 4.60 ms / 76.52 ms / 2.45 ms | [`results/ev_player_gate_2026-08-23.md`](results/ev_player_gate_2026-08-23.md), [`ev/EV_NOTES.md`](ev/EV_NOTES.md) | `python ev/gate_ev_player.py --procs 16` (~4 min on 16 cores) |
 | Draw-order invariance (the player never reads the deck): 743/743 and 740/740 sampled states give an identical decision under a permuted `game.deck` | same gate file, § Draw-order invariance | same command |
-| 🔒 **EV player beats determinized `real1` 57/58 decided matches (98.3%, [94.8, 100])**, lives margin +3.27, Nemesis win rate 92.3% (60 trials, both seatings, 2 undecided at the 4,000-step cap) | [`results/h2h_ev_full_vs_real1_det_30seeds.md`](results/h2h_ev_full_vs_real1_det_30seeds.md) | `python mp/ev/h2h.py --a ev:full --b real1:det --sims 40 --n-seeds 30 --procs 8 --max-steps 4000 --out-json mp/results/h2h_ev_full_vs_real1_det_30seeds.json --out-md mp/results/h2h_ev_full_vs_real1_det_30seeds.md` |
-| Fast ≈ full head-to-head — 26/60 (43.3%, CI [31.7, 56.7], contains 50%) — at 4.60 ms vs 76.52 ms per hand decision | [`results/h2h_ev_fast_vs_ev_full_30seeds.md`](results/h2h_ev_fast_vs_ev_full_30seeds.md) | `python mp/ev/h2h.py --a ev:fast --b ev:full --n-seeds 30 --procs 4 --out-json … --out-md …` |
-| **Negative:** the decision-statistics tier used as a shop *policy* loses to the hand-written rules — 8/60 (13.3%, [5.0, 21.7]), lives margin −2.87. Kept as the advisor's diagnostic layer only | [`results/h2h_ev_full_stats_vs_ev_full_30seeds.md`](results/h2h_ev_full_stats_vs_ev_full_30seeds.md), [`stats/STATS_NOTES.md`](stats/STATS_NOTES.md) | `python mp/ev/h2h.py --a ev:full+stats --b ev:full --n-seeds 30 --procs 4 --out-json … --out-md …` |
-| Decision-statistics sweep, 126 seeds: analytic P(hit) inside the determinized-empirical CI 30/30; Standard packs are net-negative EV at every ante measured, antes 1–4 (−8.7, −8.4, −6.0, −4.7) | [`results/stats_sweep_2026-08-23.md`](results/stats_sweep_2026-08-23.md) | `python mp/stats/sweep.py --out mp/results/stats_sweep_2026-08-23.json --processes 16` |
-| V label corpus: **51,024 labels / 2,126 jobs / 0 failures in 2.95 h** at 287.9 labels/min on 16 workers; independent-perspective sum-to-one 0.965 ± 0.025; truncation rate 0.000; label sd rises 0.21 → 0.39 from ante 1 to 5 | [`results/labels_full.json`](results/labels_full.json), [`ev/TRAINV_NOTES.md`](ev/TRAINV_NOTES.md) § 6 | `python mp/ev/scripts/gen_labels.py --run-dir mp/ev/runs/labels_full --seeds default+random:2000 --workers 16 --policy ev --budget fast --shop-tier rules --encoder v2 --n-states 12 --n-rollouts 8 --flush-jobs 32 --symmetry-jobs 24 --name full` |
-| V (4,996,789 params) held-out **Brier 0.060 / AUC 0.784 / ECE 0.021**; overfits the 51k corpus by ~epoch 7 | [`agent/VALUE_NOTES.md`](agent/VALUE_NOTES.md), [`ev/TRAINV_NOTES.md`](ev/TRAINV_NOTES.md) | `python mp/ev/train_v.py --shards mp/ev/runs/labels_full/shards --run-dir mp/ev/runs/v_full --model set_value_net --max-steps 20000 --batch-size 256 --lr 3e-4 --warmup-steps 500 --eval-every 500 --checkpoint-every 2000 --device cuda --holdout-frac 0.1 --torch-threads 8` |
-| 🔒 **Negative:** argmax-V as a full policy loses to the rules — **2 wins / 60 matches** (3.3%, Wilson [0.9, 11.4]), mean lives margin −3.15, 35,544 V calls, 0 errors. Per-action EV gaps (≪ 0.05) sit below label noise (mean CI ±0.24 at 8 rollouts) | [`results/tournament_v_v_full.json`](results/tournament_v_v_full.json) | `python mp/ev/scripts/tournament_v.py --checkpoint mp/ev/runs/v_full_best/ckpt_0001000.pt --seeds default:30 --workers 16 --threads 1 --name v_full` |
-| 🔒 **Negative:** V at the expectimax leaf is a clean null against the same player without it — 24/60 (40.0%, [28.3, 51.7]); still 52/58 (89.7%, [81.0, 96.6]) vs determinized `real1`. Leaf cost 163.3 ms vs the 100 ms target (24 unbatched forward passes per decision) | [`results/h2h_ev_full_vleaf_vs_ev_full_30seeds.md`](results/h2h_ev_full_vleaf_vs_ev_full_30seeds.md), [`ev/LEAF_NOTES.md`](ev/LEAF_NOTES.md) | `python mp/ev/h2h.py --a "ev:full+Vleaf" --b "ev:full" --n-seeds 30 --procs 8 --max-steps 4000 --out-json … --out-md …` |
-| Counterfactual pairs on shared determinized worlds reduce variance **2.54×** on hand/nemesis states (n=560, ρ +0.629) but only **1.78×** on the uniform state mix (n=1,301) — **below the 2× bar the brief set** — and 1.42× / 1.80× / 1.23× on shop / pack / blind_select. Only 5.7% of pairs resolve at 8 worlds | [`ev/PAIRS_NOTES.md`](ev/PAIRS_NOTES.md), [`results/pairs_s1.json`](results/pairs_s1.json) | `python mp/ev/scripts/gen_pairs.py --run-dir mp/ev/runs/pairs_s1 --seeds default+random:600 --n-states 6 --n-worlds 8 --workers 8 --probe-jobs 10 --reps 4 --flush-jobs 8 --minutes 70 --name s1` |
-| Extraction / sandbag layer: ante-1 gate **bit-identical** (95.2 / 96.0), matches won 1.6% → 3.2%, dev slice +$12.50 at ante 6, per-decision cost **−0.9%** (no measurable overhead); head-to-head vs itself-without-the-layer is a wash, 50.4% [44.4, 56.7] over 252 matches. 4 engine fidelity bugs fixed against the Lua along the way | [`ev/EXTRACT_NOTES.md`](ev/EXTRACT_NOTES.md) § 0, § 8 | `python mp/ev/gate_ev_player.py --procs 8` · `python mp/ev/scripts/extract_dev_slice.py slice --procs 8 --to-ante 6 --seeds <slice>` |
-| **Negative:** active label selection is a qualified no — disagreement ΔBCE −0.0012 ± 0.0010 (t = −1.29), error-proxy −0.0021 ± 0.0012 (t = −1.79) against a significance bar of 2.57 in absolute t. The error proxy costs 2.47× the rollouts and **ranks on label noise** (its rows alone: AUC 0.503). Disagreement is free and reallocates 31% of its budget to ante ≥ 5 (corpus 17.6%) unprompted | [`results/active_poc_2026-08-25.md`](results/active_poc_2026-08-25.md), [`ev/active_poc/NOTES.md`](ev/active_poc/NOTES.md) | staged CLIs in `mp/ev/active_poc/` (`gen_pool.py` → `stage_base.py` → `stage_select.py` → `stage_final.py`) |
-| Auxiliary heads on rollout intermediates: instrumentation costs **0.37 ms per ~1,050 ms rollout (0.04%)** and the no-aux path is bit-identical to the pre-aux trainer; the ablation itself is a **null at proof scale** (Brier 0.0876 aux vs 0.0877 no-aux on 3,654 rows), with the money head reaching R² +0.54 | [`ev/AUX_NOTES.md`](ev/AUX_NOTES.md), [`results/aux_ablation.json`](results/aux_ablation.json) | `python mp/ev/scripts/gen_labels.py --aux ...` then `python mp/ev/train_v.py --aux ...` (§ AUX_NOTES 6.2) |
-| 🔒 **The ranking lever works, attributed by control (2026-08-26):** 42,468-pair campaign (all 3,126 seeds, VRF **2.08×** realized, CRN and direct audits agree); argmax-V vs rules **12/60** for V trained with pairs + aux vs **2/60** for a same-data control without them (old V also 2/60) — data freshness contributed nothing; held-out resolved-pair accuracy 0.620 / 0.588 / 0.574. V at the expectimax leaf stays a null with the new V: 24/60, matching the old V exactly | [`results/pairs_pairs_v2.json`](results/pairs_pairs_v2.json), [`results/tournament_v_v_v2.json`](results/tournament_v_v_v2.json), [`results/tournament_v_v_v2_ctrl.json`](results/tournament_v_v_v2_ctrl.json), [`results/h2h_ev_full_vleaf_v2_vs_ev_full_30seeds.md`](results/h2h_ev_full_vleaf_v2_vs_ev_full_30seeds.md), [`CAMPAIGN_LOG.md`](CAMPAIGN_LOG.md) § 2026-08-26 | campaign: `python mp/ev/scripts/gen_pairs.py --run-dir mp/ev/runs/pairs_v2 --seeds default+random:3000 --seed-rng 42 --n-states 14 --n-worlds 8 --workers 16 --aux --per-kind '{"hand":5,"nemesis":4,"shop":2,"pack":2,"blind_select":1}' --mix '{"close_call":0.55,"greedy_vs_extract":0.30,"random":0.15}'` · then `train_v.py` both arms · then `tournament_v.py` per checkpoint |
+| 🔒 **EV player beats determinized `real1` 57/58 decided matches (98.3%, [94.8, 100])**, lives margin +3.27, Nemesis win rate 92.3% (60 trials, both seatings, 2 undecided at the 4,000-step cap) | [`results/h2h_ev_full_vs_real1_det_30seeds.md`](results/h2h_ev_full_vs_real1_det_30seeds.md) | `python ev/h2h.py --a ev:full --b real1:det --sims 40 --n-seeds 30 --procs 8 --max-steps 4000 --out-json results/h2h_ev_full_vs_real1_det_30seeds.json --out-md results/h2h_ev_full_vs_real1_det_30seeds.md` |
+| Fast ≈ full head-to-head — 26/60 (43.3%, CI [31.7, 56.7], contains 50%) — at 4.60 ms vs 76.52 ms per hand decision | [`results/h2h_ev_fast_vs_ev_full_30seeds.md`](results/h2h_ev_fast_vs_ev_full_30seeds.md) | `python ev/h2h.py --a ev:fast --b ev:full --n-seeds 30 --procs 4 --out-json … --out-md …` |
+| **Negative:** the decision-statistics tier used as a shop *policy* loses to the hand-written rules — 8/60 (13.3%, [5.0, 21.7]), lives margin −2.87. Kept as the advisor's diagnostic layer only | [`results/h2h_ev_full_stats_vs_ev_full_30seeds.md`](results/h2h_ev_full_stats_vs_ev_full_30seeds.md), [`stats/STATS_NOTES.md`](stats/STATS_NOTES.md) | `python ev/h2h.py --a ev:full+stats --b ev:full --n-seeds 30 --procs 4 --out-json … --out-md …` |
+| Decision-statistics sweep, 126 seeds: analytic P(hit) inside the determinized-empirical CI 30/30; Standard packs are net-negative EV at every ante measured, antes 1–4 (−8.7, −8.4, −6.0, −4.7) | [`results/stats_sweep_2026-08-23.md`](results/stats_sweep_2026-08-23.md) | `python stats/sweep.py --out results/stats_sweep_2026-08-23.json --processes 16` |
+| V label corpus: **51,024 labels / 2,126 jobs / 0 failures in 2.95 h** at 287.9 labels/min on 16 workers; independent-perspective sum-to-one 0.965 ± 0.025; truncation rate 0.000; label sd rises 0.21 → 0.39 from ante 1 to 5 | [`results/labels_full.json`](results/labels_full.json), [`ev/TRAINV_NOTES.md`](ev/TRAINV_NOTES.md) § 6 | `python ev/scripts/gen_labels.py --run-dir ev/runs/labels_full --seeds default+random:2000 --workers 16 --policy ev --budget fast --shop-tier rules --encoder v2 --n-states 12 --n-rollouts 8 --flush-jobs 32 --symmetry-jobs 24 --name full` |
+| V (4,996,789 params) held-out **Brier 0.060 / AUC 0.784 / ECE 0.021**; overfits the 51k corpus by ~epoch 7 | [`agent/VALUE_NOTES.md`](agent/VALUE_NOTES.md), [`ev/TRAINV_NOTES.md`](ev/TRAINV_NOTES.md) | `python ev/train_v.py --shards ev/runs/labels_full/shards --run-dir ev/runs/v_full --model set_value_net --max-steps 20000 --batch-size 256 --lr 3e-4 --warmup-steps 500 --eval-every 500 --checkpoint-every 2000 --device cuda --holdout-frac 0.1 --torch-threads 8` |
+| 🔒 **Negative:** argmax-V as a full policy loses to the rules — **2 wins / 60 matches** (3.3%, Wilson [0.9, 11.4]), mean lives margin −3.15, 35,544 V calls, 0 errors. Per-action EV gaps (≪ 0.05) sit below label noise (mean CI ±0.24 at 8 rollouts) | [`results/tournament_v_v_full.json`](results/tournament_v_v_full.json) | `python ev/scripts/tournament_v.py --checkpoint ev/runs/v_full_best/ckpt_0001000.pt --seeds default:30 --workers 16 --threads 1 --name v_full` |
+| 🔒 **Negative:** V at the expectimax leaf is a clean null against the same player without it — 24/60 (40.0%, [28.3, 51.7]); still 52/58 (89.7%, [81.0, 96.6]) vs determinized `real1`. Leaf cost 163.3 ms vs the 100 ms target (24 unbatched forward passes per decision) | [`results/h2h_ev_full_vleaf_vs_ev_full_30seeds.md`](results/h2h_ev_full_vleaf_vs_ev_full_30seeds.md), [`ev/LEAF_NOTES.md`](ev/LEAF_NOTES.md) | `python ev/h2h.py --a "ev:full+Vleaf" --b "ev:full" --n-seeds 30 --procs 8 --max-steps 4000 --out-json … --out-md …` |
+| Counterfactual pairs on shared determinized worlds reduce variance **2.54×** on hand/nemesis states (n=560, ρ +0.629) but only **1.78×** on the uniform state mix (n=1,301) — **below the 2× bar the brief set** — and 1.42× / 1.80× / 1.23× on shop / pack / blind_select. Only 5.7% of pairs resolve at 8 worlds | [`ev/PAIRS_NOTES.md`](ev/PAIRS_NOTES.md), [`results/pairs_s1.json`](results/pairs_s1.json) | `python ev/scripts/gen_pairs.py --run-dir ev/runs/pairs_s1 --seeds default+random:600 --n-states 6 --n-worlds 8 --workers 8 --probe-jobs 10 --reps 4 --flush-jobs 8 --minutes 70 --name s1` |
+| Extraction / sandbag layer: ante-1 gate **bit-identical** (95.2 / 96.0), matches won 1.6% → 3.2%, dev slice +$12.50 at ante 6, per-decision cost **−0.9%** (no measurable overhead); head-to-head vs itself-without-the-layer is a wash, 50.4% [44.4, 56.7] over 252 matches. 4 engine fidelity bugs fixed against the Lua along the way | [`ev/EXTRACT_NOTES.md`](ev/EXTRACT_NOTES.md) § 0, § 8 | `python ev/gate_ev_player.py --procs 8` · `python ev/scripts/extract_dev_slice.py slice --procs 8 --to-ante 6 --seeds <slice>` |
+| **Negative:** active label selection is a qualified no — disagreement ΔBCE −0.0012 ± 0.0010 (t = −1.29), error-proxy −0.0021 ± 0.0012 (t = −1.79) against a significance bar of 2.57 in absolute t. The error proxy costs 2.47× the rollouts and **ranks on label noise** (its rows alone: AUC 0.503). Disagreement is free and reallocates 31% of its budget to ante ≥ 5 (corpus 17.6%) unprompted | [`results/active_poc_2026-08-25.md`](results/active_poc_2026-08-25.md), [`ev/active_poc/NOTES.md`](ev/active_poc/NOTES.md) | staged CLIs in `ev/active_poc/` (`gen_pool.py` → `stage_base.py` → `stage_select.py` → `stage_final.py`) |
+| Auxiliary heads on rollout intermediates: instrumentation costs **0.37 ms per ~1,050 ms rollout (0.04%)** and the no-aux path is bit-identical to the pre-aux trainer; the ablation itself is a **null at proof scale** (Brier 0.0876 aux vs 0.0877 no-aux on 3,654 rows), with the money head reaching R² +0.54 | [`ev/AUX_NOTES.md`](ev/AUX_NOTES.md), [`results/aux_ablation.json`](results/aux_ablation.json) | `python ev/scripts/gen_labels.py --aux ...` then `python ev/train_v.py --aux ...` (§ AUX_NOTES 6.2) |
+| 🔒 **The ranking lever works, attributed by control (2026-08-26):** 42,468-pair campaign (all 3,126 seeds, VRF **2.08×** realized, CRN and direct audits agree); argmax-V vs rules **12/60** for V trained with pairs + aux vs **2/60** for a same-data control without them (old V also 2/60) — data freshness contributed nothing; held-out resolved-pair accuracy 0.620 / 0.588 / 0.574. V at the expectimax leaf stays a null with the new V: 24/60, matching the old V exactly | [`results/pairs_pairs_v2.json`](results/pairs_pairs_v2.json), [`results/tournament_v_v_v2.json`](results/tournament_v_v_v2.json), [`results/tournament_v_v_v2_ctrl.json`](results/tournament_v_v_v2_ctrl.json), [`results/h2h_ev_full_vleaf_v2_vs_ev_full_30seeds.md`](results/h2h_ev_full_vleaf_v2_vs_ev_full_30seeds.md), [`CAMPAIGN_LOG.md`](CAMPAIGN_LOG.md) § 2026-08-26 | campaign: `python ev/scripts/gen_pairs.py --run-dir ev/runs/pairs_v2 --seeds default+random:3000 --seed-rng 42 --n-states 14 --n-worlds 8 --workers 16 --aux --per-kind '{"hand":5,"nemesis":4,"shop":2,"pack":2,"blind_select":1}' --mix '{"close_call":0.55,"greedy_vs_extract":0.30,"random":0.15}'` · then `train_v.py` both arms · then `tournament_v.py` per checkpoint |
 
 ---
 
@@ -170,12 +204,12 @@ Each of these overturned something this project had already written down.
 1. **The sim audit overturned the project's own retrospective** (2026-07-29). A wiki
    cross-examination found no blind-clear money, per-blind deck resets, and order-independent
    joker scoring — so the "PPO search ceiling" conclusion rested on an invalid measurement.
-   → [`results/SIM_AUDIT_2026-07-29.md`](../results/SIM_AUDIT_2026-07-29.md), and its own
+   → [`docs/SIM_AUDIT_2026-07-29.md`](docs/SIM_AUDIT_2026-07-29.md), and its own
    "where reading-only auditing was unreliable" table.
 2. **A1 — every card-modifying tarot was a no-op.** Consumables were dispatched with no card
    target. Found not by reading but by a reachability probe asking whether each fix's
    precondition is ever met (`scripts/probe_fix_reachability.py`).
-   → [`results/SIM_AUDIT_2026-07-29.md`](../results/SIM_AUDIT_2026-07-29.md) § A1.
+   → [`docs/SIM_AUDIT_2026-07-29.md`](docs/SIM_AUDIT_2026-07-29.md) § A1.
 3. **The clairvoyance measurement.** The MCTS docstring's claim that simulations see different
    RNG outcomes was true on the old engine and false on the new one; measuring the gap showed
    the trained agent's hand skill was the oracle's (0.7% discard agreement when the future is
@@ -240,12 +274,12 @@ budget should spend it elsewhere.
 
 | Path | Why it is low-signal |
 |---|---|
-| `mp/*/runs/`, `mp/*/checkpoints/`, `*.pt` | training / campaign outputs. Gitignored; large; regenerable |
+| `*/runs/`, `*/checkpoints/`, `*.pt` | training / campaign outputs. Gitignored; large; regenerable |
 | `**/__pycache__/` | bytecode |
-| `mp/results/*.json` | the full machine-readable records behind the `.md` files. Read the `.md`; open the `.json` only to check a specific per-seed row |
-| `mp/oracle/ground_truth/*.json` | the 126-seed oracle corpus (17 MB of generated fixtures). It is *evidence*, but it is data — the claim it supports is in `CAMPAIGN_LOG.md` and `oracle/SOURCES.md` |
-| `mp/tests/fixtures/rng_ground_truth.json` | 2.3 MB cached LuaJIT oracle output, for running RNG tests without the game installed |
-| Top-level `results/V1..V9*`, `checkpoints_*/`, `logs_*/` | the **pre-audit** BRL project. Superseded: `results/SIM_AUDIT_2026-07-29.md` explains why those numbers are not comparable to anything here |
+| `results/*.json` | the full machine-readable records behind the `.md` files. Read the `.md`; open the `.json` only to check a specific per-seed row |
+| `oracle/ground_truth/*.json` | the 126-seed oracle corpus (17 MB of generated fixtures). It is *evidence*, but it is data — the claim it supports is in `CAMPAIGN_LOG.md` and `oracle/SOURCES.md` |
+| `tests/fixtures/rng_ground_truth.json` | 2.3 MB cached LuaJIT oracle output, for running RNG tests without the game installed |
+| `results/V1..V9*`, `checkpoints_*/`, `logs_*/` **in the predecessor repo** | the **pre-audit** BRL project, not in this tree at all. Superseded: [`docs/SIM_AUDIT_2026-07-29.md`](docs/SIM_AUDIT_2026-07-29.md) explains why those numbers are not comparable to anything here |
 
 **This rule applies to low-signal only.** The negative results above are load-bearing and are
 meant to be read: argmax-V losing 2/60, the stats tier losing 8/60, V-at-leaf being a null,
@@ -258,19 +292,20 @@ If a file-completeness check flags these, the check is wrong.
 
 | Path | Why it is absent |
 |---|---|
-| `mp/_reference/balatro_src/` | Balatro 1.0.1o Lua **extracted from the local Steam install**. Copyright LocalThunk/Playstack. Gitignored (`mp/.gitignore`), never committed, never copied into deliverables. Algorithms are ported and cited by `file:line`; the Lua itself is read at test time from the local install and never vendored. Tests that need it skip with a reason when it is absent (`BALATRO_DIR` overrides the default Steam path) |
-| `mp/oracle/blueprint_runner/vendor/` | clones of the third-party seed analyzers (Blueprint / TheSoul / Immolate). Gitignored (`mp/oracle/blueprint_runner/.gitignore`); `setup.ps1` re-clones them at the pinned commits recorded in `oracle/SOURCES.md` |
+| `_reference/balatro_src/` | Balatro 1.0.1o Lua **extracted from the local Steam install**. Copyright LocalThunk/Playstack. Gitignored (`.gitignore`), never committed, never copied into deliverables. Algorithms are ported and cited by `file:line`; the Lua itself is read at test time from the local install and never vendored. Tests that need it skip with a reason when it is absent (`BALATRO_DIR` overrides the default Steam path) |
+| `oracle/blueprint_runner/vendor/` | clones of the third-party seed analyzers (Blueprint / TheSoul / Immolate). Gitignored (`oracle/blueprint_runner/.gitignore`); `setup.ps1` re-clones them at the pinned commits recorded in `oracle/SOURCES.md` |
 | The BalatroMultiplayer mod Lua | read from `%APPDATA%/Balatro/Mods/Multiplayer/` at test time to verify The Order and the MLB rules. Third-party; never copied into the repo |
-| `mp/agent/runs/real1/`, `mp/ev/runs/` | checkpoints and campaign shards; gitignored. Rows marked 🔒 in the ledger depend on them |
+| `agent/runs/real1/`, `ev/runs/` | checkpoints and campaign shards; gitignored. Rows marked 🔒 in the ledger depend on them |
 
 ---
 
 ## Layout
 
 ```
-mp/
+balatro-1v1/
 ├── CAMPAIGN_LOG.md   the narrative — start here after this file
-├── docs/             phase briefs, frozen state spec, design assessments, field survey
+├── docs/             phase briefs, frozen state spec, design assessments, field survey,
+│                     and the 2026-07 sim audit carried over from the predecessor repo
 ├── rng/              keyed pseudorandom core (pseudohash + LCG + LuaJIT math.random port),
 │                     pools, key strings, and the generation layer (shops/packs/vouchers/...)
 ├── oracle/           126-seed ground truth + parity harnesses (analyzer-side and engine-side)
@@ -290,9 +325,9 @@ mp/
 
 ## Ground rules for anyone working here
 
-- Everything stays under `mp/`. BRL code, the top-level `results/`, and the top-level `README.md` are the
-  historical record and are not rewritten (the surgical 2026-08 bridge at the top of that
-  README is the exception).
+- The predecessor repo ([`balatro-rl`](https://github.com/taggarttufte/balatro-rl)) is the
+  historical record and is not rewritten. Nothing here reaches into it: the one document this
+  project depends on, the sim audit, is carried as a verbatim copy in `docs/`.
 - **Oracle first.** No number is reported before the thing producing it is checked against the
   real game — LuaJIT for RNG, the analyzer corpus for generation, the installed mod for MLB
   rules, and a hand-played run in the retail game for the two live checks.
