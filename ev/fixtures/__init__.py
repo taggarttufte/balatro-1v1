@@ -23,6 +23,11 @@ from .gold_seal_weak_play import build_control as gold_seal_weak_play_control
 from .tarot_target_cycle import build as tarot_target_cycle
 from .tarot_target_cycle import build_control as tarot_target_cycle_control
 
+# W-PVP (2026-08-26): the extraction pivot at a Nemesis -- a decided-LOST race where the
+# proc harvest is free, and the matched LIVE-race control where the gate stays shut.
+from .nemesis_decided_lost import build as nemesis_decided_lost
+from .nemesis_decided_lost import build_control as nemesis_decided_lost_control
+
 FIXTURES = {
     "bloodstone_vs_invisible": bloodstone_vs_invisible,
     "purple_seal_discard": purple_seal_discard,
@@ -37,6 +42,8 @@ FIXTURES = {
     "gold_seal_weak_play_control": gold_seal_weak_play_control,
     "tarot_target_cycle": tarot_target_cycle,
     "tarot_target_cycle_control": tarot_target_cycle_control,
+    "nemesis_decided_lost": nemesis_decided_lost,
+    "nemesis_decided_lost_control": nemesis_decided_lost_control,
 }
 
 __all__ = [
@@ -47,4 +54,5 @@ __all__ = [
     "reserved_parking_hold", "reserved_parking_hold_control",
     "gold_seal_weak_play", "gold_seal_weak_play_control",
     "tarot_target_cycle", "tarot_target_cycle_control",
+    "nemesis_decided_lost", "nemesis_decided_lost_control",
 ]

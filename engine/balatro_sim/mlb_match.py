@@ -36,6 +36,41 @@ Step API (usable by an env and by a scripted driver):
 ``step(player, action)`` steps that player's game and then ``sync()``s the match; ``sync()``
 is idempotent and may also be called after a game was stepped directly (env_mp does that).
 ``clone()`` composes with ``BalatroGame.clone()`` (MCTS snapshot machinery).
+
+────────────────────────────────────────────────────────────────────────────────────────
+``pvp_protocol`` — HOW THE TWO PLAYERS INTERLEAVE INSIDE A NEMESIS BLIND
+────────────────────────────────────────────────────────────────────────────────────────
+
+``"canonical"`` (the default, and the only behaviour before 2026-08-26) is strict
+alternation: every player who can act is offered every action their game allows, turn by
+turn.  The Nemesis VERDICT is invariant to that interleaving (MLB_NOTES.md §3.2) so this
+is faithful for outcomes; what it cannot express is a player choosing to *wait*.
+
+``"trailer_compelled"`` adds exactly one thing: the player who is strictly AHEAD inside a
+live Nemesis may play the match-level action ``{"type": "pvp_pass"}`` — do nothing, keep
+the hand, keep the hands-left, hand the turn back.  The player who is strictly BEHIND
+cannot: they are *compelled* to act (if they stop, they run out and lose).  Equal scores
+(which is where every Nemesis starts) means neither may pass, so both players make their
+first move before either can wait — "both play hand 1 simultaneously", falling out of the
+score comparison rather than being special-cased.
+
+**This is a MODELLING CHOICE, and it cannot be oracle-verified.**  The real game is a
+real-time race, not a turn game; there is no notion of a "turn" anywhere in the mod or on
+the server to check this against.  Two facts from the mod source make it a *defensible*
+discretisation rather than an arbitrary one (citations in ``ev/PVP_NOTES.md`` §1):
+
+* Under the Major League ruleset there is **no clock inside the PvP blind** — the classic
+  timer explicitly returns early at a PvP boss (``$MOD/ui/game/timer.lua:445-450``) and
+  ``majorleague.lua`` loads no ``pvp_timer`` layer — and there is **no AFK / forced-action
+  handling** anywhere.  So "the leader waits" is a legal, unpunished real-game line, and
+  the only thing that forces the trailer to move is the trailer's own need to score.
+* There is **no concede / forfeit action** in either direction of the protocol, so waiting
+  is the only form of "not playing" a player has.
+
+What the protocol deliberately does NOT change: the end conditions.  ``_resolve_pvp`` is
+untouched — out of hands and strictly behind ends the round at once (the early-end cut),
+both out of hands compares, an exact tie takes nobody's life.  A pass is not an action the
+server would ever see; it is the absence of one.
 """
 from __future__ import annotations
 import secrets
@@ -46,10 +81,16 @@ from .constants import MLB_STARTING_LIVES, MLB_PVP_START_ROUND, MLB_COMEBACK_PER
 from .game import BalatroGame, State
 
 __all__ = ["MLBMatch", "MLBMatchState", "PlayerView", "PlayerEcon", "DEFAULT_LIVES",
-           "COMEBACK_MONEY_PER_LIFE"]
+           "COMEBACK_MONEY_PER_LIFE", "PVP_PROTOCOLS", "PVP_PASS"]
 
 DEFAULT_LIVES = MLB_STARTING_LIVES
 COMEBACK_MONEY_PER_LIFE = MLB_COMEBACK_PER_LIFE
+
+#: The turn protocols ``MLBMatch`` understands (see the module docstring).
+PVP_PROTOCOLS = ("canonical", "trailer_compelled")
+
+#: The match-level "wait" action.  Never reaches ``BalatroGame.step``.
+PVP_PASS = {"type": "pvp_pass"}
 
 
 @dataclass
@@ -110,7 +151,10 @@ class MLBMatch:
     """Two-player MLB match coordinator (see module docstring)."""
 
     def __init__(self, seed=None, deck_key: str = "b_red", stake: "int | str" = 1,
-                 lives: int = DEFAULT_LIVES, pvp_start_round: int = MLB_PVP_START_ROUND):
+                 lives: int = DEFAULT_LIVES, pvp_start_round: int = MLB_PVP_START_ROUND,
+                 pvp_protocol: str = "canonical"):
+        if pvp_protocol not in PVP_PROTOCOLS:
+            raise ValueError(f"unknown pvp_protocol {pvp_protocol!r} (want one of {PVP_PROTOCOLS})")
         # different_seeds = false (core.lua:173): both games on ONE seed, one deck, one stake.
         g0 = BalatroGame(seed=seed, deck_key=deck_key, stake=stake, ruleset="mlb")
         g1 = BalatroGame(seed=g0.seed_str, deck_key=deck_key, stake=stake, ruleset="mlb")
@@ -137,6 +181,11 @@ class MLBMatch:
         self.econ: list = [PlayerEcon(), PlayerEcon()]   # public shop economics per player
         self._lives_seen: list = [lives, lives]          # for last_life_loss_ante (sync)
         self.last_life_loss_ante: list = [None, None]    # per player; a failed Small/Big counts too
+        # ── the turn protocol (W-PVP, 2026-08-26; see the module docstring) ──────────
+        self.pvp_protocol = pvp_protocol
+        self.pvp_passes: list = [0, 0]       # passes taken, per player, over the whole match
+        self.pvp_pass_detail: list = []      # (ante, player) per pass — behaviour measurement
+        self._pass_streak = 0                # consecutive passes with no progress in between
         self.sync()
 
     # ── queries ──────────────────────────────────────────────────────────────
@@ -157,10 +206,50 @@ class MLBMatch:
     def legal_actions(self, player: int) -> list[dict]:
         """The player's game's legal actions, minus what the match forbids: nothing once the
         match is over, nothing while readied for / waiting at the Nemesis (``PVP_WAIT``,
-        ``pvp_ready`` -> the game already returns [])."""
+        ``pvp_ready`` -> the game already returns []); PLUS the match-level ``pvp_pass``
+        when the turn protocol offers it (``"trailer_compelled"`` only, so the default is
+        byte-identical to before)."""
         if self.done:
             return []
-        return self.games[player].legal_actions()
+        acts = self.games[player].legal_actions()
+        if self.pvp_protocol != "canonical" and self.pass_offered(player):
+            acts = acts + [dict(PVP_PASS)]
+        return acts
+
+    def pass_offered(self, player: int) -> bool:
+        """May ``player`` play ``pvp_pass`` right now?  ``"trailer_compelled"`` only.
+
+        The rules, in the order they are checked:
+
+        1. both players must be inside the SAME live Nemesis (``_in_pvp`` both);
+        2. the passer must still be able to act at all — a player in ``PVP_WAIT`` is out of
+           hands and has nothing to conserve, so waiting is not a choice they own;
+        3. the passer must be **strictly ahead**.  Equal scores => nobody may pass => both
+           are compelled, which is what makes the start of every Nemesis simultaneous and
+           what makes a mid-blind tie simultaneous again;
+        4. anti-wedge: a pass is only offered when the previous step made PROGRESS.  Two
+           passes in a row can only happen if the compelled player's action changed nothing
+           (an illegal / silently-no-op action from a policy), and without this the pair
+           would hand the turn back and forth forever.  In normal play the compelled player
+           always moves between two of the leader's passes, so this never bites.
+        """
+        if self.done or self.pvp_protocol == "canonical":
+            return False
+        g, o = self.games[player], self.games[self._other(player)]
+        if not (self._in_pvp(g) and self._in_pvp(o)):
+            return False
+        if g.state != State.SELECTING_HAND:
+            return False
+        if g.chips_scored <= o.chips_scored:
+            return False
+        return self._pass_streak < 1
+
+    def _progress_of(self, player: int) -> tuple:
+        """A cheap "did anything happen" fingerprint of one player's game (anti-wedge only;
+        NOT a state signature — it is never compared across matches)."""
+        g = self.games[player]
+        return (g.chips_scored, g.hands_left, g.discards_left, len(g.hand),
+                len(g.consumable_hand), g.state)
 
     def actors(self) -> list[int]:
         """Every player who can act right now (both, in the independent phases)."""
@@ -208,9 +297,17 @@ class MLBMatch:
 
     def signature(self) -> tuple:
         """Hashable snapshot of the whole match (both games' ``state_signature`` + the
-        match scalars) -- clone-fidelity / determinism tests."""
-        return (self.games[0].state_signature(), self.games[1].state_signature(),
-                self.pvp_active, self.pvp_ante, self.done, self.winner, self._turn, tuple(self.pvp_log))
+        match scalars) -- clone-fidelity / determinism tests.
+
+        The protocol tail is APPENDED only under a non-canonical protocol, so a canonical
+        match's signature tuple is byte-identical (same length, same contents) to the
+        pre-W-PVP one — that equality is what
+        ``test_pvp_protocol.py::test_canonical_transcripts_are_unchanged`` pins."""
+        sig = (self.games[0].state_signature(), self.games[1].state_signature(),
+               self.pvp_active, self.pvp_ante, self.done, self.winner, self._turn, tuple(self.pvp_log))
+        if self.pvp_protocol != "canonical":
+            sig = sig + (self.pvp_protocol, self._pass_streak, tuple(self.pvp_passes))
+        return sig
 
     # ── stepping ─────────────────────────────────────────────────────────────
 
@@ -220,11 +317,28 @@ class MLBMatch:
         are ignored exactly as ``BalatroGame.step`` ignores them."""
         if self.done:
             return self.state()
+        if isinstance(action, dict) and action.get("type") == "pvp_pass":
+            # The match-level "wait".  Never reaches BalatroGame.step: nothing about the
+            # player's game changes, which is the whole point.  An OFFERED pass records
+            # itself and extends the no-progress streak; an unoffered one is ignored the
+            # way BalatroGame.step ignores an illegal action (permissive contract), and
+            # deliberately does NOT reset the streak.
+            if self.pvp_protocol != "canonical" and self.pass_offered(player):
+                self._pass_streak += 1
+                self.pvp_passes[player] += 1
+                self.pvp_pass_detail.append((self.pvp_ante, player))
+            self.steps += 1
+            self._turn = self._other(player)
+            self.sync()
+            return self.state()
         g = self.games[player]
         if g.state not in (State.PVP_WAIT, State.GAME_OVER):
             dollars_before = g.dollars
+            before = self._progress_of(player) if self.pvp_protocol != "canonical" else None
             g.step(action)
             self._track_econ(player, action, dollars_before - g.dollars)
+            if before is not None and self._progress_of(player) != before:
+                self._pass_streak = 0
         self.steps += 1
         self._turn = self._other(player)
         self.sync()
@@ -260,6 +374,7 @@ class MLBMatch:
                 g._start_blind()
             self.pvp_active = True
             self.pvp_ante = g0.ante
+            self._pass_streak = 0          # a fresh Nemesis starts with both scores at 0
         # 2. enemyInfo relay + 3. the end check, while both are in the Nemesis
         if self._in_pvp(g0) and self._in_pvp(g1):
             self.pvp_active = True
@@ -285,7 +400,24 @@ class MLBMatch:
         """``playHandAction`` (actionHandlers.ts:221-345), evaluated on the live state: the
         PvP ends when a player is out of hands AND strictly behind, or when both are out of
         hands.  Strictly-lower score loses a life; an exact tie loses nobody (both get
-        ``endPvP{lost=false}``).  A player's remaining hands are forfeited on an early end."""
+        ``endPvP{lost=false}``).  A player's remaining hands are forfeited on an early end.
+
+        Unchanged by ``pvp_protocol`` — the protocol decides who may act, never who wins.
+
+        Provenance, re-checked 2026-08-26 (W-PVP, ev/PVP_NOTES.md §1):
+
+        * The **early-end cut is real in the protocol.**  The client has two receive paths
+          for an ``endPvP`` that arrives while hands remain (``$MOD/networking/
+          action_handlers.lua:472-480`` and ``$MOD/ui/game/game_state.lua:313-318``, which
+          force-jumps ``G.STATE`` to ``NEW_ROUND`` mid-``update_selecting_hand``), and an
+          exhausted client just waits (``k_wait_enemy``, ``game_state.lua:185-208``).  The
+          client never decides the round itself.
+        * The **exact-tie rule is a REMOTE citation only.**  It comes from the server repo
+          (``actionHandlers.ts:320``) fetched over the network in Phase 2; nothing in the
+          local install can corroborate it, and the one client-side reimplementation —
+          ghost replay, ``$MOD/lib/ghost_replay.lua:142-168`` — uses ``>=`` and has no
+          "nobody loses" branch at all.  The server rule is implemented here (MLB_NOTES
+          §3.1); if it is ever re-verified, this is the line to change."""
         g0, g1 = self.games
         ex0 = g0.state == State.PVP_WAIT or g0.hands_left < 1
         ex1 = g1.state == State.PVP_WAIT or g1.hands_left < 1
@@ -334,6 +466,10 @@ class MLBMatch:
         new.econ = [e.copy() for e in self.econ]
         new._lives_seen = list(self._lives_seen)
         new.last_life_loss_ante = list(self.last_life_loss_ante)
+        new.pvp_protocol = self.pvp_protocol
+        new.pvp_passes = list(self.pvp_passes)
+        new.pvp_pass_detail = list(self.pvp_pass_detail)
+        new._pass_streak = self._pass_streak
         return new
 
     def clone_determinized(self, seed=None) -> "MLBMatch":
@@ -367,6 +503,10 @@ class MLBMatch:
         new.econ = [e.copy() for e in self.econ]
         new._lives_seen = list(self._lives_seen)
         new.last_life_loss_ante = list(self.last_life_loss_ante)
+        new.pvp_protocol = self.pvp_protocol
+        new.pvp_passes = list(self.pvp_passes)
+        new.pvp_pass_detail = list(self.pvp_pass_detail)
+        new._pass_streak = self._pass_streak
         return new
 
     # ── convenience driver ───────────────────────────────────────────────────

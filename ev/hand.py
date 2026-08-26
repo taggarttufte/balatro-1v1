@@ -103,6 +103,15 @@ class HandConfig:
     junk_dollars: float = 0.8     # keep-value units per dollar, for the junk ORDERINGS only
     tarot_cycle_fraction: float = 0.5  # fraction of a Tarot's value a good target unlocks
     interest_bonus: float = 0.16  # extra worth of a $ that still earns interest, see §2
+    # ── the PvP turn protocol (PVP_NOTES.md; every default here is OFF, i.e. the
+    #    pre-2026-08-26 player bit-for-bit).  Turned on together by the protocol player. ──
+    pvp_level1: bool = False      # react to the opponent's REVEALED live score (§3)
+    pvp_live_weight: float = 0.5  # weight of the "they never play again" atom when trailing
+    pvp_pass: bool = False        # generate the leader's PASS candidate (§4)
+    pvp_pass_tiebreak: float = 1e-6   # PASS wins an exact tie: it strictly conserves
+    pvp_extract: bool = False     # allow the money layer at a DECIDED Nemesis (§5)
+    pvp_decided_lost_max: float = 0.02   # P(win the race) at or below this => decided-LOST
+    pvp_decided_won_min: float = 0.995   # ... at or above this, and ahead => decided-WON
 
 
 DEFAULT_HAND_CONFIG = HandConfig()
@@ -740,17 +749,44 @@ def blind_model_for(game, cfg: HandConfig = DEFAULT_HAND_CONFIG) -> BlindModel:
 
 # ═══════════════════════════════════════════════════════════════════ the PvP opponent
 
-def opponent_final_atoms(game, model: Optional["BlindModel"], ratio: float) -> list:
+def opponent_final_atoms(game, model: Optional["BlindModel"], ratio: float, *,
+                         level1: bool = False, live_weight: float = 0.5) -> list:
     """[(weight, final score)] of the Nemesis opponent: their live score plus, for each
     hand they still have, a symmetric per-hand score (this deck's one-discard round,
-    scaled by OUR board ratio -- level-0 opponent modelling: same deck, same build)."""
+    scaled by OUR board ratio -- level-0 opponent modelling: same deck, same build).
+
+    ``level1`` (PVP_NOTES.md §3, the turn protocol's objective) adds ONE atom: the
+    opponent's **revealed live score**, i.e. "they never play another hand".  Under
+    ``pvp_protocol="trailer_compelled"`` that is a real outcome and not a rare one — a
+    leader is allowed to wait, so if I am behind and never overtake, their final score is
+    the number on the HUD right now.  It is added ONLY when I am strictly behind:
+
+    * I am **ahead** -> they are the compelled one, they must play -> level-0 atoms, no
+      live atom (weight 0).
+    * scores **equal** -> both compelled, they must play -> same.
+    * I am **behind** -> they may sit on every hand they hold -> the live atom gets
+      ``live_weight`` and the projection is renormalised to ``1 - live_weight``.
+
+    The projection atoms are untouched: the level-0 model is still what says how much they
+    add IF they answer.  ``level1=False`` (the default) returns exactly the old list."""
     opp = float(getattr(game, "pvp_opponent_score", 0) or 0)
     opp_h = int(getattr(game, "pvp_opponent_hands", 0) or 0)
     if opp_h <= 0 or model is None:
         return [(1.0, opp)]
     mu = opp + opp_h * model.mean1 * ratio
     sd = math.sqrt(max(0.0, opp_h * model.var1)) * ratio
-    return [(0.3, max(opp, mu - 0.97 * sd)), (0.4, mu), (0.3, mu + 0.97 * sd)]
+    atoms = [(0.3, max(opp, mu - 0.97 * sd)), (0.4, mu), (0.3, mu + 0.97 * sd)]
+    if not level1:
+        return atoms
+    me = float(getattr(game, "chips_scored", 0) or 0)
+    if me >= opp:
+        return atoms
+    w = min(1.0, max(0.0, float(live_weight)))
+    if w <= 0.0:
+        return atoms
+    if w >= 1.0:
+        return [(1.0, opp)]
+    return [(w, opp)] + [((1.0 - w) * q, a) for q, a in atoms]
 
 
 # ═══════════════════════════════════════════════════════════════════════ the decision
@@ -776,6 +812,9 @@ class HandAnalysis:
         blind = game.current_blind
         self.boss = blind.boss_key if (blind.is_boss and not blind.disabled) else ""
         self.pvp = bool(blind.is_pvp)
+        # what the opponent's enemyInfo reveals (0 outside a Nemesis) — PVP_NOTES.md §3
+        self.opp_score = float(getattr(game, "pvp_opponent_score", 0) or 0)
+        self.opp_hands = int(getattr(game, "pvp_opponent_hands", 0) or 0)
         self.h = int(game.hands_left)
         self.d = int(game.discards_left)
         self.scored = float(game.chips_scored)
@@ -813,9 +852,19 @@ class HandAnalysis:
         self._gen_cache: dict = {}
         self._safe_cache: dict = {}
         self._cycle_cache: dict = {}
-        # the extraction layer is off at a Nemesis (no unused-hand money, every hand is
-        # played anyway) and off when there is simply nothing to extract
-        self.extract_on = bool(cfg.extract) and not self.pvp and self.model is not None and (
+        self._decided: Optional[str] = None
+        # W-PVP: the leader may WAIT (PVP_NOTES.md §4).  Legality is derived from the same
+        # two numbers the match compares (`MLBMatch.pass_offered`): strictly ahead, inside a
+        # live Nemesis, still able to act.  The match has the last word — `EVPlayer.act`
+        # drops the candidate when the match did not actually offer it.
+        self.pvp_leader = bool(self.pvp and self.scored > self.opp_score)
+        # The extraction layer used to be OFF at a Nemesis unconditionally ("no unused-hand
+        # money, every hand is played anyway").  It is now off at a Nemesis only while the
+        # RACE IS LIVE (`_pvp_decided`, PVP_NOTES.md §5) and only when cfg.pvp_extract is
+        # set; with the default cfg this is bit-for-bit the old condition.  Off everywhere
+        # when there is simply nothing to extract.
+        self.extract_on = bool(cfg.extract) and self.model is not None and (
+            (not self.pvp) or bool(cfg.pvp_extract)) and (
             self.procs.any or self.has_card_proc or bool(self._tarot_wants))
 
     # ── per-card facts ──────────────────────────────────────────────────────
@@ -1464,8 +1513,10 @@ class HandAnalysis:
         """[(weight, need_tie, need_win)] atoms of the opponent's final score."""
         if self._pvp_atoms is not None:
             return self._pvp_atoms
-        self._pvp_atoms = [(w, a - self.scored, a - self.scored + 1.0)
-                           for w, a in opponent_final_atoms(self.game, self.model, self.ratio)]
+        atoms = opponent_final_atoms(self.game, self.model, self.ratio,
+                                     level1=bool(self.cfg.pvp_level1),
+                                     live_weight=self.cfg.pvp_live_weight)
+        self._pvp_atoms = [(w, a - self.scored, a - self.scored + 1.0) for w, a in atoms]
         return self._pvp_atoms
 
     def tail(self, need: float, h: int, d: int) -> float:
@@ -1578,13 +1629,62 @@ class HandAnalysis:
             v = self._safe_cache[key] = self.model.p_clear(need / max(self.ratio, 1e-6), h, d)
         return v
 
+    # ── the PvP race: live / decided-lost / decided-won ─────────────────────
+
+    def race_value(self) -> float:
+        """P(I do not lose this Nemesis), from the position exactly as it stands: hold
+        every card, draw nothing, spend nothing, and let the h hands I still have race the
+        opponent's atoms.  This is the ONE number the decided-race gate is defined on, and
+        it is also the base value of PASS (§4) — the two are the same question ("what is
+        this position worth if I do nothing right now?") asked for two different reasons.
+        Cheap: it reuses the per-need tail cache every candidate already fills."""
+        if not self.pvp:
+            return float("nan")
+        return self.position_value(self.full_mask, 0, self.h, self.d, self.need)
+
+    def pvp_decided(self) -> str:
+        """``""`` (the race is LIVE) / ``"lost"`` / ``"won"`` — PVP_NOTES.md §5.
+
+        * **lost**: no line left reaches the opponent's reachable score — ``race_value``
+          at or below ``cfg.pvp_decided_lost_max``.  The life is going; what is NOT gone is
+          the money still on the board, so the extraction layer opens and the remaining
+          hands and discards are spent harvesting procs instead of chasing a score that
+          cannot arrive.  Suppressed on the LAST life: that loss is ``loseGame`` and the
+          match ends with no Cash Out (MLB_NOTES §1.3c), so the dollars are worthless.
+        * **won**: strictly ahead AND ``race_value`` at or above ``cfg.pvp_decided_won_min``
+          — the leader-passing case.  Nothing that happens now can cost the life, so the
+          same money layer opens (and PASS, which spends nothing, is priced against it).
+
+        Conservative by construction: the thresholds are far from 0.5 on both sides, and
+        ``race_value`` is computed with the LEVEL-1 atoms when they are on, which makes the
+        trailer look *better* than level-0 would and therefore makes "lost" harder to
+        declare, not easier."""
+        if self._decided is not None:
+            return self._decided
+        out = ""
+        if self.pvp and self.cfg.pvp_extract:
+            v = self.race_value()
+            if v <= self.cfg.pvp_decided_lost_max and int(getattr(self.game, "lives", 4)) > 1:
+                out = "lost"
+            elif v >= self.cfg.pvp_decided_won_min and self.scored > self.opp_score:
+                out = "won"
+        self._decided = out
+        return out
+
     def extraction_safe(self, h: int, d: int, need: float) -> bool:
         """The gate of EXTRACT_NOTES §4: money is only worth banking when what is left
         after the line still clears the blind with probability ``cfg.extract_min_clear``.
-        Always False at a Nemesis (there is no money at a PvP blind and every hand is
-        played anyway — EV_NOTES §3)."""
+
+        At a Nemesis (W-PVP, 2026-08-26) the tail-DP clear probability is the wrong
+        question — a Nemesis has no chip target and it ALWAYS reaches Cash Out, won or
+        lost (MLB_NOTES §1.4b).  What money there costs is the RACE, so the gate there is
+        ``pvp_decided()``: harvest only once the race is decided, never while it is live.
+        Was unconditionally False at a Nemesis before; with the default config (
+        ``pvp_extract=False``) it still is, because ``extract_on`` is False."""
         if not self.extract_on:
             return False
+        if self.pvp:
+            return bool(self.pvp_decided())
         return self._p_clear_after(h, d, need) >= self.cfg.extract_min_clear
 
     def _dollar_rate(self) -> float:
@@ -1733,7 +1833,10 @@ class HandAnalysis:
         cfg = self.cfg
         if not self.extract_on or self.d <= 0 or not self.can_discard:
             return []
-        if self._p_clear_after(self.h, self.d - 1, self.need) < cfg.extract_min_clear:
+        if self.pvp:
+            if not self.pvp_decided():          # the race is live: no sandbagging
+                return []
+        elif self._p_clear_after(self.h, self.d - 1, self.need) < cfg.extract_min_clear:
             return []
         pb, n = self.procs, self.n
         out: list = []
@@ -1862,6 +1965,11 @@ class HandAnalysis:
         extract = self.extract_on
         rate = self._dollar_rate() if extract else 0.0
         gate = self.cfg.extract_min_clear
+        # At a Nemesis the money is gated on the RACE, not on the tail DP's clear
+        # probability, and it is UNCONDITIONAL once decided: a Nemesis always reaches Cash
+        # Out (MLB_NOTES §1.4b), so the p_clear factor the regular-blind path multiplies
+        # into the gold-hold / cycle terms is 1.0 there.
+        pvp_money = bool(extract and self.pvp and self.pvp_decided())
         for t, ht, s, _ in self.plays:
             mask = sum(1 << j for j in t)
             keep = full & ~mask
@@ -1873,9 +1981,13 @@ class HandAnalysis:
             # tie-breaks (bounded by 1e-6): higher score now, fewer cards spent
             ev += 1e-6 * s / (s + max(need, 1.0)) - 1e-9 * len(t)
             if extract:
-                pc = self._p_clear_after(h - 1, d, need - s)
-                if pc >= gate:
-                    ev += rate * (self._play_extraction(t, m, pc) + self._cycle_ev(keep, m))
+                if self.pvp:
+                    if pvp_money:
+                        ev += rate * (self._play_extraction(t, m, 1.0) + self._cycle_ev(keep, m))
+                else:
+                    pc = self._p_clear_after(h - 1, d, need - s)
+                    if pc >= gate:
+                        ev += rate * (self._play_extraction(t, m, pc) + self._cycle_ev(keep, m))
             out.append(({"type": "play", "cards": list(t)}, ev))
         if d > 0:
             for t in self._discard_lines():
@@ -1885,11 +1997,40 @@ class HandAnalysis:
                 ev = self.position_value(keep, m, h, d - 1, need)
                 ev -= 1e-9 * len(t)
                 if extract:
-                    pc = self._p_clear_after(h, d - 1, need)
-                    if pc >= gate:
-                        ev += rate * (self._discard_extraction(t, m, pc) + self._cycle_ev(keep, m))
+                    if self.pvp:
+                        if pvp_money:
+                            ev += rate * (self._discard_extraction(t, m, 1.0) + self._cycle_ev(keep, m))
+                    else:
+                        pc = self._p_clear_after(h, d - 1, need)
+                        if pc >= gate:
+                            ev += rate * (self._discard_extraction(t, m, pc) + self._cycle_ev(keep, m))
                 out.append(({"type": "discard", "cards": list(t)}, ev))
         return out
+
+    def pass_candidate(self) -> Optional[tuple]:
+        """``({"type": "pvp_pass"}, ev)`` for the leader's WAIT, or ``None`` when waiting is
+        not available (not a Nemesis, not strictly ahead, ``cfg.pvp_pass`` off).
+
+        The value is ``race_value()`` — the position with every card kept, every hand still
+        in hand, nothing spent — plus ``cfg.pvp_pass_tiebreak``.  That base is deliberately
+        the SAME analytic object every play candidate is measured with, so the comparison
+        "wait vs play this hand" is apples to apples: both ask "what is P(I do not lose)
+        from what I would be left holding".  Passing keeps the cards and the hand; playing
+        buys a known score ``s`` for one hand and ``m`` fresh cards.
+
+        The tie-break is the whole conservation story in one constant: when the two are
+        numerically equal (the decided-won case, both 1.0) PASS wins, because it spends no
+        hand, breaks no Glass card and forfeits no held Gold-card money.  When the money
+        layer is open (``pvp_decided()``) that last part stops being a tie-break and gets
+        priced properly — PASS carries no money term, and a play that dumps a Gold card
+        carries a NEGATIVE one (``_gold_delta``), so harvesting and conserving are compared
+        in dollars rather than by fiat.
+
+        NOT priced: Glass survival (a future-deck effect, V's job — PVP_NOTES.md §7), and
+        the passer's information gain from watching the answer before committing."""
+        if not (self.pvp and self.cfg.pvp_pass and self.pvp_leader):
+            return None
+        return ({"type": "pvp_pass"}, self.race_value() + self.cfg.pvp_pass_tiebreak)
 
     def _pvp_play_value(self, keep: int, m: int, s: float) -> float:
         total = 0.0
@@ -1970,11 +2111,19 @@ def _consumable_ev(game, action: dict, analysis: HandAnalysis, cfg: HandConfig) 
 
 def _hand_ranking_fast(game, cfg: HandConfig, *, legal: Optional[list] = None,
                        with_consumables: bool = True, lite: bool = False,
-                       ratio_hint: Optional[float] = None) -> list:
+                       ratio_hint: Optional[float] = None, allow_pass: bool = False) -> list:
     if legal is None:
         legal = game.legal_actions()
     an = HandAnalysis(game, cfg, lite=lite, legal=legal, ratio_hint=ratio_hint)
     ranked = an.evaluate()
+    if allow_pass:
+        # opt-in only: `pvp_pass` is a MATCH-level action that `BalatroGame.step` does not
+        # understand, so it must never leak into a path that steps a bare game (the full
+        # budget's rollouts, `play_out_blind`, the blind model) — those call this without
+        # the flag and cannot see it.
+        pc = an.pass_candidate()
+        if pc is not None:
+            ranked = ranked + [pc]
     if with_consumables and not lite:
         base = max((ev for _, ev in ranked), default=0.0)
         for a in _consumable_candidates(game, legal, an):
@@ -2036,7 +2185,8 @@ def end_of_blind_value(world, origin, cfg: HandConfig = DEFAULT_HAND_CONFIG,
         return float(value_fn(world))
     if blind.is_pvp:
         s = float(world.chips_scored)
-        atoms = opponent_final_atoms(origin, model, ratio)
+        atoms = opponent_final_atoms(origin, model, ratio, level1=bool(cfg.pvp_level1),
+                                     live_weight=cfg.pvp_live_weight)
         return sum(w * (0.5 * float(s >= a) + 0.5 * float(s > a)) for w, a in atoms)
     if not cleared:
         return 0.0
@@ -2079,12 +2229,20 @@ def _hand_ranking_full(game, cfg: HandConfig, *, value_fn=None, rng=None, n_worl
 
 def rank_hand_actions(game, *, budget: str = "fast", value_fn=None, rng=None,
                       top_k: Optional[int] = None, n_worlds: Optional[int] = None,
-                      cfg: HandConfig = DEFAULT_HAND_CONFIG, legal: Optional[list] = None) -> list:
-    """``[(action, ev)]`` sorted descending for a ``SELECTING_HAND`` state.  Side-effect-free."""
+                      cfg: HandConfig = DEFAULT_HAND_CONFIG, legal: Optional[list] = None,
+                      allow_pass: bool = False) -> list:
+    """``[(action, ev)]`` sorted descending for a ``SELECTING_HAND`` state.  Side-effect-free.
+
+    ``allow_pass`` (``budget="fast"`` only, PVP_NOTES.md §4) adds the leader's match-level
+    ``{"type": "pvp_pass"}`` candidate when the turn protocol allows it.  It is ignored by
+    ``budget="full"``: the full budget values a candidate by STEPPING it on sampled worlds,
+    and a pass is not something a ``BalatroGame`` can be stepped with, so rolling it out
+    would silently score it as "the same position, played on" — i.e. as the best play — and
+    the comparison would be meaningless.  The protocol player is a fast-budget player."""
     if game.state != State.SELECTING_HAND:
         return []
     if budget == "fast":
-        ranked = _hand_ranking_fast(game, cfg, legal=legal)
+        ranked = _hand_ranking_fast(game, cfg, legal=legal, allow_pass=allow_pass)
         return ranked[:top_k] if top_k else ranked
     if budget == "full":
         # W-LEAF / EV_NOTES §8.3: with a value_fn, the leaf is worth more worlds and fewer
@@ -2177,13 +2335,20 @@ def extraction_lines(game, legal: Optional[list] = None, *,
     ``_extraction_discard_lines`` (dump the Purple seals / three faces for Faceless / one
     card for Trading Card) and every play whose scoring cards carry a proc.  ``ev`` is the
     full objective value, so it is directly comparable with ``rank_hand_actions``.
-    (Interface for W-PAIRS's ``greedy_vs_extract`` pair source, brief §5.2.)"""
+    (Interface for W-PAIRS's ``greedy_vs_extract`` pair source, brief §5.2.)
+
+    At a Nemesis the gate is the DECIDED-race one (``pvp_decided``, PVP_NOTES.md §5) and
+    the conditioning probability is 1.0, matching ``evaluate()``; with the default config
+    ``extract_on`` is False at a Nemesis and this returns ``[]`` exactly as before."""
     if game.state != State.SELECTING_HAND:
         return []
     if legal is None:
         legal = game.legal_actions()
     an = HandAnalysis(game, cfg, legal=legal)
     if not an.extract_on:
+        return []
+    decided = an.pvp_decided() if an.pvp else ""
+    if an.pvp and not decided:
         return []
     out = []
     for a, ev in an.evaluate():
@@ -2192,14 +2357,16 @@ def extraction_lines(game, legal: Optional[list] = None, *,
         keep = an.full_mask & ~mask
         m = min(len(t), an.hand_size - _popcount(keep))
         if a["type"] == "play":
-            pc = an._p_clear_after(an.h - 1, an.d, an.need - an._exact_of(t))
+            pc = 1.0 if an.pvp else an._p_clear_after(an.h - 1, an.d, an.need - an._exact_of(t))
             money = an._play_extraction(t, m, pc) + an._cycle_ev(keep, m)
         else:
-            pc = an._p_clear_after(an.h, an.d - 1, an.need)
+            pc = 1.0 if an.pvp else an._p_clear_after(an.h, an.d - 1, an.need)
             money = an._discard_extraction(t, m, pc) + an._cycle_ev(keep, m)
-        if pc < cfg.extract_min_clear or abs(money) < 1e-9:
+        if (not an.pvp and pc < cfg.extract_min_clear) or abs(money) < 1e-9:
             continue
-        out.append((a, float(ev), f"extract ${money:.2f} (P(clear after) {pc:.2f})"))
+        why = (f"extract ${money:.2f} (Nemesis decided-{decided})" if an.pvp
+               else f"extract ${money:.2f} (P(clear after) {pc:.2f})")
+        out.append((a, float(ev), why))
     out.sort(key=lambda x: (-x[1], _action_sort_key(x[0])))
     return out
 

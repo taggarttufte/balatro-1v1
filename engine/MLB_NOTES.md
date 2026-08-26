@@ -76,6 +76,13 @@ verdict).  The engine mirrors that split:
    (the player reaching the score first wins a tie); the live server (`actionHandlers.ts:320`)
    only takes a life when the scores differ.  Implemented the server rule.  Brief §1.3's "verify
    vs server" is done.
+   **2026-08-26 (W-PVP) re-check:** that server citation is a REMOTE one (fetched over the
+   network in Phase 2) and **nothing in the local install corroborates it** — there is no
+   score comparison in the live-MP client at all, and `ghost_replay.lua:142-168`, the only
+   local reimplementation, uses `>=` with no "nobody loses" branch.  The server rule stays
+   implemented (`agents.md:58` phrases the loss condition with a strict `<`, which agrees);
+   `_resolve_pvp`'s docstring names the line to change if it is ever re-verified.
+   `ev/PVP_NOTES.md` §1.4.
 2. **Canonical turn order.**  Both players act in real time in the real game.  The outcome of a
    Nemesis (who loses / tie) is invariant to the interleaving: scores only grow, and the rule
    ends the round only when the behind player can no longer improve — pinned by
@@ -86,6 +93,15 @@ verdict).  The engine mirrors that split:
    (ready-waiting, `PVP_WAIT`, done).  `step()` is permissive — any player who can act may be
    stepped — so an env that moves both players per step is fine; the canonical order is for
    search/replay.
+   **2026-08-26 (W-PVP):** this is now the `pvp_protocol="canonical"` branch and is still the
+   default and still byte-identical (pinned step-by-step by
+   `engine_tests/test_pvp_protocol.py` against transcripts captured before the change).
+   `pvp_protocol="trailer_compelled"` adds one match-level action — the strictly-leading
+   player inside a live Nemesis may `{"type": "pvp_pass"}`, i.e. wait — which is the thing
+   strict alternation could not express.  It is a MODELLING CHOICE that cannot be
+   oracle-verified; the mod-source facts that make it defensible (no clock at a PvP blind
+   under MLB, no concede action) and every edge-case decision are in `ev/PVP_NOTES.md` §1-§2.
+   End conditions are untouched.
 3. **"First to 0 loses."**  When both are at 1 life and both fail the same blind the server
    kills whoever's `failRound` arrives first.  In the engine the first game stepped into its
    fail loses (`test_first_to_zero_loses_even_if_both_are_failing`); with alternation that's

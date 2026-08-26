@@ -148,6 +148,13 @@ unused-hand money at a PvP blind, and every hand is played anyway — the engine
 Nemesis on chips).  Not modelled: the opponent reacting to my score, the early-end cut
 (exhausted and strictly behind → immediate loss) as a reason to sequence big hands first.
 
+> **2026-08-26, W-PVP — the first gap is now optionally closed.**  `cfg.pvp_level1` adds the
+> opponent's REVEALED live score as a fourth atom (weight `pvp_live_weight`, only when I am
+> strictly behind, because only then may they sit on their hands), which is the level-1
+> objective for `MLBMatch(pvp_protocol="trailer_compelled")`.  **Default OFF: with
+> `DEFAULT_HAND_CONFIG` everything in this section is bit-for-bit unchanged.**  The
+> early-end cut is still only reached indirectly.  See `PVP_NOTES.md` §3.
+
 ## 4. `EVPlayer` — every state
 
 `act(game)` always returns an element of `legal_actions()` (or `no_action = {"type":

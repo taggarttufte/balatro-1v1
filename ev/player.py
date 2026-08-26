@@ -56,7 +56,8 @@ import hand as _hand
 from hand import HandConfig, DEFAULT_HAND_CONFIG, blind_model_for, board_ratio
 from sampling import sample_world, world_rng
 
-__all__ = ["EVPlayer", "PlayerConfig", "DEFAULT_PLAYER_CONFIG", "build_proxy", "PREMIUM_TAGS"]
+__all__ = ["EVPlayer", "PlayerConfig", "DEFAULT_PLAYER_CONFIG", "build_proxy", "PREMIUM_TAGS",
+           "adapt_match_player", "protocol_hand_cfg", "PVP_PROTOCOL_HAND_CFG"]
 
 #: Tags worth skipping a Small/Big blind for (rule tier), by the value of what they give.
 PREMIUM_TAGS = frozenset({
@@ -220,12 +221,31 @@ class EVPlayer:
     #: ... and seen this often forces leave_shop / skip_booster
     FORCE_LEAVE_AFTER = 6
 
-    def act(self, game) -> dict:
+    def act(self, game, extra_actions: Optional[list] = None) -> dict:
+        """``extra_actions`` (W-PVP): MATCH-level actions the coordinator is offering that
+        the game itself knows nothing about — today exactly ``{"type": "pvp_pass"}``, the
+        Nemesis leader's wait (PVP_NOTES.md §4).  ``adapt_match_player`` fills it in from
+        ``MLBMatch.legal_actions``; every existing caller passes nothing and is unaffected.
+
+        The match has the last word on legality: the analysis generates the pass from the
+        two scores it can see, and anything the match did not actually offer is dropped
+        here rather than returned as an illegal action."""
         legal = game.legal_actions()
+        allow_pass = bool(extra_actions) and any(
+            a.get("type") == "pvp_pass" for a in extra_actions)
         if not legal:
+            if allow_pass:
+                # rare: SELECTING_HAND with an empty hand (deck-out).  The match offered a
+                # wait and the game offers nothing, so waiting is the only thing to do.
+                return {"type": "pvp_pass"}
             return dict(self.no_action)
         if self.epsilon > 0.0 and self._eps_rng.random() < self.epsilon:
             return dict(legal[self._eps_rng.randrange(len(legal))])
+        if allow_pass and game.state == State.SELECTING_HAND:
+            ranked = self._rank_hand(game, legal, explain=False, allow_pass=True)
+            if ranked:
+                return dict(ranked[0][0])
+            return dict(legal[0])
         force_rules = False
         if game.state in (State.SHOP, State.BOOSTER_OPEN):
             # a repeated identical signature means the previous pick was a no-op (an
@@ -246,11 +266,16 @@ class EVPlayer:
             return dict(ranked[0][0])
         return dict(legal[0])
 
-    def explain(self, game) -> list:
+    def explain(self, game, extra_actions: Optional[list] = None) -> list:
         """Ranked ``[(action, ev, reason)]`` for the state (W6's advisor prints this)."""
         legal = game.legal_actions()
+        allow_pass = bool(extra_actions) and any(
+            a.get("type") == "pvp_pass" for a in extra_actions)
         if not legal:
             return [(dict(self.no_action), 0.0, "no legal action (waiting / over)")]
+        if allow_pass and game.state == State.SELECTING_HAND:
+            return [(a, ev, r) for a, ev, r in
+                    self._rank_hand(game, legal, explain=True, allow_pass=True)]
         return [(a, ev, r) for a, ev, r in self._rank(game, legal)]
 
     # ── dispatch ────────────────────────────────────────────────────────────
@@ -278,8 +303,11 @@ class EVPlayer:
 
     # ── hands ───────────────────────────────────────────────────────────────
 
-    def _rank_hand(self, game, legal: list, explain: bool = True) -> list:
+    def _rank_hand(self, game, legal: list, explain: bool = True,
+                   allow_pass: bool = False) -> list:
         kw = dict(budget=self.budget, cfg=self.hand_cfg, legal=legal)
+        if allow_pass and self.budget == "fast":
+            kw["allow_pass"] = True
         if self.budget == "full":
             kw["value_fn"] = self.value_fn
             kw["rng"] = world_rng(self.seed, game, salt=0xF0)
@@ -330,6 +358,9 @@ class EVPlayer:
             idx = a.get("consumable_idx", 0)
             key = game.consumable_hand[idx] if idx < len(game.consumable_hand) else "?"
             return f"use {key} on {a.get('target_cards', [])} (EV {ev:.3f})"
+        if t == "pvp_pass":
+            return (f"WAIT — leading {game.chips_scored} vs {game.pvp_opponent_score}, "
+                    f"conserve {game.hands_left} hands (EV {ev:.3f})")
         return f"{t} (EV {ev:.3f})"
 
     # ── blind select ────────────────────────────────────────────────────────
@@ -568,3 +599,35 @@ class EVPlayer:
         out.append(({"type": "skip_booster"}, 0.0, "skip the pack"))
         out.sort(key=lambda x: (-x[1], _hand._action_sort_key(x[0])))
         return out
+
+
+# ═══════════════════════════════════════════════════════ the PvP turn protocol (W-PVP)
+
+#: `HandConfig` overrides that turn the level-1 Nemesis objective, the leader's PASS and
+#: the decided-race extraction gate ON together.  See `ev/PVP_NOTES.md`.
+PVP_PROTOCOL_HAND_CFG = dict(pvp_level1=True, pvp_pass=True, pvp_extract=True)
+
+
+def protocol_hand_cfg(base: HandConfig = DEFAULT_HAND_CONFIG, *, level1: bool = True,
+                      pvp_pass: bool = True, extract: bool = True) -> HandConfig:
+    """``HandConfig`` for a player that plays under ``pvp_protocol="trailer_compelled"``.
+
+    The three levers are separable on purpose — the attribution h2h in PVP_NOTES.md §8
+    runs level-1 against level-0 with the protocol on for BOTH sides, which needs
+    ``level1=False`` while ``pvp_pass``/``extract`` stay on."""
+    return replace(base, pvp_level1=bool(level1), pvp_pass=bool(pvp_pass),
+                   pvp_extract=bool(extract))
+
+
+def adapt_match_player(player) -> Callable:
+    """``player`` -> ``(match, p, acts) -> action``, the ``MLBMatch.play_out`` policy form.
+
+    Same contract as ``eval/common.adapt_player`` with one addition: the match-level
+    actions in ``acts`` that no ``BalatroGame`` knows about (``pvp_pass``) are handed to
+    ``act`` as ``extra_actions``, so the player can choose to WAIT.  Use this instead of
+    ``adapt_player`` whenever the match runs a non-canonical ``pvp_protocol``; with the
+    canonical protocol ``acts`` never contains one and the two adapters are identical."""
+    def pol(m, p, acts):
+        extra = [a for a in (acts or []) if a.get("type") == "pvp_pass"]
+        return player.act(m.games[p], extra_actions=extra) if extra else player.act(m.games[p])
+    return pol

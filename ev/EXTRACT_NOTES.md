@@ -202,6 +202,16 @@ arrays, `play_keep is discard_keep is keep_value`, one sort instead of two, and
 (0.90), and always False at a Nemesis (`is_pvp`: there is no unused-hand money at a PvP blind
 and every hand is played anyway — EV_NOTES §3) or when there is nothing to extract.
 
+> **2026-08-26, W-PVP — the Nemesis clause is now conditional.**  "Never at a Nemesis" was
+> right while the RACE IS LIVE and wrong once it is over: a Nemesis always reaches Cash Out
+> won or lost (MLB_NOTES §1.4b), the *discard* money row is not patched out at a PvP blind
+> (§1.4a), and the per-action procs pay there like anywhere else.  With `cfg.pvp_extract` the
+> gate at a Nemesis becomes `pvp_decided()` — decided-LOST (no line reaches the opponent's
+> reachable score, and it is not the last life) or decided-WON — and the money's conditioning
+> probability is 1.0 rather than `P(clear)`.  **Default OFF: `extract_on` is still False at
+> every Nemesis with `DEFAULT_HAND_CONFIG`, so everything below is unchanged.**  It fires at
+> ~6% of Nemesis hand decisions in real play.  See `PVP_NOTES.md` §5.
+
 Gated on it:
 
 * **`_extraction_discard_lines`** — dump the proc-discardable cards (Purple seals capped at
