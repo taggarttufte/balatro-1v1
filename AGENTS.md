@@ -47,6 +47,7 @@ the audit that overturned it is part of the record.
 | …versus the 106-generation MCTS, played honestly | **57 / 58** decided matches (98.3%, CI [94.8, 100]) | `results/h2h_ev_full_vs_real1_det_30seeds.md` |
 | *Negative:* the learned V as a full policy | **2 / 60** matches vs the hand-written rules — per-action EV gaps sit below label noise | `results/tournament_v_v_full.json` |
 | …after the counterfactual-pairs round (2026-08-26) | **12 / 60**, while a same-data control without the ranking loss stays at 2 / 60 — the gain is the lever, attributed | `results/tournament_v_v_v2.json` |
+| …after λ/τ tuning + a 24-world hi-res pair corpus (same day) | **34.7% pooled over 756 matches, best seed 42.9%** — approaching parity with the hand-written rules | `results/tournament_v_v3_s1.json` |
 
 ## Repository layout
 

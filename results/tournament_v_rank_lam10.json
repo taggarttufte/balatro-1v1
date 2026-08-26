@@ -1,0 +1,78 @@
+{
+ "name": "rank_lam10",
+ "checkpoint": "C:\\Users\\Taggart\\projects\\balatro-1v1\\ev\\runs\\sweep_rank\\lam10\\ckpt_0001750.pt",
+ "timestamp": "2026-08-26T00:19:03",
+ "n_seeds": 30,
+ "n_matches": 60,
+ "v_wins": 17,
+ "v_win_rate": 0.2833333333333333,
+ "wilson95": [
+  0.1850667860430859,
+  0.40767525049735165
+ ],
+ "by_seat": {
+  "0": {
+   "n": 30,
+   "wins": 9
+  },
+  "1": {
+   "n": 30,
+   "wins": 8
+  }
+ },
+ "pairs_v_swept": 5,
+ "pairs_v_lost_both": 18,
+ "mean_v_lives_margin": -1.55,
+ "mean_final_ante": 5.133333333333334,
+ "v_calls": 47583,
+ "v_errors": 0,
+ "mean_match_s": 5.329016114999346,
+ "elapsed_s": 48.10779320000438,
+ "pool": {
+  "submitted": 30,
+  "done": 30,
+  "failed": 0,
+  "skipped": 0,
+  "elapsed_s": 48.106812199999695,
+  "job_seconds": 328.8628499000042,
+  "paused": false,
+  "interrupted": false,
+  "exhausted": true,
+  "failed_ids": [],
+  "n_workers": 8,
+  "jobs_per_min": 37.41673824731233,
+  "mean_job_s": 10.962094996666808
+ },
+ "seeds": [
+  "11111111",
+  "1558AXDL",
+  "15H9Z3IY",
+  "1KV4W6YS",
+  "1MD1YZ9T",
+  "28V7DD4H",
+  "29DAQVG1",
+  "29Y3L4S9",
+  "29ZSW8MY",
+  "2BRGI767",
+  "2CP4KSXZ",
+  "2GHBLJD9",
+  "2H9N3ISZ",
+  "2K9H9HN",
+  "34JCNMPA",
+  "3SZ71111",
+  "41Y71M6E",
+  "46Y8UZEG",
+  "4H2L46CE",
+  "4K8A9QER",
+  "4R219TNX",
+  "4T1SZKLF",
+  "4UEGRRRA",
+  "51F2NVWK",
+  "56QZEVDV",
+  "5AWWF1M1",
+  "5UIUKHCI",
+  "5YVHAEP",
+  "6H6WNQM2",
+  "7I4M53DL"
+ ]
+}

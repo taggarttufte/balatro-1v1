@@ -122,6 +122,9 @@ running.
 | Baseline | `real1` MCTS, 106 generations — **must be cited determinized**; clairvoyant numbers are not evidence |
 | Learned V | 5M params, trained on 51k labels; **not yet a policy** (argmax-V 2/60 vs rules) |
 | V-v2 round | **complete 2026-08-26**: 42,468 counterfactual pairs (realized VRF 2.08×); argmax-V vs rules **2/60 → 12/60**, with a same-data no-pairs control staying at 2/60 — the gain is the ranking loss, not the data. V at the expectimax leaf remains a null (24/60) |
+| V-v3 (same day) | sweep → 3-seed confirmation → hi-res 24-world pair corpus: argmax-V **34.7% pooled (262/756), best seed 42.9%** at lives margin −0.56 — approaching parity with the rules. Trajectory 3.3% → 20% → 30% → 34.7%, each step attributed |
+| PvP turn protocol | "compulsion on the trailer" implemented flag-gated (canonical default byte-identical, parity held); decided-lost extraction pivot fires on 4.4% of real Nemesis decisions; found canonical self-play seat bias (seat 1 wins 70%) |
+| Transfer spread (EV player) | Red 71.3% / Checkered 72.6% / Plasma 71.4% per-blind vs a fixed target — **spread 1.3pp ≈ zero**: the analytic layer is deck-robust by construction |
 | Full-run wins | the 126-seed gate's `won` metric: **1.6%** [0.0, 4.0], rising to **3.2%** with the extraction layer. (The predecessor repo's README reference points: skilled human ≈ 70%, random < 0.01%) |
 
 Nothing here claims a strong Balatro player. The strongest claim here is about

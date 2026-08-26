@@ -1856,3 +1856,66 @@ the July-2026 audit that links the two projects is copied into docs/ with proven
    ON-vs-OFF h2h + level-1-vs-level-0 h2h at <=6 procs. No commits; lead verifies AM.
 Morning runbook: verify W-PVP + commit; retrain on pairs_v2+v3_hires with sweep-best config; tournament
 + h2h battery; compile.
+
+**2026-08-26 (night) — transfer_spread with ev:fast LANDED (results/transfer_spread_ev_fast.json,
+150 paired seeds x 3 decks, solo vs vanilla_boss target, White stake):** per-blind win rate Red 0.713 /
+Checkered 0.726 / Plasma 0.714 — **spread 1.3pp, CI [0.4, 4.5pp] ≈ ZERO**; Checkered easiest by ante-8
+reach (43.3% vs Red 31.3%, Plasma 36.7%). The layer-1 exploitability question answered for the analytic
+layer: worst cell ≈ average cell — the machinery adapts by construction (expectimax over actual deck
+composition, per-composition tail DP, Plasma scoring in-engine). The assessment's LOW/LOWEST transfer
+prior was a learned-policy worry; encode-vs-learn again. Caveats: 3/15 decks, White stake, solo proxy
+target (not MLB matches). Md companion + ledger row at morning compile.
+
+**2026-08-26 (night) — W-PVP LANDED, lead-verified (53 new tests spot-run green) + committed `3e8063f`,
+pushed.** Full report in ev/PVP_NOTES.md. Highlights beyond the commit message: (1) the protocol is
+DEFENSIBLE from the mod source — MLB loads no pvp_timer and punishes nothing, so waiting is legal and
+untimed in the real game; (2) exact-tie provenance flagged: only the Phase-2 REMOTE server fetch supports
+nobody-loses; the mod's own ghost_replay.lua uses >= — kept server rule, line documented; (3) **canonical
+alternation is seat-biased in mirror self-play (seat 1 wins 70%, protocol moves it to 43%, n=30)** — NOTE:
+prior h2h aggregates are unaffected (both seatings always run per seed, bias cancels), but per-seat rows
+were never comparable; (4) extraction pivot fires at 4.4% of Nemesis decisions (real play) and wins the
+decided-lost fixture; aggregate $ delta slightly negative because early-end cuts x2.3 shorten losing
+Nemeses — judge on the fixture; (5) level-1 vs level-0 = n=60 cannot separate (do not quote as "doesn't
+help"). PASS is fast-budget only (full budget would mis-score it via stepping) — full-budget PASS support
+queued. Still running tonight: sweep_rank (partial results accumulating), pairs_v3_hires.
+
+**2026-08-26 (night) — SWEEP DONE (results/sweep_rank_2026-08-26.{json,md}, 12/13 configs, ~3.5 h):
+STRONGER RANKING PRESSURE WINS.** Top: **lam3_tau0.02 = 22/60 (36.7%)** vs the 12/60 official baseline;
+cap8 20/60; lam3 17; lam10 17; lam0.3 16; noaux 16; center (v_v2 replica @3000 steps) only 6/60 —
+config/seed noise is real, so is the trend: tournament wins track lam_rank strength, NOT pair_acc/brier
+(lam0.3 has the best offline metrics and mid-pack wins — offline metrics are not the objective). tau 0.10
+is poison (3/60); winners keep ECE fine (0.025). newonly config FAILED (new_only mode needs
+--new-fingerprint; not chased — not a candidate). **Winner's-curse caveat: 22/60 is selection-inflated
+across 12 tournaments; morning confirm = retrain lam3_tau0.02 (+cap8 runner-up) on pairs_v2 + v3_hires
+combined, evaluate on 126-seed tournament + h2h battery.** Campaign still running.
+
+**2026-08-26 — CONFIRMATION RUN (2 configs x 3 fresh seeds x 126-seed tournaments, results/
+tournament_v_confirm_*.json): lam3_tau0.02 CONFIRMED at pooled 227/756 = 30.0% [26.8, 33.4] vs rules
+(seeds: 57/70/100 of 252; lives -1.85/-1.73/-0.88); cap8 regressed to baseline 152/756 = 20.1% — its
+sweep 20/60 was noise, and the sweep's 22/60 was winner's-curse-inflated as flagged. ARGMAX-V TRAJECTORY:
+2/60 -> 12/60 -> 30.0% pooled, every step attributed.** Notes: training-seed variance is a lever
+(22.6-39.7% across 3 seeds — report pooled, deploy best); best ckpts at steps 750-2000 (early ranking
+optimum). NEXT (auto, when pairs_v3_hires lands): final retrain lam3_tau0.02 x3 seeds on pairs_v2 +
+v3_hires combined -> 126-seed tournament + h2h battery + fixtures -> compile + ledger.
+
+**2026-08-26 — W-ENCODE-POC LAUNCHED (Tagg: "little POC on the llm plan").** Scope: minimal ev/encode/
+harness + 8 self-authored registry entries from real Lua (Cloud 9, Rocket, Satellite | Ride the Bus,
+Green Joker, Ice Cream | Hermit | Seed Money) verified empirically — trigger-targeted w/ reachability
+instrumentation (econ tier) and with-vs-without SAME-WORLDS paired rollouts (policy-conditional tier;
+the CRN machinery as an item-value oracle). Marginal-check rule vs double-counting. REQUIRED negative
+controls: a 3x-overpriced entry + a double-count entry must be REJECTED — a POC where everything passes
+proves nothing. No integration, no fleet; verdict decides whether L1/L2/L3 proceed. Also running:
+v_v3 final retrain battery (3 seeds combined corpus -> 126-seed tournaments -> Vleaf h2h).
+Campaign FINAL: 16,257 hi-res pairs, VRF 2.43x, resolved 4.7% flat (closer pairs offset tighter CIs —
+weighted signal is what improved; retrain arbitrates).
+
+### 2026-08-26 — V-v3 FINAL: pooled 34.7% vs rules; the overnight menu's full harvest
+
+v_v3 = lam3_tau0.02 x 3 seeds on the COMBINED corpus (127k abs rows + 58,725 pairs incl. 16,257 hi-res
+@ 24 worlds): **s1 108/252 (42.9%, lives −0.56) / s2 84/252 / s3 70/252 → pooled 262/756 = 34.7%
+[31.3, 38.1]** vs the pairs_v2-only confirmation 30.0% — the hi-res corpus is worth ~+5pp; held-out
+pair_acc 0.69–0.71 (was 0.62). **ARGMAX-V TRAJECTORY: 2/60 → 12/60 → 30.0% → 34.7% pooled / 42.9%
+best, each step attributed** (control isolated data-freshness; sweep+confirmation isolated config;
+v3 isolated corpus). V-at-leaf with s1: **29/60 [35.0, 60.0]** vs plain full — still a null, trend
+24 → 24 → 29 across V generations; Nemesis rate 0.506. Keeper: ev/runs/v_v3/s1/ckpt_0002000.pt.
+Results: tournament_v_v3_s{1,2,3}.json, h2h_vleaf_v3_vs_ev_full_30seeds.{json,md}.

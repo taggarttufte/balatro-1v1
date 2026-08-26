@@ -1,0 +1,277 @@
+{
+ "name": "pairs_v3_hires",
+ "run_dir": "ev\\runs\\pairs_v3_hires",
+ "timestamp": "2026-08-26T13:36:40",
+ "pool": {
+  "submitted": 1524,
+  "done": 1524,
+  "failed": 0,
+  "skipped": 0,
+  "elapsed_s": 37480.88510350001,
+  "job_seconds": 519536.2272817999,
+  "paused": false,
+  "interrupted": false,
+  "exhausted": true,
+  "failed_ids": [],
+  "n_workers": 14,
+  "jobs_per_min": 2.439643560911031,
+  "mean_job_s": 340.9030362741469
+ },
+ "n_pairs": 16257,
+ "n_abs_rows": 32514,
+ "n_seeds": 1626,
+ "skipped_states": 3,
+ "variance": {
+  "n_pairs": 16257,
+  "n_worlds": 24,
+  "crn": {
+   "var_paired_per_rollout_block": 0.1344142204820939,
+   "var_unpaired_per_rollout_block": 0.32597210708870666,
+   "var_reduction_factor": 2.4251311053217863,
+   "mean_rho": 0.6091246571757779,
+   "n_with_rho": 13378,
+   "se_paired_at_n": 0.07483710657212267,
+   "se_unpaired_at_n": 0.11654257217298798
+  },
+  "direct": {
+   "n_pairs": 200,
+   "var_paired": 0.0056192154399116664,
+   "var_unpaired": 0.013275469328821668,
+   "var_reduction_factor": 2.3625129648046306
+  },
+  "resolved_frac": 0.04748723626745402,
+  "by_source": {
+   "close_call": {
+    "n": 11047,
+    "var_reduction_factor": 2.761129343362567,
+    "resolved_frac": 0.0330406445188739
+   },
+   "greedy_vs_extract": {
+    "n": 87,
+    "var_reduction_factor": 2.3236941126249175,
+    "resolved_frac": 0.04597701149425287
+   },
+   "random": {
+    "n": 5123,
+    "var_reduction_factor": 1.9153617072540172,
+    "resolved_frac": 0.07866484481748975
+   }
+  },
+  "by_state_kind": {
+   "hand": {
+    "n": 8130,
+    "var_reduction_factor": 2.6107410105671898,
+    "resolved_frac": 0.034317343173431734
+   },
+   "nemesis": {
+    "n": 6504,
+    "var_reduction_factor": 2.6871670318623337,
+    "resolved_frac": 0.04228167281672817
+   },
+   "shop": {
+    "n": 1623,
+    "var_reduction_factor": 1.418981995754842,
+    "resolved_frac": 0.13431916204559458
+   }
+  }
+ },
+ "mix": {
+  "n": 16257,
+  "pair_source": {
+   "close_call": 11047,
+   "greedy_vs_extract": 87,
+   "random": 5123
+  },
+  "pair_source_frac": {
+   "close_call": 0.6795226671587624,
+   "greedy_vs_extract": 0.005351540874700129,
+   "random": 0.3151257919665375
+  },
+  "state_kind": {
+   "hand": 8130,
+   "nemesis": 6504,
+   "shop": 1623
+  },
+  "state_kind_frac": {
+   "hand": 0.5000922679461155,
+   "nemesis": 0.40007381435689243,
+   "shop": 0.09983391769699207
+  },
+  "requested": {
+   "close_call": 11380,
+   "greedy_vs_extract": 3251,
+   "random": 1626
+  },
+  "requested_to_realised": {
+   "close_call->close_call": 8684,
+   "close_call->greedy_vs_extract": 4,
+   "close_call->random": 2692,
+   "greedy_vs_extract->close_call": 2363,
+   "greedy_vs_extract->greedy_vs_extract": 83,
+   "greedy_vs_extract->random": 805,
+   "random->random": 1626
+  }
+ },
+ "abs_dataset": {
+  "n": 32514,
+  "n_seeds": 1626,
+  "y_mean": 0.47386297583580017,
+  "y_sd": 0.30506762862205505,
+  "by_kind": {
+   "hand": {
+    "n": 16260,
+    "y_mean": 0.4611700475215912,
+    "y_sd": 0.2891919016838074,
+    "ci_mean": 0.14950339496135712,
+    "trunc_frac": 0.0
+   },
+   "nemesis": {
+    "n": 13008,
+    "y_mean": 0.4901876747608185,
+    "y_sd": 0.32540827989578247,
+    "ci_mean": 0.14091117680072784,
+    "trunc_frac": 0.0
+   },
+   "shop": {
+    "n": 3246,
+    "y_mean": 0.47202539443969727,
+    "y_sd": 0.2950502336025238,
+    "ci_mean": 0.148935005068779,
+    "trunc_frac": 0.0
+   }
+  },
+  "by_ante": {
+   "1": {
+    "n": 5070,
+    "y_mean": 0.489551842212677,
+    "y_sd": 0.12734799087047577,
+    "ci_mean": 0.17916837334632874,
+    "trunc_frac": 0.0
+   },
+   "2": {
+    "n": 7390,
+    "y_mean": 0.4858066737651825,
+    "y_sd": 0.22041405737400055,
+    "ci_mean": 0.16679179668426514,
+    "trunc_frac": 0.0
+   },
+   "3": {
+    "n": 7462,
+    "y_mean": 0.48003217577934265,
+    "y_sd": 0.3189893364906311,
+    "ci_mean": 0.1433401256799698,
+    "trunc_frac": 0.0
+   },
+   "4": {
+    "n": 6928,
+    "y_mean": 0.4604182839393616,
+    "y_sd": 0.3609546422958374,
+    "ci_mean": 0.12929530441761017,
+    "trunc_frac": 0.0
+   },
+   "5": {
+    "n": 4438,
+    "y_mean": 0.4514201581478119,
+    "y_sd": 0.4002252519130707,
+    "ci_mean": 0.11386892199516296,
+    "trunc_frac": 0.0
+   },
+   "6": {
+    "n": 1122,
+    "y_mean": 0.4628887176513672,
+    "y_sd": 0.4075336754322052,
+    "ci_mean": 0.1115809977054596,
+    "trunc_frac": 0.0
+   },
+   "7": {
+    "n": 94,
+    "y_mean": 0.39007097482681274,
+    "y_sd": 0.41763409972190857,
+    "ci_mean": 0.10289900004863739,
+    "trunc_frac": 0.0
+   },
+   "8": {
+    "n": 10,
+    "y_mean": 0.38333335518836975,
+    "y_sd": 0.4702245593070984,
+    "ci_mean": 0.07872561365365982,
+    "trunc_frac": 0.0
+   }
+  },
+  "ci_mean": 0.1460091471672058,
+  "trunc_frac": 0.0
+ },
+ "aux_coverage": {
+  "a": {
+   "money_next_shop": 0.9450698160792275,
+   "lives_2antes": 1.0,
+   "pvp_margin_next": 0.961862582272252,
+   "blind_cleared": 0.9923110044903733,
+   "xmult_by_ante4": 0.8257981177338992,
+   "extract_income": 1.0,
+   "cards_modified": 1.0,
+   "tarots_used": 1.0
+  },
+  "b": {
+   "money_next_shop": 0.9441471366180723,
+   "lives_2antes": 1.0,
+   "pvp_margin_next": 0.9602017592421725,
+   "blind_cleared": 0.9919419327059112,
+   "xmult_by_ante4": 0.8257981177338992,
+   "extract_income": 1.0,
+   "cards_modified": 1.0,
+   "tarots_used": 1.0
+  }
+ },
+ "throughput": {
+  "pairs_per_min": 26.019396348881422,
+  "workers": 14,
+  "s_per_pair_in_worker": 33.96669212748581,
+  "ms_per_rollout": 707.639419322621,
+  "elapsed_s": 37488.187155499996
+ },
+ "timing_totals": {
+  "selfplay_s": 1800.0023834003805,
+  "pair_s": 517550.48794650123,
+  "n_snapshots": 15240,
+  "n_pairs": 15237,
+  "n_rollouts": 731376,
+  "rollout_decisions": 116878252,
+  "rollout_policy_s": 450338.2192157062,
+  "total_s": 519534.09658260125
+ },
+ "config": {
+  "n_states": 10,
+  "n_worlds": 24,
+  "close_gap": 0.03,
+  "mix": {
+   "close_call": 0.7,
+   "greedy_vs_extract": 0.2,
+   "random": 0.1
+  },
+  "policy": "auto",
+  "budget": "fast",
+  "shop_tier": "rules",
+  "epsilon_selfplay": 0.1,
+  "epsilon_rollout": 0.02,
+  "encoder": "auto",
+  "max_ante": 12,
+  "deck_key": "b_red",
+  "stake": 1,
+  "lives": 4,
+  "policy_seed": 0,
+  "rollout_seed": 0,
+  "allow_clairvoyant": false,
+  "coupling": "step_then_determinize",
+  "aux": true,
+  "per_kind": {
+   "hand": 5,
+   "nemesis": 4,
+   "shop": 1,
+   "pack": 0,
+   "blind_select": 0
+  }
+ },
+ "seeds_spec": "default+random:1500",
+ "has_extraction": true
+}
