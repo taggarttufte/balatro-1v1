@@ -481,8 +481,9 @@ def _selfplay_config(policy: str, budget: str, epsilon: float, policy_seed: int,
 
 
 def _drive_selfplay(seed: str, *, policy_factory: Callable, policy_seed: int, deck_key: str, stake,
-                    lives: int, max_ante: int, max_steps: int, on_decision: Optional[Callable] = None):
-    m = MLBMatch(seed=seed, deck_key=deck_key, stake=stake, lives=lives)
+                    lives: int, max_ante: int, max_steps: int, on_decision: Optional[Callable] = None,
+                    pvp_protocol: str = "canonical"):
+    m = MLBMatch(seed=seed, deck_key=deck_key, stake=stake, lives=lives, pvp_protocol=pvp_protocol)
     pols = [policy_factory(policy_seed * 2 + p, p) for p in (0, 1)]
     guard = _Guard()
     while not m.done and m.steps < max_steps and not _truncated(m, max_ante):
@@ -503,7 +504,8 @@ def sample_states(seed: str, *, n_states: int = 12, per_kind: Optional[dict] = N
                   policy_factory: Optional[Callable] = None, policy: str = "auto", budget: str = "fast",
                   epsilon: float = 0.1, policy_seed: int = 0, rng_seed: Optional[int] = None,
                   deck_key: str = "b_red", stake=1, lives: int = 4, max_ante: int = DEFAULT_MAX_ANTE,
-                  max_steps: int = DEFAULT_MAX_STEPS, min_step: int = 0) -> list:
+                  max_steps: int = DEFAULT_MAX_STEPS, min_step: int = 0,
+                  pvp_protocol: str = "canonical") -> list:
     """Self-play ONE match on ``seed`` and return reservoir-sampled ``Snapshot``s, stratified
     by ``STATE_KINDS`` (``per_kind`` caps; default ``n_states`` spread evenly over the kinds
     that occur).  ``rng_seed`` (default: hash of seed + policy_seed) seeds the reservoir."""
@@ -542,8 +544,9 @@ def sample_states(seed: str, *, n_states: int = 12, per_kind: Optional[dict] = N
 
     m = _drive_selfplay(seed, policy_factory=policy_factory, policy_seed=policy_seed, deck_key=deck_key,
                         stake=stake, lives=lives, max_ante=max_ante, max_steps=max_steps,
-                        on_decision=on_decision)
+                        on_decision=on_decision, pvp_protocol=pvp_protocol)
     sp = _selfplay_config(policy, budget, epsilon, policy_seed, deck_key, stake, lives, max_ante)
+    sp["pvp_protocol"] = pvp_protocol
     sp.update({"winner": m.winner, "final_antes": [g.ante for g in m.games],
                "final_lives": [g.lives for g in m.games], "steps": m.steps,
                "forced": getattr(m, "_w5_forced", 0), "decisions_seen": dict(seen)})
@@ -562,7 +565,8 @@ def sample_states(seed: str, *, n_states: int = 12, per_kind: Optional[dict] = N
 def reconstruct_snapshot(seed: str, step: int, *, policy: str = "auto", budget: str = "fast",
                          epsilon: float = 0.1, policy_seed: int = 0, deck_key: str = "b_red", stake=1,
                          lives: int = 4, max_ante: int = DEFAULT_MAX_ANTE,
-                         max_steps: int = DEFAULT_MAX_STEPS, policy_factory: Optional[Callable] = None):
+                         max_steps: int = DEFAULT_MAX_STEPS, policy_factory: Optional[Callable] = None,
+                         pvp_protocol: str = "canonical"):
     """Re-play the self-play match of ``sample_states`` to ``step`` and return the match
     (the state a ``Snapshot`` with that tag held).  Bit-exact when the policy is seeded."""
     if policy_factory is None:
@@ -577,7 +581,7 @@ def reconstruct_snapshot(seed: str, step: int, *, policy: str = "auto", budget: 
 
     m = _drive_selfplay(seed, policy_factory=policy_factory, policy_seed=policy_seed, deck_key=deck_key,
                         stake=stake, lives=lives, max_ante=max_ante, max_steps=max_steps,
-                        on_decision=on_decision)
+                        on_decision=on_decision, pvp_protocol=pvp_protocol)
     return holder.get("m", m)
 
 
@@ -650,7 +654,9 @@ def label_job(payload: dict) -> dict:
             pol_s += r1.policy_seconds
             n_ro += r1.n
         for p, r in ((0, r0), (1, r1)):
+            from balatro_sim.behavior_stamp import ENGINE_BEHAVIOR_STAMP
             meta = {"seed": s.seed, "step": s.step, "player": p, "actor": s.actor, "kind": s.kind,
+                    "engine_stamp": ENGINE_BEHAVIOR_STAMP,
                     "ante": s.ante, "ci": r.ci, "n_rollouts": r.n, "trunc_frac": r.trunc_frac,
                     "determinized": r.determinized, "lives": list(s.match.games[p].lives for p in (0, 1)),
                     "outcomes": [round(o, 4) for o in r.outcomes],

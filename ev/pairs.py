@@ -620,6 +620,8 @@ def pair_record(snapshot, choice: PairChoice, pr: PairRollout, *, fingerprint: s
         "delta_ci": float(pr.delta_ci),
         "meta": dict(meta or {}),
     }
+    from balatro_sim.behavior_stamp import ENGINE_BEHAVIOR_STAMP
+    rec["meta"].setdefault("engine_stamp", ENGINE_BEHAVIOR_STAMP)
     if aux:
         rec["aux"] = dict(aux)
     return _strict_json(rec)
@@ -923,7 +925,8 @@ def pair_job(payload: dict) -> dict:
         per_kind = {k: (share if k in PAIRABLE_KINDS else 0) for k in L.STATE_KINDS}
     snaps = L.sample_states(seed, n_states=n_states, per_kind=per_kind, policy_factory=sp_factory,
                             policy=policy, budget=budget, epsilon=eps_sp, policy_seed=policy_seed,
-                            deck_key=deck_key, stake=stake, lives=lives, max_ante=max_ante)
+                            deck_key=deck_key, stake=stake, lives=lives, max_ante=max_ante,
+                            pvp_protocol=payload.get("pvp_protocol", "canonical"))
     t_sp = time.perf_counter() - t0
 
     rng = random.Random(f"pairs:{seed}:{policy_seed}:{rollout_seed}")

@@ -261,6 +261,14 @@ gated money term is what promotes them.
 
 ## 6. Tarot targeting (first-order)
 
+> **2026-08-27, W-CYCLE — this section is SUPERSEDED.**  `_cycle_ev` is now per-TARGET:
+> targets are graded per card, the expectation is the k-th best grade over the real pile,
+> the value is W-SHOP's measured per-deck tarot dollars when the player supplies them, and a
+> play that CLEARS the blind banks no cycle at all (the round ends and the cards it draws go
+> back into the deck).  There are dedicated throwaway-dig lines under the same safety gate.
+> `HandConfig.tarot_per_target=False` restores everything below bit-for-bit.  See
+> `CYCLE_NOTES.md`; what follows is the form it replaced.
+
 A held targeted Tarot is only worth its `tarot_value_dollars` if there is something in hand to
 put it on.  `_prep_tarot_wants` builds `(want_mask, need, pile_count)` per held Tarot and
 `_cycle_ev(keep_mask, m)` prices a line that draws `m` fresh cards by the hypergeometric

@@ -26,6 +26,12 @@ import _bootstrap  # noqa: F401
 from _bootstrap import State
 
 import fixtures
+# W-CYCLE: the tarot fixture's own pinned lines (the package rebinds the NAME
+# `fixtures.tarot_target_cycle` to its `build`, so the module has to be reached directly)
+from fixtures.tarot_target_cycle import CLEAR_NOW as TC_CLEAR_NOW
+from fixtures.tarot_target_cycle import DIG_LINE as TC_DIG_LINE
+from fixtures.tarot_target_cycle import CHIPS_TARGET as TC_CHIPS_TARGET
+from fixtures.tarot_target_cycle import build_low_grade_target as _tc_low
 import hand as H
 import player as P
 import advisor
@@ -35,17 +41,21 @@ if _MP_ROOT not in sys.path:
     sys.path.insert(0, _MP_ROOT)
 
 
-# Six (sandbag, control) pairs; for five of them the extraction action and the "clear now"
-# action are genuinely DIFFERENT candidates (a real rank swap between fixture and control).
-# tarot_target_cycle is the one exception -- see its own test below and PROBE_NOTES.md.
+# Six (sandbag, control) pairs; in every one of them the extraction/dig action and the
+# "clear now" action are genuinely DIFFERENT candidates (a real rank swap between fixture
+# and control).  tarot_target_cycle used to be the exception -- it was pinned at the weaker
+# "same action, more EV" claim because W-EXTRACT's per-COUNT `_cycle_ev` scored every line
+# that drew the same number of cards identically (PROBE_NOTES.md section 3.3).  W-CYCLE's
+# per-TARGET model (ev/CYCLE_NOTES.md) produces the swap, so it joins the table.
 SCENARIOS = [
     ("purple_seal_discard", ("discard", (5, 6)), ("play", (0, 1))),
     ("faceless_discard", ("discard", (2, 3, 4)), ("play", (0, 1))),
     ("business_card_board", ("play", (2,)), ("play", (0, 1))),
     ("reserved_parking_hold", ("play", (7,)), ("play", (0, 1))),
     ("gold_seal_weak_play", ("play", (4,)), ("play", (0, 1))),
+    ("tarot_target_cycle", ("discard", (6, 7)), ("play", (0, 1, 2, 3, 4))),
 ]
-ALL_NAMES = [n for n, _, _ in SCENARIOS] + ["tarot_target_cycle"]
+ALL_NAMES = [n for n, _, _ in SCENARIOS]
 
 
 def _ranked_dict(game) -> dict:
@@ -143,22 +153,105 @@ def test_control_ordering_reverses(name, extract_action, clear_action):
             f"action ({max(evs.values()):.5f})")
 
 
-def test_tarot_target_cycle_sandbag_beats_the_same_line_without_the_tarot():
-    """tarot_target_cycle is the one scenario where the sandbag and control's TOP action is
-    literally the same card set (every 5-card clearing play here draws 5 fresh cards, so the
-    cycle bonus attaches near-uniformly rather than flipping a rank -- see PROBE_NOTES.md,
-    'honest discrepancies'). The claim this test pins is the one that actually holds: the
-    SAME action is worth strictly more with the Sun held and no Hearts in hand than without
-    any tarot at all, and the bonus is rendered."""
+def test_tarot_target_cycle_is_a_dig_line_not_a_uniform_bonus():
+    """The rank swap of the upgraded fixture, spelled out (ev/CYCLE_NOTES.md section 4).
+
+    ``discard [6,7]`` throws the two junk Spades, keeps the whole Clubs flush (so the floor
+    still clears the blind next hand) AND keeps the lone Ace of Hearts the Sun is waiting
+    on, and draws 2. It beats ``play [0..4]``, which clears the blind outright -- because a
+    clearing play ENDS the round, and the cards it draws go back into the deck without ever
+    carrying the tarot (``_play_continues``). Both facts are pinned here: the swap, and the
+    fact that the clear carries no dig at all."""
+    g_on = fixtures.FIXTURES["tarot_target_cycle"]().games[0]
+    evs = _ranked_dict(g_on)
+    dig, clear = evs[_key(*TC_DIG_LINE)], evs[_key(*TC_CLEAR_NOW)]
+    assert dig > clear, f"dig {dig:.6f} did not beat clear-now {clear:.6f}"
+    an = H.HandAnalysis(g_on, H.DEFAULT_HAND_CONFIG, legal=g_on.legal_actions())
+    assert an.extraction_ev({"type": "play", "cards": list(TC_CLEAR_NOW[1])}) == 0.0
+    assert an.extraction_ev({"type": "discard", "cards": list(TC_DIG_LINE[1])}) > 0.0
+    # ... and the dig line only exists because a tarot is held
+    assert tuple(TC_DIG_LINE[1]) in an._dig_lines()
+
+
+def test_tarot_dig_value_depends_on_the_COUNT_of_targets_a_line_keeps():
+    """Two discards of the SAME size, from the same hand, leaving the same made-hand floor:
+    ``[6,7]`` keeps the Ace of Hearts the Sun is waiting on, ``[5,6]`` bins it (it pairs with
+    nothing and sits in no straight window, so it is third in the junk ordering and the very
+    next junk-out-k line throws it). Roughly 8x.
+
+    Honest scope: this half of the claim is NOT new -- W-EXTRACT's per-count form already
+    subtracted the wanted cards a line keeps. It is here because it is the half that carries
+    most of the fixture's margin; the genuinely new half is the next test."""
+    g = fixtures.FIXTURES["tarot_target_cycle"]().games[0]
+    an = H.HandAnalysis(g, H.DEFAULT_HAND_CONFIG, legal=g.legal_actions())
+    keeps_ace = an.extraction_ev({"type": "discard", "cards": [6, 7]})
+    bins_ace = an.extraction_ev({"type": "discard", "cards": [5, 6]})
+    assert keeps_ace > 4.0 * bins_ace > 0.0
+
+
+def test_tarot_dig_value_depends_on_WHICH_target_card_the_line_keeps():
+    """The per-TARGET claim, isolated (ev/CYCLE_NOTES.md section 1). Same board, same line
+    (``discard [6,7]``), same number of Hearts kept, same 2 cards drawn, same draw pile
+    depth -- only the RANK of the one held Heart changes, Ace vs Four. The Ace covers the
+    top grade tiers on its own, so the second Heart the Sun still needs may be any Heart at
+    all; with the Four held, the good tiers still need two more cards.
+
+    W-EXTRACT's per-COUNT ``_cycle_ev`` scored these two boards IDENTICALLY -- it read only
+    ``m`` and the COUNT of wanted cards kept, never which ones. That is exactly the
+    "depends only on m drawn, not WHICH cards" limitation PROBE_NOTES.md section 3.3
+    reported, and it is what this workstream removes."""
+    from dataclasses import replace
+    line = {"type": "discard", "cards": list(TC_DIG_LINE[1])}
+    g_hi = fixtures.FIXTURES["tarot_target_cycle"]().games[0]
+    g_lo = _tc_low().games[0]
+    hi = H.HandAnalysis(g_hi, H.DEFAULT_HAND_CONFIG, legal=g_hi.legal_actions())
+    lo = H.HandAnalysis(g_lo, H.DEFAULT_HAND_CONFIG, legal=g_lo.legal_actions())
+    assert hi.extraction_ev(line) > lo.extraction_ev(line) > 0.0
+    # ... and the old per-count form cannot tell the two boards apart at all
+    old = replace(H.DEFAULT_HAND_CONFIG, tarot_per_target=False)
+    hi_old = H.HandAnalysis(g_hi, old, legal=g_hi.legal_actions())
+    lo_old = H.HandAnalysis(g_lo, old, legal=g_lo.legal_actions())
+    assert hi_old.extraction_ev(line) == pytest.approx(lo_old.extraction_ev(line))
+
+
+def test_tarot_per_target_off_restores_the_old_ordering():
+    """``tarot_per_target=False`` is the h2h / gate A/B arm: with it, the dig is not
+    generated, a clearing play banks the cycle bonus again, and the fixture goes back to
+    the weaker claim PROBE_NOTES.md section 3.3 pinned (same action, more EV)."""
+    from dataclasses import replace
+    old = replace(H.DEFAULT_HAND_CONFIG, tarot_per_target=False)
     g_on = fixtures.FIXTURES["tarot_target_cycle"]().games[0]
     g_off = fixtures.FIXTURES["tarot_target_cycle_control"]().games[0]
-    action = ("play", (0, 1, 2, 3, 4))
-    ev_on = _ranked_dict(g_on)[_key(*action)]
-    ev_off = _ranked_dict(g_off)[_key(*action)]
-    assert ev_on > ev_off
-    lines = H.extraction_lines(g_on, g_on.legal_actions())
-    assert lines and all("extract $" in reason for _, _, reason in lines)
+    an = H.HandAnalysis(g_on, old, legal=g_on.legal_actions())
+    assert an._dig_lines() == []
+    clear = {"type": "play", "cards": [0, 1, 2, 3, 4]}
+    assert an.extraction_ev(clear) > 0.0            # the clear banked it under the old form
+    ev_on = dict((H._action_sort_key(a), ev) for a, ev in H.rank_hand_actions(g_on, cfg=old))
+    ev_off = dict((H._action_sort_key(a), ev) for a, ev in H.rank_hand_actions(g_off, cfg=old))
+    k = _key("play", (0, 1, 2, 3, 4))
+    assert ev_on[k] > ev_off[k]
+
+
+def test_tarot_target_cycle_control_has_nothing_to_dig_toward():
+    g_off = fixtures.FIXTURES["tarot_target_cycle_control"]().games[0]
+    an = H.HandAnalysis(g_off, H.DEFAULT_HAND_CONFIG, legal=g_off.legal_actions())
+    assert an._tarot_wants == [] and an.extract_on is False and an._dig_lines() == []
     assert H.extraction_lines(g_off, g_off.legal_actions()) == []
+
+
+def test_dig_lines_obey_the_same_safety_gate_as_the_extraction_lines():
+    """CYCLE_NOTES.md section 3: a dig costs a discard, so it is only generated while the
+    tail DP still clears the blind after spending it -- and never at a LIVE Nemesis."""
+    g = fixtures.FIXTURES["tarot_target_cycle"]().games[0]
+    an = H.HandAnalysis(g, H.DEFAULT_HAND_CONFIG, legal=g.legal_actions())
+    assert an._dig_lines()                                   # safe at the fixture's target
+    g.current_blind.chips_target = 10 ** 7                   # unreachable
+    an2 = H.HandAnalysis(g, H.DEFAULT_HAND_CONFIG, legal=g.legal_actions())
+    assert an2.extract_on is True and an2._dig_lines() == []
+    g.current_blind.chips_target = TC_CHIPS_TARGET
+    g.current_blind.is_pvp = True
+    an3 = H.HandAnalysis(g, H.DEFAULT_HAND_CONFIG, legal=g.legal_actions())
+    assert an3.extract_on is False and an3._dig_lines() == []
 
 
 # ─────────────────────────────────────────────────────────── the safety gate suppresses money
@@ -194,7 +287,7 @@ def test_safety_gate_is_off_at_a_nemesis_even_with_procs_present():
 
 # ─────────────────────────────────────────────────────────── advisor / CLI integration
 
-@pytest.mark.parametrize("name", [n for n, _, _ in SCENARIOS] + ["tarot_target_cycle"])
+@pytest.mark.parametrize("name", ALL_NAMES)
 def test_advisor_renders_the_extraction_line_with_its_money_decomposition(name):
     """``python ev/cli.py advise fixture:<name>`` must show the extraction line among the
     ranked actions with its dollar decomposition -- brief section 7's literal ask. This goes
@@ -211,7 +304,7 @@ def test_advisor_renders_the_extraction_line_with_its_money_decomposition(name):
     assert "[extract $+" in top_line
 
 
-@pytest.mark.parametrize("name", [n for n, _, _ in SCENARIOS])
+@pytest.mark.parametrize("name", ALL_NAMES)
 def test_advisor_control_shows_no_extraction_line(name):
     m = fixtures.FIXTURES[f"{name}_control"]()
     text = advisor.advise(m, 0, n_rollouts=1, rollout_budget="fast", budget="fast")

@@ -149,6 +149,15 @@ likely to land near the pair-CI "unresolved" cutoff close to that boundary.
 ### 3.3 `tarot_target_cycle` does not produce a same-need rank swap, only a same-action
 EV bump -- and this is a real property of `_cycle_ev`, not a fixture-construction failure
 
+> **2026-08-27, W-CYCLE -- this finding was acted on and the fixture is now a rank swap.**
+> The diagnosis below is confirmed and was the brief for a follow-up workstream: `_cycle_ev`
+> is now per-TARGET (graded per card, expectation over the real pile) and a clearing play
+> banks no cycle at all, so `fixture:tarot_target_cycle` was rebuilt and pins a genuine
+> swap -- a throwaway dig at 1.051253 over clear-now at 1.044001, reversed in the control.
+> `test_tarot_dig_value_depends_on_WHICH_target_card_the_line_keeps` pins the exact
+> "depends only on m, not WHICH cards" limitation described below as fixed. See
+> `CYCLE_NOTES.md` §1/§4; the reading below is of the model that has been replaced.
+
 Unlike the other five, every attempt to build a "cycling beats a non-cycling clear" rank swap
 for `tarot_target_cycle` failed for a structural reason: `_cycle_ev(keep_mask, m)`
 (EXTRACT_NOTES.md section 6) depends on `m` (how many fresh cards the action draws) and the

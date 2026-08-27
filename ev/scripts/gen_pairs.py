@@ -62,6 +62,9 @@ def build_parser() -> argparse.ArgumentParser:
     ap.add_argument("--probe-jobs", type=int, default=0, help="first N seeds get --reps blocks")
     ap.add_argument("--close-gap", type=float, default=PR.DEFAULT_CLOSE_GAP)
     ap.add_argument("--mix", default=None, help='JSON, e.g. \'{"close_call":0.5,"greedy_vs_extract":0.4,"random":0.1}\'')
+    ap.add_argument("--pvp-protocol", default="canonical",
+                    choices=["canonical", "trailer_compelled"],
+                    help="MLBMatch pvp_protocol for self-play + snapshots (W-PVP; clones carry it)")
     ap.add_argument("--per-kind", default=None,
                     help='JSON per-kind snapshot caps forwarded to sample_states, e.g. '
                          '\'{"hand":5,"nemesis":4,"shop":2,"pack":2,"blind_select":1}\' '
@@ -117,7 +120,8 @@ def main(argv=None) -> int:
             "stake": args.stake, "lives": args.lives, "policy_seed": args.policy_seed,
             "rollout_seed": args.rollout_seed, "allow_clairvoyant": args.allow_clairvoyant,
             "coupling": args.coupling, "aux": args.aux,
-            "per_kind": json.loads(args.per_kind) if args.per_kind else None}
+            "per_kind": json.loads(args.per_kind) if args.per_kind else None,
+            "pvp_protocol": args.pvp_protocol}
 
     def jobs():
         for i, s in enumerate(seeds):

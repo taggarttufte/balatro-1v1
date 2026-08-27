@@ -560,6 +560,12 @@ class EVPlayer:
         # `_atom_cache`: the fresh-shop-slot $ distribution, keyed by a shop signature.
         self._fix_cache: dict = {}
         self._atom_cache: dict = {}
+        # W-CYCLE: the SAME measurement, taken from a mid-blind state for the hand layer's
+        # dig (`_held_tarot_values`).  It gets its own dict because `_fix_cache`'s key is
+        # deliberately coarse — deck shape, ante, planet levels, hand size, and NOT the
+        # jokers or the blind — so a value measured at a hand decision must never be handed
+        # back to the shop, or the shelf would be priced off a mid-blind board.
+        self._hand_fix_cache: dict = {}
         # The race read (§2d): bound by `adapt_match_player` from the live MLBMatch, and
         # left None by every solo harness — where the race term is then exactly neutral.
         self._race_p_win: Optional[float] = None
@@ -574,6 +580,7 @@ class EVPlayer:
         self._ratio_cache.clear()
         self._fix_cache.clear()
         self._atom_cache.clear()
+        self._hand_fix_cache.clear()
         self._race_cache.clear()
         self._race_p_win = None
 
@@ -728,9 +735,39 @@ class EVPlayer:
 
     # ── hands ───────────────────────────────────────────────────────────────
 
+    def _held_tarot_values(self, game) -> dict:
+        """``{tarot key: dollars}`` for the TARGETED tarots this run is holding, measured
+        for THIS deck — W-CYCLE's one interface into the hand layer (ev/CYCLE_NOTES.md §2).
+
+        Pure reuse of the shop economy: ``_deck_effects`` (memoised per deck shape, so the
+        five build-proxy probes are paid once per deck change, not once per hand) fed to the
+        same ``tarot_dollars`` table the shelf is priced with.  The hand layer's dig
+        therefore trades against The Star's measured $15 and The Chariot's $3 instead of the
+        flat $4 placeholder — which is what makes "the improvement grows with build quality"
+        arithmetic rather than a constant.  ``{}`` (the flat fallback) whenever no targeted
+        tarot is held, so a run that owns none pays nothing for this."""
+        held = {k for k in (getattr(game, "consumable_hand", ()) or ())
+                if k in _hand._TAROT_TARGETS}
+        if not held:
+            return {}
+        # `_deck_effects` memoises into `self._fix_cache`; swap in the hand-side dict for
+        # the call so a mid-blind measurement never leaks into the shop's memo (see
+        # `__init__`).  The method itself is W-SHOP's and is not modified.
+        shop_cache, self._fix_cache = self._fix_cache, self._hand_fix_cache
+        try:
+            eff = self._deck_effects(game, self._TAROT_EFFECTS)
+            return {k: max(0.0, float(tarot_dollars(game, k, self.cfg, eff))) for k in held}
+        except Exception:               # noqa: BLE001 — a valuation must never break `act`
+            return {}
+        finally:
+            self._fix_cache = shop_cache
+
     def _rank_hand(self, game, legal: list, explain: bool = True,
                    allow_pass: bool = False) -> list:
         kw = dict(budget=self.budget, cfg=self.hand_cfg, legal=legal)
+        tv = self._held_tarot_values(game) if self.hand_cfg.tarot_per_target else {}
+        if tv:
+            kw["tarot_values"] = tv
         if allow_pass and self.budget == "fast":
             kw["allow_pass"] = True
         if self.budget == "full":
@@ -747,7 +784,7 @@ class EVPlayer:
         # brief §7 read it).  One HandAnalysis for the whole ranking, not one per action.
         money: dict = {}
         try:
-            an = _hand.HandAnalysis(game, self.hand_cfg, legal=legal)
+            an = _hand.HandAnalysis(game, self.hand_cfg, legal=legal, tarot_values=tv or None)
             if an.extract_on:
                 for a, _ in ranked:
                     if a.get("type") in ("play", "discard"):

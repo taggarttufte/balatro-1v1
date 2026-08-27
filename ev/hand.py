@@ -28,11 +28,16 @@ horizon = the end of the current blind.  The maths is in ``EV_NOTES.md``; the sh
     * **The extraction layer** (``EXTRACT_NOTES.md``) prices the per-action money procs in
       dollars — Gold seal, Lucky, Business Card, Golden Ticket, Rough Gem, Reserved
       Parking, Faceless, Mail-In Rebate, Trading Card, Delayed Gratification, To Do List,
-      Purple seal → Tarot, Gold enhancement held to round end — plus a first-order value
-      for cycling toward a held Tarot's targets, and generates the sandbag lines
-      (dump the seals, play the proc cards) that the greedy objective could never emit.
-      Every dollar is only banked when the tail DP still clears the blind with probability
-      ``extract_min_clear`` after the line, so a sandbag never costs a life.
+      Purple seal → Tarot, Gold enhancement held to round end — and generates the sandbag
+      lines (dump the seals, play the proc cards) that the greedy objective could never
+      emit.  Every dollar is only banked when the tail DP still clears the blind with
+      probability ``extract_min_clear`` after the line, so a sandbag never costs a life.
+    * **The tarot dig** (``CYCLE_NOTES.md``) prices what a line leaves a held targeted
+      Tarot to land on: targets are graded per card and the expectation is taken over the
+      real draw pile, so "throw the junk, keep the Ace of the suit and draw two" is worth
+      more than "throw the Ace".  A play that CLEARS the blind ends the round and banks
+      none of it, which is what lets a deliberately weak throwaway outrank an immediate
+      clear when the tarot is worth more than the $1/hand the clear banks.
 
 ``budget="full"`` (Monte-Carlo expectimax)
     Top-K candidates by the fast scorer; each is stepped on ``n_worlds`` sampled worlds
@@ -103,6 +108,10 @@ class HandConfig:
     junk_dollars: float = 0.8     # keep-value units per dollar, for the junk ORDERINGS only
     tarot_cycle_fraction: float = 0.5  # fraction of a Tarot's value a good target unlocks
     interest_bonus: float = 0.16  # extra worth of a $ that still earns interest, see §2
+    # ── the per-target tarot dig (CYCLE_NOTES.md).  `tarot_per_target=False` restores
+    #    W-EXTRACT's per-COUNT `_cycle_ev` bit-for-bit (the h2h / gate A/B arm). ──
+    tarot_per_target: bool = True  # grade targets per card + price the dig, not just `m`
+    dig_lines: int = 4            # throwaway-dig discard lines per decision (2 in `lite`)
     # ── the PvP turn protocol (PVP_NOTES.md; every default here is OFF, i.e. the
     #    pre-2026-08-26 player bit-for-bit).  Turned on together by the protocol player. ──
     pvp_level1: bool = False      # react to the opponent's REVEALED live score (§3)
@@ -204,6 +213,57 @@ _TAROT_TARGETS = {
 _TAROT_SUIT = {"c_star": "Diamonds", "c_moon": "Clubs", "c_sun": "Hearts", "c_world": "Spades"}
 _TAROT_ENHANCEMENT = frozenset(("c_magician", "c_empress", "c_heirophant", "c_lovers",
                                 "c_chariot", "c_justice", "c_devil", "c_tower"))
+
+# ── per-target grading (CYCLE_NOTES.md §1) ───────────────────────────────────────────
+#
+# A tarot's targets are NOT interchangeable — the design note this implements is "held
+# tarots land on SPECIFIC target cards" — so every candidate target carries a grade in
+# (0, 1] and the tarot's realizable value is the grade of the k-th best target it can
+# reach.  The tiers are the rank families the engine's own chip table already separates
+# (Ace 11 chips, the ten-chip 10/J/Q/K, the mid ranks, the low ranks): a Steel card is
+# worth more on an Ace than on a 2 because the Ace carries 11 chips into every hand it
+# joins, and a suit tarot's flush is worth the chips of the cards that complete it.
+# Four tiers is what keeps the expectation below at four hypergeometric calls per (keep, m).
+_GRADE_TIERS: tuple = (1.0, 0.85, 0.70, 0.55)
+
+
+def _tier_of(rank: int) -> int:
+    """Index into ``_GRADE_TIERS`` of a card of ``rank`` (0 = the best target tier)."""
+    if rank >= 14:
+        return 0
+    if rank >= 10:
+        return 1
+    if rank >= 7:
+        return 2
+    return 3
+
+
+class _TarotWant:
+    """One held targeted tarot, graded per target card (CYCLE_NOTES.md §1).
+
+    ``k``          how many targets the tarot's effect actually needs to be worth anything
+                   (a suit tarot converts 3 cards, so a flush still wants ``flush_need - 3``
+                   REAL cards of the suit; an enhancement tarot wants 1 plain card).
+    ``keep_bits``  per grade tier, the bitmask of HAND cards that qualify at that tier or
+                   better — ``keep_bits[-1]`` is every qualifying card.
+    ``pile``       per grade tier, how many qualifying cards of that tier or better are
+                   still in the REAL draw pile.
+    ``value``      the tarot's worth in dollars for THIS run (measured when the player
+                   supplies it, ``cfg.tarot_value_dollars`` otherwise — §2).
+    """
+    __slots__ = ("key", "k", "keep_bits", "pile", "value")
+
+    def __init__(self, key: str, k: int, keep_bits: tuple, pile: tuple, value: float):
+        self.key = key
+        self.k = k
+        self.keep_bits = keep_bits
+        self.pile = pile
+        self.value = value
+
+    @property
+    def have_mask(self) -> int:
+        """Every hand card that qualifies as a target at all."""
+        return self.keep_bits[-1]
 
 
 class ProcBoard:
@@ -825,10 +885,13 @@ class HandAnalysis:
 
     def __init__(self, game, cfg: HandConfig = DEFAULT_HAND_CONFIG, *, lite: bool = False,
                  model: Optional[BlindModel] = None, legal: Optional[list] = None,
-                 build_model: bool = True, ratio_hint: Optional[float] = None):
+                 build_model: bool = True, ratio_hint: Optional[float] = None,
+                 tarot_values: Optional[dict] = None):
         self.game = game
         self.cfg = cfg
         self.lite = lite
+        #: measured per-tarot dollars from the player, if it has any (CYCLE_NOTES.md §2)
+        self._tarot_values = tarot_values
         self.ratio_hint = ratio_hint        # rollouts: reuse the root's board ratio, skip the dry runs
         self.hand = list(game.hand)
         self.n = len(self.hand)
@@ -1043,19 +1106,21 @@ class HandAnalysis:
         self.junk_order = self.play_junk_order
 
     def _prep_tarot_wants(self):
-        """First-order targeting value of the TARGETED tarots already in hand.
+        """PER-TARGET targeting value of the TARGETED tarots already in hand
+        (CYCLE_NOTES.md §1; this replaces EXTRACT_NOTES.md §6's per-COUNT version).
 
-        A held tarot is only worth its ``tarot_value_dollars`` if there is something in
-        hand worth putting it on.  Each entry is ``(want_mask, need, pile_count)``: the
-        hand cards that qualify as targets, how many of them the tarot needs, and how many
-        qualifying cards are left in the draw pile.  ``_cycle_ev`` then prices a cycling
-        line by the hypergeometric probability that the draw supplies the missing ones.
+        A held tarot is only worth its dollars if there is something worth putting it on,
+        and *which* card it lands on is most of the difference: one ``_TarotWant`` per held
+        targeted tarot carries the qualifying HAND cards and the qualifying DRAW-PILE cards
+        **bucketed by grade**, so ``_cycle_ev`` can price "this line leaves the Ace of the
+        wanted suit in hand and draws 3" differently from "this line plays it away and
+        draws 3" — the rank swap PROBE_NOTES.md §3.3 could not produce against the old form.
 
-        Modelled: the four SUIT tarots (Star / Moon / Sun / World -- convert up to 3 cards,
-        so a flush wants ``flush_need - 3`` real cards of that suit already in hand) and
-        the eight ENHANCEMENT tarots (want a plain card; overwriting an enhancement wastes
-        it).  NOT modelled: Strength / Hanged Man / Death targeting, and which SPECIFIC
-        card the tarot should land on (see EXTRACT_NOTES.md §6)."""
+        Modelled: the four SUIT tarots (Star / Moon / Sun / World convert up to 3 cards, so
+        a flush still wants ``flush_need - 3`` REAL cards of that suit) and the eight
+        ENHANCEMENT tarots (want a plain card; overwriting an enhancement wastes it).
+        NOT modelled: Strength / Hanged Man / Death targeting (their effect is a rank/deck
+        change the hand layer cannot grade per card), and the tarot arriving LATER."""
         out: list = []
         self._tarot_wants = out
         if not self.cfg.extract:
@@ -1063,20 +1128,77 @@ class HandAnalysis:
         held = getattr(self.game, "consumable_hand", ()) or ()
         if not held:
             return
-        for key in held:
-            k = _TAROT_TARGETS.get(key)
-            if k is None:
-                continue
+        keys = [k for k in held if k in _TAROT_TARGETS]
+        if not keys:
+            return
+        n_tiers = len(_GRADE_TIERS)
+        # one pass over the REAL draw pile per family that is actually held
+        want_suits = {_TAROT_SUIT[k] for k in keys if k in _TAROT_SUIT}
+        want_plain = any(k in _TAROT_ENHANCEMENT for k in keys)
+        pile_suit: dict = {s: [0] * n_tiers for s in want_suits}
+        pile_plain = [0] * n_tiers
+        if want_suits or want_plain:
+            for c in self.game.deck:
+                if c.enhancement == "Stone":
+                    continue        # a Stone card has no rank and no suit to target
+                tier = _tier_of(c.rank)
+                if want_plain and c.enhancement == "None":
+                    for t in range(tier, n_tiers):
+                        pile_plain[t] += 1
+                if want_suits:
+                    wild = c.enhancement == "Wild" and not c.debuffed
+                    for s in want_suits:
+                        if wild or c.suit == s:
+                            for t in range(tier, n_tiers):
+                                pile_suit[s][t] += 1
+        for key in keys:
+            n_conv = _TAROT_TARGETS[key]
             if key in _TAROT_SUIT:
                 suit = _TAROT_SUIT[key]
-                out.append((self.suit_bits.get(suit, 0), max(1, self.flush_need - k),
-                            self.deck.by_suit.get(suit, 0)))
+                bits = self.suit_bits.get(suit, 0)
+                keep_bits = self._grade_masks(bits)
+                want = _TarotWant(key, max(1, self.flush_need - n_conv), keep_bits,
+                                  tuple(pile_suit[suit]), self._tarot_dollars(key))
             elif key in _TAROT_ENHANCEMENT:
-                want = 0
+                bits = 0
                 for j, c in enumerate(self.hand):
-                    if not self.hidden[j] and c.enhancement == "None" and not c.debuffed:
-                        want |= 1 << j
-                out.append((want, 1, self.deck.n_plain))
+                    if (not self.hidden[j] and not self.stone[j]
+                            and c.enhancement == "None" and not c.debuffed):
+                        bits |= 1 << j
+                want = _TarotWant(key, 1, self._grade_masks(bits), tuple(pile_plain),
+                                  self._tarot_dollars(key))
+            else:
+                continue            # Strength / Hanged Man / Death: not graded (see above)
+            out.append(want)
+
+    def _grade_masks(self, bits: int) -> tuple:
+        """``bits`` split into cumulative grade tiers: entry ``l`` = the cards in ``bits``
+        whose grade is ``_GRADE_TIERS[l]`` or better."""
+        masks = [0] * len(_GRADE_TIERS)
+        mm = bits
+        while mm:
+            low = mm & -mm
+            j = low.bit_length() - 1
+            mm ^= low
+            tier = _tier_of(self.hand[j].rank)
+            for t in range(tier, len(_GRADE_TIERS)):
+                masks[t] |= low
+        return tuple(masks)
+
+    def _tarot_dollars(self, key: str) -> float:
+        """What one use of ``key`` is worth in dollars for THIS run (CYCLE_NOTES.md §2).
+
+        ``tarot_values`` is W-SHOP's own MEASURED per-deck valuation (``EVPlayer.
+        _deck_effects`` -> ``player.tarot_dollars``: The Star $15 on a scattered deck, The
+        Chariot $3), handed down by ``EVPlayer._rank_hand``.  Every other caller (the
+        rollout policy, the fixtures, a bare ``rank_hand_actions``) falls back to
+        ``cfg.tarot_value_dollars`` — the flat $4 placeholder EXTRACT_NOTES.md §7 flags.
+        ``tarot_per_target=False`` also forces the flat value, so that flag alone restores
+        the pre-W-CYCLE player exactly."""
+        if not self.cfg.tarot_per_target:
+            return float(self.cfg.tarot_value_dollars)
+        v = self._tarot_values.get(key) if self._tarot_values else None
+        return float(v) if v is not None else float(self.cfg.tarot_value_dollars)
 
     # ── candidates ──────────────────────────────────────────────────────────
 
@@ -1201,6 +1323,20 @@ class HandAnalysis:
         if self.n >= 1:
             add(tuple(sorted(self.junk_order[:min(5, self.n)])))
             add((self.junk_order[0],))
+        # the throwaway DIG play (CYCLE_NOTES.md §3): the same dump, but never spending the
+        # cards a held tarot is waiting for.  Structural alternates, generated UNGATED
+        # exactly like `_reps`' play-side extraction variants (EXTRACT_NOTES.md §4) -- the
+        # money they carry is still gated, and the discard-side dig lines are gated at
+        # generation because they cost a discard the tail DP has to be able to spare.
+        if self._tarot_wants and self.cfg.tarot_per_target and self.n >= 2:
+            wanted = 0
+            for want in self._tarot_wants:
+                if want.value > 0.0:
+                    wanted |= want.have_mask
+            spare = [j for j in self.junk_order if not (wanted >> j & 1)]
+            if spare:
+                add(tuple(sorted(spare[:min(5, len(spare))])))
+                add((spare[0],))
         if self.lite and len(cands) > 24:
             cands = cands[:24]
         self.play_cands = cands
@@ -1805,27 +1941,85 @@ class HandAnalysis:
             money -= 2.0 * max(0, self.d)
         return money + self._gold_delta(t, m, p_clear)
 
-    def _cycle_ev(self, keep_mask: int, m: int) -> float:
-        """Tarot-targeting value of drawing ``m`` fresh cards onto ``keep_mask``: for each
-        held targeted tarot whose targets are NOT in the kept cards, the hypergeometric
-        probability that the draw supplies them, times a fraction of the tarot's value.
-        First-order — see ``_prep_tarot_wants`` and EXTRACT_NOTES §6."""
-        if not self._tarot_wants or m <= 0:
+    def _target_quality(self, want: "_TarotWant", keep_mask: int, m: int) -> float:
+        """``E[grade of the k-th best target available]`` once ``keep_mask`` is kept and
+        ``m`` fresh cards are drawn — the layer-cake identity
+
+            ``E[X_(k)] = Σ_l (g_l − g_(l+1)) · P( #targets of grade ≥ g_l  ≥  k )``
+
+        with ``#targets = (the kept ones, known exactly) + Hypergeometric(N, pile_l, m)``.
+        Exact given the grades, four ``_hyper_tail`` calls, and it is what makes the value
+        depend on WHICH cards the line keeps: a kept Ace of the wanted suit raises the
+        count at every tier, so the same ``m`` is worth more from that keep set."""
+        N = self.deck.total
+        tiers = _GRADE_TIERS
+        n = len(tiers)
+        total = 0.0
+        for l in range(n):
+            w = tiers[l] - (tiers[l + 1] if l + 1 < n else 0.0)
+            if w <= 0.0:
+                continue
+            need = want.k - _popcount(want.keep_bits[l] & keep_mask)
+            if need <= 0:
+                total += w
+                continue
+            pile = want.pile[l]
+            if pile <= 0 or N <= 0 or m <= 0 or need > m:
+                continue
+            total += w * _hyper_tail(N, pile, min(m, N), need)
+        return total
+
+    def _cycle_ev(self, keep_mask: int, m: int, p_cont: float = 1.0) -> float:
+        """Dollars the DIG is worth: the improvement a line that draws ``m`` fresh cards
+        onto ``keep_mask`` makes to what a held targeted tarot can land on
+        (CYCLE_NOTES.md §1), conditioned on ``p_cont`` — whether the round goes on at all.
+
+        Per tarot: nothing when the kept cards already supply its ``k`` targets (it can be
+        used right now; digging would only swap one target for a slightly better one, which
+        is second order), otherwise ``value · tarot_cycle_fraction · E[X_(k)]`` — the graded
+        probability that the draw supplies them.  ``tarot_per_target=False`` restores
+        EXTRACT_NOTES §6's per-COUNT form bit-for-bit."""
+        if not self._tarot_wants or m <= 0 or p_cont <= 0.0:
             return 0.0
         key = (keep_mask, m)
         v = self._cycle_cache.get(key)
-        if v is not None:
-            return v
-        N = self.deck.total
-        unit = self.cfg.tarot_value_dollars * self.cfg.tarot_cycle_fraction
-        total = 0.0
-        for want, need, pile in self._tarot_wants:
-            miss = need - _popcount(want & keep_mask)
-            if miss <= 0 or pile <= 0 or N <= 0:
-                continue
-            total += _hyper_tail(N, pile, min(m, N), miss) * unit
-        self._cycle_cache[key] = total
-        return total
+        if v is None:
+            per_target = self.cfg.tarot_per_target
+            frac = self.cfg.tarot_cycle_fraction
+            total = 0.0
+            for want in self._tarot_wants:
+                if want.k <= 0 or want.value <= 0.0:
+                    continue
+                if _popcount(want.have_mask & keep_mask) >= want.k:
+                    continue        # the tarot can already land: the dig adds nothing
+                if per_target:
+                    total += want.value * frac * self._target_quality(want, keep_mask, m)
+                else:
+                    N, pile = self.deck.total, want.pile[-1]
+                    miss = want.k - _popcount(want.have_mask & keep_mask)
+                    if pile > 0 and N > 0:
+                        total += (want.value * frac
+                                  * _hyper_tail(N, pile, min(m, N), miss))
+            v = self._cycle_cache[key] = total
+        return v * p_cont
+
+    def _play_continues(self, s: float) -> float:
+        """Does the ROUND go on after a play worth ``s``?  1.0 / 0.0.
+
+        The cards a play draws can only carry a tarot if there is another decision in this
+        blind: a play that clears the target — or that spends the last hand — ends the
+        round, and ``game._end_round`` puts the whole hand straight back into the deck, so
+        the fresh cards are never targetable and the dig is worth exactly nothing on it.
+        This is the conditioning ``_gold_delta`` applies in the other direction (Gold money
+        needs the round to END), and it is why a throwaway dig can outrank an immediate
+        clear at all: the clear cannot bank the dig, only the throwaway can."""
+        if not self.cfg.tarot_per_target:
+            return 1.0              # W-EXTRACT's form: every line banked the same cycle
+        if self.h - 1 <= 0:
+            return 0.0
+        if self.pvp:
+            return 1.0              # a Nemesis has no chip target; only hands end it
+        return 0.0 if s >= self.need else 1.0
 
     def extraction_ev(self, action: dict) -> float:
         """Public: expected DOLLARS ``action`` extracts (money procs + tarot cycling).
@@ -1838,8 +2032,10 @@ class HandAnalysis:
         m = min(len(t), self.hand_size - _popcount(keep))
         kind = action.get("type")
         if kind == "play":
-            pc = self._p_clear_after(self.h - 1, self.d, self.need - self._exact_of(t))
-            return self._play_extraction(t, m, pc) + self._cycle_ev(keep, m)
+            s = self._exact_of(t)
+            pc = self._p_clear_after(self.h - 1, self.d, self.need - s)
+            return (self._play_extraction(t, m, pc)
+                    + self._cycle_ev(keep, m, self._play_continues(s)))
         if kind == "discard":
             pc = self._p_clear_after(self.h, self.d - 1, self.need)
             return self._discard_extraction(t, m, pc) + self._cycle_ev(keep, m)
@@ -1892,6 +2088,63 @@ class HandAnalysis:
         if pb.trading and self.discard_junk_order:
             out.append((self.discard_junk_order[0],))
         cap = 3 if self.lite else cfg.extract_lines
+        return out[:cap]
+
+    def _dig_lines(self) -> list:
+        """Discard lines whose whole value is the DIG (CYCLE_NOTES.md §3): throw the cards
+        a held tarot does NOT want, keep the ones it does, and draw as deep as the discard
+        allows.  ``discard_keep`` is blind to tarot targets, so the very card the tarot is
+        waiting for (a lone Ace of the wanted suit, which pairs with nothing and sits in no
+        straight window) sits near the top of the junk ordering and gets thrown as soon as
+        ``k`` reaches it.  Measured: 60% of the sets generated here are card sets
+        ``_discard_lines`` does not produce at all (CYCLE_NOTES §3 has the numbers).
+
+        Gated exactly like ``_extraction_discard_lines`` (EXTRACT_NOTES.md §4): the tail DP
+        must still clear the blind after the discard is spent, never while a Nemesis race
+        is live, and the decided-race rules of PVP_NOTES.md §5 apply at a Nemesis."""
+        cfg = self.cfg
+        if not (self.extract_on and cfg.tarot_per_target) or self.d <= 0 or not self.can_discard:
+            return []
+        if not self._tarot_wants:
+            return []
+        if self.pvp:
+            if not self.pvp_decided():          # the race is live: no sandbagging
+                return []
+        elif self._p_clear_after(self.h, self.d - 1, self.need) < cfg.extract_min_clear:
+            return []
+        wanted = 0
+        for want in self._tarot_wants:
+            if want.value > 0.0:
+                wanted |= want.have_mask
+        spare = [j for j in self.discard_junk_order if not (wanted >> j & 1)]
+        if not spare:
+            return []
+        keep_play = 0
+        if self.plays:
+            t, _, _, _ = max(self.plays, key=lambda p: p[2])
+            keep_play = sum(1 << j for j in t)
+        out: list = []
+        seen = set()
+
+        def push(idx: list):
+            if not idx:
+                return
+            t = tuple(sorted(idx[:5]))
+            if t not in seen:
+                seen.add(t)
+                out.append(t)
+
+        # (a) dig as deep as possible without touching the tarot's targets
+        push(spare)
+        # (b) ... and the variant that also preserves the best made play, so the dig costs
+        #     the discard and nothing else (this is the line the acceptance fixture rides)
+        push([j for j in spare if not (keep_play >> j & 1)])
+        # (c) one card shallower than the deepest dig, for boards where the deep dig gives up
+        #     too much structure (`push` truncates at 5, so this has to be trimmed BEFORE it)
+        k = min(5, len(spare)) - 1
+        if k >= 1:
+            push(spare[:k])
+        cap = 2 if self.lite else cfg.dig_lines
         return out[:cap]
 
     # ── actions ─────────────────────────────────────────────────────────────
@@ -1967,7 +2220,7 @@ class HandAnalysis:
         # line (bank money / cycle the deck), not a worse chase line, and they are already
         # gated on the tail DP
         seen = set(lines)
-        for t in self._extraction_discard_lines():
+        for t in self._extraction_discard_lines() + self._dig_lines():
             if t in seen:
                 continue
             if self._legal_disc is not None and t not in self._legal_disc:
@@ -2006,13 +2259,16 @@ class HandAnalysis:
             # tie-breaks (bounded by 1e-6): higher score now, fewer cards spent
             ev += 1e-6 * s / (s + max(need, 1.0)) - 1e-9 * len(t)
             if extract:
+                cont = self._play_continues(s)
                 if self.pvp:
                     if pvp_money:
-                        ev += rate * (self._play_extraction(t, m, 1.0) + self._cycle_ev(keep, m))
+                        ev += rate * (self._play_extraction(t, m, 1.0)
+                                      + self._cycle_ev(keep, m, cont))
                 else:
                     pc = self._p_clear_after(h - 1, d, need - s)
                     if pc >= gate:
-                        ev += rate * (self._play_extraction(t, m, pc) + self._cycle_ev(keep, m))
+                        ev += rate * (self._play_extraction(t, m, pc)
+                                      + self._cycle_ev(keep, m, cont))
             out.append(({"type": "play", "cards": list(t)}, ev))
         if d > 0:
             for t in self._discard_lines():
@@ -2185,10 +2441,12 @@ def _consumable_ev(game, action: dict, analysis: HandAnalysis, cfg: HandConfig) 
 
 def _hand_ranking_fast(game, cfg: HandConfig, *, legal: Optional[list] = None,
                        with_consumables: bool = True, lite: bool = False,
-                       ratio_hint: Optional[float] = None, allow_pass: bool = False) -> list:
+                       ratio_hint: Optional[float] = None, allow_pass: bool = False,
+                       tarot_values: Optional[dict] = None) -> list:
     if legal is None:
         legal = game.legal_actions()
-    an = HandAnalysis(game, cfg, lite=lite, legal=legal, ratio_hint=ratio_hint)
+    an = HandAnalysis(game, cfg, lite=lite, legal=legal, ratio_hint=ratio_hint,
+                      tarot_values=tarot_values)
     ranked = an.evaluate()
     if allow_pass:
         # opt-in only: `pvp_pass` is a MATCH-level action that `BalatroGame.step` does not
@@ -2270,10 +2528,11 @@ def end_of_blind_value(world, origin, cfg: HandConfig = DEFAULT_HAND_CONFIG,
 
 
 def _hand_ranking_full(game, cfg: HandConfig, *, value_fn=None, rng=None, n_worlds: int,
-                       top_k: Optional[int], legal: Optional[list] = None) -> list:
+                       top_k: Optional[int], legal: Optional[list] = None,
+                       tarot_values: Optional[dict] = None) -> list:
     if legal is None:
         legal = game.legal_actions()
-    fast = _hand_ranking_fast(game, cfg, legal=legal)
+    fast = _hand_ranking_fast(game, cfg, legal=legal, tarot_values=tarot_values)
     if not fast:
         return fast
     k = top_k if top_k is not None else cfg.full_top_k
@@ -2306,8 +2565,12 @@ def _hand_ranking_full(game, cfg: HandConfig, *, value_fn=None, rng=None, n_worl
 def rank_hand_actions(game, *, budget: str = "fast", value_fn=None, rng=None,
                       top_k: Optional[int] = None, n_worlds: Optional[int] = None,
                       cfg: HandConfig = DEFAULT_HAND_CONFIG, legal: Optional[list] = None,
-                      allow_pass: bool = False) -> list:
+                      allow_pass: bool = False, tarot_values: Optional[dict] = None) -> list:
     """``[(action, ev)]`` sorted descending for a ``SELECTING_HAND`` state.  Side-effect-free.
+
+    ``tarot_values`` (``{tarot key: dollars}``, CYCLE_NOTES.md §2): W-SHOP's MEASURED
+    per-deck valuation of the tarots this run is HOLDING, supplied by ``EVPlayer``.  Omitted
+    (every non-player caller), the dig falls back to ``cfg.tarot_value_dollars``.
 
     ``allow_pass`` (``budget="fast"`` only, PVP_NOTES.md §4) adds the leader's match-level
     ``{"type": "pvp_pass"}`` candidate when the turn protocol allows it.  It is ignored by
@@ -2318,7 +2581,8 @@ def rank_hand_actions(game, *, budget: str = "fast", value_fn=None, rng=None,
     if game.state != State.SELECTING_HAND:
         return []
     if budget == "fast":
-        ranked = _hand_ranking_fast(game, cfg, legal=legal, allow_pass=allow_pass)
+        ranked = _hand_ranking_fast(game, cfg, legal=legal, allow_pass=allow_pass,
+                                    tarot_values=tarot_values)
         return ranked[:top_k] if top_k else ranked
     if budget == "full":
         # W-LEAF / EV_NOTES §8.3: with a value_fn, the leaf is worth more worlds and fewer
@@ -2332,7 +2596,7 @@ def rank_hand_actions(game, *, budget: str = "fast", value_fn=None, rng=None,
             nw = n_worlds if n_worlds is not None else cfg.full_n_worlds
             tk = top_k
         return _hand_ranking_full(game, cfg, value_fn=value_fn, rng=rng, n_worlds=nw,
-                                  top_k=tk, legal=legal)
+                                  top_k=tk, legal=legal, tarot_values=tarot_values)
     raise ValueError(f"unknown budget {budget!r} (want 'fast' or 'full')")
 
 
@@ -2388,7 +2652,8 @@ def hand_ev(game, action: dict, *, budget: str = "fast", value_fn=None, rng=None
     raise ValueError(f"unknown budget {budget!r}")
 
 
-def extraction_ev(game, action: dict, *, cfg: HandConfig = DEFAULT_HAND_CONFIG) -> float:
+def extraction_ev(game, action: dict, *, cfg: HandConfig = DEFAULT_HAND_CONFIG,
+                  tarot_values: Optional[dict] = None) -> float:
     """Expected DOLLARS ``action`` extracts from a ``SELECTING_HAND`` state: the money
     procs that fire (Gold seal, Lucky, Business Card, Golden Ticket, Rough Gem, Reserved
     Parking, Faceless, Mail-In Rebate, Trading Card, Purple seal -> Tarot, Gold enhancement
@@ -2398,11 +2663,13 @@ def extraction_ev(game, action: dict, *, cfg: HandConfig = DEFAULT_HAND_CONFIG) 
     when ``HandAnalysis.extraction_safe`` says the blind survives the line."""
     if game.state != State.SELECTING_HAND:
         return 0.0
-    return HandAnalysis(game, cfg, legal=game.legal_actions()).extraction_ev(action)
+    return HandAnalysis(game, cfg, legal=game.legal_actions(),
+                        tarot_values=tarot_values).extraction_ev(action)
 
 
 def extraction_lines(game, legal: Optional[list] = None, *,
-                     cfg: HandConfig = DEFAULT_HAND_CONFIG) -> list:
+                     cfg: HandConfig = DEFAULT_HAND_CONFIG,
+                     tarot_values: Optional[dict] = None) -> list:
     """``[(action, ev, reason)]`` — the SAFETY-GATED sandbag lines at this state, best
     first, or ``[]`` when there is nothing to extract or the tail DP says the blind is not
     safe enough to spend a resource on money.
@@ -2420,7 +2687,7 @@ def extraction_lines(game, legal: Optional[list] = None, *,
         return []
     if legal is None:
         legal = game.legal_actions()
-    an = HandAnalysis(game, cfg, legal=legal)
+    an = HandAnalysis(game, cfg, legal=legal, tarot_values=tarot_values)
     if not an.extract_on:
         return []
     decided = an.pvp_decided() if an.pvp else ""
@@ -2433,8 +2700,10 @@ def extraction_lines(game, legal: Optional[list] = None, *,
         keep = an.full_mask & ~mask
         m = min(len(t), an.hand_size - _popcount(keep))
         if a["type"] == "play":
-            pc = 1.0 if an.pvp else an._p_clear_after(an.h - 1, an.d, an.need - an._exact_of(t))
-            money = an._play_extraction(t, m, pc) + an._cycle_ev(keep, m)
+            s = an._exact_of(t)
+            pc = 1.0 if an.pvp else an._p_clear_after(an.h - 1, an.d, an.need - s)
+            money = (an._play_extraction(t, m, pc)
+                     + an._cycle_ev(keep, m, an._play_continues(s)))
         else:
             pc = 1.0 if an.pvp else an._p_clear_after(an.h, an.d - 1, an.need)
             money = an._discard_extraction(t, m, pc) + an._cycle_ev(keep, m)
