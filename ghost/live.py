@@ -104,7 +104,8 @@ class Sidecar:
 
     def _emit_state(self) -> None:
         m = self.mirror
-        self._emit("agent_state", ante=m.ante, lives=m.lives, money=m.money)
+        self._emit("agent_state", ante=m.ante, lives=m.lives, money=m.money,
+                   jokers=[j.key for j in m.game.jokers])
 
     def _advance_and_publish(self) -> None:
         """Advance the mirror to its next Nemesis and publish the round; on death the

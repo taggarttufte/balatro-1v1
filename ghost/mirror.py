@@ -104,6 +104,13 @@ class MirrorAgent:
         self._pending: Optional[dict] = None   # the un-resolved Nemesis round record
         self._opp_score_now = 0
         self._opp_hands_now = self.opp_hands_estimate
+        # the chronicle: everything the agent SAW and DID outside hand play — shops,
+        # packs (with contents), buys, rerolls, sells, consumables, skips.  Feeds the
+        # post-match report (ghost/report.py); the human never sees the agent's shops
+        # in game, and the game-over screen has no data source for them in ghost mode.
+        self.chronicle: list = []
+        self._last_shop_sig = None
+        self._last_pack_sig = None
 
     # ── observation ────────────────────────────────────────────────────────────
 
@@ -147,6 +154,57 @@ class MirrorAgent:
                 pass                      # race curve is an enhancement, never a blocker
         return self.player.act(self.game)
 
+    def _note(self, kind: str, **detail) -> None:
+        self.chronicle.append({"ante": self.game.ante, "kind": kind, **detail})
+
+    @staticmethod
+    def _item_key(item) -> str:
+        return getattr(item, "key", None) or str(item)
+
+    def _chronicle_pre(self, action: dict) -> None:
+        """Record what the agent sees/does at shops and packs, BEFORE the step applies.
+        Purely observational — never touches the game."""
+        g = self.game
+        at = action.get("type")
+        if g.state is State.SHOP:
+            sig = tuple((self._item_key(i), bool(i.sold)) for i in g.current_shop)
+            if sig != self._last_shop_sig:
+                self._last_shop_sig = sig
+                self._note("shop", money=g.dollars,
+                           items=[{"key": self._item_key(i),
+                                   "kind": getattr(i, "kind", "?"),
+                                   "sold": bool(i.sold)} for i in g.current_shop])
+            if at == "buy":
+                idx = action.get("item_idx")
+                if isinstance(idx, int) and 0 <= idx < len(g.current_shop):
+                    from balatro_sim.shop import effective_price
+                    item = g.current_shop[idx]
+                    self._note("buy", item=self._item_key(item),
+                               kind_bought=getattr(item, "kind", "?"),
+                               price=effective_price(g, item), money=g.dollars)
+            elif at == "reroll":
+                self._note("reroll", money=g.dollars)
+            elif at == "sell_joker":
+                ji = action.get("joker_idx")
+                if isinstance(ji, int) and 0 <= ji < len(g.jokers):
+                    self._note("sell", item=g.jokers[ji].key)
+            elif at == "use_consumable":
+                ci = action.get("consumable_idx", action.get("idx"))
+                if isinstance(ci, int) and 0 <= ci < len(g.consumable_hand):
+                    self._note("use", item=g.consumable_hand[ci])
+        elif g.state is State.BOOSTER_OPEN:
+            contents = [self._item_key(c) for c in (g.booster_choices or [])]
+            sig = (g.booster_pack_key, tuple(contents))
+            if g.booster_pack_key and self._last_pack_sig != sig \
+               and (self._last_pack_sig is None
+                    or self._last_pack_sig[0] != g.booster_pack_key
+                    or len(contents) >= len(self._last_pack_sig[1])):
+                self._note("pack_open", pack=g.booster_pack_key, contents=contents)
+            self._last_pack_sig = sig
+            self._note("pack_action", action=dict(action), remaining=contents)
+        elif g.state is State.BLIND_SELECT and at == "skip_blind":
+            self._note("skip_blind", blind=getattr(g.current_blind, "kind", "?"))
+
     def _progress_key(self) -> tuple:
         g = self.game
         return (g.state.name, g.ante, g.dollars, g.chips_scored, g.hands_left,
@@ -167,6 +225,7 @@ class MirrorAgent:
             if g.current_blind.is_pvp and g.state is State.SELECTING_HAND:
                 g.set_pvp_info(self._opp_score_now, self._opp_hands_now)
             action = self._act() if stall < self.NO_PROGRESS_LIMIT else {"type": "advance"}
+            self._chronicle_pre(action)
             g.step(action)
         raise RuntimeError(
             f"mirror exceeded {self.MAX_STEPS_PER_PHASE} steps in one phase "
