@@ -2010,3 +2010,23 @@ hi-res Red (24 worlds, close-heavy, 210 min). Then: two-arm retrain (new-only vs
 lam3_tau0.02 x3 seeds) → double battery (old bar canonical for ladder continuity; new W-SHOP bar
 protocol-ON as the go-forward ladder). NOTE: ghost-mod session is active in ghost/ (its two scaffolding
 files rode into `0f8c3f9` via a lead git-add -A — future lead commits stage explicit paths only).
+
+### 2026-08-27 — GHOST MOD G1 LANDED: the static ghost race (`ghost/`, dedicated session)
+
+(Naming note: "GHOST" in the v4 decks entry above = the Ghost DECK data slice; this entry is the
+ghost-race PRODUCT from `docs/GHOST_MOD_BRIEF_2026-08.md`.) G1 needs ZERO Lua: the MP mod's own
+Practice-mode ghost race is the runtime — it lists any `.json` in `$MOD/replays/` and starts the
+human's run ON THE REPLAY'S SEED AND DECK (`practice_mode.lua:32-34`), so the same-seed race is
+native. Landed `ghost/`: `export.py` (MatchLogger line → ghost JSON; only
+`hands[].{score,hands_left,side}` is load-bearing, `ruleset_mp_majorleague` verbatim, deck by
+display name, BOTH seats written so the perspective-flip works), `make.py` (one command: ev/h2h
+`build_player` spec self-play → log → ghost → install; ~3 s/match), `parity_card.py` (oracle-
+generator card: run-start facts + ante-1 shops, reroll/skip caveats — the human-checkable seed-
+parity pass). One real mechanism: the ROUND-RESOLVING play's post-step summary is torn down, so
+PvP plays are detected from the PRE-step summary and the final entry scores from `pvp_log`
+(pinned by test). Gates: ghost/tests 10 passed, replay/tests 82 unchanged, `replay.cli verify`
+clean on the produced log; pipeline exercised on seed `Q3YSA2CC` (6 Nemesis rounds, installed).
+Known artifacts documented in `ghost/GHOST_NOTES.md` §4 (open-loop recording, early-cut
+truncation, mod's `>=` tie rule vs server rule, recording horizon, winner-seat bias). NOT yet
+verified in-game — Tagg's validation pass is GHOST_NOTES §5. Kickoff decisions defaulted least-
+bindingly (fresh random seeds, ev:fast, mod's own UI, no capture mod); G2 = live mirror sidecar.
