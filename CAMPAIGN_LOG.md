@@ -2094,3 +2094,12 @@ them in matched self-play, and use ghost matches to detect when human games get 
 for sandbagging to matter (that closeness itself = the "becoming competitive" signal). Root
 cause restated: shop valuation is near-term EV with no build-commitment/scaling term — W-SHOP
 (v4 chain, tonight) is the first attack; race each new rung and track the slope in MATCHES.md.
+
+**2026-08-27 ~04:15 — GHOST SESSION CLOSE-OUT (Tagg).** Strength read refined: "I could win
+almost every game on a low stake — I get deep enough to get something going." Verdict on the
+product: "very good start, genuinely useful data." Score-chase UX is fine for now; QUEUED by
+Tagg: (1) turn-based within-blind decisions (live interleaving + protocol vs human — G2_DESIGN
+§8), (2) in-game post-match joker/deck reveal on the game-over screen (data already streams;
+mod-side UI work). Session totals: G1 shipped+validated (+ mod bug found/worked around), G2
+built+validated across two live matches, match ledger + post-match report tooling live, slope
+metric + human-curve target designed. Ghost work pauses here; next rung race when W-SHOP lands.

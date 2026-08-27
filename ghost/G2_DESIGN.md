@@ -218,9 +218,16 @@ as in G1.
 | whole `ghost/` suite | `python -m pytest ghost/tests` green |
 | in-game | **VALIDATED 2026-08-27** — after two live-found fixes (Talisman comma scores; recovery double-read, `eb6527c`), the first clean full match ran start-to-finish on seed `AOG8R942`: 5 Nemesis rounds, closed-loop lives + comeback, paced reveals, clean end at 0 lives + launcher cleanup. Record: `ghost/MATCHES.md` |
 
-## 8. Explicitly deferred past v1
+## 8. Explicitly deferred past v1 (Tagg-confirmed queue, 2026-08-27 close-out)
 
-Level-1/protocol play against the human's live mid-blind score (needs within-blind
-score streaming into the agent's objective — the atoms exist, `pvp_level1`); the
-difficulty ladder in the launcher; capture mode (G3); the agent PASSing/waiting at a
-lead (needs the turn protocol against a human — modeling decision, brief §a).
+- **Turn-based within-blind play** (Tagg's #1 future want): real interleaving instead of
+  the score chase — the mod streams his live mid-blind score into the agent's decisions
+  (`pvp_level1` atoms exist), the agent answers hand-for-hand, and the trailer-compelled
+  protocol (PASS at a lead) becomes playable against a human. Requires holding the
+  mirror's Nemesis open per-hand instead of pre-computing the round.
+- **In-game post-match build reveal** (Tagg's #2): show the agent's joker lineup + deck
+  on the game-over screen. Data already flows (`agent_state.jokers`; the chronicle has
+  the deck); the work is mod-side UI — find what the MP game-over screen reads for
+  enemy jokers in lobby mode and feed it. Until then: `python -m ghost.report`.
+- Capture mode / the human metrics column (G3); the "why did you buy that" explain
+  tool; the difficulty ladder in the launcher.
