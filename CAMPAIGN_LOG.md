@@ -2064,3 +2064,17 @@ a stubbed env, including a FULL LOOP against the real sidecar over real IPC file
 tests, ghost suite 36, +replay 82 all green. Mod installed to Mods/GhostRace. NOT yet raced
 in-game — that is the open validation item (restart Balatro, `python -m ghost.live`, load the
 LIVE entry).
+
+**2026-08-27 ~03:32 — G2 VALIDATED IN GAME: first clean full live match.** Seed `AOG8R942`,
+ev:fast, ~29 min: TAGG WINS 3-0 lives. Agent took ante 2 (18,409 vs 11,823 — the burst opener:
+Brainstorm-copied Scary Face chips x Swashbuckler sell-value mult, The-Soul Canio as an inert
+sell-value battery); Tagg took antes 3-6, going exponential (20k → 6.6M → 62M) while the agent
+crawled 12k → 65k. Every mechanism worked live: closed-loop lives, comeback money in the agent
+economy, paced reveals, agent death at 0 lives ending the match, launcher auto-cleanup. Two
+live-found bugs earlier in the night (Talisman comma-grouped scores killed the parse; recovery
+replayed the outbox through a second reader and double-applied a result → bogus agent death)
+both fixed + regression-tested (`eb6527c`, suite 38). Ledger started: `ghost/MATCHES.md`.
+READING: the agent is competitive while raw hand-play decides (antes 2-3) and collapses once
+multiplicative builds come online — the build/scaling gap in one match, same as the V-v2
+sandbagging thread. Next levers: ev:full rung h2h vs the same seeds; shop-scaling work is where
+ghost strength lives.

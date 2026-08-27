@@ -216,7 +216,7 @@ as in G1.
 | `ghost/live.py` sidecar | 6 tests: opening publish, full match flow, human/agent death, abandon, **crash-recovery replay to identical state**, launcher bootstrap |
 | `ghost/mod/GhostRace/main.lua` | **executed in real LuaJIT (lupa) over a stubbed game env** — 7 tests incl. reveal pacing, the cut, tie-nobody, comeback bookkeeping, agent-death win, replay-mode passthrough, and a **full loop against the REAL sidecar over real IPC files** |
 | whole `ghost/` suite | `python -m pytest ghost/tests` green |
-| in-game | NOT yet — Tagg's validation pass (restart Balatro after `python -m ghost.install_mod`, run `python -m ghost.live`, load the LIVE entry) |
+| in-game | **VALIDATED 2026-08-27** — after two live-found fixes (Talisman comma scores; recovery double-read, `eb6527c`), the first clean full match ran start-to-finish on seed `AOG8R942`: 5 Nemesis rounds, closed-loop lives + comeback, paced reveals, clean end at 0 lives + launcher cleanup. Record: `ghost/MATCHES.md` |
 
 ## 8. Explicitly deferred past v1
 
