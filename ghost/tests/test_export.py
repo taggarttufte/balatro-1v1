@@ -73,31 +73,36 @@ def test_snapshot_keys_are_the_pvp_log_antes(doc, match_line):
 
 
 def test_hands_entries(doc):
+    """Format v2: exactly one PRE-EXHAUSTED entry per side, so the mod's exhaustion check
+    (game_state.lua:188-198) can never index-lag behind the human's final hand."""
     for ante, snap in doc["ante_snapshots"].items():
         assert snap["result"] in ("win", "loss", "tie")
         for field in ("player_score", "enemy_score"):
             int(snap[field])                            # plain decimal strings
         for field in ("player_lives", "enemy_lives"):
             assert isinstance(snap[field], int) and snap[field] >= 0
-        enemy_scores = []
+        assert [h["side"] for h in snap["hands"]] == ["player", "enemy"]
         for h in snap["hands"]:
-            assert h["side"] in ("player", "enemy")
-            assert isinstance(h["hands_left"], int) and h["hands_left"] >= 0
+            assert h["hands_left"] == 0
             assert isinstance(h["score"], str)
-            if h["side"] == "enemy":
-                enemy_scores.append(int(h["score"]))
-        # chips are cumulative within a blind: the race targets never go down
+        assert snap["hands"][0]["score"] == snap["player_score"]
+        assert snap["hands"][1]["score"] == snap["enemy_score"]
+        # the full per-hand progression survives in the mod-ignored field
+        enemy_scores = [int(h["score"]) for h in snap["_hand_progression"]
+                        if h["side"] == "enemy"]
+        # chips are cumulative within a blind: the progression never goes down
         assert enemy_scores == sorted(enemy_scores), f"ante {ante}: {enemy_scores}"
 
 
 def test_final_hand_matches_resolution(doc, match_line):
-    """The last enemy entry of each round IS the score pvp_log resolved with — the pin
-    that the resolving-play extraction (pre-step detection + pvp_log fallback) works."""
+    """The last enemy progression entry of each round IS the score pvp_log resolved with —
+    the pin that the resolving-play extraction (pre-step detection + pvp_log fallback)
+    works."""
     agent_seat = doc["_generator"]["agent_seat"]
     by_ante = {int(a): (s0, s1) for a, _l, s0, s1 in match_line["pvp_log"]}
     saw_enemy_hands = 0
     for ante, snap in doc["ante_snapshots"].items():
-        enemy = [h for h in snap["hands"] if h["side"] == "enemy"]
+        enemy = [h for h in snap["_hand_progression"] if h["side"] == "enemy"]
         if enemy:
             saw_enemy_hands += 1
             assert int(enemy[-1]["score"]) == int(by_ante[int(ante)][agent_seat])
@@ -127,12 +132,12 @@ def test_default_seat_is_the_winner(doc, match_line):
 def test_explicit_seats_mirror_each_other(match_line):
     d0 = ghost_replay(match_line, agent_seat=0, timestamp=0)
     d1 = ghost_replay(match_line, agent_seat=1, timestamp=0)
+    flip = {"enemy": "player", "player": "enemy"}
     for ante in d0["ante_snapshots"]:
         s0, s1 = d0["ante_snapshots"][ante], d1["ante_snapshots"][ante]
         assert s0["enemy_score"] == s1["player_score"]
         assert s0["player_score"] == s1["enemy_score"]
         assert s0["enemy_lives"] == s1["player_lives"]
-        sides0 = [h["side"] for h in s0["hands"]]
-        sides1 = [h["side"] for h in s1["hands"]]
-        flip = {"enemy": "player", "player": "enemy"}
+        sides0 = [h["side"] for h in s0["_hand_progression"]]
+        sides1 = [h["side"] for h in s1["_hand_progression"]]
         assert sides1 == [flip[s] for s in sides0]

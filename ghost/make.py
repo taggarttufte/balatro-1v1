@@ -96,8 +96,9 @@ def _print_nemesis_table(doc: dict) -> None:
     for ante in sorted(doc["ante_snapshots"], key=int):
         snap = doc["ante_snapshots"][ante]
         verdict = {"win": "sim opponent won", "loss": "ghost won", "tie": "tie"}[snap["result"]]
+        n_hands = sum(1 for h in snap["_hand_progression"] if h["side"] == "enemy")
         print(f"    A{ante}: ghost {snap['enemy_score']} vs {snap['player_score']} "
-              f"({verdict}; {sum(1 for h in snap['hands'] if h['side'] == 'enemy')} ghost hands)")
+              f"({verdict}; {n_hands} ghost hands)")
 
 
 def main(argv=None) -> int:

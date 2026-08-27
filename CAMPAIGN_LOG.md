@@ -2030,3 +2030,15 @@ Known artifacts documented in `ghost/GHOST_NOTES.md` §4 (open-loop recording, e
 truncation, mod's `>=` tie rule vs server rule, recording horizon, winner-seat bias). NOT yet
 verified in-game — Tagg's validation pass is GHOST_NOTES §5. Kickoff decisions defaulted least-
 bindingly (fresh random seeds, ev:fast, mod's own UI, no capture mod); G2 = live mirror sidecar.
+
+**2026-08-27 (later) — GHOST G1 IN-GAME VALIDATED + FORMAT v2.** Tagg raced it: picker loads,
+seed/deck start works, race plays — G1 confirmed end-to-end. Found a MOD bug: on the player's
+final hand `game_state.lua:188-198` resolves synchronously against the ghost's CURRENT index
+entry (index only advances via the 0.6s advance animation, unreachable on the last hand), so
+beating the final score on your last hand still lost a life. Fix on our side = format v2: ONE
+pre-exhausted entry per side (final score, hands_left 0) — cannot lag; overtake ends the round
+in the human's favour instantly; per-hand progression preserved in `_hand_progression` (mod
+ignores it). Upstream-reportable (affects their own recorded replays too). Also explained:
+picker joker text (Erosion +208/Abstract +0) = dynamic descriptions rendered outside a run,
+display-only. Gates re-run (ghost/tests 10), v2 reinstalled; life-rule re-verify on v2 = the
+one open validation item.

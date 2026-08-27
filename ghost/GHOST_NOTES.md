@@ -14,7 +14,7 @@ edited.
 | `python -m pytest ghost/tests -q` | **10 passed** |
 | `python -m pytest replay/tests -q` | unchanged (nothing in `replay/` edited) |
 | `python -m ghost.make --spec ev:fast` (seed `Q3YSA2CC`) | full pipeline ~3 s: 6 Nemesis rounds logged, ghost installed, `replay.cli verify` clean on the produced log |
-| in-game load + race | **NOT yet verified — Tagg's validation pass, §5** |
+| in-game load + race (Tagg, 2026-08-27) | **WORKS** — picker loads it, run starts on the ghost's seed, race plays. Found: the mod's exhaustion **index-lag bug** (beat the score on your last hand → you still lose the life) → **format v2** (one pre-exhausted entry per side, §4 first bullet) shipped same day. Life rule re-verify pending on v2 |
 
 **No Lua is shipped in G1.** The mod's own Practice-mode ghost race
 (`$MOD/lib/ghost_replay.lua` + `ui/main_menu/play_button/ghost_replay_picker.lua`) is the
@@ -56,6 +56,12 @@ display name** (`MP.UTILS.get_deck_key_from_name`, `$MOD/lib/card_utils.lua:168-
 Both seats are written (`side "enemy"` = the agent, `side "player"` = its sim opponent),
 so the picker's perspective-flip button works.
 
+**Format v2 (2026-08-27): `hands` carries ONE pre-exhausted entry per side** (the round's
+final score, `hands_left` 0), because the mod's exhaustion check index-lags against
+multi-entry arrays (§4 first bullet — found by Tagg's first race). The true per-hand
+progression is preserved per snapshot in `_hand_progression`, a field the mod ignores,
+for the G2 mirror and analysis.
+
 ## 3. The one extraction subtlety (`export.py::_pvp_hand_entries`)
 
 `replay/log.py` captures the per-step summary AFTER `match.step()`, and the step that
@@ -68,6 +74,28 @@ hard-errors if the last enemy entry disagrees with `pvp_log`
 
 ## 4. Known artifacts — what a static ghost gets wrong (all inherited by design)
 
+* **THE MOD'S EXHAUSTION INDEX-LAG BUG (found in game 2026-08-27, worked around by
+  format v2).** `$MOD/ui/game/game_state.lua:188-198`: when the human plays their last
+  hand, `resolve_pvp_hands_exhausted` runs synchronously and compares chips against the
+  ghost's CURRENT index entry, awarding the round only if playback is already exhausted
+  (`$MOD/lib/ghost_replay.lua:142-168`). The index advances only via the 0.6 s/entry
+  advance animation (`_start_advance_sequence`), which is reachable only from
+  `resolve_pvp_mid_hand` — never on the final hand. So with per-hand entries, overtaking
+  the ghost on your last hand (the normal way a chase ends) loses you the life despite
+  beating the final score. Worked around on our side by writing one pre-exhausted entry
+  per side; the underlying bug is upstream-reportable (fix: exhaustion should compare
+  against the LAST entry / drain the remaining entries synchronously), and it affects the
+  mod's own recorded replays too.
+* **No hand-by-hand ticker under format v2** — the ghost's final score is posted from the
+  blind's start (enemy HUD shows 0 hands: "opponent finished") and the race is a pure
+  chase; overtaking it ends the round in your favour immediately. This is the honest UX
+  of a recording — the v1 per-hand ticker LOOKED more alive but resolved wrongly. The
+  live ticker returns for real in G2, where the mirror actually plays.
+* **Picker cosmetics: dynamic joker text is nonsense in the menu.** The stats panel
+  renders joker cards via `G.P_CENTERS` outside a run, so self-computing descriptions
+  read empty game state: Erosion shows "+208 Mult" (4 × 52 — the whole starting deck
+  "missing"), Abstract Joker "+0 Mult" (no jokers owned by the menu). Display-only, not
+  our data (we supply keys only), not fixable from a replay file.
 * **Open loop.** The recorded agent's comeback money ($4 × cumulative lives lost) and
   economy were shaped by its SIM opponent's results, not the human's. The moment the
   human's PvP outcomes diverge from the sim opponent's, the recording is *wrong*, not just
@@ -103,9 +131,10 @@ hard-errors if the last enemy entry disagrees with `pvp_log`
    file-sourced one.)
 3. Check the parity card's run-start lines (boss, voucher, tags, opening hand) and the
    first shop before rerolling. Any mismatch: stop, save the card + a screenshot.
-4. Race at least through ante 2-3: confirm the ghost's score ticks up hand-by-hand at the
-   Nemesis with the card's numbers, lives are taken per MLB rules, and the match ends
-   sanely at 0 lives (either side).
+4. Race at least through ante 2-3 (format v2): the ghost's final score is posted at the
+   Nemesis start — confirm that BEATING it ends the round in your favour (the ghost loses
+   the life, even when you overtake on your very last hand), that falling short costs you
+   one, and that the match ends sanely at 0 lives (either side).
 5. Report back: picker loaded it? scores matched? anything the mod did with a
    no-data ante (§4)? → results land in this file's §0 table.
 

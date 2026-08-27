@@ -17,6 +17,18 @@ What the mod actually consumes (all citations are files inside the installed mod
   ``resolve_pvp_hands_exhausted``).  ``score`` is an insane-int string; a plain decimal
   string parses as itself (``lib/insane_int.lua::from_string``), which covers every score
   our engine produces in the ante range that matters.
+* **Why we write ONE entry per side per ante (format v2, 2026-08-27):** when the human
+  runs out of hands, ``ui/game/game_state.lua:188-198`` synchronously calls
+  ``resolve_pvp_hands_exhausted``, which compares chips against the CURRENT index entry
+  and awards the round only if playback is already exhausted — but the index advances
+  ONLY through the 0.6 s/entry animation (``_start_advance_sequence``), which never runs
+  on the human's final hand.  With per-hand entries, overtaking the ghost on your last
+  hand leaves the index lagging and takes YOUR life despite beating the final score
+  (observed in game, 2026-08-27).  A single pre-exhausted entry per side (final score,
+  ``hands_left`` 0) cannot lag: overtaking mid-blind ends the round in the human's favour
+  at once, and the exhaustion check compares straight against the final score.  The
+  per-hand progression is preserved in each snapshot's ``_hand_progression`` (a field the
+  mod ignores) for the G2 mirror and analysis.
 * Everything else (``player_score``/``enemy_score``/lives/``result`` per ante, jokers,
   names, ``final_ante``, ``winner``, ``timestamp``) is display-only metadata for the
   replay-picker UI (``ui/main_menu/play_button/ghost_replay_picker.lua``).
@@ -191,15 +203,15 @@ def ghost_replay(line: dict, *, agent_seat: Optional[int] = None,
     player_seat = 1 - agent_seat
     seat_side = {agent_seat: "enemy", player_seat: "player"}
 
-    hands = _pvp_hand_entries(line, seat_side)
+    progression = _pvp_hand_entries(line, seat_side)
     lives = {seat: _lives_after_ante(line, seat) for seat in (0, 1)}
 
     snapshots = {}
     for ante, loser, s0, s1 in line["pvp_log"]:
         ante = int(ante)
         scores = (s0, s1)
-        ante_hands = hands.get(ante, [])
-        enemy_rows = [h for h in ante_hands if h["side"] == "enemy"]
+        prog = progression.get(ante, [])
+        enemy_rows = [h for h in prog if h["side"] == "enemy"]
         if enemy_rows and enemy_rows[-1]["score"] != _score_str(scores[agent_seat]):
             raise GhostExportError(
                 f"ante {ante}: last enemy hand score {enemy_rows[-1]['score']} != "
@@ -213,7 +225,13 @@ def ghost_replay(line: dict, *, agent_seat: Optional[int] = None,
                                                   line["final_state"]["players"][agent_seat]["lives"]),
             "result": ("win" if loser == agent_seat else
                        "loss" if loser == player_seat else "tie"),
-            "hands": ante_hands,
+            # one pre-exhausted entry per side — the mod's exhaustion check cannot
+            # index-lag against these (module docstring, "format v2")
+            "hands": [
+                {"score": _score_str(scores[player_seat]), "hands_left": 0, "side": "player"},
+                {"score": _score_str(scores[agent_seat]), "hands_left": 0, "side": "enemy"},
+            ],
+            "_hand_progression": prog,
         }
 
     fs = line["final_state"]
