@@ -1991,3 +1991,22 @@ Protocol-ON for tonight's generation CONFIRMED by Tagg (ladder-continuity evals 
 Chain: W-SHOP lands+verify → W-CYCLE (+ lead adds the engine-behaviour stamp in parallel) → broad
 campaign (8 worlds, protocol ON) → hi-res campaign (24 worlds) → two-arm retrain x3 seeds → battery
 vs old bar (canonical) + new bar (protocol ON) → compile.
+
+### 2026-08-27 — W-CYCLE LANDED (`0f8c3f9`) + v4 CAMPAIGN CHAIN RUNNING (the new-world corpus)
+
+W-CYCLE: per-target dig economics landed with the fixture RANK-SWAP achieved (dig outranks clear in the
+sandbag state, control reverses; Ace-vs-Four target grades strictly ordered where the per-count form
+tied); the mechanism's key insight — cycle EV is exactly 0 on a clearing play (round ends, fresh cards
+can't carry a tarot) — is what lets throwaways win the argmax. Vanilla-solo h2h a wash (50.8%, dig
+states rare there); 60% of dig-line card-sets unreachable by the old generator = new action space.
+Also landed: engine-behaviour stamp (behavior_stamp.py, in every shard row) + pvp_protocol plumbed
+through sample_states/reconstruct/pair_job/gen_pairs. Smoke verified stamp+protocol+deck+FLIPPED
+fingerprint (ev-fast-rules:f53a98a39baf) in a real shard.
+**DECKS (Tagg): all prior data was b_red/White only. Tonight adds a YELLOW slice (safe: no generation-
+stream change); GHOST queued behind a shop-spectral stream fidelity check before any data is cut on it.**
+**v4 CHAIN RUNNING (14 workers, protocol trailer_compelled, aux, stamped):** broad Red (8 worlds, shop
+weight raised — reroll/pack decisions are now live pair material, 240 min) → Yellow slice (100 min) →
+hi-res Red (24 worlds, close-heavy, 210 min). Then: two-arm retrain (new-only vs new+old-abs,
+lam3_tau0.02 x3 seeds) → double battery (old bar canonical for ladder continuity; new W-SHOP bar
+protocol-ON as the go-forward ladder). NOTE: ghost-mod session is active in ghost/ (its two scaffolding
+files rode into `0f8c3f9` via a lead git-add -A — future lead commits stage explicit paths only).
