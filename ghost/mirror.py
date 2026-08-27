@@ -159,7 +159,17 @@ class MirrorAgent:
 
     @staticmethod
     def _item_key(item) -> str:
-        return getattr(item, "key", None) or str(item)
+        """Key plus any edition/seal/enhancement — the engine rolls all three for pack
+        cards (oracle-verified generation), and a chronicle that drops them would
+        wrongly read as 'the agent never saw sealed/enhanced cards'."""
+        key = str(getattr(item, "key", None) or item)
+        bits = [key]
+        for attr in ("enhancement", "edition", "seal"):
+            v = getattr(item, attr, None)
+            if v and str(v) not in ("None", "none", ""):
+                bits.append(f"{str(v).lower()}-{attr[:4]}" if attr == "seal"
+                            else str(v).lower())
+        return " ".join(bits)
 
     def _chronicle_pre(self, action: dict) -> None:
         """Record what the agent sees/does at shops and packs, BEFORE the step applies.
