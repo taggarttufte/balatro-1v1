@@ -345,29 +345,43 @@ def reroll_p_hit(game, cfg: StatsConfig = DEFAULT, slices: Optional[list["PoolSl
     return p_reroll, mean_hit_value, details
 
 
+def pack_slices(game, pack_kind: str, cfg: StatsConfig = DEFAULT, rs=None) -> list[PoolSlice]:
+    """Every ``PoolSlice`` ONE card of a ``pack_kind`` pack can land on -- the pack analogue
+    of ``shop_slot_distribution`` (a pack card is a single draw from its own content type's
+    culled pool, at ``p_component`` summing to 1). Standard packs return ``[]``: playing
+    cards have no pool model here (documented gap, STATS_NOTES.md §5).
+
+    Split out of ``pack_p_hit`` (2026-08-26, W-SHOP) so a caller that needs the pool MEMBERS
+    -- e.g. to compute order statistics over its own valuation rather than a threshold hit
+    rate -- does not have to reach into the private ``_joker_slices`` / ``_consumable_slice``.
+    ``pack_p_hit`` now calls this and is otherwise unchanged."""
+    if rs is None:
+        rs = game.run_state.clone()
+    ante = rs.ante
+    owned_keys = [j.key for j in game.jokers]
+    if pack_kind == "Buffoon":
+        return _joker_slices(rs, owned_keys, ante, 1.0, cfg)
+    if pack_kind == "Arcana":
+        return [s for s in [_consumable_slice(rs, "Tarot", "Tarot", ante, 1.0,
+                            lambda k: tarot_value(k, cfg))] if s]
+    if pack_kind == "Celestial":
+        return [s for s in [_consumable_slice(rs, "Planet", "Planet", ante, 1.0,
+                            lambda k: planet_value(game, k, cfg))] if s]
+    if pack_kind == "Spectral":
+        return [s for s in [_consumable_slice(rs, "Spectral", "Spectral", ante, 1.0,
+                            lambda k: spectral_value(k, cfg))] if s]
+    return []
+
+
 def pack_p_hit(game, pack_kind: str, size: int, cfg: StatsConfig = DEFAULT, rs=None
               ) -> tuple[float, float, dict]:
     """P(at least one of ``size`` revealed pack cards is a hit) and the expected value of the
     best hit, for one pack kind ("Arcana"/"Celestial"/"Spectral"/"Buffoon"/"Standard").
     Standard packs (playing cards) have no hit model here -- returns ``(0.0, 0.0, {})``
     (documented gap, STATS_NOTES.md). ``rs``: see ``shop_slot_distribution``."""
-    if rs is None:
-        rs = game.run_state.clone()
-    ante = rs.ante
-    owned_keys = [j.key for j in game.jokers]
-    if pack_kind == "Buffoon":
-        slices = _joker_slices(rs, owned_keys, ante, 1.0, cfg)
-    elif pack_kind == "Arcana":
-        slices = [s for s in [_consumable_slice(rs, "Tarot", "Tarot", ante, 1.0,
-                              lambda k: tarot_value(k, cfg))] if s]
-    elif pack_kind == "Celestial":
-        slices = [s for s in [_consumable_slice(rs, "Planet", "Planet", ante, 1.0,
-                              lambda k: planet_value(game, k, cfg))] if s]
-    elif pack_kind == "Spectral":
-        slices = [s for s in [_consumable_slice(rs, "Spectral", "Spectral", ante, 1.0,
-                              lambda k: spectral_value(k, cfg))] if s]
-    else:
+    if pack_kind not in ("Buffoon", "Arcana", "Celestial", "Spectral"):
         return 0.0, 0.0, {}
+    slices = pack_slices(game, pack_kind, cfg, rs)
     p_card, mean_hit_value = p_hit_and_value(slices)
     p_pack = 1.0 - (1.0 - p_card) ** max(1, size)
     details = {"p_card": p_card, "size": size, "mean_hit_value": mean_hit_value,
@@ -435,6 +449,6 @@ def card_value(item, cfg: StatsConfig = DEFAULT) -> float:
 __all__ = [
     "StatsConfig", "DEFAULT", "sample_hands", "sample_hand_scores", "joker_hit_value",
     "pool_dollar_value", "is_hit", "shop_slot_distribution", "p_hit_and_value",
-    "reroll_p_hit", "pack_p_hit", "tarot_value", "spectral_value", "planet_value",
+    "reroll_p_hit", "pack_slices", "pack_p_hit", "tarot_value", "spectral_value", "planet_value",
     "voucher_value", "card_value", "PoolSlice",
 ]

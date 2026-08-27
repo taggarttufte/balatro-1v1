@@ -112,6 +112,11 @@ class HandConfig:
     pvp_extract: bool = False     # allow the money layer at a DECIDED Nemesis (§5)
     pvp_decided_lost_max: float = 0.02   # P(win the race) at or below this => decided-LOST
     pvp_decided_won_min: float = 0.995   # ... at or above this, and ahead => decided-WON
+    # ── The Fool sequencing (SHOP_NOTES.md §4).  `fool_order=False` = the pre-W-SHOP
+    #    player bit-for-bit; the rule only ever fires while c_fool is actually held. ──
+    fool_order: bool = True       # order consumable USES so the Fool copies the best one
+    fool_order_dollars: float = 0.002   # P(clear) units per $ of "use the cheap one first"
+    fool_defer_penalty: float = 0.02    # penalty on using the Fool while a better use is held
 
 
 DEFAULT_HAND_CONFIG = HandConfig()
@@ -2113,6 +2118,55 @@ def _consumable_candidates(game, legal: list, analysis: Optional[HandAnalysis]) 
     return out
 
 
+def _fool_ordered(game, cons: list, cfg: HandConfig) -> list:
+    """The Fool sequencing rule (SHOP_NOTES.md §4).  ``cons`` = ``[(action, ev)]`` for the
+    ``use_consumable`` candidates of this decision; returns the same list with the EVs
+    PERMUTED inside the consumable group.
+
+    The Fool creates a copy of ``run_state.last_tarot_planet`` — the Tarot or Planet used
+    LAST, and The Fool itself never overwrites it (``consumables.apply_tarot``:110).  So
+    when a batch of consumables is going to be used anyway, the order is worth something:
+    drain the batch weakest-first so the copy the Fool makes is of the BEST card, and hold
+    The Fool back while a better copy is still on the way.
+
+    Two properties make this safe to leave on by default:
+
+    * the rule only ever *permutes EVs within the consumable group*, so the group's
+      position relative to every play and discard — and therefore whether a consumable is
+      used at all this decision — is bit-identical to the unordered ranking;
+    * it is inert unless ``c_fool`` is actually in ``consumable_hand``, which is 1 tarot in
+      22.  ``cfg.fool_order=False`` restores the pre-2026-08-26 ranking exactly.
+
+    Not modelled: that the *best* use may be the one whose position value is highest for a
+    reason that will not survive to the next decision (a target that gets played away).  The
+    EVs being permuted are position values, not standalone card values — using them as the
+    ordering key is the first-order reading of "which of these is the good one"."""
+    if not getattr(cfg, "fool_order", False) or len(cons) < 2:
+        return cons
+    hand_keys = list(game.consumable_hand)
+    if "c_fool" not in hand_keys:
+        return cons
+    fool_slots = {i for i, k in enumerate(hand_keys) if k == "c_fool"}
+    idx_of = [a.get("consumable_idx", -1) for a, _ in cons]
+    others = [i for i, ci in enumerate(idx_of) if ci not in fool_slots]
+    fools = [i for i, ci in enumerate(idx_of) if ci in fool_slots]
+    out = list(cons)
+    if len(others) >= 2:
+        # best-first order gets the ascending EVs: the weakest use is now chosen first and
+        # the strongest is left standing as the last one before The Fool.
+        order = sorted(others, key=lambda i: -cons[i][1])
+        evs = sorted((cons[i][1] for i in others))
+        for i, ev in zip(order, evs):
+            out[i] = (cons[i][0], ev)
+    if fools and others:
+        best_other = max(cons[i][1] for i in others)
+        floor = min(cons[i][1] for i in others)
+        for i in fools:
+            if cons[i][1] <= best_other:      # a better copy is still available: wait for it
+                out[i] = (cons[i][0], floor - cfg.fool_defer_penalty)
+    return out
+
+
 def _consumable_ev(game, action: dict, analysis: HandAnalysis, cfg: HandConfig) -> float:
     """EV of using a consumable now = the best hand action's EV in the resulting state
     (on a clone), minus nothing: a use that does not change the position ties with the
@@ -2146,6 +2200,7 @@ def _hand_ranking_fast(game, cfg: HandConfig, *, legal: Optional[list] = None,
             ranked = ranked + [pc]
     if with_consumables and not lite:
         base = max((ev for _, ev in ranked), default=0.0)
+        cons: list = []
         for a in _consumable_candidates(game, legal, an):
             ev = _consumable_ev(game, a, an, cfg)
             if ev < 0:
@@ -2153,7 +2208,8 @@ def _hand_ranking_fast(game, cfg: HandConfig, *, legal: Optional[list] = None,
             # using a consumable that does not hurt is preferred (frees the slot), a
             # targeted one only when it strictly helps
             bonus = 1e-6 if not a.get("target_cards") else -1e-6
-            ranked.append((a, ev + bonus))
+            cons.append((a, ev + bonus))
+        ranked.extend(_fool_ordered(game, cons, cfg))
     ranked.sort(key=lambda x: (-x[1], _action_sort_key(x[0])))
     return ranked
 

@@ -197,6 +197,19 @@ count is read off `game.reroll_cost`, never stored).  Per-decision cost ≈ 4.4 
   by > 0.05.  Pack picks: the proxy after each pick (planets auto-used), anything the proxy
   cannot value (a tarot, a spectral) is still taken over skipping.
 
+> **2026-08-26, W-SHOP — tier (3)'s shop economy is rewritten; this paragraph describes the
+> `shop_arm_cfgs("old")` arm.**  `PlayerConfig.reroll_ev` / `pack_ev` / `fool_order` (all
+> default ON) replace: the fixed pack preference order with a per-family EV (`E[sum of the
+> best `choose` of `size` pack cards]` over the generator's own pools, minus price and
+> interest); the flat `lam_money·(3 − price)` tarot row with a per-DECK measurement of what
+> each tarot does (`EVPlayer._deck_effects`); and the hard `max_rerolls_per_visit = 1` cap
+> with an optimal-stopping rule over determinized fresh shelves, carrying an
+> interest-threshold cost, the ante shop queue's spread economics and an MLB
+> race-aggression term.  `shop_arm_cfgs("old")` restores everything above bit-for-bit and is
+> the h2h's control arm (126 seeds x 2 seatings: the new shop wins **54.4%** [48.0, 61.1]).
+> The negative half — letting the reroll compete with the buy rows — is measured and
+> documented.  See `ev/SHOP_NOTES.md`.
+
 ## 5. Side-effect freedom, determinism, invariance
 
 All public functions work on clones or the `HypotheticalScorer`; the tests pin

@@ -1959,3 +1959,35 @@ re-captured (Ice Cream melt legitimately moved 3/4 seeds; superseded values kept
 **QUEUED: engine-behaviour stamp in shard metadata** (nothing currently distinguishes pre/post-fix
 corpora but dates — must land before the next label campaign); Vampire/Square/Burnt fidelity gaps;
 Cloud 9 Stone-nine minor.
+
+### 2026-08-26 — SHOP-ECONOMY DIAGNOSIS (Tagg + measurements) → W-SHOP LAUNCHED
+
+Tendency sweep (80 seeds, ev:fast, buys/sells logged): most-bought joker = ICE CREAM (17/80 — buys the
+melting joker for day-one chips: the myopia smoking gun); lineup = flat commons; Photograph 9/Chad 11
+bought (retrigger adjacency IS visible to the dry-run — the one synergy class that works); Blueprint
+0 buys / Idol+Ancient+Baron bought-then-SOLD (conditional value reads weak in the fresh-hand sim);
+deck sculpting ~1.15 enhancements + 0.5 seals/run (vs a human converting a third of the deck).
+Shop-rate sweep (1,351 visits): REROLLS 6.4% of visits, never >1 (the hard rule); pack takes arcana
+20.5 / celestial 23.2 / buffoon 26.8 / standard 16.5 — the celestial>arcana INVERSION vs the human
+prior is the tell: it buys what the myopic proxy can price (planets=immediate levels) and passes what
+it can't (tarots=horizon). Mean $22.7 at entry — parked at the interest cap; money present, spending
+policy absent. **Tagg's diagnosis CONFIRMED and sharpened: not an untrained pivot — an unrepresentable
+one (reroll cap is a rule; vouchers flat +0.02; money exchange rate constant = fixed high discount rate).**
+**W-SHOP launched (opus)**: EV-driven uncapped rerolls (interest-threshold cost, spread-across-blinds
+stopping, race-conditional aggression pre-PvP), pack-EV takes (arcana via tarot valuation; buffoon
+CYCLE-SELL option pricing — Tagg's trick; standard stays measured-honest), Fool-ordering in consumable
+sequencing; flag-gated; gates = before/after shop_profile + 126-seed gate + old-vs-new h2h (the thesis
+test). Baselines in this entry are the before-table.
+
+**2026-08-26 — TONIGHT'S CHAIN AMENDED (Tagg): + W-CYCLE before the campaigns.** Tagg's flag: late-game,
+using hands as THROWAWAYS to dig deeper so held tarots land on specific deck targets is often worth far
+more than $1/hand banking. Maps exactly onto W-PROBE's documented limitation (_cycle_ev is per-count,
+not per-target — no rank-swap possible). W-CYCLE spec: per-target cycle EV via the existing
+hypergeometric draw-target machinery (P(draw the tarot's targets | throw k, draw m) x tarot-on-target
+improvement), throwaway-dig candidate lines under the extraction safety gate; ante-dependence emerges
+from the arithmetic (improvement term grows with build; cost stays $1/hand) — per-action, never a mode.
+ACCEPTANCE: W-PROBE's tarot_target_cycle fixture upgrades from its weaker pin to the genuine rank-swap.
+Protocol-ON for tonight's generation CONFIRMED by Tagg (ladder-continuity evals stay canonical).
+Chain: W-SHOP lands+verify → W-CYCLE (+ lead adds the engine-behaviour stamp in parallel) → broad
+campaign (8 worlds, protocol ON) → hi-res campaign (24 worlds) → two-arm retrain x3 seeds → battery
+vs old bar (canonical) + new bar (protocol ON) → compile.
