@@ -1,0 +1,13 @@
+{
+  "id": "GhostRace",
+  "name": "GhostRace",
+  "display_name": "GhostRace",
+  "author": ["Taggart"],
+  "description": "Race a live agent sidecar (balatro-1v1) through the Multiplayer mod's practice ghost mode.",
+  "prefix": "ghostrace",
+  "main_file": "main.lua",
+  "priority": 10000001,
+  "version": "0.1.0",
+  "badge_colour": "1E4D2B",
+  "dependencies": ["Multiplayer (>=0.5.2)"]
+}

@@ -2042,3 +2042,25 @@ ignores it). Upstream-reportable (affects their own recorded replays too). Also 
 picker joker text (Erosion +208/Abstract +0) = dynamic descriptions rendered outside a run,
 display-only. Gates re-run (ghost/tests 10), v2 reinstalled; life-rule re-verify on v2 = the
 one open validation item.
+
+### 2026-08-27 (evening) — GHOST G2 BUILT: the LIVE MIRROR (agent plays the seed against you)
+
+Same session as G1. Design `ghost/G2_DESIGN.md` (protocol frozen, both recon contracts
+condensed in §4-§5). Two recon agents pinned the mechanisms: ENGINE — `pvp_solo=False` parks a
+solo-MLB game in PVP_WAIT until the driver resolves (the sidecar IS the server); `set_pvp_info`
+is LOAD-BEARING for EVPlayer's objective; resolution driver-side (server rule, strict `<`, tie
+= nobody); comeback auto-pays if the life lands before the advance; human lives reach the agent
+via a bind_race shim. MOD — smods load order is priority-only (GhostRace = 10000001 >
+Multiplayer 10000000); every MP.GHOST.* is wrappable at call time; NFS.append works on raw
+absolute paths; polling = Game.update chain + wall clock. Landed: `ipc.py` (append-only JSONL,
+crash-recoverable), `mirror.py` (solo-MLB mirror + EVPlayer, all resolution branches),
+`live.py` (sidecar: publishes each agent Nemesis round a full ante ahead; `--resume` replays
+the outbox to an identical mirror — determinism in (seed, spec)), `mod/GhostRace/` (our FIRST
+real Lua mod: wraps load/clear/get_enemy_hands/resolvers, owns live resolution — the G1
+exhaustion bug is structurally impossible — paced reveals, launcher via the existing Match
+Replays picker with `_live` marker + bootstrap round; degrades to a G1 static ghost without the
+mod), `install_mod.py`. TESTED WITHOUT THE GAME: main.lua executed in real LuaJIT (lupa) over
+a stubbed env, including a FULL LOOP against the real sidecar over real IPC files — 26 new
+tests, ghost suite 36, +replay 82 all green. Mod installed to Mods/GhostRace. NOT yet raced
+in-game — that is the open validation item (restart Balatro, `python -m ghost.live`, load the
+LIVE entry).
