@@ -1942,3 +1942,20 @@ separate author from verifier** (POC author wrote both entries and scenarios; L1
 auto-generated scenarios + interaction sweeps (4/5 findings were interaction/process-state, invisible
 solo) + cold-cache contract + stochastic path). Honest gap: no evidence yet a verified entry IMPROVES
 the player — that is L3's gate, untouched.
+
+### 2026-08-26 — W-FIX LANDED (lead-verified: engine 1715 green, encode 63, parity 126/126 spot-run)
+
+Four POC findings fixed at the source, full detail engine/FIX_NOTES.md. The star: Blueprint copy-guard
+done as a PHASE SPLIT (before/joker_main/after mirroring state_events.lua), not a naive in-place guard —
+the worked example (High Card Ace, Green Joker@6, Blueprint left) separates all three: Lua 240 / pre-fix
+256 / naive-guard 224. 15 jokers guarded from an exhaustive Lua grep; Hiker's double-fire deliberately
+KEPT (Lua has no guard — fidelity means copying the bugs the game has, not the ones it doesn't).
+Satellite POC REJECT→ACCEPT (1.500±0.000 exact); Ice Cream melts (its old ±0.948 CI WAS the one
+Brainstorm double-decay seed — collapses to ±0.000); Green Joker correctly still rejected (policy-bias,
+not engine — the harness discriminates error classes). Cache leak quantified: 1 hit in 3,516 —
+per-player scoping keeps the 76.2% hit rate at +3% ms, per-seed rows now partition-independent.
+EV gate: fast bit-stable (1/126 rows), full 95.2→96.0, greedy 0/126 changed. PvP canonical transcripts
+re-captured (Ice Cream melt legitimately moved 3/4 seeds; superseded values kept, auditable).
+**QUEUED: engine-behaviour stamp in shard metadata** (nothing currently distinguishes pre/post-fix
+corpora but dates — must land before the next label campaign); Vampire/Square/Burnt fidelity gaps;
+Cloud 9 Stone-nine minor.
