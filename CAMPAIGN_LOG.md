@@ -2078,3 +2078,19 @@ READING: the agent is competitive while raw hand-play decides (antes 2-3) and co
 multiplicative builds come online — the build/scaling gap in one match, same as the V-v2
 sandbagging thread. Next levers: ev:full rung h2h vs the same seeds; shop-scaling work is where
 ghost strength lives.
+
+**2026-08-27 ~04:00 — DESIGN INPUT (Tagg, after live match #2): the SCORE-CURVE SLOPE is the
+competitiveness metric, and the human curve is a training target.** Verdict from play: agent
+competent early (took a life at A2) but "not able to get a coherent build together" — no
+competition at later antes. Numbers: agent nemesis scores grew ~1.35x/ante (12.4k→65.1k) vs
+Tagg ~8x/ante (11.8k→61.9M, A5 dip = his own hiccup). Three actionable objects: (1) METRIC —
+fit log10(nemesis score) vs ante per player; agent +0.13 decades/ante vs human ~+0.9; ladder
+rungs/training runs gate on closing this slope; ghost matches auto-produce the human reference.
+(2) TARGET — feed the measured "Tagg curve" into the existing table-driven external-Nemesis-
+target machinery (eval/targets.py table_target, P4-W4) as a dense honest solo-training bar:
+"beat the human curve at every ante" (no pvp_solo degeneracy, no synthetic bar). (3) EVAL
+DESIGN — sandbag/value-extraction levers are unmeasurable in one-sided matches; keep measuring
+them in matched self-play, and use ghost matches to detect when human games get close enough
+for sandbagging to matter (that closeness itself = the "becoming competitive" signal). Root
+cause restated: shop valuation is near-term EV with no build-commitment/scaling term — W-SHOP
+(v4 chain, tonight) is the first attack; race each new rung and track the slope in MATCHES.md.
