@@ -281,11 +281,19 @@ class _SeeingDouble:
 JOKER_REGISTRY["j_seeing_double"] = _SeeingDouble()
 
 # ── j_loyalty_card: x4 Mult every 6th hand played ───────────────────────────
+# card.lua:3632-3648 DERIVES `loyalty_remaining` from the run-global
+# `G.GAME.hands_played - hands_played_at_create`, so a Blueprint copy re-deriving it
+# cannot advance it, and both the copy branch (:3634) and the own branch (:3641) pay
+# x4 on exactly the same hand.  The engine keeps a private counter instead, which a
+# copy DID advance — so it is incremented once per hand in the `before` pass and only
+# read in joker_main, exactly like the other scaling jokers.
 class _LoyaltyCard:
+    def pre_score(self, inst, ctx):
+        if ctx.blueprint:
+            return
+        inst.state["count"] = inst.state.get("count", 0) + 1
     def on_hand_scored(self, inst, ctx):
-        inst.state.setdefault("count", 0)
-        inst.state["count"] += 1
-        if inst.state["count"] % 6 == 0:
+        if inst.state.get("count", 0) % 6 == 0 and inst.state.get("count", 0) > 0:
             ctx.mult_mult *= 4
 JOKER_REGISTRY["j_loyalty_card"] = _LoyaltyCard()
 

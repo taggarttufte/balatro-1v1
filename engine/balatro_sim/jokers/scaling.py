@@ -49,9 +49,16 @@ class _Crafty:
 JOKER_REGISTRY["j_crafty"] = _Crafty()
 
 # ── j_green_joker: +1 mult per hand played, -1 mult per discard ────────────
+# card.lua:3563 (`context.before`, `and not context.blueprint`) raises the counter;
+# :4010-4015 (joker_main) pays it.  Two different passes, so the increment lands
+# BEFORE any joker — including a Blueprint copying this one — reads the value, and a
+# copy pays the RAISED figure without raising it a second time.
 class _GreenJoker:
-    def on_hand_scored(self, inst, ctx):
+    def pre_score(self, inst, ctx):
+        if ctx.blueprint:
+            return
         inst.state["mult"] = inst.state.get("mult", 0) + 1
+    def on_hand_scored(self, inst, ctx):
         ctx.mult += inst.state.get("mult", 0)
     def on_discard(self, inst, cards, ctx):
         inst.state["mult"] = max(0, inst.state.get("mult", 0) - 1)
@@ -199,8 +206,13 @@ JOKER_REGISTRY["j_glass"] = _GlassJoker()
 # TODO: joker copying
 
 # ── j_obelisk: x0.2 Mult per consecutive hand that isn't your most played type
+# card.lua:3543 (`context.before`, `and not context.blueprint`) walks the streak;
+# the x_mult is paid in the generic joker_main x_mult branch.  Split across the two
+# passes for the same reason as Green Joker.
 class _Obelisk:
-    def on_hand_scored(self, inst, ctx):
+    def pre_score(self, inst, ctx):
+        if ctx.blueprint:
+            return
         counts = inst.state.setdefault("counts", {})
         counts[ctx.hand_type] = counts.get(ctx.hand_type, 0) + 1
         most_played = max(counts, key=counts.get)
@@ -208,6 +220,7 @@ class _Obelisk:
             inst.state["streak"] = inst.state.get("streak", 0) + 1
         else:
             inst.state["streak"] = 0
+    def on_hand_scored(self, inst, ctx):
         xm = 1.0 + inst.state.get("streak", 0) * 0.2
         ctx.mult_mult *= xm
 JOKER_REGISTRY["j_obelisk"] = _Obelisk()
@@ -246,11 +259,11 @@ JOKER_REGISTRY["j_fortune_teller"] = _FortuneTeller()
 # (same as j_stone above)
 
 # ── j_lucky_cat: x0.25 xMult per successful Lucky trigger (permanent) ───────
-# card.lua:3076 (`individual`: other_card.lucky_trigger) — scoring.py sets
-# ctx.lucky_trigger on each pass where either Lucky roll hit.
+# card.lua:3076 (`individual`: other_card.lucky_trigger `and not context.blueprint`) —
+# scoring.py sets ctx.lucky_trigger on each pass where either Lucky roll hit.
 class _LuckyCat:
     def on_score_card(self, inst, card, ctx):
-        if ctx.lucky_trigger:
+        if ctx.lucky_trigger and not ctx.blueprint:
             inst.state["xmult"] = inst.state.get("xmult", 1.0) + 0.25
     def on_hand_scored(self, inst, ctx):
         xm = inst.state.get("xmult", 1.0)
@@ -269,10 +282,15 @@ class _Baseball:
 JOKER_REGISTRY["j_baseball"] = _Baseball()
 
 # ── j_trousers: +2 mult if played hand contains Two Pair ──────────────
+# card.lua:3412 (`context.before`, `and not context.blueprint`) gains; :3986 (joker_main)
+# pays.  Same before/main split as Green Joker.
 class _SpareTrousers:
-    def on_hand_scored(self, inst, ctx):
+    def pre_score(self, inst, ctx):
+        if ctx.blueprint:
+            return
         if "Two Pair" in ctx.hand_type:
             inst.state["mult"] = inst.state.get("mult", 0) + 2
+    def on_hand_scored(self, inst, ctx):
         ctx.mult += inst.state.get("mult", 0)
 JOKER_REGISTRY["j_trousers"] = _SpareTrousers()
 
@@ -295,20 +313,44 @@ class _Blackboard:
 JOKER_REGISTRY["j_blackboard"] = _Blackboard()
 
 # ── j_runner: +15 chips per Straight made this run ──────────────────────────
+# card.lua:3435 (`context.before`, `and not context.blueprint`) gains; :3908 (joker_main)
+# pays.  Same before/main split as Green Joker.
 class _Runner:
-    def on_hand_scored(self, inst, ctx):
+    def pre_score(self, inst, ctx):
+        if ctx.blueprint:
+            return
         if "Straight" in ctx.hand_type:
             inst.state["chips"] = inst.state.get("chips", 0) + 15
+    def on_hand_scored(self, inst, ctx):
         ctx.chips += inst.state.get("chips", 0)
 JOKER_REGISTRY["j_runner"] = _Runner()
 
-# ── j_ice_cream: +100 chips, -5 chips per hand played ───────────────────────
+# ── j_ice_cream: +100 chips, -5 chips per hand played, MELTS at zero ─────────
+# joker_main pays `extra.chips` (card.lua:3915-3920); the decrement is a separate
+# `context.after` branch (:3571, `and not context.blueprint`) that runs after every
+# joker_main contribution (state_events.lua:1070).
+#
+# The melt is the branch the engine used to be missing: `if extra.chips - chip_mod <= 0
+# then ... G.jokers:remove_card(self); self:remove()` (:3572-3592) DESTROYS the joker on
+# the hand that would take it to zero — it does not clamp.  `extra.chips` is left at its
+# last positive value; the card simply stops existing, and the joker slot is freed.
+# 100 chips at 5/hand therefore means 20 scoring hands (100, 95, ..., 5 = 1050 chips
+# total) and then a free slot, not a permanent 0-chip squatter.
 class _IceCream:
     def on_init(self, inst, ctx):
         inst.state["chips"] = 100
     def on_hand_scored(self, inst, ctx):
         ctx.chips += inst.state.get("chips", 100)
-        inst.state["chips"] = max(0, inst.state.get("chips", 100) - 5)
+    def on_hand_after(self, inst, ctx):
+        if ctx.blueprint:
+            return
+        chips = inst.state.get("chips", 100)
+        if chips - 5 <= 0:
+            # base.drain_joker_state pops 'destroyed' and calls remove_joker (the slot
+            # is freed because joker_slots is untouched).  Same mechanism as Seltzer.
+            inst.state["destroyed"] = True
+        else:
+            inst.state["chips"] = chips - 5
 JOKER_REGISTRY["j_ice_cream"] = _IceCream()
 
 # ── j_dna: if first hand has only 1 card, permanent copy added to deck ──────
@@ -347,13 +389,19 @@ JOKER_REGISTRY["j_hiker"] = _Hiker()
 # TODO: batch discard tracking
 
 # ── j_ride_the_bus: +1 mult per consecutive hand without face card, resets ──
+# card.lua:3525 (`context.before`, `and not context.blueprint`) scans
+# `context.scoring_hand` and resets or gains; :3992-3997 (joker_main) pays.  Same
+# before/main split as Green Joker.
 class _RideTheBus:
-    def on_hand_scored(self, inst, ctx):
+    def pre_score(self, inst, ctx):
+        if ctx.blueprint:
+            return
         has_face = any(ctx.is_face_card(c) for c in ctx.scoring_cards if not c.debuffed)
         if has_face:
             inst.state["mult"] = 0
         else:
             inst.state["mult"] = inst.state.get("mult", 0) + 1
+    def on_hand_scored(self, inst, ctx):
         ctx.mult += inst.state.get("mult", 0)
 JOKER_REGISTRY["j_ride_the_bus"] = _RideTheBus()
 

@@ -207,20 +207,25 @@ def test_ice_cream_applies_chips_then_decays_five():
 
 
 # ═════════════════════════════════════════════════ divergences found by this workstream
-# Neither is fixed here (out of scope, brief); both are pinned so a later fix has to
-# update a test rather than pass silently.
+#
+# Each was pinned against the CURRENT (broken) behaviour so a later fix would have to
+# update a test rather than pass silently.  Three of the four have since been fixed by
+# W-FIX (2026-08-26) and their pins were flipped to assert the Lua's behaviour — that is
+# the pattern working as designed, and the flips are listed in engine/FIX_NOTES.md.  The
+# fourth (Cloud 9 / Stone) is still open and still pinned as a gap.
 
-def test_ENGINE_GAP_satellite_forgets_planets_used_before_it_was_bought():
-    """**Divergence.**  Lua reads the GLOBAL ``G.GAME.consumeable_usage``
-    (card.lua:1667-1673), so a Satellite bought at ante 4 after five distinct planets pays
-    $5 on its very first round end.  The engine keeps the set on the JOKER INSTANCE
-    (jokers/misc.py:208-217, populated only by ``consumables.apply_planet``'s
-    ``on_planet_used`` sweep, consumables.py:55-59) and never seeds it from
-    ``game.planets_used``, so it pays $0 until NEW planets are used.
+def test_FIXED_satellite_pays_for_planets_used_before_it_was_bought():
+    """**Was §3.1, FIXED by W-FIX 2026-08-26.**  Lua reads the GLOBAL
+    ``G.GAME.consumeable_usage`` (card.lua:1667-1673), so a Satellite bought at ante 4
+    after five distinct planets pays $5 on its very first round end.  The engine kept the
+    set on the JOKER INSTANCE, populated only by an ``on_planet_used`` sweep, and never
+    seeded it from ``game.planets_used`` — so it paid $0 until NEW planets were used,
+    which is 100% of the value of a joker that is essentially always bought mid-run.
 
-    Materiality: Satellite is a $6 rarity-2 joker that is almost always bought mid-run,
-    which is exactly the case the engine gets wrong.  This is the whole reason the
-    ``j_satellite`` entry is rejected by ``run_poc``."""
+    Now ``ScoreContext.planets_used`` carries the run-global list (game.py ``_hook_ctx``)
+    and ``jokers/misc.py::_Satellite.on_round_end`` counts its distinct entries.  The
+    ``j_satellite`` entry, which was always faithful to the Lua, is accepted by
+    ``run_poc`` as a result."""
     g = _g()
     V.use_planets(g, ("c_mercury", "c_venus", "c_mars"))     # BEFORE the purchase
     V.add_joker(g, "j_satellite")
@@ -229,32 +234,33 @@ def test_ENGINE_GAP_satellite_forgets_planets_used_before_it_was_bought():
     b0, bb = g.dollars, base.dollars
     g._end_round()
     base._end_round()
-    got = (g.dollars - b0) - (base.dollars - bb)
-    assert got == 0, "pinning the CURRENT engine behaviour"
-    assert got != 3, "the Lua would pay $3 here — see the docstring"
+    assert (g.dollars - b0) - (base.dollars - bb) == 3
 
 
-def test_ENGINE_GAP_blueprint_double_scales_a_self_mutating_joker():
-    """**Divergence.**  Every self-mutating scaling joker guards its state change with
-    ``and not context.blueprint`` in the Lua — Ride the Bus (card.lua:3525), Green Joker
-    (:3563), Ice Cream (:3571), Obelisk (:3542).  A Blueprint/Brainstorm copy therefore
-    reproduces the SCORE contribution but not the state change.
+def test_FIXED_blueprint_no_longer_double_scales_a_self_mutating_joker():
+    """**Was §3.2, FIXED by W-FIX 2026-08-26** — the finding this POC exists to
+    demonstrate, because it was found by MEASUREMENT, not by reading: one seed in 40 of
+    the Ice Cream trajectory run came back at 10 chips instead of 40, and the trace showed
+    the divergence starting on the hand a Brainstorm was bought (seed 7YTVQERM, hand 7).
 
-    The engine's ``_Blueprint`` / ``_Brainstorm`` call the target's ``on_hand_scored``
-    on the target's own instance with no blueprint flag (jokers/misc.py:145-195,
-    ``_guarded_call``), and the engine folds "apply chips" and "decay" into that one hook
-    (jokers/scaling.py:305-312) — so the copy decays it a second time.
+    Every self-mutating scaling joker guards its state change with ``and not
+    context.blueprint`` in the Lua — Ride the Bus (card.lua:3525), Obelisk (:3543), Green
+    Joker (:3563), Ice Cream (:3571), and 22 more branches.  The engine's ``_Blueprint`` /
+    ``_Brainstorm`` called the target's hook on the target's own instance with no flag, and
+    folded "apply the chips" and "decay" into that one hook, so the copy mutated the target
+    a second time: Ice Cream melted twice as fast, Green Joker and Ride the Bus scaled
+    twice as fast.
 
-    Effect: Ice Cream melts twice as fast, Green Joker and Ride the Bus scale twice as
-    fast.  Found by MEASUREMENT, not by reading: one seed in 40 of the Ice Cream
-    trajectory run came back at 10 chips instead of 40, and the trace showed the
-    divergence starting on the hand a Brainstorm was bought (seed 7YTVQERM, hand 7)."""
+    ``jokers/misc.py::_guarded_call`` now sets ``ctx.blueprint`` (card.lua:2310-2312's
+    depth counter) and every guarded joker reads it; the ``before`` / ``joker_main`` /
+    ``after`` split means the copy still pays the same row the original does.  Engine-side
+    coverage — including the structural check that every guarded joker stays guarded —
+    lives in ``engine/tests/engine_tests/test_joker_state_fidelity.py``."""
     g = _g()
     ice = V.add_joker(g, "j_ice_cream")
     V.add_joker(g, "j_brainstorm")           # leftmost joker is Ice Cream -> copies it
     g.step({"type": "play", "cards": [0]})
-    assert ice.state["chips"] == 90, "pinning the CURRENT engine behaviour (two decrements)"
-    assert ice.state["chips"] != 95, "the Lua would decay once — see the docstring"
+    assert ice.state["chips"] == 95, "one decrement, as the Lua does"
 
 
 def test_ENGINE_GAP_cloud_9_counts_a_stone_enhanced_nine():
@@ -282,19 +288,21 @@ def test_ENGINE_GAP_cloud_9_counts_a_stone_enhanced_nine():
     assert got != 3, "the Lua would pay $3 here — see the docstring"
 
 
-def test_ENGINE_GAP_ice_cream_never_melts():
-    """**Divergence.**  ``if extra.chips - chip_mod <= 0 then ... G.jokers:remove_card(self)``
-    (card.lua:3571-3592): Ice Cream is DESTROYED on the hand that would take it to zero, and
-    the joker slot is freed.  The engine floors it at 0 (``max(0, chips - 5)``,
-    jokers/scaling.py:305-312) and keeps a dead card on the board forever.
+def test_FIXED_ice_cream_melts():
+    """**Was §3.3, FIXED by W-FIX 2026-08-26.**  ``if extra.chips - chip_mod <= 0 then ...
+    G.jokers:remove_card(self)`` (card.lua:3571-3592): Ice Cream is DESTROYED on the hand
+    that would take it to zero, and the joker slot is freed.  The engine floored it at 0
+    (``max(0, chips - 5)``) and kept a dead card on the board forever.
 
-    Materiality: low for scoring (a 0-chip joker adds 0 either way) but not zero for
+    Materiality was low for scoring (a 0-chip joker adds 0 either way) but not zero for
     POLICY — a permanently-occupied joker slot changes every later buy decision, and the
     encode layer's buy value for Ice Cream should price 20 hands of decay followed by a
-    freed slot, not 20 hands followed by a blocked one."""
+    freed slot, not 20 hands followed by a blocked one.  That is now what the engine
+    does."""
     g = _g()
     j = V.add_joker(g, "j_ice_cream")
     j.state["chips"] = 5                       # one hand from melting
+    slots = g.joker_slots
     g.step({"type": "play", "cards": [0]})
-    assert V.joker_of(g, "j_ice_cream") is not None, "pinning the CURRENT engine behaviour"
-    assert j.state["chips"] == 0
+    assert V.joker_of(g, "j_ice_cream") is None, "melted"
+    assert g.joker_slots == slots and len(g.jokers) == 0, "and the slot is free"

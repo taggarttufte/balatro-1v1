@@ -65,7 +65,7 @@ class TestJokerRegistryIsOneToOneWithPools:
             JOKER_REGISTRY["j_joker"] = object()
 
     def test_every_implementation_has_at_least_one_hook(self):
-        hooks = ("pre_score", "on_score_card", "on_hand_scored", "on_discard",
+        hooks = ("pre_score", "on_score_card", "on_hand_scored", "on_hand_after", "on_discard",
                  "on_round_end", "on_blind_selected", "on_boss_beaten",
                  "on_planet_used", "on_tarot_used", "on_sell", "on_shop_enter",
                  "on_shop_leave", "on_held_card", "on_card_destroyed",

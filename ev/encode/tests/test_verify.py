@@ -192,26 +192,39 @@ def test_seed_money_accepts_exactly_and_is_a_step_function():
     assert vals["$40"] == 3.0 and vals["$55"] == 5.0 and vals["$80"] == 5.0
 
 
-def test_satellite_is_rejected_and_the_rejection_localises_the_engine_gap():
-    """The entry is faithful to the Lua; the ENGINE is not.  The two scenario families
-    split cleanly, which is what turns a reject into a bug report."""
+def test_satellite_accepts_exactly_on_both_scenario_families():
+    """**Flipped by W-FIX (2026-08-26).**  The entry was always faithful to the Lua; the
+    ENGINE was not, and the two scenario families split cleanly — every "planets used
+    BEFORE the purchase" case measured $0 against a predicted $1-$3, every "used after"
+    case was exact.  That split is what turned a reject into a bug report (POC_NOTES §3.1),
+    and it is the reason this test now asserts acceptance on the union: the engine reads
+    the run-global planet tally, so purchase timing no longer changes the payout.
+
+    The `before` family is retained deliberately — it is the discriminating half, and a
+    regression would show up here as the same clean split."""
     m = V.measure_round_end(R.REGISTRY["j_satellite"],
                             P.satellite_scenarios("before") + P.satellite_scenarios("after"))
-    assert not m.accept
+    assert m.accept and m.exact
     before = [r for r in m.scenarios if "before" in r["scenario"]]
     after = [r for r in m.scenarios if "after" in r["scenario"]]
-    assert all(r["measured"] == 0.0 for r in before), "engine pays nothing for prior planets"
-    assert all(r["measured"] == r["predicted"] for r in after), "and is exact once it can see them"
+    assert before and after
+    for r in before + after:
+        assert r["measured"] == r["predicted"], r["scenario"]
 
 
 # ── the player-cache leak the harness has to defend against (POC_NOTES §3.5) ───────
 
 def test_the_board_ratio_cache_key_ignores_planet_levels():
-    """``hand._board_sig`` deliberately omits planet levels and the exact deck composition
-    (hand.py:345-358), but ``board_ratio`` samples real hands at the run's real levels — so
-    two states that differ ONLY in an omitted field share a cache entry and the first one
-    computed wins.  That makes ``ev:fast`` deterministic given ``(seed, budget)`` only in a
-    COLD process, which a verification harness cannot rely on."""
+    """``hand._board_sig`` deliberately omits planet levels and the exact deck composition,
+    but ``board_ratio`` samples real hands at the run's real levels — so two states that
+    differ ONLY in an omitted field share a cache entry and the first one computed wins.
+
+    The KEY is unchanged and this test still holds; what W-FIX (2026-08-26) changed is the
+    SCOPE.  ``board_ratio`` now memoises into a caller-supplied dict and ``EVPlayer`` owns
+    one per instance (cleared by ``reset()``), so the approximation stays inside a run —
+    where it is deterministic given the seed — instead of crossing between runs that share
+    a worker process.  ``hand._RATIO_CACHE``, exercised below, is the fallback for
+    module-level callers like this test."""
     import hand as H
     a = V.in_blind()
     V.add_joker(a, "j_joker")

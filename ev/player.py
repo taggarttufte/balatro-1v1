@@ -32,9 +32,14 @@ at most once per visit, never below the interest floor; a joker is sold only to 
 room for a shelf joker that is worth more than the weakest owned one.
 
 Determinism: with ``epsilon == 0`` every decision is a function of ``(seed, observable
-state)`` — the world sampler is seeded from both (``sampling.world_rng``) and no per-visit
-memory is kept (rerolls done are read off ``game.reroll_cost``).  ``epsilon > 0`` mixes
-in uniformly random legal actions (W5's self-play diversity) from the same seeded stream.
+state, this player's own history)`` — the world sampler is seeded from the first two
+(``sampling.world_rng``) and no per-visit memory is kept (rerolls done are read off
+``game.reroll_cost``).  ``epsilon > 0`` mixes in uniformly random legal actions (W5's
+self-play diversity) from the same seeded stream.  The one piece of history that survives
+between ``act`` calls is ``_ratio_cache``, ``hand.board_ratio``'s memo: it is per-INSTANCE
+and cleared by ``reset()``, so a run cannot inherit another run's numbers even when a
+worker pool reuses the process (W-FIX 2026-08-26; it used to be a module global, and
+W-ENCODE-POC measured 8% of seeds changing with the worker partition because of it).
 
 Side-effect freedom: ``act`` only reads the live game; every evaluation is on a clone.
 """
@@ -141,15 +146,21 @@ def _auto_use_planets(clone) -> None:
 
 
 def build_proxy(game, cfg: PlayerConfig = DEFAULT_PLAYER_CONFIG,
-                hcfg: HandConfig = DEFAULT_HAND_CONFIG, *, auto_planets: bool = True) -> dict:
+                hcfg: HandConfig = DEFAULT_HAND_CONFIG, *, auto_planets: bool = True,
+                ratio_cache: Optional[dict] = None) -> dict:
     """The analytic valuation of a non-hand state (see the module docstring).  Returns a
-    dict with ``value`` and its parts.  Read-only (works on a clone when planets are held)."""
+    dict with ``value`` and its parts.  Read-only (works on a clone when planets are held).
+
+    ``ratio_cache``: the board-ratio memo to use.  ``EVPlayer`` passes its own instance
+    dict so a run's shop/pack numbers depend on nothing but that run (hand.board_ratio has
+    the full argument); omitted, ``hand._RATIO_CACHE`` is used, which is fine for a
+    one-shot module-level call and NOT fine inside a reused worker."""
     g = game
     if auto_planets and any(k in PLANET_HAND for k in g.consumable_hand):
         g = game.clone()
         _auto_use_planets(g)
     model = blind_model_for(g, hcfg)
-    ratio = board_ratio(g, 3, hcfg)
+    ratio = board_ratio(g, 3, hcfg, cache=ratio_cache)
     target = _next_blind_target(g)
     hands = int(g.base_hands) + (3 if any(j.key == "j_burglar" for j in g.jokers) else 0)
     discards = int(g.base_discards)
@@ -208,6 +219,16 @@ class EVPlayer:
         self._eps_rng = random.Random(f"ev-eps:{self.seed}")
         # anti-cycling guard: how often act() has seen an unchanged SHOP/BOOSTER signature
         self._sig_seen: Counter = Counter()
+        # W-FIX (2026-08-26): board_ratio's memo, owned by the PLAYER rather than by the
+        # hand module.  hand._board_sig deliberately omits planet levels and the exact deck
+        # composition (EV_NOTES 8b item 1: a planet pick must not force a ratio recompute),
+        # so a process-global dict let one run be served a number computed for another —
+        # W-ENCODE-POC measured 2 of 24 seeds (8%) changing trajectory with the worker
+        # partition of a reused multiprocessing pool.  One dict per player keeps the
+        # within-run hit rate the fix pass was after (the shop evaluates a dozen candidates
+        # per visit and the state a purchase produces hits the candidate's entry) and makes
+        # a run's decisions a function of that run alone.
+        self._ratio_cache: dict = {}
 
     # ── protocol ────────────────────────────────────────────────────────────
 
@@ -215,6 +236,7 @@ class EVPlayer:
         self._last_explain = []
         self._eps_rng = random.Random(f"ev-eps:{self.seed}")
         self._sig_seen = Counter()
+        self._ratio_cache.clear()
 
     #: an unchanged shop/booster signature seen this often falls back to the rules tier
     STUCK_AFTER = 3
@@ -369,7 +391,7 @@ class EVPlayer:
         keys = [a["type"] for a in legal]
         if self.value_fn is not None and not self.value_fn_leaf_only:
             return self._rank_with_value(game, legal)
-        px = build_proxy(game, self.cfg, self.hand_cfg)
+        px = build_proxy(game, self.cfg, self.hand_cfg, ratio_cache=self._ratio_cache)
         out = [({"type": "play_blind"}, px["p_clear"],
                 f"play {game.current_blind.kind} (P(clear) {px['p_clear']:.2f}, target {px['target']:.0f})")]
         if "skip_blind" in keys and self.cfg.skip_tags and game.ante >= self.cfg.skip_min_ante:
@@ -485,7 +507,7 @@ class EVPlayer:
             if len(c.consumable_hand) < n0 and c.state == State.SHOP:
                 bonus = 5.0 if key in PLANET_HAND else 4.0
                 out.append((a, bonus, f"use {key} now"))
-        base = build_proxy(game, cfg, self.proxy_cfg)
+        base = build_proxy(game, cfg, self.proxy_cfg, ratio_cache=self._ratio_cache)
         floor = self._interest_floor(game)
         p_clear = base["p_clear"]
         # 2. shelf purchases
@@ -500,14 +522,14 @@ class EVPlayer:
                 c.step(a)
                 if len(c.jokers) <= len(game.jokers) and item.edition != "Negative":
                     continue
-                px = build_proxy(c, cfg, self.proxy_cfg)
+                px = build_proxy(c, cfg, self.proxy_cfg, ratio_cache=self._ratio_cache)
                 gain = px["value"] - base["value"]
                 out.append((a, gain, f"buy {item.name} ${price}: P(clear) {base['p_clear']:.2f}->{px['p_clear']:.2f}, "
                                      f"strength {base['strength']:.0f}->{px['strength']:.0f} (gain {gain:+.3f})"))
             elif item.kind in ("planet", "tarot", "spectral"):
                 c = game.clone()
                 c.step(a)
-                px = build_proxy(c, cfg, self.proxy_cfg)
+                px = build_proxy(c, cfg, self.proxy_cfg, ratio_cache=self._ratio_cache)
                 gain = px["value"] - base["value"]
                 if item.kind != "planet":
                     # an unvalued tarot/spectral: worth its price only when cheap and early
@@ -537,7 +559,7 @@ class EVPlayer:
             for ji in range(len(game.jokers)):
                 c = game.clone()
                 c.step({"type": "sell_joker", "joker_idx": ji})
-                px = build_proxy(c, cfg, self.proxy_cfg)
+                px = build_proxy(c, cfg, self.proxy_cfg, ratio_cache=self._ratio_cache)
                 loss = base["value"] - px["value"]
                 if worst is None or loss < worst[1]:
                     worst = (ji, loss, c)
@@ -554,7 +576,7 @@ class EVPlayer:
                     c2.step({"type": "buy", "item_idx": i})
                     if len(c2.jokers) <= len(c_sold.jokers):
                         continue
-                    px2 = build_proxy(c2, cfg, self.proxy_cfg)
+                    px2 = build_proxy(c2, cfg, self.proxy_cfg, ratio_cache=self._ratio_cache)
                     g2 = px2["value"] - base["value"]
                     if best_shelf is None or g2 > best_shelf[1]:
                         best_shelf = (item, g2)
@@ -579,14 +601,14 @@ class EVPlayer:
 
     def _rank_booster_rules(self, game, legal: list) -> list:
         cfg = self.cfg
-        base = build_proxy(game, cfg, self.proxy_cfg)
+        base = build_proxy(game, cfg, self.proxy_cfg, ratio_cache=self._ratio_cache)
         out = []
         for a in legal:
             if a["type"] != "pick_booster":
                 continue
             c = game.clone()
             c.step(a)
-            px = build_proxy(c, cfg, self.proxy_cfg)
+            px = build_proxy(c, cfg, self.proxy_cfg, ratio_cache=self._ratio_cache)
             gain = px["value"] - base["value"]
             names = []
             for i in a.get("indices", []):

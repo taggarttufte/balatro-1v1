@@ -354,3 +354,98 @@ def test_anti_cycling_guard_does_not_disturb_a_normal_shop_visit():
     a2 = EVPlayer().act(g)
     assert _key(a1) == _key(a2)            # one visit: same decision as a fresh player
     assert g.state_signature() == sig0
+
+
+# ───────────────────────────────────────── W-FIX (2026-08-26): the ratio cache is scoped
+#
+# ``hand._board_sig`` deliberately omits planet levels and the exact deck composition
+# (EV_NOTES §8b item 1 — the speed trade that motivated the cache).  While the memo was a
+# process GLOBAL that made a run's decisions depend on what the worker had played before
+# it: W-ENCODE-POC measured 2 of 24 seeds (8%) changing trajectory with the worker
+# partition of a reused pool, and every per-seed row of a pooled gate was therefore
+# partition-dependent.  The fix is the scope, not the key.
+
+def test_the_player_owns_its_ratio_cache_and_clears_it_on_reset():
+    g = _shop()
+    pl = EVPlayer()
+    assert pl._ratio_cache == {}
+    pl.act(g)
+    assert pl._ratio_cache, "the shop tier must still memoise within a visit"
+    pl.reset()
+    assert pl._ratio_cache == {}
+
+
+def test_two_players_do_not_share_ratio_entries():
+    g = _shop()
+    a, b = EVPlayer(), EVPlayer()
+    a.act(g)
+    assert a._ratio_cache and b._ratio_cache == {}
+    assert not (set(a._ratio_cache) & set(b._ratio_cache))
+
+
+def test_nothing_a_player_computes_reaches_the_module_cache():
+    """The module dict stays the fallback for one-shot module-level callers; no player
+    writes to it, so a pool worker cannot poison the next run through it."""
+    H._RATIO_CACHE.clear()
+    g = _shop()
+    pl = EVPlayer()
+    for _ in range(3):
+        if g.state != State.SHOP:
+            break
+        g.step(pl.act(g))
+    assert pl._ratio_cache, "precondition: the player did cache something"
+    assert H._RATIO_CACHE == {}, "a player must not write the process-global cache"
+
+
+def _run_to_ante(seed: str, stop_ante: int = 3, player=None) -> tuple:
+    """A short real run; the trace is what a determinism check compares."""
+    pl = player or EVPlayer(budget="fast")
+    g = BalatroGame(seed=seed, deck_key="b_red", stake=1, ruleset="vanilla")
+    trace = []
+    steps = 0
+    while g.state != State.GAME_OVER and g.ante <= stop_ante and steps < 600:
+        a = pl.act(g)
+        trace.append(_key(a))
+        g.step(a)
+        steps += 1
+    return tuple(trace), g.ante, g.dollars
+
+
+#: A (predecessor, target) pair for which the PRE-FIX process-global cache really did
+#: change the second run, found by sweeping the first 24 ground-truth seeds against their
+#: cold traces (1 of 24 changed here; W-ENCODE-POC measured 2 of 24 on its own scenario
+#: shape — the count depends on what the worker happened to compute first).  A regression
+#: pin needs a case that actually diverged, not an arbitrary seed: most seeds are
+#: insensitive to the leak and would pass either way.
+_LEAK_PAIR = ("4K8A9QER", "4UEGRRRA")
+
+
+def test_a_run_is_unchanged_by_what_the_process_played_before_it():
+    """The property the POC harness had to add ``reset_player_caches()`` to get, now a
+    property of the player itself: no cache clearing anywhere in this test.
+
+    Verified to bite: aliasing ``EVPlayer._ratio_cache`` back to ``hand._RATIO_CACHE``
+    (the pre-fix behaviour) makes this pair diverge."""
+    poison, target = _LEAK_PAIR
+    cold = _run_to_ante(target)
+    _run_to_ante(poison)                        # poison the process
+    assert _run_to_ante(target) == cold
+
+
+def test_a_run_is_unchanged_by_what_the_process_played_before_it_over_several_seeds():
+    seeds = list(C.DEFAULT_SEEDS)[:4]
+    cold = _run_to_ante(seeds[0])
+    for other in seeds[1:]:
+        _run_to_ante(other)
+    assert _run_to_ante(seeds[0]) == cold
+
+
+def test_a_reused_player_replays_a_run_identically_after_reset():
+    pl = EVPlayer(budget="fast")
+    seeds = list(C.DEFAULT_SEEDS)[:3]
+    first = _run_to_ante(seeds[0], player=pl)
+    pl.reset()
+    _run_to_ante(seeds[1], player=pl)
+    pl.reset()
+    again = _run_to_ante(seeds[0], player=pl)
+    assert again == first

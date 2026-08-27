@@ -55,16 +55,27 @@ class _Madness:
 JOKER_REGISTRY["j_madness"] = _Madness()
 
 # ── j_square: gains +4 chips if the played hand has exactly 4 cards ──────────
+# card.lua:3427 (`context.before`, `and not context.blueprint`) gains; :3901
+# (joker_main) pays.  Same before/main split as Green Joker.
 class _SquareJoker:
-    def on_hand_scored(self, inst, ctx):
+    def pre_score(self, inst, ctx):
+        if ctx.blueprint:
+            return
         if len(ctx.scoring_cards) == 4:
             inst.state["chips"] = inst.state.get("chips", 0) + 4
+    def on_hand_scored(self, inst, ctx):
         ctx.chips += inst.state.get("chips", 0)
 JOKER_REGISTRY["j_square"] = _SquareJoker()
 
 # ── j_vampire: remove enhancement from scored card, gain x0.1 xMult per card ─
+# card.lua:3465 `and not context.blueprint`: a copy pays the CURRENT x_mult but neither
+# gains nor strips.  (The engine does this per scoring card rather than in the Lua's
+# `before` sweep over context.scoring_hand — a separate, pre-existing divergence about
+# WHEN the enhancement is stripped, not about the copy; see engine/FIX_NOTES.md.)
 class _Vampire:
     def on_score_card(self, inst, card, ctx):
+        if ctx.blueprint:
+            return
         if card.enhancement and card.enhancement not in ("None", "Base") and not card.debuffed:
             inst.state["xmult"] = inst.state.get("xmult", 1.0) + 0.1
             card.enhancement = "None"

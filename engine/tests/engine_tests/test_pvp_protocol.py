@@ -6,6 +6,16 @@ Two things are pinned here:
    from the tree BEFORE the protocol landed (four seeds, ``ev:fast`` on both sides, the
    sha1 chain of ``MLBMatch.signature()`` after every single step); the canonical path must
    still reproduce it byte for byte, including the length of the signature tuple.
+
+   **Re-captured 2026-08-26 (W-FIX).**  Four engine-correctness fixes landed that
+   deliberately change what ``ev:fast`` plays — a Blueprint / Brainstorm copy no longer
+   re-runs the copied joker's self-mutation, Satellite reads the run-global planet tally,
+   Ice Cream melts and frees its slot, and ``hand.board_ratio``'s memo became per-player.
+   Three of the four seeds moved; ``1KV4W6YS`` is byte-identical, which is itself evidence
+   the blast radius is the four fixes and not something broader.  Each changed row keeps
+   its pre-fix values under ``superseded_2026-08-26_wfix`` so the original W-PVP claim
+   (adding the protocol changed nothing) remains auditable.  This test's job is unchanged:
+   from here on, any further drift in the canonical path has to be explained.
 2. **The protocol itself**, rule by rule, including every edge case decision listed in
    ``ev/PVP_NOTES.md`` §2.
 

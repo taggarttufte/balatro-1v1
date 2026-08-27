@@ -398,3 +398,37 @@ def test_board_ratio_is_cached_by_board_signature():
     g.debug_add_joker("j_greedy_joker")
     H.board_ratio(g)
     assert len(H._RATIO_CACHE) == 2
+
+
+def test_board_ratio_memoises_into_the_cache_it_is_given():
+    """W-FIX: ``cache=`` is the scope boundary.  Two callers with their own dicts cannot
+    see each other's entries, which is what makes a run's ratios a function of that run —
+    ``_board_sig`` deliberately omits planet levels and the deck composition, so a SHARED
+    dict served one run a number computed for another (POC_NOTES §3.5: 8% of seeds)."""
+    g = _in_blind()
+    g.debug_add_joker("j_joker")
+    H._RATIO_CACHE.clear()
+    mine: dict = {}
+    r = H.board_ratio(g, cache=mine)
+    assert len(mine) == 1 and not H._RATIO_CACHE, "nothing leaked into the module cache"
+    assert H.board_ratio(g, cache=mine) == r
+    yours: dict = {}
+    assert H.board_ratio(g, cache=yours) == r      # same board -> same number, cold
+    assert len(yours) == 1 and len(mine) == 1
+
+
+def test_a_private_cache_is_not_served_a_number_computed_for_another_board():
+    """The mechanism behind the leak, contained: two boards with an IDENTICAL
+    ``_board_sig`` and different planet levels get each other's number when they share a
+    dict, and their own when they do not."""
+    a = _in_blind()
+    a.debug_add_joker("j_joker")
+    b = _in_blind()
+    b.debug_add_joker("j_joker")
+    b.planet_levels["Pair"] = b.planet_levels.get("Pair", 1) + 6
+    assert H._board_sig(a) == H._board_sig(b), "the key cannot tell these two apart"
+
+    shared: dict = {}
+    ra = H.board_ratio(a, cache=shared)
+    assert H.board_ratio(b, cache=shared) == ra, "shared: b is served a's number"
+    assert H.board_ratio(b, cache={}) != ra, "private: b computes its own"

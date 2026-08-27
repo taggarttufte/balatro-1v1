@@ -184,6 +184,29 @@ class ScoreContext:
     blind_kind: str = ""               # "Small" | "Big" | "Boss" for the current blind
     hands_played: int = 0              # G.GAME.current_round.hands_played BEFORE this hand
 
+    # ── `context.blueprint` (card.lua:2310-2312, :2324-2326) ──────────────────
+    # Blueprint / Brainstorm re-dispatch the copied joker's own effect with
+    # `context.blueprint = (context.blueprint and (context.blueprint + 1)) or 1`
+    # — a DEPTH COUNTER, not a bool, so a Blueprint chain can bound itself. 26
+    # joker branches in card.lua then read `and not context.blueprint` to make the
+    # copy reproduce the SCORE contribution but NOT the self state change (Ride
+    # the Bus :3525, Obelisk :3543, Green Joker :3563, Ice Cream :3571, Seltzer
+    # :3601, Square Joker :3427, Runner :3435, Spare Trousers :3412, Vampire
+    # :3465, Wee Joker :3084, Lucky Cat :3076, ...).
+    #
+    # Set by jokers.misc._guarded_call, which is the ONE place a copied effect is
+    # dispatched.  A hook that mutates `inst.state` must open with
+    # `if ctx.blueprint: return` (or guard the mutation) — see engine/FIX_NOTES.md.
+    # 0 = this joker is firing as itself.
+    blueprint: int = 0
+
+    # ``G.GAME.consumeable_usage`` keys with ``set == 'Planet'`` — RUN-GLOBAL, not
+    # per-joker (card.lua:1667-1673; written by set_consumeable_usage,
+    # misc_functions.lua:1184-1195, from Card:use_consumeable, card.lua:1093).
+    # game._hook_ctx() fills it from ``game.planets_used`` so Satellite pays for
+    # planets used BEFORE it was bought.  Uses, not unique keys: the reader dedups.
+    planets_used: list = field(default_factory=list)
+
     # ── Pending side-effects produced by hooks and applied by game.py ────────
     pending_jokers: list = field(default_factory=list)      # JokerInstance to add (Riff-raff, Invisible)
     pending_cards: list = field(default_factory=list)       # (Card, where) to add to the deck ("deck"|"hand")
@@ -278,8 +301,9 @@ class JokerInstance:
         """Fast structured copy — avoids deepcopy overhead.
 
         State is a dict of primitives plus a few flat containers (Card Sharp
-        ``played_hands`` set, Satellite ``planets_used``, ``pending_consumables``
-        lists). Those are copied one level deep: a shallow ``state.copy()`` shared
+        ``played_hands`` set, Obelisk / Burnt Joker ``counts`` dict,
+        ``pending_consumables`` lists). Those are copied one level deep: a shallow
+        ``state.copy()`` shared
         them between the clone and the original, so MCTS siblings cross-contaminated
         (W7 finding, 2026-08-21). Same pattern as
         ``card_selection._clone_joker_for_dry_run``.

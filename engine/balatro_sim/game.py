@@ -456,6 +456,10 @@ class BalatroGame:
             joker_slots=self.joker_slots,
             consumable_slots=self.consumable_slots,
             consumables=self.consumable_hand,
+            # G.GAME.consumeable_usage's Planet rows (card.lua:1667-1673) — run-global,
+            # so Satellite pays for planets used BEFORE it was bought.  Passed by
+            # reference: the only reader dedups and never mutates it.
+            planets_used=self.planets_used,
             blind_kind=self.current_blind.kind,
             hands_played=getattr(self, "_hands_played_round", 0),
             # Pareidolia is a `find_joker` lookup inside Card:is_face (card.lua:967), not a

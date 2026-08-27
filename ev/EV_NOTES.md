@@ -207,6 +207,15 @@ runs and at Nemesis states of an `MLBMatch`.  `HandAnalysis` reads `game.deck` o
 permutes `game.deck` at 72 states per budget (6 per seed; 126 seeds → 756) and got the
 identical decision every time.
 
+**What this paragraph did NOT cover until 2026-08-26**: side-effect freedom and *in-process*
+draw-order invariance say nothing about state carried *between runs* by a module-level
+cache.  `board_ratio`'s memo was process-global, so a run's decisions depended on what the
+worker had played before it — 8% of seeds, see §8b item 1.  The memo is now per-`EVPlayer`
+and cleared by `reset()`, and the property is pinned end-to-end by
+`ev/tests/test_player.py::test_a_run_is_unchanged_by_what_the_process_played_before_it`
+(on a seed pair verified to diverge under the old scope).  **A run is a function of
+`(seed, budget, cfg)` alone, in a cold process or a reused worker.**
+
 ## 6. Benchmarks (this box, Tagg active; AFTER the fix pass)
 
 Sequential (4 seeds to ante 6):
@@ -267,6 +276,30 @@ Four defects W5/W6 surfaced, fixed at the source:
    entry from the previous `act()`; the shop/pack proxies use a lighter `proxy_cfg`
    (48-sample simulator, 4 atoms, 1.20 grid) and a 3-hand ratio.  Shop 22 → 3.9 ms, pack
    27 → 6.1 ms, MLB match 7 → 2 s.
+
+   **Amended 2026-08-26 (W-FIX): the cache is per-PLAYER, not process-global.**  The key
+   above is unchanged and the speed argument still holds; what was wrong was the *scope*.
+   Because the key omits planet levels and the exact deck composition while `board_ratio`
+   samples real hands from the real deck at the run's real levels, two states that differ
+   only in an omitted field share an entry and whichever was computed first wins.  Inside
+   one run that is the intended approximation and is deterministic given the seed.  Across
+   runs sharing a worker process it was a determinism leak: W-ENCODE-POC measured **2 of 24
+   seeds (8%)** changing trajectory with the worker partition (POC_NOTES §3.5), which made
+   every per-seed row of any pooled harness — `gate_ev_player.py` included — depend on what
+   the worker had played before it.
+
+   `board_ratio(game, n_hands, cfg, *, cache=...)` now memoises into a caller-supplied
+   dict.  `EVPlayer` owns `self._ratio_cache`, clears it in `reset()`, and passes it at
+   every `build_proxy` call site; `hand._RATIO_CACHE` remains only as the fallback for
+   module-level callers and no player writes it.  Widening the key was the alternative and
+   would have paid back the 40% pack cost — and would have bought nothing, because the
+   cross-run sharing was worth **one cache hit in 3516 lookups**: over 12 `ev:fast` seeds
+   the hit rate is 76.2% per-player vs 76.2% shared (2678 vs 2679), against 0% and a 2.6×
+   slowdown with no cache at all.  All the value is within-run reuse, which the per-player
+   dict keeps.  Cost of the change, 12 seeds single process: shop 4.41 → 4.56 ms, pack
+   6.63 → 6.76 ms, hand 3.33 → 3.38 ms (+2-3%).  `workers=1 == 4 == 6` now holds without
+   `ev/encode/verify.py::reset_player_caches()`.  Full write-up and the other three fixes
+   of that round: `engine/FIX_NOTES.md`.
 2. **ε-wedge**: ε draws now come from a private sequential `random.Random("ev-eps:<seed>")`
    advanced once per `act()` and re-seeded by `reset()` — an ε-pick that no-ops (Wheel of
    Fortune whiff) no longer freezes the stream on an unchanged observable state (W5 saw

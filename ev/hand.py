@@ -338,6 +338,9 @@ def _resource_caps(game) -> tuple:
     return max(1, h), max(0, d)
 
 
+#: Fallback ratio cache for direct module-level callers (tests, ``estimate_clear_probability``).
+#: **Every production path passes its own** -- ``EVPlayer`` owns one per instance and clears
+#: it in ``reset()``.  See ``board_ratio`` for why the scope, not the key, is the fix.
 _RATIO_CACHE: dict = {}
 _RATIO_CACHE_MAX = 256
 
@@ -358,17 +361,34 @@ def _board_sig(game) -> tuple:
             sum(1 for c in game.full_deck if c.seal != "None"))
 
 
-def board_ratio(game, n_hands: int = 4, cfg: HandConfig = DEFAULT_HAND_CONFIG) -> float:
+def board_ratio(game, n_hands: int = 4, cfg: HandConfig = DEFAULT_HAND_CONFIG,
+                *, cache: Optional[dict] = None) -> float:
     """Median exact/cheap multiplier of the board (jokers, editions, enhancements) over
     ``n_hands`` deterministic sample hands of the full deck -- the factor that turns the
     cheap-unit blind model into this board's scores.  Read-only (private clone); cached by
     ``_board_sig`` (the shop / pack rule tier calls this once per candidate per act(), and
-    the state a purchase produces hits the candidate's cache entry -- fix pass 2026-08-23)."""
+    the state a purchase produces hits the candidate's cache entry -- fix pass 2026-08-23).
+
+    ``cache`` is the dict to memoise into; ``EVPlayer`` passes ``self._ratio_cache``, which
+    ``EVPlayer.reset()`` clears.  **The scope, not the key, is what makes this sound.**
+    ``_board_sig`` deliberately omits planet levels and the exact deck composition (the
+    speed trade that motivated the cache: a planet pick must not force a recompute, it was
+    40% of a pack decision), but ``board_ratio`` samples real hands from the real deck at
+    the run's real planet levels -- so two states that differ only in an omitted field
+    share an entry and whichever was computed first wins.  Inside ONE run that is a
+    documented approximation and is deterministic given the seed.  Across runs sharing a
+    process it was a determinism leak: W-ENCODE-POC measured 2 of 24 seeds (8%) changing
+    trajectory with the worker partition, because ``multiprocessing`` pools reuse workers
+    and a seed inherited whatever the previous seed had computed (POC_NOTES 3.5, EV_NOTES
+    8b item 1).  Widening the key would have paid back the 40% pack cost; giving each
+    player its own cache keeps the within-run hit rate and makes a run's result depend on
+    nothing but its own history."""
     if not game.jokers and not getattr(game, "plasma", False) and all(
             c.enhancement == "None" and c.edition == "None" and c.seal == "None" for c in game.full_deck):
         return 1.0
+    store = _RATIO_CACHE if cache is None else cache
     sig = (_board_sig(game), n_hands)
-    hit = _RATIO_CACHE.get(sig)
+    hit = store.get(sig)
     if hit is not None:
         return hit
     import hashlib
@@ -390,9 +410,9 @@ def board_ratio(game, n_hands: int = 4, cfg: HandConfig = DEFAULT_HAND_CONFIG) -
         ratios.append(an.ratio)
     ratios.sort()
     out = float(ratios[len(ratios) // 2])
-    if len(_RATIO_CACHE) >= _RATIO_CACHE_MAX:
-        _RATIO_CACHE.pop(next(iter(_RATIO_CACHE)))
-    _RATIO_CACHE[sig] = out
+    if len(store) >= _RATIO_CACHE_MAX:
+        store.pop(next(iter(store)))
+    store[sig] = out
     return out
 
 
@@ -2380,10 +2400,11 @@ def best_hand_action(game, **kw) -> dict:
 
 
 def estimate_clear_probability(game, target: float, hands: int, discards: int,
-                               cfg: HandConfig = DEFAULT_HAND_CONFIG) -> float:
+                               cfg: HandConfig = DEFAULT_HAND_CONFIG,
+                               *, ratio_cache: Optional[dict] = None) -> float:
     """P(a fresh blind of ``target`` chips is cleared with ``hands`` / ``discards``) under
     this game's deck + board — the blind model's tail from a fresh position (used by the
-    shop / blind-select rules of ``EVPlayer``)."""
+    shop / blind-select rules of ``EVPlayer``).  ``ratio_cache``: see ``board_ratio``."""
     model = blind_model_for(game, cfg)
-    ratio = board_ratio(game, cfg=cfg)
+    ratio = board_ratio(game, cfg=cfg, cache=ratio_cache)
     return model.p_clear(float(target) / max(ratio, 1e-6), int(hands), int(discards))

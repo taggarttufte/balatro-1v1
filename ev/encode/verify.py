@@ -371,22 +371,25 @@ class Measurement:
 def reset_player_caches() -> None:
     """Clear ``ev/hand.py``'s module-level caches before a run.
 
-    **Why this is not paranoia.**  ``hand._RATIO_CACHE`` is a process-global dict keyed by
+    **Retained as a belt, no longer the braces (W-FIX, 2026-08-26).**
+
+    What this defended against: ``hand._RATIO_CACHE`` was a process-global dict keyed by
     ``_board_sig``, which DELIBERATELY omits planet levels and the exact deck composition
-    (hand.py:345-358 — a documented speed trade: "a planet pick must not force a ratio
-    recompute").  ``board_ratio`` itself samples real hands from the real deck at the run's
-    real planet levels, so two states that differ only in those omitted fields share a cache
-    entry and the FIRST one computed wins.
+    (a documented speed trade: "a planet pick must not force a ratio recompute").
+    ``board_ratio`` itself samples real hands from the real deck at the run's real planet
+    levels, so two states that differ only in those omitted fields shared a cache entry and
+    the FIRST one computed won.  ``ev:fast`` was therefore deterministic given
+    ``(seed, budget)`` only within a COLD process — run several seeds in one worker and a
+    seed's result depended on which seeds preceded it, measured at **2 of 24 seeds (8%)**
+    and isolated to ``_RATIO_CACHE`` alone (``_MODEL_CACHE`` shared across runs changes
+    nothing: ``_blind_key`` carries the full deck, hand size and planet levels).
 
-    Consequence: ``ev:fast`` is deterministic given ``(seed, budget)`` only within a COLD
-    process.  Run several seeds in one worker and a seed's result depends on which seeds
-    preceded it — measured at **2 of 24 seeds (8%)** changing trajectory, and isolated to
-    ``_RATIO_CACHE`` alone (``_MODEL_CACHE`` shared across runs changes nothing).  Any pool
-    that reuses workers therefore gets partition-dependent per-seed numbers.
-
-    A verification harness cannot live with that: a measurement must not depend on what the
-    worker did before it.  ``ev/hand.py`` is read-only to this workstream, so the harness
-    resets the cache at every run boundary instead.  See POC_NOTES §3.5.
+    ``ev/hand.py`` was read-only to the POC, so the harness reset the cache at every run
+    boundary instead.  It has since been fixed at the source: the memo is a caller-supplied
+    dict, ``EVPlayer`` owns one per instance and clears it in ``reset()``, and no player
+    writes the module dict at all.  ``workers=1 == 4 == 6`` now holds WITHOUT this call.
+    It is kept because the harness also builds states outside a player, and clearing a
+    fallback cache costs nothing.  See POC_NOTES §3.5 and engine/FIX_NOTES.md fix 4.
     """
     try:
         import hand as _H

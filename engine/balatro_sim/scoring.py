@@ -24,6 +24,9 @@ Scoring order (mirrors functions/state_events.lua `evaluate_play`, 1.0.1o):
   5. `joker_main`: for each joker left to right — its Foil/Holo edition (FOLD), its
      on_hand_scored (FOLD), its Polychrome (FOLD). Editions apply exactly ONCE per
      joker here, never on per-card passes (state_events.lua:876-947).
+  5b. `after` phase: jokers' on_hand_after — one more sweep over the board once every
+     joker_main contribution is in (state_events.lua:1070). card.lua's only
+     `context.after` block (:3570) is Ice Cream's melt and Seltzer's countdown.
   6. `final_scoring_step` (state_events.lua:946-948): the deck's
      `Back:trigger_effect{context='final_scoring_step', chips, mult}` — only Plasma does
      anything (back.lua:121-128): `tot = chips + mult; chips = floor(tot/2);
@@ -165,6 +168,27 @@ def _joker_main_phase(ctx: ScoreContext, jokers: list[JokerInstance]):
         # Negative grants a joker slot and has no scoring effect.
 
 
+def _after_phase(ctx: ScoreContext, jokers: list[JokerInstance]):
+    """`after` — state_events.lua:1070 dispatches one more pass over ``G.jokers.cards``
+    with ``{cardarea = G.jokers, ..., after = true}`` AFTER the whole joker_main phase.
+
+    card.lua has exactly one ``elseif context.after then`` block (:3570) and it holds the
+    two self-consuming jokers, both gated on ``not context.blueprint``: Ice Cream's melt /
+    decay (:3571-3599) and Seltzer's countdown (:3601-3630).  Because both are gated, a
+    Blueprint / Brainstorm copy is a no-op here and this pass does NOT go through the copy
+    dispatch — which is why the hook is fired directly on the owned jokers.
+
+    Before this pass existed the engine folded "apply the chips" and "decay" into Ice
+    Cream's single ``on_hand_scored``.  That put the decrement at Ice Cream's own slot in
+    joker_main rather than after it, so a Brainstorm to its right copied the ALREADY
+    decayed value (Lua copies the pre-decay one).  Nothing here touches chips or mult, so
+    no fold is needed; ``drain_joker_state`` applies ``state['destroyed']`` afterwards."""
+    for joker in jokers:
+        effect = JOKER_REGISTRY.get(joker.key)
+        if effect and hasattr(effect, "on_hand_after"):
+            effect.on_hand_after(joker, ctx)
+
+
 def score_hand(
     scoring_cards: list[Card],
     all_cards: list[Card],
@@ -267,6 +291,9 @@ def score_hand(
 
     # 5. joker_main with editions
     _joker_main_phase(ctx, jokers)
+
+    # 5b. `after` (state_events.lua:1070) — Ice Cream's melt, Seltzer's countdown.
+    _after_phase(ctx, jokers)
 
     # Fold anything a joker left pending without triggering a fold.
     ctx.fold_mult()

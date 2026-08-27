@@ -418,10 +418,14 @@ class TestEconomyJokers:
 
 class TestScalingJokers:
     def test_green_joker_gains_mult(self):
+        """W-FIX: the gain moved to ``pre_score`` (card.lua:3563 is ``context.before``)
+        and ``on_hand_scored`` only pays it (:4010-4015) — scoring.py runs both passes
+        for a real hand, so the joker still gains and pays on the same hand."""
         j = JokerInstance("j_green_joker")
         cards = [Card(14, "Spades")]
         ctx = _make_ctx(scoring_cards=cards, hand_type="High Card", jokers=[j])
         effect = JOKER_REGISTRY["j_green_joker"]
+        effect.pre_score(j, ctx)
         effect.on_hand_scored(j, ctx)
         assert j.state.get("mult", 0) >= 1
         assert ctx.mult >= 1
@@ -444,10 +448,13 @@ class TestScalingJokers:
         assert j.state.get("xmult", 1.0) >= 1.5  # x0.5 per Jack discarded
 
     def test_square_joker_gains_on_4_cards(self):
+        """W-FIX: the gain is ``context.before`` (card.lua:3427), the payout joker_main
+        (:3901), so the test drives both passes."""
         j = JokerInstance("j_square")
         cards = [Card(r, "Hearts") for r in [2, 3, 4, 5]]
         ctx = _make_ctx(scoring_cards=cards, hand_type="High Card", jokers=[j])
         effect = JOKER_REGISTRY["j_square"]
+        effect.pre_score(j, ctx)
         effect.on_hand_scored(j, ctx)
         assert j.state.get("chips", 0) >= 4
 
@@ -521,11 +528,14 @@ class TestRetriggerJokers:
         assert ctx.card_retriggers.get(1, 0) >= 1
 
     def test_seltzer_self_destructs(self):
+        """W-FIX: the countdown moved to ``on_hand_after`` — card.lua:3601 is inside the
+        ``elseif context.after then`` block (:3570), a pass state_events.lua:1070 runs
+        after the whole joker_main phase."""
         j = JokerInstance("j_selzer")
         j.state["hands"] = 1
         effect = JOKER_REGISTRY["j_selzer"]
         ctx = _make_ctx(jokers=[j])
-        effect.on_hand_scored(j, ctx)
+        effect.on_hand_after(j, ctx)
         assert j.state.get("destroyed") is True
 
 
@@ -795,7 +805,7 @@ class TestRegistryCompleteness:
                           "j_stuntman_passive", "j_chicot", "j_oops", "j_credit_card",
                           "j_chaos", "j_astronomer", "j_ring_master", "j_mime"}
         hooks = [
-            "on_score_card", "on_hand_scored", "on_discard", "on_round_end",
+            "on_score_card", "on_hand_scored", "on_hand_after", "on_discard", "on_round_end",
             "on_blind_selected", "on_boss_beaten", "on_planet_used",
             "on_tarot_used", "on_sell", "on_shop_enter", "on_shop_leave",
             "pre_score", "on_card_destroyed", "on_card_added",

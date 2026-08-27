@@ -27,6 +27,17 @@ python -m pytest ev/encode -q
 | tests | **63 passed** (`python -m pytest ev/encode`) |
 | wall clock, whole POC | 28 s (measurements) + 3 s (tests) |
 
+> **Superseded in part, later the same day.**  W-FIX fixed three of the five divergences
+> (§3.1 Satellite, §3.2 Blueprint double-scaling, §3.3 the Ice Cream melt) plus the §3.5
+> `_RATIO_CACHE` leak, and flipped their pins in `tests/test_engine_fidelity.py` and
+> `tests/test_verify.py` from "the engine is wrong, here is what it does" to "the engine is
+> right".  Re-running `run_poc.py` on the fixed tree gives **9/10 real entries accepted**
+> (Satellite REJECT → ACCEPT and exact; Ice Cream `39.516 ± 0.948` → `40.000 ± 0.000`),
+> controls still 2/2 rejected.  §3.4 (Cloud 9 / Stone) is still open.  This document is
+> left as the dated record of what was measured BEFORE those fixes — every number below is
+> the pre-fix one — and `engine/FIX_NOTES.md` carries the after table and the before/after
+> on every gate.
+
 **Verdict: the loop works and verification bites.** Two of the eight hand-written entries
 were wrong or unverifiable, and neither would have been caught by re-reading the Lua — one
 is an engine defect, one is a modelling bias that only a rollout can size. Both controls

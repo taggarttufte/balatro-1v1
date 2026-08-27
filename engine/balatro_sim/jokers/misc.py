@@ -60,7 +60,12 @@ class _Seltzer:
         if remaining > 0:
             for i in range(len(ctx.scoring_cards)):
                 ctx.card_retriggers[i] = ctx.card_retriggers.get(i, 0) + 1
-    def on_hand_scored(self, inst, ctx):
+    def on_hand_after(self, inst, ctx):
+        # card.lua:3601 — `context.after`, `and not context.blueprint`: the countdown
+        # runs after the whole joker_main phase (state_events.lua:1070) and a
+        # Blueprint / Brainstorm copy does not consume a charge.
+        if ctx.blueprint:
+            return
         inst.state["hands"] = inst.state.get("hands", 10) - 1
         if inst.state["hands"] <= 0:
             inst.state["destroyed"] = True
@@ -125,13 +130,25 @@ _MAX_COPY_DEPTH = 3
 
 
 def _guarded_call(method_name, target, ctx, card=None):
-    """Call a joker effect method with recursion depth guard."""
+    """Call a joker effect method as a Blueprint / Brainstorm COPY, with the recursion
+    depth guard and the game's ``context.blueprint`` flag.
+
+    ``ctx.blueprint`` mirrors card.lua:2310-2312 / :2324-2326
+    (``context.blueprint = (context.blueprint and (context.blueprint + 1)) or 1``): the
+    target's own hook runs on the target's own instance, but every branch that changes
+    the target's STATE is gated on ``not context.blueprint`` in the Lua and must be gated
+    on ``ctx.blueprint`` here.  Without this the copy re-ran the mutation and every
+    self-mutating scaling joker advanced twice per hand (W-ENCODE-POC §3.2 measured Ice
+    Cream melting at 10 chips/hand instead of 5 the moment a Brainstorm entered the
+    board).  Restored in ``finally`` so an exception cannot leak the flag into the rest
+    of the scoring pass."""
     global _copy_depth
     if _copy_depth >= _MAX_COPY_DEPTH:
         return None
     effect = JOKER_REGISTRY.get(target.key)
     if effect and hasattr(effect, method_name):
         _copy_depth += 1
+        ctx.blueprint = getattr(ctx, "blueprint", 0) + 1
         try:
             fn = getattr(effect, method_name)
             if card is not None:
@@ -139,6 +156,7 @@ def _guarded_call(method_name, target, ctx, card=None):
             return fn(target, ctx)
         finally:
             _copy_depth -= 1
+            ctx.blueprint -= 1
     return None
 
 
@@ -206,14 +224,37 @@ class _MrBones:
 JOKER_REGISTRY["j_mr_bones"] = _MrBones()
 
 # ── j_satellite: +$1 per unique Planet card used this run ────────────────────
+# card.lua:1667-1673 (`calculate_dollar_bonus`):
+#
+#     local planets_used = 0
+#     for k, v in pairs(G.GAME.consumeable_usage) do
+#         if v.set == 'Planet' then planets_used = planets_used + 1 end end
+#     if planets_used == 0 then return end
+#     return self.ability.extra*planets_used            -- extra = 1 (game.lua:515)
+#
+# `G.GAME.consumeable_usage` is keyed by centre key, so this is DISTINCT planets, and it
+# is RUN-GLOBAL: written by set_consumeable_usage (misc_functions.lua:1184-1195) from
+# Card:use_consumeable (card.lua:1093) for every consumable the run has ever used,
+# whether or not a Satellite was on the board at the time.  A Satellite bought at ante 4
+# after five distinct planets therefore pays $5 on its very first round end.
+#
+# The engine used to keep the set on the JOKER INSTANCE, seeded only by an
+# `on_planet_used` hook, so it paid $0 until NEW planets were used — 100% of the value
+# of a joker that is essentially always bought mid-run (W-ENCODE-POC §3.1; the harness
+# split the scenario family and every "used before the purchase" case measured $0).
+# It now reads ctx.planets_used, which game._hook_ctx() fills from `game.planets_used`
+# — appended by consumables.apply_planet, the single entry point every planet USE goes
+# through (game._use_consumable, the booster-pack paths, ev/player's clone).  Deliberate
+# non-members, matching the Lua: Black Hole (a Spectral, so `set ~= 'Planet'`), Space
+# Joker and Burnt Joker (they call level_up_hand, never use_consumeable), and the
+# Orbital tag (same).  `game.planets_used` is copied by BalatroGame.clone (game.py:598)
+# and is already part of state_signature (:1009), so clone / determinize carry it.
 class _Satellite:
     def on_round_end(self, inst, ctx):
-        n = len(inst.state.get("planets_used", set()))
+        n = len(set(getattr(ctx, "planets_used", ()) or ()))
+        if n == 0:
+            return
         inst.state["pending_money"] = inst.state.get("pending_money", 0) + n
-    def on_planet_used(self, inst, planet_name):
-        if "planets_used" not in inst.state:
-            inst.state["planets_used"] = set()
-        inst.state["planets_used"].add(planet_name)
 JOKER_REGISTRY["j_satellite"] = _Satellite()
 
 # ── j_cloud_9: +$1 per 9 in FULL DECK at end of round ────────────────────────
@@ -226,8 +267,12 @@ class _Cloud9:
 JOKER_REGISTRY["j_cloud_9"] = _Cloud9()
 
 # ── j_wee (wee joker): permanently gains +8 chips each time a 2 is scored ────
+# card.lua:3083-3084 (`individual`, `get_id() == 2 and not context.blueprint`): a copy
+# pays the current chips (:3873) but does not grow them.
 class _Wee:
     def on_score_card(self, inst, card, ctx):
+        if ctx.blueprint:
+            return
         if card.rank == 2 and not card.debuffed:
             inst.state["chips"] = inst.state.get("chips", 0) + 8
     def on_hand_scored(self, inst, ctx):
@@ -341,6 +386,12 @@ class _BurntJoker:
         if most_played:
             inst.state["planet_upgrade"] = most_played  # game.py applies this
     def on_hand_scored(self, inst, ctx):
+        # `counts` is engine bookkeeping standing in for the run-global
+        # `G.GAME.hands[<type>].played` tally, which a Blueprint copy cannot advance
+        # (nothing in card.lua writes it from a joker hook).  Guarded so the copy does
+        # not double-count a hand type and skew `most_played`.
+        if ctx.blueprint:
+            return
         counts = inst.state.setdefault("counts", {})
         counts[ctx.hand_type] = counts.get(ctx.hand_type, 0) + 1
         inst.state["most_played"] = max(counts, key=counts.get)
@@ -652,8 +703,14 @@ class _Ceremonial:
 JOKER_REGISTRY["j_ceremonial"] = _Ceremonial()
 
 # ── j_midas_mask: all played face cards become Gold during scoring ───────────
+# card.lua:3443 `and not context.blueprint` — a copy must not re-gild.  Setting the
+# enhancement twice is idempotent today, so the guard changes no number; it is here
+# because the Lua's guard list is the contract and the next edit to this joker (a
+# "cards gilded this hand" tally, say) would silently double without it.
 class _MidasMask:
     def on_score_card(self, inst, card, ctx):
+        if ctx.blueprint:
+            return
         if ctx.is_face_card(card) and not card.debuffed:
             card.enhancement = "Gold"
 JOKER_REGISTRY["j_midas_mask"] = _MidasMask()
@@ -679,9 +736,17 @@ class _Swashbuckler:
 JOKER_REGISTRY["j_swashbuckler"] = _Swashbuckler()
 
 class _CardSharp:
+    """card.lua:4040 — `G.GAME.hands[context.scoring_name].played_this_round > 1`, i.e.
+    "this hand type has already been played this round".  That counter is run-global and
+    is bumped by `evaluate_poker_hand`, not by the joker, so a Blueprint copy reads the
+    same value the original does and pays x3 in exactly the same rounds.  The engine
+    keeps the equivalent set on the instance — which a copy DID write, so the copy's own
+    write made the original see its own hand as a repeat.  Guarded."""
     def on_hand_scored(self, inst, ctx):
         if ctx.hand_type in inst.state.get("played_hands", set()):
             ctx.mult_mult *= 3
+        if ctx.blueprint:
+            return
         played = inst.state.setdefault("played_hands", set())
         played.add(ctx.hand_type)
     def on_round_end(self, inst, ctx):

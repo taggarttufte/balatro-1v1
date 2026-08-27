@@ -1,0 +1,2742 @@
+{
+  "generated": "2026-08-26 20:12:56",
+  "marginal_rule": "Every number in this module is a MARGINAL measurement: two arms built from one state, differing only by the item, with every other effect active in both.  Anything the player already prices therefore measures as zero here, by construction.",
+  "band": 2.0,
+  "measurements": [
+    {
+      "key": "j_cloud_9",
+      "mode": "round_end_paired",
+      "n": 4,
+      "unit": "dollars",
+      "predicted": 3.0,
+      "measured": 3.0,
+      "ci95": 0.0,
+      "fired": 4,
+      "accept": true,
+      "reason": "ok",
+      "seconds": 0.01,
+      "extra": {
+        "per_scenario_exact": true,
+        "worst_scenario": {
+          "scenario": "nines=0",
+          "predicted": 0.0,
+          "measured": 0.0,
+          "with": 7.0,
+          "without": 7.0,
+          "hook_calls": {
+            "on_round_end": 1
+          },
+          "hook_money": 0.0
+        }
+      },
+      "scenarios": [
+        {
+          "scenario": "nines=0",
+          "predicted": 0.0,
+          "measured": 0.0,
+          "with": 7.0,
+          "without": 7.0,
+          "hook_calls": {
+            "on_round_end": 1
+          },
+          "hook_money": 0.0
+        },
+        {
+          "scenario": "nines=1",
+          "predicted": 1.0,
+          "measured": 1.0,
+          "with": 8.0,
+          "without": 7.0,
+          "hook_calls": {
+            "on_round_end": 1
+          },
+          "hook_money": 1.0
+        },
+        {
+          "scenario": "nines=4",
+          "predicted": 4.0,
+          "measured": 4.0,
+          "with": 11.0,
+          "without": 7.0,
+          "hook_calls": {
+            "on_round_end": 1
+          },
+          "hook_money": 4.0
+        },
+        {
+          "scenario": "nines=7",
+          "predicted": 7.0,
+          "measured": 7.0,
+          "with": 14.0,
+          "without": 7.0,
+          "hook_calls": {
+            "on_round_end": 1
+          },
+          "hook_money": 7.0
+        }
+      ]
+    },
+    {
+      "key": "j_cloud_9",
+      "mode": "rollout_paired",
+      "n": 40,
+      "unit": "dollars",
+      "predicted": 21.5,
+      "measured": 21.475,
+      "ci95": 0.11068539384334507,
+      "fired": 40,
+      "accept": true,
+      "reason": "ok",
+      "seconds": 4.92,
+      "extra": {
+        "mean_rounds": 6.25,
+        "mean_payouts": 5.375,
+        "d_money": 6.35,
+        "d_money_ci": 3.7952317046930997,
+        "d_ante": 0.1,
+        "d_ante_ci": 0.28764935919649437,
+        "stop_ante": 4,
+        "worlds": 40,
+        "seed": "11111111",
+        "d_money_direction_ok": true,
+        "empirical_buy_value_dollars": 6.35,
+        "nines_start": 4.0,
+        "nines_end": 4.0,
+        "gross_per_payout": 3.9953488372093022,
+        "note": "gross is the item's realized payout (probe); d_money is the CRN with-vs-without final-money delta and is SMALLER because the money gets spent and the arms diverge."
+      },
+      "scenarios": [
+        {
+          "world": 0,
+          "gross": 25.0,
+          "d_dollars": 2.0,
+          "d_ante": 0.0,
+          "rounds": 8,
+          "payouts": 6,
+          "nines_start": 4,
+          "nines_end": 5
+        },
+        {
+          "world": 1,
+          "gross": 20.0,
+          "d_dollars": 3.0,
+          "d_ante": 0.0,
+          "rounds": 5,
+          "payouts": 5,
+          "nines_start": 4,
+          "nines_end": 4
+        },
+        {
+          "world": 2,
+          "gross": 28.0,
+          "d_dollars": -2.0,
+          "d_ante": 0.0,
+          "rounds": 8,
+          "payouts": 7,
+          "nines_start": 4,
+          "nines_end": 4
+        },
+        {
+          "world": 3,
+          "gross": 16.0,
+          "d_dollars": 2.0,
+          "d_ante": 0.0,
+          "rounds": 8,
+          "payouts": 4,
+          "nines_start": 4,
+          "nines_end": 4
+        },
+        {
+          "world": 4,
+          "gross": 24.0,
+          "d_dollars": 6.0,
+          "d_ante": 0.0,
+          "rounds": 6,
+          "payouts": 6,
+          "nines_start": 4,
+          "nines_end": 4
+        },
+        {
+          "world": 5,
+          "gross": 28.0,
+          "d_dollars": 11.0,
+          "d_ante": 0.0,
+          "rounds": 7,
+          "payouts": 7,
+          "nines_start": 4,
+          "nines_end": 4
+        },
+        {
+          "world": 6,
+          "gross": 32.0,
+          "d_dollars": 17.0,
+          "d_ante": 0.0,
+          "rounds": 8,
+          "payouts": 8,
+          "nines_start": 4,
+          "nines_end": 4
+        },
+        {
+          "world": 7,
+          "gross": 22.0,
+          "d_dollars": 2.0,
+          "d_ante": 0.0,
+          "rounds": 5,
+          "payouts": 6,
+          "nines_start": 4,
+          "nines_end": 3
+        },
+        {
+          "world": 8,
+          "gross": 16.0,
+          "d_dollars": 2.0,
+          "d_ante": 0.0,
+          "rounds": 7,
+          "payouts": 4,
+          "nines_start": 4,
+          "nines_end": 4
+        },
+        {
+          "world": 9,
+          "gross": 24.0,
+          "d_dollars": 14.0,
+          "d_ante": 0.0,
+          "rounds": 8,
+          "payouts": 6,
+          "nines_start": 4,
+          "nines_end": 4
+        },
+        {
+          "world": 10,
+          "gross": 32.0,
+          "d_dollars": 14.0,
+          "d_ante": 0.0,
+          "rounds": 8,
+          "payouts": 8,
+          "nines_start": 4,
+          "nines_end": 4
+        },
+        {
+          "world": 11,
+          "gross": 24.0,
+          "d_dollars": 14.0,
+          "d_ante": 0.0,
+          "rounds": 6,
+          "payouts": 6,
+          "nines_start": 4,
+          "nines_end": 4
+        },
+        {
+          "world": 12,
+          "gross": 20.0,
+          "d_dollars": 26.0,
+          "d_ante": 2.0,
+          "rounds": 6,
+          "payouts": 5,
+          "nines_start": 4,
+          "nines_end": 4
+        },
+        {
+          "world": 13,
+          "gross": 16.0,
+          "d_dollars": -36.0,
+          "d_ante": -2.0,
+          "rounds": 4,
+          "payouts": 4,
+          "nines_start": 4,
+          "nines_end": 4
+        },
+        {
+          "world": 14,
+          "gross": 28.0,
+          "d_dollars": 17.0,
+          "d_ante": 0.0,
+          "rounds": 7,
+          "payouts": 7,
+          "nines_start": 4,
+          "nines_end": 4
+        },
+        {
+          "world": 15,
+          "gross": 20.0,
+          "d_dollars": -1.0,
+          "d_ante": 0.0,
+          "rounds": 7,
+          "payouts": 5,
+          "nines_start": 4,
+          "nines_end": 4
+        },
+        {
+          "world": 16,
+          "gross": 24.0,
+          "d_dollars": 10.0,
+          "d_ante": 0.0,
+          "rounds": 6,
+          "payouts": 6,
+          "nines_start": 4,
+          "nines_end": 4
+        },
+        {
+          "world": 17,
+          "gross": 16.0,
+          "d_dollars": -1.0,
+          "d_ante": 0.0,
+          "rounds": 4,
+          "payouts": 4,
+          "nines_start": 4,
+          "nines_end": 4
+        },
+        {
+          "world": 18,
+          "gross": 20.0,
+          "d_dollars": 0.0,
+          "d_ante": 0.0,
+          "rounds": 7,
+          "payouts": 5,
+          "nines_start": 4,
+          "nines_end": 4
+        },
+        {
+          "world": 19,
+          "gross": 20.0,
+          "d_dollars": 4.0,
+          "d_ante": 0.0,
+          "rounds": 5,
+          "payouts": 5,
+          "nines_start": 4,
+          "nines_end": 4
+        },
+        {
+          "world": 20,
+          "gross": 20.0,
+          "d_dollars": 7.0,
+          "d_ante": 0.0,
+          "rounds": 7,
+          "payouts": 5,
+          "nines_start": 4,
+          "nines_end": 4
+        },
+        {
+          "world": 21,
+          "gross": 20.0,
+          "d_dollars": 5.0,
+          "d_ante": 0.0,
+          "rounds": 5,
+          "payouts": 5,
+          "nines_start": 4,
+          "nines_end": 4
+        },
+        {
+          "world": 22,
+          "gross": 20.0,
+          "d_dollars": -3.0,
+          "d_ante": 0.0,
+          "rounds": 6,
+          "payouts": 5,
+          "nines_start": 4,
+          "nines_end": 4
+        },
+        {
+          "world": 23,
+          "gross": 24.0,
+          "d_dollars": 26.0,
+          "d_ante": 1.0,
+          "rounds": 6,
+          "payouts": 6,
+          "nines_start": 4,
+          "nines_end": 4
+        },
+        {
+          "world": 24,
+          "gross": 24.0,
+          "d_dollars": 6.0,
+          "d_ante": 0.0,
+          "rounds": 6,
+          "payouts": 6,
+          "nines_start": 4,
+          "nines_end": 4
+        },
+        {
+          "world": 25,
+          "gross": 12.0,
+          "d_dollars": -8.0,
+          "d_ante": -2.0,
+          "rounds": 3,
+          "payouts": 3,
+          "nines_start": 4,
+          "nines_end": 4
+        },
+        {
+          "world": 26,
+          "gross": 16.0,
+          "d_dollars": 5.0,
+          "d_ante": 1.0,
+          "rounds": 4,
+          "payouts": 4,
+          "nines_start": 4,
+          "nines_end": 4
+        },
+        {
+          "world": 27,
+          "gross": 16.0,
+          "d_dollars": 1.0,
+          "d_ante": 0.0,
+          "rounds": 7,
+          "payouts": 4,
+          "nines_start": 4,
+          "nines_end": 4
+        },
+        {
+          "world": 28,
+          "gross": 20.0,
+          "d_dollars": 4.0,
+          "d_ante": 0.0,
+          "rounds": 5,
+          "payouts": 5,
+          "nines_start": 4,
+          "nines_end": 4
+        },
+        {
+          "world": 29,
+          "gross": 24.0,
+          "d_dollars": 16.0,
+          "d_ante": 2.0,
+          "rounds": 6,
+          "payouts": 6,
+          "nines_start": 4,
+          "nines_end": 4
+        },
+        {
+          "world": 30,
+          "gross": 32.0,
+          "d_dollars": 25.0,
+          "d_ante": 1.0,
+          "rounds": 8,
+          "payouts": 8,
+          "nines_start": 4,
+          "nines_end": 4
+        },
+        {
+          "world": 31,
+          "gross": 28.0,
+          "d_dollars": 28.0,
+          "d_ante": 1.0,
+          "rounds": 7,
+          "payouts": 7,
+          "nines_start": 4,
+          "nines_end": 4
+        },
+        {
+          "world": 32,
+          "gross": 8.0,
+          "d_dollars": -24.0,
+          "d_ante": -3.0,
+          "rounds": 2,
+          "payouts": 2,
+          "nines_start": 4,
+          "nines_end": 4
+        },
+        {
+          "world": 33,
+          "gross": 24.0,
+          "d_dollars": 10.0,
+          "d_ante": 0.0,
+          "rounds": 6,
+          "payouts": 6,
+          "nines_start": 4,
+          "nines_end": 4
+        },
+        {
+          "world": 34,
+          "gross": 20.0,
+          "d_dollars": 19.0,
+          "d_ante": 2.0,
+          "rounds": 8,
+          "payouts": 5,
+          "nines_start": 4,
+          "nines_end": 4
+        },
+        {
+          "world": 35,
+          "gross": 20.0,
+          "d_dollars": 14.0,
+          "d_ante": 0.0,
+          "rounds": 5,
+          "payouts": 5,
+          "nines_start": 4,
+          "nines_end": 4
+        },
+        {
+          "world": 36,
+          "gross": 32.0,
+          "d_dollars": 5.0,
+          "d_ante": 0.0,
+          "rounds": 8,
+          "payouts": 8,
+          "nines_start": 4,
+          "nines_end": 4
+        },
+        {
+          "world": 37,
+          "gross": 12.0,
+          "d_dollars": 14.0,
+          "d_ante": 1.0,
+          "rounds": 8,
+          "payouts": 3,
+          "nines_start": 4,
+          "nines_end": 4
+        },
+        {
+          "world": 38,
+          "gross": 16.0,
+          "d_dollars": 0.0,
+          "d_ante": 0.0,
+          "rounds": 6,
+          "payouts": 4,
+          "nines_start": 4,
+          "nines_end": 4
+        },
+        {
+          "world": 39,
+          "gross": 16.0,
+          "d_dollars": 0.0,
+          "d_ante": 0.0,
+          "rounds": 7,
+          "payouts": 4,
+          "nines_start": 4,
+          "nines_end": 4
+        }
+      ]
+    },
+    {
+      "key": "j_rocket",
+      "mode": "round_end_paired",
+      "n": 4,
+      "unit": "dollars",
+      "predicted": 3.0,
+      "measured": 3.0,
+      "ci95": 0.0,
+      "fired": 6,
+      "accept": true,
+      "reason": "ok",
+      "seconds": 0.01,
+      "extra": {
+        "per_scenario_exact": true,
+        "worst_scenario": {
+          "scenario": "boss=0,bonus=1",
+          "predicted": 1.0,
+          "measured": 1.0,
+          "with": 8.0,
+          "without": 7.0,
+          "hook_calls": {
+            "on_round_end": 1
+          },
+          "hook_money": 1.0
+        }
+      },
+      "scenarios": [
+        {
+          "scenario": "boss=0,bonus=1",
+          "predicted": 1.0,
+          "measured": 1.0,
+          "with": 8.0,
+          "without": 7.0,
+          "hook_calls": {
+            "on_round_end": 1
+          },
+          "hook_money": 1.0
+        },
+        {
+          "scenario": "boss=1,bonus=1",
+          "predicted": 3.0,
+          "measured": 3.0,
+          "with": 10.0,
+          "without": 7.0,
+          "hook_calls": {
+            "on_boss_beaten": 1,
+            "on_round_end": 1
+          },
+          "hook_money": 3.0
+        },
+        {
+          "scenario": "boss=0,bonus=3",
+          "predicted": 3.0,
+          "measured": 3.0,
+          "with": 10.0,
+          "without": 7.0,
+          "hook_calls": {
+            "on_round_end": 1
+          },
+          "hook_money": 3.0
+        },
+        {
+          "scenario": "boss=1,bonus=3",
+          "predicted": 5.0,
+          "measured": 5.0,
+          "with": 12.0,
+          "without": 7.0,
+          "hook_calls": {
+            "on_boss_beaten": 1,
+            "on_round_end": 1
+          },
+          "hook_money": 5.0
+        }
+      ]
+    },
+    {
+      "key": "j_satellite",
+      "mode": "round_end_paired",
+      "n": 8,
+      "unit": "dollars",
+      "predicted": 1.5,
+      "measured": 1.5,
+      "ci95": 0.0,
+      "fired": 8,
+      "accept": true,
+      "reason": "ok",
+      "seconds": 0.02,
+      "extra": {
+        "per_scenario_exact": true,
+        "worst_scenario": {
+          "scenario": "none (before purchase)",
+          "predicted": 0.0,
+          "measured": 0.0,
+          "with": 7.0,
+          "without": 7.0,
+          "hook_calls": {
+            "on_round_end": 1
+          },
+          "hook_money": 0.0
+        }
+      },
+      "scenarios": [
+        {
+          "scenario": "none (before purchase)",
+          "predicted": 0.0,
+          "measured": 0.0,
+          "with": 7.0,
+          "without": 7.0,
+          "hook_calls": {
+            "on_round_end": 1
+          },
+          "hook_money": 0.0
+        },
+        {
+          "scenario": "1 unique (before purchase)",
+          "predicted": 1.0,
+          "measured": 1.0,
+          "with": 8.0,
+          "without": 7.0,
+          "hook_calls": {
+            "on_round_end": 1
+          },
+          "hook_money": 1.0
+        },
+        {
+          "scenario": "3 unique (before purchase)",
+          "predicted": 3.0,
+          "measured": 3.0,
+          "with": 10.0,
+          "without": 7.0,
+          "hook_calls": {
+            "on_round_end": 1
+          },
+          "hook_money": 3.0
+        },
+        {
+          "scenario": "2 unique / 3 uses (before purchase)",
+          "predicted": 2.0,
+          "measured": 2.0,
+          "with": 9.0,
+          "without": 7.0,
+          "hook_calls": {
+            "on_round_end": 1
+          },
+          "hook_money": 2.0
+        },
+        {
+          "scenario": "none (after purchase)",
+          "predicted": 0.0,
+          "measured": 0.0,
+          "with": 7.0,
+          "without": 7.0,
+          "hook_calls": {
+            "on_round_end": 1
+          },
+          "hook_money": 0.0
+        },
+        {
+          "scenario": "1 unique (after purchase)",
+          "predicted": 1.0,
+          "measured": 1.0,
+          "with": 8.0,
+          "without": 7.0,
+          "hook_calls": {
+            "on_round_end": 1
+          },
+          "hook_money": 1.0
+        },
+        {
+          "scenario": "3 unique (after purchase)",
+          "predicted": 3.0,
+          "measured": 3.0,
+          "with": 10.0,
+          "without": 7.0,
+          "hook_calls": {
+            "on_round_end": 1
+          },
+          "hook_money": 3.0
+        },
+        {
+          "scenario": "2 unique / 3 uses (after purchase)",
+          "predicted": 2.0,
+          "measured": 2.0,
+          "with": 9.0,
+          "without": 7.0,
+          "hook_calls": {
+            "on_round_end": 1
+          },
+          "hook_money": 2.0
+        }
+      ]
+    },
+    {
+      "key": "j_ride_the_bus",
+      "mode": "scaling_trajectory",
+      "n": 23,
+      "unit": "mult",
+      "predicted": 1.551531278040094,
+      "measured": 1.6956521739130435,
+      "ci95": 0.7539342420806213,
+      "fired": 276,
+      "accept": true,
+      "reason": "ok",
+      "seconds": 4.52,
+      "extra": {
+        "per_scenario_exact": false,
+        "worst_scenario": {
+          "seed": "967889YL",
+          "predicted": 1.551531278040094,
+          "measured": 7.0,
+          "hands": 12,
+          "discards": 6,
+          "face_hands": 2
+        },
+        "hands_ahead": 12,
+        "start": 0.0,
+        "delta": 1.6956521739130435,
+        "sign_of_delta_ok": true,
+        "calibration_seeds": 23,
+        "face_hand_rate": 0.391304347826087,
+        "discards_per_hand": 0.967391304347826,
+        "seeds_run": 72,
+        "seeds_scored": 23,
+        "lost_before_horizon": 19,
+        "lost_reasons": {
+          "sold": 19
+        },
+        "survival_rate": 0.7361111111111112,
+        "died_early": 7,
+        "measured_sd": 1.844766124834248
+      },
+      "scenarios": [
+        {
+          "seed": "8Y7ABZ7C",
+          "predicted": 1.551531278040094,
+          "measured": 2.0,
+          "hands": 12,
+          "discards": 19,
+          "face_hands": 7
+        },
+        {
+          "seed": "93W4UHC4",
+          "predicted": 1.551531278040094,
+          "measured": 2.0,
+          "hands": 12,
+          "discards": 7,
+          "face_hands": 6
+        },
+        {
+          "seed": "967889YL",
+          "predicted": 1.551531278040094,
+          "measured": 7.0,
+          "hands": 12,
+          "discards": 6,
+          "face_hands": 2
+        },
+        {
+          "seed": "9QV2ZT9X",
+          "predicted": 1.551531278040094,
+          "measured": 1.0,
+          "hands": 12,
+          "discards": 11,
+          "face_hands": 6
+        },
+        {
+          "seed": "9VIGPRT6",
+          "predicted": 1.551531278040094,
+          "measured": 2.0,
+          "hands": 12,
+          "discards": 12,
+          "face_hands": 4
+        },
+        {
+          "seed": "9ZXMM1M",
+          "predicted": 1.551531278040094,
+          "measured": 0.0,
+          "hands": 12,
+          "discards": 13,
+          "face_hands": 5
+        },
+        {
+          "seed": "A",
+          "predicted": 1.551531278040094,
+          "measured": 0.0,
+          "hands": 12,
+          "discards": 19,
+          "face_hands": 3
+        },
+        {
+          "seed": "AE1K7DG1",
+          "predicted": 1.551531278040094,
+          "measured": 0.0,
+          "hands": 12,
+          "discards": 14,
+          "face_hands": 5
+        },
+        {
+          "seed": "ALEEB",
+          "predicted": 1.551531278040094,
+          "measured": 0.0,
+          "hands": 12,
+          "discards": 19,
+          "face_hands": 7
+        },
+        {
+          "seed": "AMPYZUIU",
+          "predicted": 1.551531278040094,
+          "measured": 1.0,
+          "hands": 12,
+          "discards": 6,
+          "face_hands": 1
+        },
+        {
+          "seed": "C1ZLPKAA",
+          "predicted": 1.551531278040094,
+          "measured": 0.0,
+          "hands": 12,
+          "discards": 14,
+          "face_hands": 7
+        },
+        {
+          "seed": "C93K3YWJ",
+          "predicted": 1.551531278040094,
+          "measured": 1.0,
+          "hands": 12,
+          "discards": 12,
+          "face_hands": 2
+        },
+        {
+          "seed": "CCBWC6CR",
+          "predicted": 1.551531278040094,
+          "measured": 2.0,
+          "hands": 12,
+          "discards": 6,
+          "face_hands": 6
+        },
+        {
+          "seed": "CHPB293X",
+          "predicted": 1.551531278040094,
+          "measured": 5.0,
+          "hands": 12,
+          "discards": 11,
+          "face_hands": 5
+        },
+        {
+          "seed": "CIGHYTAU",
+          "predicted": 1.551531278040094,
+          "measured": 2.0,
+          "hands": 12,
+          "discards": 6,
+          "face_hands": 7
+        },
+        {
+          "seed": "CMEEXU8I",
+          "predicted": 1.551531278040094,
+          "measured": 0.0,
+          "hands": 12,
+          "discards": 7,
+          "face_hands": 6
+        },
+        {
+          "seed": "D7Y5419A",
+          "predicted": 1.551531278040094,
+          "measured": 0.0,
+          "hands": 12,
+          "discards": 6,
+          "face_hands": 6
+        },
+        {
+          "seed": "ECG8NVDZ",
+          "predicted": 1.551531278040094,
+          "measured": 3.0,
+          "hands": 12,
+          "discards": 13,
+          "face_hands": 3
+        },
+        {
+          "seed": "EGE5ZY77",
+          "predicted": 1.551531278040094,
+          "measured": 0.0,
+          "hands": 12,
+          "discards": 19,
+          "face_hands": 5
+        },
+        {
+          "seed": "EVB8882H",
+          "predicted": 1.551531278040094,
+          "measured": 1.0,
+          "hands": 12,
+          "discards": 11,
+          "face_hands": 5
+        },
+        {
+          "seed": "FSXYRB3J",
+          "predicted": 1.551531278040094,
+          "measured": 4.0,
+          "hands": 12,
+          "discards": 10,
+          "face_hands": 4
+        },
+        {
+          "seed": "GVQL737K",
+          "predicted": 1.551531278040094,
+          "measured": 3.0,
+          "hands": 12,
+          "discards": 17,
+          "face_hands": 4
+        },
+        {
+          "seed": "GVYT2DGJ",
+          "predicted": 1.551531278040094,
+          "measured": 3.0,
+          "hands": 12,
+          "discards": 9,
+          "face_hands": 3
+        }
+      ]
+    },
+    {
+      "key": "j_green_joker",
+      "mode": "scaling_trajectory",
+      "n": 59,
+      "unit": "mult",
+      "predicted": 1.5423728813559323,
+      "measured": 4.271186440677966,
+      "ci95": 0.3987872332053543,
+      "fired": 708,
+      "accept": false,
+      "reason": "band+ci",
+      "seconds": 5.69,
+      "extra": {
+        "per_scenario_exact": false,
+        "worst_scenario": {
+          "seed": "7UNQV1C9",
+          "predicted": 1.0,
+          "measured": 9.0,
+          "hands": 12,
+          "discards": 11,
+          "face_hands": 10
+        },
+        "hands_ahead": 12,
+        "start": 0.0,
+        "delta": 4.271186440677966,
+        "sign_of_delta_ok": true,
+        "calibration_seeds": 0,
+        "face_hand_rate": 0.0,
+        "discards_per_hand": 0.9943502824858758,
+        "seeds_run": 72,
+        "seeds_scored": 59,
+        "lost_before_horizon": 10,
+        "lost_reasons": {
+          "sold": 10
+        },
+        "survival_rate": 0.8611111111111112,
+        "died_early": 3,
+        "measured_sd": 2.551743882906532
+      },
+      "scenarios": [
+        {
+          "seed": "11111111",
+          "predicted": 1.0,
+          "measured": 5.0,
+          "hands": 12,
+          "discards": 11,
+          "face_hands": 5
+        },
+        {
+          "seed": "15H9Z3IY",
+          "predicted": 0.0,
+          "measured": 3.0,
+          "hands": 12,
+          "discards": 14,
+          "face_hands": 4
+        },
+        {
+          "seed": "1KV4W6YS",
+          "predicted": 0.0,
+          "measured": 2.0,
+          "hands": 12,
+          "discards": 12,
+          "face_hands": 6
+        },
+        {
+          "seed": "1MD1YZ9T",
+          "predicted": 5.0,
+          "measured": 5.0,
+          "hands": 12,
+          "discards": 7,
+          "face_hands": 6
+        },
+        {
+          "seed": "28V7DD4H",
+          "predicted": 0.0,
+          "measured": 4.0,
+          "hands": 12,
+          "discards": 14,
+          "face_hands": 6
+        },
+        {
+          "seed": "29DAQVG1",
+          "predicted": 8.0,
+          "measured": 10.0,
+          "hands": 12,
+          "discards": 4,
+          "face_hands": 2
+        },
+        {
+          "seed": "29Y3L4S9",
+          "predicted": 0.0,
+          "measured": 3.0,
+          "hands": 12,
+          "discards": 13,
+          "face_hands": 8
+        },
+        {
+          "seed": "2CP4KSXZ",
+          "predicted": 0.0,
+          "measured": 1.0,
+          "hands": 12,
+          "discards": 17,
+          "face_hands": 5
+        },
+        {
+          "seed": "2GHBLJD9",
+          "predicted": 2.0,
+          "measured": 5.0,
+          "hands": 12,
+          "discards": 10,
+          "face_hands": 4
+        },
+        {
+          "seed": "2K9H9HN",
+          "predicted": 3.0,
+          "measured": 5.0,
+          "hands": 12,
+          "discards": 9,
+          "face_hands": 3
+        },
+        {
+          "seed": "34JCNMPA",
+          "predicted": 2.0,
+          "measured": 7.0,
+          "hands": 12,
+          "discards": 10,
+          "face_hands": 5
+        },
+        {
+          "seed": "3SZ71111",
+          "predicted": 0.0,
+          "measured": 4.0,
+          "hands": 12,
+          "discards": 12,
+          "face_hands": 2
+        },
+        {
+          "seed": "46Y8UZEG",
+          "predicted": 2.0,
+          "measured": 4.0,
+          "hands": 12,
+          "discards": 10,
+          "face_hands": 5
+        },
+        {
+          "seed": "4K8A9QER",
+          "predicted": 0.0,
+          "measured": 0.0,
+          "hands": 12,
+          "discards": 16,
+          "face_hands": 3
+        },
+        {
+          "seed": "4R219TNX",
+          "predicted": 0.0,
+          "measured": 2.0,
+          "hands": 12,
+          "discards": 12,
+          "face_hands": 4
+        },
+        {
+          "seed": "4UEGRRRA",
+          "predicted": 0.0,
+          "measured": 4.0,
+          "hands": 12,
+          "discards": 23,
+          "face_hands": 5
+        },
+        {
+          "seed": "51F2NVWK",
+          "predicted": 4.0,
+          "measured": 6.0,
+          "hands": 12,
+          "discards": 8,
+          "face_hands": 8
+        },
+        {
+          "seed": "56QZEVDV",
+          "predicted": 2.0,
+          "measured": 4.0,
+          "hands": 12,
+          "discards": 10,
+          "face_hands": 5
+        },
+        {
+          "seed": "5AWWF1M1",
+          "predicted": 0.0,
+          "measured": 4.0,
+          "hands": 12,
+          "discards": 14,
+          "face_hands": 11
+        },
+        {
+          "seed": "5UIUKHCI",
+          "predicted": 0.0,
+          "measured": 1.0,
+          "hands": 12,
+          "discards": 18,
+          "face_hands": 7
+        },
+        {
+          "seed": "5YVHAEP",
+          "predicted": 3.0,
+          "measured": 8.0,
+          "hands": 12,
+          "discards": 9,
+          "face_hands": 8
+        },
+        {
+          "seed": "7I4M53DL",
+          "predicted": 1.0,
+          "measured": 3.0,
+          "hands": 12,
+          "discards": 11,
+          "face_hands": 4
+        },
+        {
+          "seed": "7LB2WVPK",
+          "predicted": 0.0,
+          "measured": 2.0,
+          "hands": 12,
+          "discards": 14,
+          "face_hands": 6
+        },
+        {
+          "seed": "7ODNKXP",
+          "predicted": 0.0,
+          "measured": 1.0,
+          "hands": 12,
+          "discards": 17,
+          "face_hands": 3
+        },
+        {
+          "seed": "7UNQV1C9",
+          "predicted": 1.0,
+          "measured": 9.0,
+          "hands": 12,
+          "discards": 11,
+          "face_hands": 10
+        },
+        {
+          "seed": "7YTVQERM",
+          "predicted": 1.0,
+          "measured": 5.0,
+          "hands": 12,
+          "discards": 11,
+          "face_hands": 5
+        },
+        {
+          "seed": "8I5QXNGE",
+          "predicted": 4.0,
+          "measured": 8.0,
+          "hands": 12,
+          "discards": 8,
+          "face_hands": 4
+        },
+        {
+          "seed": "8IZ7HHE4",
+          "predicted": 2.0,
+          "measured": 5.0,
+          "hands": 12,
+          "discards": 10,
+          "face_hands": 2
+        },
+        {
+          "seed": "8Q47WV6K",
+          "predicted": 0.0,
+          "measured": 2.0,
+          "hands": 12,
+          "discards": 13,
+          "face_hands": 7
+        },
+        {
+          "seed": "8QBRTPD",
+          "predicted": 0.0,
+          "measured": 1.0,
+          "hands": 12,
+          "discards": 19,
+          "face_hands": 5
+        },
+        {
+          "seed": "8SIYIK9C",
+          "predicted": 0.0,
+          "measured": 2.0,
+          "hands": 12,
+          "discards": 19,
+          "face_hands": 3
+        },
+        {
+          "seed": "8UU564MF",
+          "predicted": 0.0,
+          "measured": 3.0,
+          "hands": 12,
+          "discards": 14,
+          "face_hands": 4
+        },
+        {
+          "seed": "8Y7ABZ7C",
+          "predicted": 0.0,
+          "measured": 3.0,
+          "hands": 12,
+          "discards": 14,
+          "face_hands": 6
+        },
+        {
+          "seed": "93W4UHC4",
+          "predicted": 6.0,
+          "measured": 7.0,
+          "hands": 12,
+          "discards": 6,
+          "face_hands": 8
+        },
+        {
+          "seed": "9Q9HQXZG",
+          "predicted": 3.0,
+          "measured": 8.0,
+          "hands": 12,
+          "discards": 9,
+          "face_hands": 4
+        },
+        {
+          "seed": "9QV2ZT9X",
+          "predicted": 0.0,
+          "measured": 1.0,
+          "hands": 12,
+          "discards": 13,
+          "face_hands": 7
+        },
+        {
+          "seed": "9VIGPRT6",
+          "predicted": 0.0,
+          "measured": 4.0,
+          "hands": 12,
+          "discards": 14,
+          "face_hands": 8
+        },
+        {
+          "seed": "9ZXMM1M",
+          "predicted": 0.0,
+          "measured": 4.0,
+          "hands": 12,
+          "discards": 15,
+          "face_hands": 8
+        },
+        {
+          "seed": "A1UAS1G5",
+          "predicted": 1.0,
+          "measured": 6.0,
+          "hands": 12,
+          "discards": 11,
+          "face_hands": 6
+        },
+        {
+          "seed": "AE1K7DG1",
+          "predicted": 0.0,
+          "measured": 2.0,
+          "hands": 12,
+          "discards": 13,
+          "face_hands": 10
+        },
+        {
+          "seed": "ALEEB",
+          "predicted": 0.0,
+          "measured": 3.0,
+          "hands": 12,
+          "discards": 15,
+          "face_hands": 5
+        },
+        {
+          "seed": "AMPYZUIU",
+          "predicted": 6.0,
+          "measured": 8.0,
+          "hands": 12,
+          "discards": 6,
+          "face_hands": 2
+        },
+        {
+          "seed": "BA1D48RK",
+          "predicted": 3.0,
+          "measured": 7.0,
+          "hands": 12,
+          "discards": 9,
+          "face_hands": 7
+        },
+        {
+          "seed": "BQ6A2D42",
+          "predicted": 0.0,
+          "measured": 1.0,
+          "hands": 12,
+          "discards": 17,
+          "face_hands": 5
+        },
+        {
+          "seed": "C19P8BQ4",
+          "predicted": 9.0,
+          "measured": 10.0,
+          "hands": 12,
+          "discards": 3,
+          "face_hands": 7
+        },
+        {
+          "seed": "C1ZLPKAA",
+          "predicted": 0.0,
+          "measured": 2.0,
+          "hands": 12,
+          "discards": 12,
+          "face_hands": 5
+        },
+        {
+          "seed": "C93K3YWJ",
+          "predicted": 0.0,
+          "measured": 4.0,
+          "hands": 12,
+          "discards": 12,
+          "face_hands": 6
+        },
+        {
+          "seed": "CCBWC6CR",
+          "predicted": 7.0,
+          "measured": 10.0,
+          "hands": 12,
+          "discards": 5,
+          "face_hands": 7
+        },
+        {
+          "seed": "CHPB293X",
+          "predicted": 1.0,
+          "measured": 5.0,
+          "hands": 12,
+          "discards": 11,
+          "face_hands": 5
+        },
+        {
+          "seed": "CIGHYTAU",
+          "predicted": 2.0,
+          "measured": 6.0,
+          "hands": 12,
+          "discards": 10,
+          "face_hands": 9
+        },
+        {
+          "seed": "CMEEXU8I",
+          "predicted": 4.0,
+          "measured": 6.0,
+          "hands": 12,
+          "discards": 8,
+          "face_hands": 6
+        },
+        {
+          "seed": "D4TDD2B6",
+          "predicted": 5.0,
+          "measured": 6.0,
+          "hands": 12,
+          "discards": 7,
+          "face_hands": 4
+        },
+        {
+          "seed": "D7Y5419A",
+          "predicted": 3.0,
+          "measured": 4.0,
+          "hands": 12,
+          "discards": 9,
+          "face_hands": 3
+        },
+        {
+          "seed": "ECG8NVDZ",
+          "predicted": 0.0,
+          "measured": 2.0,
+          "hands": 12,
+          "discards": 16,
+          "face_hands": 7
+        },
+        {
+          "seed": "EGE5ZY77",
+          "predicted": 0.0,
+          "measured": 1.0,
+          "hands": 12,
+          "discards": 13,
+          "face_hands": 4
+        },
+        {
+          "seed": "EVB8882H",
+          "predicted": 0.0,
+          "measured": 4.0,
+          "hands": 12,
+          "discards": 12,
+          "face_hands": 5
+        },
+        {
+          "seed": "FSXYRB3J",
+          "predicted": 0.0,
+          "measured": 1.0,
+          "hands": 12,
+          "discards": 18,
+          "face_hands": 5
+        },
+        {
+          "seed": "GVYT2DGJ",
+          "predicted": 0.0,
+          "measured": 3.0,
+          "hands": 12,
+          "discards": 12,
+          "face_hands": 6
+        },
+        {
+          "seed": "H1EWXLNE",
+          "predicted": 0.0,
+          "measured": 6.0,
+          "hands": 12,
+          "discards": 14,
+          "face_hands": 4
+        }
+      ]
+    },
+    {
+      "key": "j_ice_cream",
+      "mode": "scaling_trajectory",
+      "n": 62,
+      "unit": "chips",
+      "predicted": 40.0,
+      "measured": 40.0,
+      "ci95": 0.0,
+      "fired": 744,
+      "accept": true,
+      "reason": "ok",
+      "seconds": 7.04,
+      "extra": {
+        "per_scenario_exact": true,
+        "worst_scenario": {
+          "seed": "11111111",
+          "predicted": 40.0,
+          "measured": 40.0,
+          "hands": 12,
+          "discards": 13,
+          "face_hands": 4
+        },
+        "hands_ahead": 12,
+        "start": 100.0,
+        "delta": -60.0,
+        "sign_of_delta_ok": true,
+        "calibration_seeds": 0,
+        "face_hand_rate": 0.0,
+        "discards_per_hand": 0.8870967741935484,
+        "seeds_run": 72,
+        "seeds_scored": 62,
+        "lost_before_horizon": 5,
+        "lost_reasons": {
+          "sold": 5
+        },
+        "survival_rate": 0.9305555555555556,
+        "died_early": 5,
+        "measured_sd": 0.0
+      },
+      "scenarios": [
+        {
+          "seed": "11111111",
+          "predicted": 40.0,
+          "measured": 40.0,
+          "hands": 12,
+          "discards": 13,
+          "face_hands": 4
+        },
+        {
+          "seed": "1558AXDL",
+          "predicted": 40.0,
+          "measured": 40.0,
+          "hands": 12,
+          "discards": 14,
+          "face_hands": 5
+        },
+        {
+          "seed": "15H9Z3IY",
+          "predicted": 40.0,
+          "measured": 40.0,
+          "hands": 12,
+          "discards": 9,
+          "face_hands": 3
+        },
+        {
+          "seed": "1KV4W6YS",
+          "predicted": 40.0,
+          "measured": 40.0,
+          "hands": 12,
+          "discards": 10,
+          "face_hands": 3
+        },
+        {
+          "seed": "1MD1YZ9T",
+          "predicted": 40.0,
+          "measured": 40.0,
+          "hands": 12,
+          "discards": 15,
+          "face_hands": 7
+        },
+        {
+          "seed": "28V7DD4H",
+          "predicted": 40.0,
+          "measured": 40.0,
+          "hands": 12,
+          "discards": 9,
+          "face_hands": 5
+        },
+        {
+          "seed": "29DAQVG1",
+          "predicted": 40.0,
+          "measured": 40.0,
+          "hands": 12,
+          "discards": 4,
+          "face_hands": 1
+        },
+        {
+          "seed": "29Y3L4S9",
+          "predicted": 40.0,
+          "measured": 40.0,
+          "hands": 12,
+          "discards": 10,
+          "face_hands": 6
+        },
+        {
+          "seed": "29ZSW8MY",
+          "predicted": 40.0,
+          "measured": 40.0,
+          "hands": 12,
+          "discards": 15,
+          "face_hands": 4
+        },
+        {
+          "seed": "2CP4KSXZ",
+          "predicted": 40.0,
+          "measured": 40.0,
+          "hands": 12,
+          "discards": 12,
+          "face_hands": 7
+        },
+        {
+          "seed": "2GHBLJD9",
+          "predicted": 40.0,
+          "measured": 40.0,
+          "hands": 12,
+          "discards": 6,
+          "face_hands": 4
+        },
+        {
+          "seed": "2K9H9HN",
+          "predicted": 40.0,
+          "measured": 40.0,
+          "hands": 12,
+          "discards": 6,
+          "face_hands": 2
+        },
+        {
+          "seed": "34JCNMPA",
+          "predicted": 40.0,
+          "measured": 40.0,
+          "hands": 12,
+          "discards": 9,
+          "face_hands": 4
+        },
+        {
+          "seed": "3SZ71111",
+          "predicted": 40.0,
+          "measured": 40.0,
+          "hands": 12,
+          "discards": 11,
+          "face_hands": 1
+        },
+        {
+          "seed": "46Y8UZEG",
+          "predicted": 40.0,
+          "measured": 40.0,
+          "hands": 12,
+          "discards": 9,
+          "face_hands": 5
+        },
+        {
+          "seed": "4K8A9QER",
+          "predicted": 40.0,
+          "measured": 40.0,
+          "hands": 12,
+          "discards": 4,
+          "face_hands": 3
+        },
+        {
+          "seed": "4R219TNX",
+          "predicted": 40.0,
+          "measured": 40.0,
+          "hands": 12,
+          "discards": 12,
+          "face_hands": 4
+        },
+        {
+          "seed": "4UEGRRRA",
+          "predicted": 40.0,
+          "measured": 40.0,
+          "hands": 12,
+          "discards": 16,
+          "face_hands": 4
+        },
+        {
+          "seed": "51F2NVWK",
+          "predicted": 40.0,
+          "measured": 40.0,
+          "hands": 12,
+          "discards": 11,
+          "face_hands": 7
+        },
+        {
+          "seed": "5AWWF1M1",
+          "predicted": 40.0,
+          "measured": 40.0,
+          "hands": 12,
+          "discards": 16,
+          "face_hands": 8
+        },
+        {
+          "seed": "5UIUKHCI",
+          "predicted": 40.0,
+          "measured": 40.0,
+          "hands": 12,
+          "discards": 19,
+          "face_hands": 7
+        },
+        {
+          "seed": "5YVHAEP",
+          "predicted": 40.0,
+          "measured": 40.0,
+          "hands": 12,
+          "discards": 15,
+          "face_hands": 8
+        },
+        {
+          "seed": "6H6WNQM2",
+          "predicted": 40.0,
+          "measured": 40.0,
+          "hands": 12,
+          "discards": 7,
+          "face_hands": 6
+        },
+        {
+          "seed": "7I4M53DL",
+          "predicted": 40.0,
+          "measured": 40.0,
+          "hands": 12,
+          "discards": 14,
+          "face_hands": 5
+        },
+        {
+          "seed": "7LB2WVPK",
+          "predicted": 40.0,
+          "measured": 40.0,
+          "hands": 12,
+          "discards": 11,
+          "face_hands": 4
+        },
+        {
+          "seed": "7ODNKXP",
+          "predicted": 40.0,
+          "measured": 40.0,
+          "hands": 12,
+          "discards": 16,
+          "face_hands": 5
+        },
+        {
+          "seed": "7PEE6NA5",
+          "predicted": 40.0,
+          "measured": 40.0,
+          "hands": 12,
+          "discards": 8,
+          "face_hands": 4
+        },
+        {
+          "seed": "7UNQV1C9",
+          "predicted": 40.0,
+          "measured": 40.0,
+          "hands": 12,
+          "discards": 5,
+          "face_hands": 10
+        },
+        {
+          "seed": "7YTVQERM",
+          "predicted": 40.0,
+          "measured": 40.0,
+          "hands": 12,
+          "discards": 3,
+          "face_hands": 5
+        },
+        {
+          "seed": "8I5QXNGE",
+          "predicted": 40.0,
+          "measured": 40.0,
+          "hands": 12,
+          "discards": 8,
+          "face_hands": 7
+        },
+        {
+          "seed": "8Q47WV6K",
+          "predicted": 40.0,
+          "measured": 40.0,
+          "hands": 12,
+          "discards": 11,
+          "face_hands": 7
+        },
+        {
+          "seed": "8QBRTPD",
+          "predicted": 40.0,
+          "measured": 40.0,
+          "hands": 12,
+          "discards": 6,
+          "face_hands": 8
+        },
+        {
+          "seed": "8SIYIK9C",
+          "predicted": 40.0,
+          "measured": 40.0,
+          "hands": 12,
+          "discards": 5,
+          "face_hands": 2
+        },
+        {
+          "seed": "8UU564MF",
+          "predicted": 40.0,
+          "measured": 40.0,
+          "hands": 12,
+          "discards": 14,
+          "face_hands": 7
+        },
+        {
+          "seed": "8Y7ABZ7C",
+          "predicted": 40.0,
+          "measured": 40.0,
+          "hands": 12,
+          "discards": 11,
+          "face_hands": 6
+        },
+        {
+          "seed": "93W4UHC4",
+          "predicted": 40.0,
+          "measured": 40.0,
+          "hands": 12,
+          "discards": 5,
+          "face_hands": 7
+        },
+        {
+          "seed": "9Q9HQXZG",
+          "predicted": 40.0,
+          "measured": 40.0,
+          "hands": 12,
+          "discards": 10,
+          "face_hands": 4
+        },
+        {
+          "seed": "9QV2ZT9X",
+          "predicted": 40.0,
+          "measured": 40.0,
+          "hands": 12,
+          "discards": 17,
+          "face_hands": 8
+        },
+        {
+          "seed": "9VIGPRT6",
+          "predicted": 40.0,
+          "measured": 40.0,
+          "hands": 12,
+          "discards": 16,
+          "face_hands": 4
+        },
+        {
+          "seed": "9ZXMM1M",
+          "predicted": 40.0,
+          "measured": 40.0,
+          "hands": 12,
+          "discards": 13,
+          "face_hands": 7
+        },
+        {
+          "seed": "A",
+          "predicted": 40.0,
+          "measured": 40.0,
+          "hands": 12,
+          "discards": 11,
+          "face_hands": 3
+        },
+        {
+          "seed": "A1UAS1G5",
+          "predicted": 40.0,
+          "measured": 40.0,
+          "hands": 12,
+          "discards": 10,
+          "face_hands": 4
+        },
+        {
+          "seed": "AE1K7DG1",
+          "predicted": 40.0,
+          "measured": 40.0,
+          "hands": 12,
+          "discards": 14,
+          "face_hands": 7
+        },
+        {
+          "seed": "ALEEB",
+          "predicted": 40.0,
+          "measured": 40.0,
+          "hands": 12,
+          "discards": 18,
+          "face_hands": 5
+        },
+        {
+          "seed": "AMPYZUIU",
+          "predicted": 40.0,
+          "measured": 40.0,
+          "hands": 12,
+          "discards": 2,
+          "face_hands": 4
+        },
+        {
+          "seed": "BA1D48RK",
+          "predicted": 40.0,
+          "measured": 40.0,
+          "hands": 12,
+          "discards": 11,
+          "face_hands": 6
+        },
+        {
+          "seed": "BQ6A2D42",
+          "predicted": 40.0,
+          "measured": 40.0,
+          "hands": 12,
+          "discards": 13,
+          "face_hands": 3
+        },
+        {
+          "seed": "C19P8BQ4",
+          "predicted": 40.0,
+          "measured": 40.0,
+          "hands": 12,
+          "discards": 2,
+          "face_hands": 3
+        },
+        {
+          "seed": "C1ZLPKAA",
+          "predicted": 40.0,
+          "measured": 40.0,
+          "hands": 12,
+          "discards": 12,
+          "face_hands": 4
+        },
+        {
+          "seed": "C93K3YWJ",
+          "predicted": 40.0,
+          "measured": 40.0,
+          "hands": 12,
+          "discards": 9,
+          "face_hands": 4
+        },
+        {
+          "seed": "CCBWC6CR",
+          "predicted": 40.0,
+          "measured": 40.0,
+          "hands": 12,
+          "discards": 17,
+          "face_hands": 4
+        },
+        {
+          "seed": "CIGHYTAU",
+          "predicted": 40.0,
+          "measured": 40.0,
+          "hands": 12,
+          "discards": 7,
+          "face_hands": 9
+        },
+        {
+          "seed": "CMEEXU8I",
+          "predicted": 40.0,
+          "measured": 40.0,
+          "hands": 12,
+          "discards": 16,
+          "face_hands": 5
+        },
+        {
+          "seed": "D4TDD2B6",
+          "predicted": 40.0,
+          "measured": 40.0,
+          "hands": 12,
+          "discards": 8,
+          "face_hands": 2
+        },
+        {
+          "seed": "D7Y5419A",
+          "predicted": 40.0,
+          "measured": 40.0,
+          "hands": 12,
+          "discards": 13,
+          "face_hands": 3
+        },
+        {
+          "seed": "ECG8NVDZ",
+          "predicted": 40.0,
+          "measured": 40.0,
+          "hands": 12,
+          "discards": 4,
+          "face_hands": 6
+        },
+        {
+          "seed": "EGE5ZY77",
+          "predicted": 40.0,
+          "measured": 40.0,
+          "hands": 12,
+          "discards": 17,
+          "face_hands": 8
+        },
+        {
+          "seed": "EVB8882H",
+          "predicted": 40.0,
+          "measured": 40.0,
+          "hands": 12,
+          "discards": 8,
+          "face_hands": 4
+        },
+        {
+          "seed": "FSXYRB3J",
+          "predicted": 40.0,
+          "measured": 40.0,
+          "hands": 12,
+          "discards": 7,
+          "face_hands": 7
+        },
+        {
+          "seed": "GVQL737K",
+          "predicted": 40.0,
+          "measured": 40.0,
+          "hands": 12,
+          "discards": 17,
+          "face_hands": 5
+        },
+        {
+          "seed": "GVYT2DGJ",
+          "predicted": 40.0,
+          "measured": 40.0,
+          "hands": 12,
+          "discards": 11,
+          "face_hands": 2
+        },
+        {
+          "seed": "H1EWXLNE",
+          "predicted": 40.0,
+          "measured": 40.0,
+          "hands": 12,
+          "discards": 8,
+          "face_hands": 5
+        }
+      ]
+    },
+    {
+      "key": "c_hermit",
+      "mode": "use_paired",
+      "n": 6,
+      "unit": "dollars",
+      "predicted": 13.166666666666666,
+      "measured": 13.166666666666666,
+      "ci95": 0.0,
+      "fired": 6,
+      "accept": true,
+      "reason": "ok",
+      "seconds": 0.01,
+      "extra": {
+        "per_scenario_exact": true,
+        "worst_scenario": {
+          "scenario": "$0",
+          "predicted": 0.0,
+          "measured": 0.0,
+          "used": true,
+          "dollars_before": 0,
+          "dollars_after": 0
+        }
+      },
+      "scenarios": [
+        {
+          "scenario": "$0",
+          "predicted": 0.0,
+          "measured": 0.0,
+          "used": true,
+          "dollars_before": 0,
+          "dollars_after": 0
+        },
+        {
+          "scenario": "$5",
+          "predicted": 5.0,
+          "measured": 5.0,
+          "used": true,
+          "dollars_before": 5,
+          "dollars_after": 10
+        },
+        {
+          "scenario": "$14",
+          "predicted": 14.0,
+          "measured": 14.0,
+          "used": true,
+          "dollars_before": 14,
+          "dollars_after": 28
+        },
+        {
+          "scenario": "$20",
+          "predicted": 20.0,
+          "measured": 20.0,
+          "used": true,
+          "dollars_before": 20,
+          "dollars_after": 40
+        },
+        {
+          "scenario": "$33",
+          "predicted": 20.0,
+          "measured": 20.0,
+          "used": true,
+          "dollars_before": 33,
+          "dollars_after": 53
+        },
+        {
+          "scenario": "$60",
+          "predicted": 20.0,
+          "measured": 20.0,
+          "used": true,
+          "dollars_before": 60,
+          "dollars_after": 80
+        }
+      ]
+    },
+    {
+      "key": "v_seed_money",
+      "mode": "round_end_paired",
+      "n": 6,
+      "unit": "dollars",
+      "predicted": 2.1666666666666665,
+      "measured": 2.1666666666666665,
+      "ci95": 0.0,
+      "fired": 6,
+      "accept": true,
+      "reason": "ok",
+      "seconds": 0.01,
+      "extra": {
+        "per_scenario_exact": true,
+        "worst_scenario": {
+          "scenario": "$0",
+          "predicted": 0.0,
+          "measured": 0.0,
+          "with": 7.0,
+          "without": 7.0,
+          "hook_calls": {},
+          "hook_money": 0.0
+        }
+      },
+      "scenarios": [
+        {
+          "scenario": "$0",
+          "predicted": 0.0,
+          "measured": 0.0,
+          "with": 7.0,
+          "without": 7.0,
+          "hook_calls": {},
+          "hook_money": 0.0
+        },
+        {
+          "scenario": "$12",
+          "predicted": 0.0,
+          "measured": 0.0,
+          "with": 9.0,
+          "without": 9.0,
+          "hook_calls": {},
+          "hook_money": 0.0
+        },
+        {
+          "scenario": "$27",
+          "predicted": 0.0,
+          "measured": 0.0,
+          "with": 12.0,
+          "without": 12.0,
+          "hook_calls": {},
+          "hook_money": 0.0
+        },
+        {
+          "scenario": "$40",
+          "predicted": 3.0,
+          "measured": 3.0,
+          "with": 15.0,
+          "without": 12.0,
+          "hook_calls": {},
+          "hook_money": 0.0
+        },
+        {
+          "scenario": "$55",
+          "predicted": 5.0,
+          "measured": 5.0,
+          "with": 17.0,
+          "without": 12.0,
+          "hook_calls": {},
+          "hook_money": 0.0
+        },
+        {
+          "scenario": "$80",
+          "predicted": 5.0,
+          "measured": 5.0,
+          "with": 17.0,
+          "without": 12.0,
+          "hook_calls": {},
+          "hook_money": 0.0
+        }
+      ]
+    },
+    {
+      "key": "v_seed_money",
+      "mode": "rollout_paired",
+      "n": 40,
+      "unit": "dollars",
+      "predicted": NaN,
+      "measured": 0.0,
+      "ci95": 0.0,
+      "fired": 0,
+      "accept": true,
+      "reason": "info (no claim to score)",
+      "seconds": 6.93,
+      "extra": {
+        "mean_rounds": 7.775,
+        "mean_payouts": 0.0,
+        "d_money": -0.35,
+        "d_money_ci": 1.4132889809199474,
+        "d_ante": 0.0,
+        "d_ante_ci": 0.07017925765586441,
+        "stop_ante": 5,
+        "worlds": 40,
+        "seed": "11111111",
+        "d_money_direction_ok": false,
+        "empirical_buy_value_dollars": -0.35,
+        "nines_start": 4.0,
+        "nines_end": 3.95,
+        "gross_per_payout": 0.0,
+        "note": "gross is the item's realized payout (probe); d_money is the CRN with-vs-without final-money delta and is SMALLER because the money gets spent and the arms diverge."
+      },
+      "scenarios": [
+        {
+          "world": 0,
+          "gross": 0.0,
+          "d_dollars": 0.0,
+          "d_ante": 0.0,
+          "rounds": 10,
+          "payouts": 0,
+          "nines_start": 4,
+          "nines_end": 4
+        },
+        {
+          "world": 1,
+          "gross": 0.0,
+          "d_dollars": 0.0,
+          "d_ante": 0.0,
+          "rounds": 7,
+          "payouts": 0,
+          "nines_start": 4,
+          "nines_end": 4
+        },
+        {
+          "world": 2,
+          "gross": 0.0,
+          "d_dollars": 0.0,
+          "d_ante": 0.0,
+          "rounds": 9,
+          "payouts": 0,
+          "nines_start": 4,
+          "nines_end": 4
+        },
+        {
+          "world": 3,
+          "gross": 0.0,
+          "d_dollars": -27.0,
+          "d_ante": 0.0,
+          "rounds": 9,
+          "payouts": 0,
+          "nines_start": 4,
+          "nines_end": 4
+        },
+        {
+          "world": 4,
+          "gross": 0.0,
+          "d_dollars": 0.0,
+          "d_ante": 0.0,
+          "rounds": 8,
+          "payouts": 0,
+          "nines_start": 4,
+          "nines_end": 4
+        },
+        {
+          "world": 5,
+          "gross": 0.0,
+          "d_dollars": 0.0,
+          "d_ante": 0.0,
+          "rounds": 7,
+          "payouts": 0,
+          "nines_start": 4,
+          "nines_end": 4
+        },
+        {
+          "world": 6,
+          "gross": 0.0,
+          "d_dollars": 0.0,
+          "d_ante": 0.0,
+          "rounds": 12,
+          "payouts": 0,
+          "nines_start": 4,
+          "nines_end": 4
+        },
+        {
+          "world": 7,
+          "gross": 0.0,
+          "d_dollars": 0.0,
+          "d_ante": 0.0,
+          "rounds": 4,
+          "payouts": 0,
+          "nines_start": 4,
+          "nines_end": 4
+        },
+        {
+          "world": 8,
+          "gross": 0.0,
+          "d_dollars": 0.0,
+          "d_ante": 0.0,
+          "rounds": 9,
+          "payouts": 0,
+          "nines_start": 4,
+          "nines_end": 4
+        },
+        {
+          "world": 9,
+          "gross": 0.0,
+          "d_dollars": 0.0,
+          "d_ante": 0.0,
+          "rounds": 11,
+          "payouts": 0,
+          "nines_start": 4,
+          "nines_end": 4
+        },
+        {
+          "world": 10,
+          "gross": 0.0,
+          "d_dollars": 0.0,
+          "d_ante": 0.0,
+          "rounds": 11,
+          "payouts": 0,
+          "nines_start": 4,
+          "nines_end": 4
+        },
+        {
+          "world": 11,
+          "gross": 0.0,
+          "d_dollars": 0.0,
+          "d_ante": 0.0,
+          "rounds": 6,
+          "payouts": 0,
+          "nines_start": 4,
+          "nines_end": 3
+        },
+        {
+          "world": 12,
+          "gross": 0.0,
+          "d_dollars": 0.0,
+          "d_ante": 0.0,
+          "rounds": 5,
+          "payouts": 0,
+          "nines_start": 4,
+          "nines_end": 4
+        },
+        {
+          "world": 13,
+          "gross": 0.0,
+          "d_dollars": 0.0,
+          "d_ante": -1.0,
+          "rounds": 10,
+          "payouts": 0,
+          "nines_start": 4,
+          "nines_end": 4
+        },
+        {
+          "world": 14,
+          "gross": 0.0,
+          "d_dollars": 0.0,
+          "d_ante": 0.0,
+          "rounds": 10,
+          "payouts": 0,
+          "nines_start": 4,
+          "nines_end": 4
+        },
+        {
+          "world": 15,
+          "gross": 0.0,
+          "d_dollars": 0.0,
+          "d_ante": 0.0,
+          "rounds": 9,
+          "payouts": 0,
+          "nines_start": 4,
+          "nines_end": 4
+        },
+        {
+          "world": 16,
+          "gross": 0.0,
+          "d_dollars": 0.0,
+          "d_ante": 0.0,
+          "rounds": 8,
+          "payouts": 0,
+          "nines_start": 4,
+          "nines_end": 4
+        },
+        {
+          "world": 17,
+          "gross": 0.0,
+          "d_dollars": 0.0,
+          "d_ante": 0.0,
+          "rounds": 5,
+          "payouts": 0,
+          "nines_start": 4,
+          "nines_end": 4
+        },
+        {
+          "world": 18,
+          "gross": 0.0,
+          "d_dollars": 0.0,
+          "d_ante": 0.0,
+          "rounds": 8,
+          "payouts": 0,
+          "nines_start": 4,
+          "nines_end": 4
+        },
+        {
+          "world": 19,
+          "gross": 0.0,
+          "d_dollars": 0.0,
+          "d_ante": 0.0,
+          "rounds": 6,
+          "payouts": 0,
+          "nines_start": 4,
+          "nines_end": 4
+        },
+        {
+          "world": 20,
+          "gross": 0.0,
+          "d_dollars": 0.0,
+          "d_ante": 0.0,
+          "rounds": 10,
+          "payouts": 0,
+          "nines_start": 4,
+          "nines_end": 4
+        },
+        {
+          "world": 21,
+          "gross": 0.0,
+          "d_dollars": 0.0,
+          "d_ante": 0.0,
+          "rounds": 5,
+          "payouts": 0,
+          "nines_start": 4,
+          "nines_end": 4
+        },
+        {
+          "world": 22,
+          "gross": 0.0,
+          "d_dollars": 1.0,
+          "d_ante": 0.0,
+          "rounds": 11,
+          "payouts": 0,
+          "nines_start": 4,
+          "nines_end": 3
+        },
+        {
+          "world": 23,
+          "gross": 0.0,
+          "d_dollars": 0.0,
+          "d_ante": 0.0,
+          "rounds": 5,
+          "payouts": 0,
+          "nines_start": 4,
+          "nines_end": 4
+        },
+        {
+          "world": 24,
+          "gross": 0.0,
+          "d_dollars": 9.0,
+          "d_ante": 0.0,
+          "rounds": 9,
+          "payouts": 0,
+          "nines_start": 4,
+          "nines_end": 4
+        },
+        {
+          "world": 25,
+          "gross": 0.0,
+          "d_dollars": 0.0,
+          "d_ante": 0.0,
+          "rounds": 7,
+          "payouts": 0,
+          "nines_start": 4,
+          "nines_end": 4
+        },
+        {
+          "world": 26,
+          "gross": 0.0,
+          "d_dollars": 0.0,
+          "d_ante": 0.0,
+          "rounds": 3,
+          "payouts": 0,
+          "nines_start": 4,
+          "nines_end": 4
+        },
+        {
+          "world": 27,
+          "gross": 0.0,
+          "d_dollars": 1.0,
+          "d_ante": 0.0,
+          "rounds": 10,
+          "payouts": 0,
+          "nines_start": 4,
+          "nines_end": 4
+        },
+        {
+          "world": 28,
+          "gross": 0.0,
+          "d_dollars": 0.0,
+          "d_ante": 0.0,
+          "rounds": 6,
+          "payouts": 0,
+          "nines_start": 4,
+          "nines_end": 4
+        },
+        {
+          "world": 29,
+          "gross": 0.0,
+          "d_dollars": 0.0,
+          "d_ante": 0.0,
+          "rounds": 4,
+          "payouts": 0,
+          "nines_start": 4,
+          "nines_end": 4
+        },
+        {
+          "world": 30,
+          "gross": 0.0,
+          "d_dollars": 0.0,
+          "d_ante": 0.0,
+          "rounds": 8,
+          "payouts": 0,
+          "nines_start": 4,
+          "nines_end": 4
+        },
+        {
+          "world": 31,
+          "gross": 0.0,
+          "d_dollars": 0.0,
+          "d_ante": 0.0,
+          "rounds": 6,
+          "payouts": 0,
+          "nines_start": 4,
+          "nines_end": 4
+        },
+        {
+          "world": 32,
+          "gross": 0.0,
+          "d_dollars": 2.0,
+          "d_ante": 1.0,
+          "rounds": 11,
+          "payouts": 0,
+          "nines_start": 4,
+          "nines_end": 4
+        },
+        {
+          "world": 33,
+          "gross": 0.0,
+          "d_dollars": 0.0,
+          "d_ante": 0.0,
+          "rounds": 7,
+          "payouts": 0,
+          "nines_start": 4,
+          "nines_end": 4
+        },
+        {
+          "world": 34,
+          "gross": 0.0,
+          "d_dollars": 0.0,
+          "d_ante": 0.0,
+          "rounds": 4,
+          "payouts": 0,
+          "nines_start": 4,
+          "nines_end": 4
+        },
+        {
+          "world": 35,
+          "gross": 0.0,
+          "d_dollars": 0.0,
+          "d_ante": 0.0,
+          "rounds": 6,
+          "payouts": 0,
+          "nines_start": 4,
+          "nines_end": 4
+        },
+        {
+          "world": 36,
+          "gross": 0.0,
+          "d_dollars": 0.0,
+          "d_ante": 0.0,
+          "rounds": 11,
+          "payouts": 0,
+          "nines_start": 4,
+          "nines_end": 4
+        },
+        {
+          "world": 37,
+          "gross": 0.0,
+          "d_dollars": 0.0,
+          "d_ante": 0.0,
+          "rounds": 7,
+          "payouts": 0,
+          "nines_start": 4,
+          "nines_end": 4
+        },
+        {
+          "world": 38,
+          "gross": 0.0,
+          "d_dollars": 0.0,
+          "d_ante": 0.0,
+          "rounds": 8,
+          "payouts": 0,
+          "nines_start": 4,
+          "nines_end": 4
+        },
+        {
+          "world": 39,
+          "gross": 0.0,
+          "d_dollars": 0.0,
+          "d_ante": 0.0,
+          "rounds": 9,
+          "payouts": 0,
+          "nines_start": 4,
+          "nines_end": 4
+        }
+      ]
+    },
+    {
+      "key": "j_cloud_9__x3",
+      "mode": "round_end_paired",
+      "n": 4,
+      "unit": "dollars",
+      "predicted": 9.0,
+      "measured": 3.0,
+      "ci95": 6.1980642139300235,
+      "fired": 4,
+      "accept": false,
+      "reason": "band+inexact",
+      "seconds": 0.01,
+      "extra": {
+        "per_scenario_exact": false,
+        "worst_scenario": {
+          "scenario": "nines=7",
+          "predicted": 21.0,
+          "measured": 7.0,
+          "with": 14.0,
+          "without": 7.0,
+          "hook_calls": {
+            "on_round_end": 1
+          },
+          "hook_money": 7.0
+        }
+      },
+      "scenarios": [
+        {
+          "scenario": "nines=0",
+          "predicted": 0.0,
+          "measured": 0.0,
+          "with": 7.0,
+          "without": 7.0,
+          "hook_calls": {
+            "on_round_end": 1
+          },
+          "hook_money": 0.0
+        },
+        {
+          "scenario": "nines=1",
+          "predicted": 3.0,
+          "measured": 1.0,
+          "with": 8.0,
+          "without": 7.0,
+          "hook_calls": {
+            "on_round_end": 1
+          },
+          "hook_money": 1.0
+        },
+        {
+          "scenario": "nines=4",
+          "predicted": 12.0,
+          "measured": 4.0,
+          "with": 11.0,
+          "without": 7.0,
+          "hook_calls": {
+            "on_round_end": 1
+          },
+          "hook_money": 4.0
+        },
+        {
+          "scenario": "nines=7",
+          "predicted": 21.0,
+          "measured": 7.0,
+          "with": 14.0,
+          "without": 7.0,
+          "hook_calls": {
+            "on_round_end": 1
+          },
+          "hook_money": 7.0
+        }
+      ]
+    },
+    {
+      "key": "j_joker__doublecount",
+      "mode": "round_end_paired",
+      "n": 3,
+      "unit": "dollars",
+      "predicted": 4.0,
+      "measured": 0.0,
+      "ci95": 0.0,
+      "fired": 0,
+      "accept": false,
+      "reason": "unreachable+band+ci+inexact",
+      "seconds": 0.0,
+      "extra": {
+        "per_scenario_exact": false,
+        "worst_scenario": {
+          "scenario": "rep0",
+          "predicted": 4.0,
+          "measured": 0.0,
+          "with": 7.0,
+          "without": 7.0,
+          "hook_calls": {},
+          "hook_money": 0.0
+        }
+      },
+      "scenarios": [
+        {
+          "scenario": "rep0",
+          "predicted": 4.0,
+          "measured": 0.0,
+          "with": 7.0,
+          "without": 7.0,
+          "hook_calls": {},
+          "hook_money": 0.0
+        },
+        {
+          "scenario": "rep1",
+          "predicted": 4.0,
+          "measured": 0.0,
+          "with": 7.0,
+          "without": 7.0,
+          "hook_calls": {},
+          "hook_money": 0.0
+        },
+        {
+          "scenario": "rep2",
+          "predicted": 4.0,
+          "measured": 0.0,
+          "with": 7.0,
+          "without": 7.0,
+          "hook_calls": {},
+          "hook_money": 0.0
+        }
+      ]
+    }
+  ],
+  "empirical_fallbacks": [
+    {
+      "key": "j_green_joker",
+      "mode": "scaling_trajectory",
+      "unit": "mult",
+      "value": 4.271186440677966,
+      "ci95": 0.3987872332053543,
+      "n": 59,
+      "source": "ev/encode/verify.py::scaling_trajectory",
+      "supersedes_predict": true,
+      "note": "Every number in this module is a MARGINAL measurement: two arms built from one state, differing only by the item, with every other effect active in both.  Anything the player already prices therefore measures as zero here, by construction."
+    },
+    {
+      "key": "v_seed_money",
+      "mode": "rollout_paired",
+      "unit": "dollars",
+      "value": -0.35,
+      "ci95": 1.4132889809199474,
+      "n": 40,
+      "source": "ev/encode/verify.py::rollout_paired",
+      "supersedes_predict": false,
+      "note": "Every number in this module is a MARGINAL measurement: two arms built from one state, differing only by the item, with every other effect active in both.  Anything the player already prices therefore measures as zero here, by construction."
+    },
+    {
+      "key": "j_cloud_9__x3",
+      "mode": "round_end_paired",
+      "unit": "dollars",
+      "value": 3.0,
+      "ci95": 6.1980642139300235,
+      "n": 4,
+      "source": "ev/encode/verify.py::round_end_paired",
+      "supersedes_predict": true,
+      "note": "Every number in this module is a MARGINAL measurement: two arms built from one state, differing only by the item, with every other effect active in both.  Anything the player already prices therefore measures as zero here, by construction."
+    },
+    {
+      "key": "j_joker__doublecount",
+      "mode": "round_end_paired",
+      "unit": "dollars",
+      "value": 0.0,
+      "ci95": 0.0,
+      "n": 3,
+      "source": "ev/encode/verify.py::round_end_paired",
+      "supersedes_predict": true,
+      "note": "Every number in this module is a MARGINAL measurement: two arms built from one state, differing only by the item, with every other effect active in both.  Anything the player already prices therefore measures as zero here, by construction."
+    }
+  ]
+}

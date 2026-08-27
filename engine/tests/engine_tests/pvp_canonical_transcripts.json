@@ -1,5 +1,5 @@
 {
- "note": "pre-change canonical MLBMatch transcripts (W-PVP byte-equivalence pin)",
+ "note": "pre-change canonical MLBMatch transcripts (W-PVP byte-equivalence pin) | RE-CAPTURED 2026-08-26 by W-FIX after four engine-correctness fixes (Blueprint/Brainstorm no longer re-run a copied joker's self-mutation; Satellite reads the run-global planet tally; Ice Cream melts and frees its slot; ev/hand.board_ratio's memo is per-player instead of process-global). Those change what ev:fast plays, so the pre-W-FIX chains no longer reproduce. Changed: ['11111111', '1558AXDL', '15H9Z3IY']; identical: ['1KV4W6YS']. Each changed row keeps its previous values under 'superseded_2026-08-26_wfix' so the W-PVP claim (adding the protocol changed nothing) stays auditable.",
  "player": "ev:fast eps=0 seeds 11/22, lives=4, b_red, stake 1, max_steps 4000",
  "seeds": [
   "11111111",
@@ -10,7 +10,7 @@
  "runs": [
   {
    "seed": "11111111",
-   "steps": 700,
+   "steps": 681,
    "done": true,
    "winner": 1,
    "lives": [
@@ -18,12 +18,12 @@
     1
    ],
    "ante": [
-    9,
-    9
+    8,
+    8
    ],
    "dollars": [
-    55,
-    56
+    66,
+    68
    ],
    "pvp_log": [
     [
@@ -46,27 +46,27 @@
     ],
     [
      5,
-     1,
-     13094,
-     12924
+     0,
+     14001,
+     19776
     ],
     [
      6,
-     0,
-     49536,
-     50020
+     1,
+     54400,
+     41664
     ],
     [
      7,
      1,
-     73202,
-     56824
+     67512,
+     54084
     ],
     [
      8,
-     null,
-     5987,
-     5987
+     0,
+     5340,
+     11455
     ]
    ],
    "pvp_detail": [
@@ -99,18 +99,18 @@
     ],
     [
      5,
-     1,
-     13094,
-     12924,
+     0,
+     14001,
+     19776,
      4,
-     4,
-     false
+     3,
+     true
     ],
     [
      6,
-     0,
-     49536,
-     50020,
+     1,
+     54400,
+     41664,
      4,
      4,
      false
@@ -118,25 +118,41 @@
     [
      7,
      1,
-     73202,
-     56824,
+     67512,
+     54084,
      4,
      4,
      false
     ],
     [
      8,
-     null,
-     5987,
-     5987,
+     0,
+     5340,
+     11455,
      4,
-     4,
-     false
+     3,
+     true
     ]
    ],
-   "final_signature": "ce30de6cb34fc56f",
-   "chain": "8f4e0f2bafb275058c6c545b48355ad4b85952e7",
-   "signature_len": 8
+   "signature_len": 8,
+   "chain": "7998c66de57e8ed142345afc45698e24920dfefe",
+   "superseded_2026-08-26_wfix": {
+    "steps": 700,
+    "winner": 1,
+    "lives": [
+     0,
+     1
+    ],
+    "ante": [
+     9,
+     9
+    ],
+    "dollars": [
+     55,
+     56
+    ],
+    "chain": "8f4e0f2bafb275058c6c545b48355ad4b85952e7"
+   }
   },
   {
    "seed": "1558AXDL",
@@ -219,13 +235,29 @@
      false
     ]
    ],
-   "final_signature": "bdefba2754a3205a",
-   "chain": "667ce1509eb4cc9026505f2f6c8a6e4da226ac06",
-   "signature_len": 8
+   "signature_len": 8,
+   "chain": "77ec4e5f031268baaa9e2aa9e379f309b1d0435e",
+   "superseded_2026-08-26_wfix": {
+    "steps": 401,
+    "winner": 1,
+    "lives": [
+     0,
+     2
+    ],
+    "ante": [
+     6,
+     6
+    ],
+    "dollars": [
+     36,
+     26
+    ],
+    "chain": "667ce1509eb4cc9026505f2f6c8a6e4da226ac06"
+   }
   },
   {
    "seed": "15H9Z3IY",
-   "steps": 490,
+   "steps": 446,
    "done": true,
    "winner": 0,
    "lives": [
@@ -237,8 +269,8 @@
     7
    ],
    "dollars": [
-    23,
-    29
+    32,
+    27
    ],
    "pvp_log": [
     [
@@ -263,19 +295,13 @@
      5,
      0,
      32701,
-     37780
+     36072
     ],
     [
      6,
      1,
-     42264,
-     37532
-    ],
-    [
-     7,
-     1,
-     40976,
-     36880
+     44638,
+     44430
     ]
    ],
    "pvp_detail": [
@@ -310,7 +336,7 @@
      5,
      0,
      32701,
-     37780,
+     36072,
      4,
      4,
      false
@@ -318,25 +344,32 @@
     [
      6,
      1,
-     42264,
-     37532,
-     4,
-     4,
-     false
-    ],
-    [
-     7,
-     1,
-     40976,
-     36880,
+     44638,
+     44430,
      4,
      4,
      false
     ]
    ],
-   "final_signature": "ec12dfcd4f403d11",
-   "chain": "12cb9ad2423f719cabd319d7e7497d7d66339bcb",
-   "signature_len": 8
+   "signature_len": 8,
+   "chain": "4730e955559d5bd67aacbc975c7400cecdef560d",
+   "superseded_2026-08-26_wfix": {
+    "steps": 490,
+    "winner": 0,
+    "lives": [
+     1,
+     0
+    ],
+    "ante": [
+     7,
+     7
+    ],
+    "dollars": [
+     23,
+     29
+    ],
+    "chain": "12cb9ad2423f719cabd319d7e7497d7d66339bcb"
+   }
   },
   {
    "seed": "1KV4W6YS",
@@ -419,9 +452,8 @@
      false
     ]
    ],
-   "final_signature": "b313a6ad0339eb4b",
-   "chain": "77e9b9c1288c2442e2ef498bd145db1b10196217",
-   "signature_len": 8
+   "signature_len": 8,
+   "chain": "77e9b9c1288c2442e2ef498bd145db1b10196217"
   }
  ]
 }
