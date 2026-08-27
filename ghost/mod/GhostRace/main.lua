@@ -53,7 +53,11 @@ local ORIG = {
 -------------------------------------------------------------------------------
 
 local function numstr(x)
-    return tostring(x)
+    -- Talisman makes G.GAME.chips a Big whose tostring comma-groups ("1,073");
+    -- emit a plain machine-parsable decimal instead.
+    local n = tonumber(x)
+    if n then return string.format("%.0f", n) end
+    return (tostring(x):gsub(",", ""))
 end
 
 local function current_ante()

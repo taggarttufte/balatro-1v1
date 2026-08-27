@@ -30,7 +30,7 @@ if str(_ROOT) not in sys.path:
 from ghost.export import (  # noqa: E402
     GAMEMODE_KEY, RULESET_KEY, _deck_display_name, mod_replays_dir, slugify, write_ghost,
 )
-from ghost.ipc import PROTOCOL_VERSION, JsonlTail, append_event, iter_session  # noqa: E402
+from ghost.ipc import PROTOCOL_VERSION, JsonlTail, append_event  # noqa: E402
 from ghost.make import resolve_seed  # noqa: E402
 from ghost.mirror import MirrorAgent, MirrorDead  # noqa: E402
 
@@ -139,10 +139,14 @@ class Sidecar:
     def recover(self) -> None:
         """Rebuild from the outbox: fresh mirror + replay every recorded resolution
         (determinism in (seed, spec) makes this exact), then republish the pending
-        round so the mod's buffer is complete even if the inbox was lost."""
+        round so the mod's buffer is complete even if the inbox was lost.
+
+        The replay is consumed through ``self.tail`` — NOT a separate reader — so the
+        live loop resumes at EOF and can never re-apply a replayed event (the
+        double-resolution bug found in the first live session, 2026-08-27)."""
         self.mirror = MirrorAgent(self.seed, spec=self.spec, deck_key=self.deck_key,
                                   stake=self.stake, lives=self.lives)
-        events = list(iter_session(self.outbox_path))
+        events = self.tail.poll()
         self._emit("hello", protocol=PROTOCOL_VERSION, spec=self.spec,
                    agent_name=f"{self.spec} LIVE")
         try:
@@ -170,10 +174,17 @@ class Sidecar:
     # ── inbound ───────────────────────────────────────────────────────────────
 
     def pump(self) -> int:
-        """One poll: handle every new outbox event.  Returns how many were handled."""
+        """One poll: handle every new outbox event.  Returns how many were handled.
+        A handler error is logged loudly and the event skipped — one malformed message
+        must never kill a live session (the mirror may then be desynced: the log line
+        is the signal to --resume)."""
         events = self.tail.poll()
         for ev in events:
-            self._handle(ev)
+            try:
+                self._handle(ev)
+            except Exception as exc:
+                self.log(f"[sidecar] ERROR handling {ev.get('e')!r}: {exc!r} — "
+                         f"event skipped; if the mirror desyncs, restart with --resume")
             if self.done:
                 break
         return len(events)
@@ -185,6 +196,11 @@ class Sidecar:
             if ev.get("seed") not in (None, self.seed):
                 self.log(f"[sidecar] WARNING: mod seed {ev['seed']!r} != "
                          f"session seed {self.seed!r}")
+            if self.mirror is not None and self.mirror.pvp_log:
+                # the launcher was reloaded mid-match: a fresh in-game run starts, so
+                # the mirror restarts too (deterministic — same opening as before)
+                self.log("[sidecar] mid-match reload — resetting the mirror")
+                self.start()
         elif e == "nemesis_start":
             pend = self.mirror._pending
             if pend is None or pend["ante"] != ev.get("ante"):
@@ -269,21 +285,28 @@ def main(argv=None) -> int:
     else:
         car.start()
 
+    launcher_path = None
     if not args.no_install:
         doc = launcher_doc(seed, args.deck_key, args.stake, args.spec, outbox, inbox,
                            player_name=args.player_name, bootstrap=car.pending)
-        path = write_ghost(doc, str(Path(mod_replays_dir()) /
-                                    f"live_{seed}_{slugify(args.spec)}.json"))
-        log(f"[sidecar] launcher installed: {path}")
+        launcher_path = write_ghost(doc, str(Path(mod_replays_dir()) /
+                                             f"live_{seed}_{slugify(args.spec)}.json"))
+        log(f"[sidecar] launcher installed: {launcher_path}")
 
-    if not car.done:
-        log("[sidecar] ready — in Balatro: Practice -> Match Replays -> "
-            f"'{args.spec} LIVE' -> Play Match.  Ctrl+C to stop.")
-        try:
-            car.run()
-        except KeyboardInterrupt:
-            log("[sidecar] stopped by user")
-    log_file.close()
+    try:
+        if not car.done:
+            log("[sidecar] ready — in Balatro: Practice -> Match Replays -> "
+                f"'{args.spec} LIVE' -> Play Match.  Ctrl+C to stop.")
+            try:
+                car.run()
+            except KeyboardInterrupt:
+                log("[sidecar] stopped by user")
+    finally:
+        # a LIVE entry without its sidecar is a trap — never leave one in the picker
+        if launcher_path and Path(launcher_path).exists():
+            Path(launcher_path).unlink()
+            log(f"[sidecar] launcher removed: {launcher_path}")
+        log_file.close()
     return 0
 
 

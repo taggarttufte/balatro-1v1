@@ -117,6 +117,46 @@ def test_recover_replays_outbox(tmp_path):
     # and it republished the pending round for the mod's buffer
     assert _by_kind(_events(inbox), "agent_nemesis")[-1]["ante"] == state[3]
 
+    # THE 2026-08-27 live-session bug: pumping after recovery must be a strict no-op —
+    # the replayed events are consumed through the SAME tail, never applied twice
+    car2.pump()
+    state3 = (car2.mirror.ante, car2.mirror.lives, car2.mirror.money,
+              car2.pending["ante"], tuple(car2.pvp_log_snapshot()))
+    assert state3 == state
+    assert not car2.done
+
+
+def test_mid_match_reload_resets_the_mirror(session):
+    car, outbox, inbox = session
+    car.start()
+    first = _by_kind(_events(inbox), "agent_nemesis")[-1]
+    append_event(str(outbox), "session_start", seed=SEED)
+    append_event(str(outbox), "pvp_result", ante=first["ante"],
+                 human_score=first["final"] - 5, human_lives=3, loser="human")
+    car.pump()
+    assert car.pvp_log_snapshot()                       # one resolved round
+
+    # the human reloads the launcher: a fresh run begins — the mirror restarts
+    append_event(str(outbox), "session_start", seed=SEED)
+    car.pump()
+    assert car.pvp_log_snapshot() == []
+    fresh = _by_kind(_events(inbox), "agent_nemesis")[-1]
+    assert fresh["ante"] == first["ante"] and fresh["final"] == first["final"]
+    assert not car.done
+
+
+def test_resolve_parses_formatted_scores(session):
+    """Talisman's Big tostring comma-groups: '1,073' must parse (the first live
+    session's crash)."""
+    car, outbox, inbox = session
+    car.start()
+    nem = _by_kind(_events(inbox), "agent_nemesis")[-1]
+    append_event(str(outbox), "pvp_result", ante=nem["ante"],
+                 human_score=f"{nem['final'] + 1000:,}", human_lives=4, loser="agent")
+    car.pump()
+    log = car.pvp_log_snapshot()[-1]
+    assert log[3] == nem["final"] + 1000 and log[1] == 0    # agent lost, parsed clean
+
 
 def test_launcher_doc_carries_bootstrap(session):
     car, outbox, inbox = session

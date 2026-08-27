@@ -227,8 +227,9 @@ class MirrorAgent:
             raise RuntimeError("no pending Nemesis to resolve")
         pend, self._pending = self._pending, None
         g = self.game
-        human_final = int(float(human_final))   # the mod sends tostring(chips): possibly
-                                                # "57987" or scientific notation (Talisman)
+        # The mod sends tostring(chips); with Talisman installed that can be a
+        # comma-grouped Big ("1,073") or scientific notation — normalise all of them.
+        human_final = int(float(str(human_final).replace(",", "").strip()))
         if human_lives is not None:
             self.set_opponent_lives(human_lives)
 
